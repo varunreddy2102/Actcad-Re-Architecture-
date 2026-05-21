@@ -161,6 +161,7 @@ For each component of the planned stack: notable adopters, why they picked it, k
 - **Adopters.** Bricsys / BricsCAD (founding ODA member, the deepest user — Drawings + Visualize + BIM + IFC SDK), GstarCAD, ZWCAD, NanoCAD (all direct on ODA Drawings). Graphisoft ARCHICAD and Vectorworks use ODA Drawings as their DWG import / export layer. Bentley MicroStation, Trimble, Dassault hold memberships for format interop. ARES Graebert wrote their own DWG library and uses ODA selectively. **IntelliCAD itself swapped its in-house DWG core for ODA technology under the hood years ago**, so all IntelliCAD-derived products (ActCAD, progeCAD, CMS IntelliCAD) inherit ODA indirectly today.
 - **Why.** Format coverage no one else ships under a single C++ API (DWG back to R12, DGN, IFC 2x3/4/4.3, Revit, Navisworks); aggressive Autodesk-version tracking; one membership covers everything; Visualize lets members drop expensive third-party graphics middleware (HOOPS, etc.).
 - **Known pain.** Annual membership fee is non-trivial (Sustaining tier required for MCAD). API surface is wide but uneven — Revit *read* is mature, Revit *write* is partial. Threading model is heavy C++. Riding ODA's release cadence whether your QA is ready or not. Visualize scene graph is its own world — interop with engine-side picking / snapping is your problem.
+- **Cost (vendor-published).** Limited Commercial $3K first yr / $2.25K renewal (100-seat cap). **Pro / Sustaining $7.5K first yr / $4.5K renewal** — unlimited commercial seats + Web/SaaS (inWEB) redistribution rights, **no per-seat royalty**. Enterprise / Founding $37.5K first yr / $18K renewal — adds full source + Git access + board nomination. Extensions priced separately (BimRv / BimNw / MCAD / Civil typically $5K–$10K/yr each on top of the membership). See §15 for the rollup. ([ODA pricing](https://www.opendesign.com/pricing))
 - **Verdict.** **Good fit, go direct.** ActCAD already pays ODA transitively; cutting to direct membership removes ITC as middleman and matches BricsCAD / GstarCAD / ZWCAD / NanoCAD.
 - Sources: [ODA Members](https://www.opendesign.com/oda-membership), [Bricsys ODA showcase](https://www.opendesign.com/member-showcase/bricsys), [IntelliCAD on ODA](https://gfxspeak.com/featured/autocad-workalike-market/).
 
@@ -170,6 +171,7 @@ For each component of the planned stack: notable adopters, why they picked it, k
 - **Notably NOT on OCCT.** SolidWorks (Parasolid), NX (Parasolid), Solid Edge (Parasolid), Inventor / Fusion (ASM = Parasolid fork), Plasticity (Parasolid). **Shapr3D migrated OCCT → Parasolid in 2017** explicitly because OCCT's boolean robustness wasn't production-grade for MCAD workloads.
 - **Why anyone picks OCCT.** Only open-source full-scale B-rep + STEP / IGES / BREP I/O; LGPL 2.1 with dynamic-linking exception allows commercial closed-source products; broad surface / curve / topology coverage; included tessellator + visualization.
 - **Known pain.** Boolean robustness on degenerate topology (FreeCAD issues #5619, #5782, #15599, #17497, #17705, #26119 all document this — workaround is the "Fuzzy Boolean" tolerance hack). Tolerance model is global-ish, breaks when small geometry sits next to large. Performance on large assemblies (FreeCAD bypasses the OCCT viewer for Coin3D). Surface intersection edge cases on trimmed NURBS produce empty / invalid edges. Multi-threaded booleans are sometimes *slower* than single-threaded.
+- **Cost.** **$0** under LGPL 2.1 + linking exception (safe for closed-source commercial linking — read the exception). Open Cascade SAS sells optional commercial support + indemnification; **pricing is undisclosed** and only worth it for certified releases / roadmap influence.
 - **Verdict.** **Acceptable for ActCAD's AEC / drafting / light-3D scope.** Risky if customers ever want filleted assemblies — keep Parasolid as a paid Phase-3+ option. The §9 spike measures the boundary.
 - Sources: [OCCT projects](https://dev.opencascade.org/about/projects_and_products), [FreeCAD #15599](https://github.com/FreeCAD/FreeCAD/issues/15599), [#5619](https://github.com/FreeCAD/FreeCAD/issues/5619), [Shapr3D migration](https://www.fabbaloo.com/2017/12/shapr3d-30-brings-parasolid-3d-modeling-to-ipad-pro).
 
@@ -178,6 +180,7 @@ For each component of the planned stack: notable adopters, why they picked it, k
 - **Adopters.** **Effectively none in production yet.** SolidWorks read opened June 2025; Inventor read followed; CATIA / NX / Creo / JT / Parasolid / Solid Edge are on the 2026–2027 roadmap. No shipped end-user CAD product is on it as a primary kernel.
 - **Why members are interested.** Flat per-company pricing (no per-developer / per-seat), bundled into ODA membership extension — orders of magnitude cheaper than Parasolid (six-figures/yr + royalties) or ACIS. The only credible CATIA / SOLIDWORKS *write* path not controlled by Dassault.
 - **Comparison.** Parasolid mature since 1988, gold standard for booleans / fillets, expensive, distribution-controlled. ACIS second-place commercial, better at faceted-import / defeaturing. OCCT open-source but B-rep robustness behind both. **ODA MCAD is positioned as translation / interop, not as a modeling kernel.**
+- **Cost.** Bundled into ODA membership (Sustaining + extension, ~$5K–$10K/yr on top of the membership base). No per-seat royalty. **Parasolid for comparison: OEM only, fully opaque pricing, industry estimate six-figure upfront + per-seat royalty + annual maintenance** (Engineering.com / PROLIM analysts characterize CAD-component spend at 15–17% of ISV revenue once kernel + interop + visualization are stacked).
 - **Verdict.** **Mismatch as a modeling kernel.** Use it as a **SolidWorks / Inventor / CATIA importer** in Phase 2-3 once it's mature. Do not stake the 3D pipeline on it.
 - Sources: [ODA MCAD product](https://www.opendesign.com/products/mcad-sdk), [MCAD SDK for SolidWorks](https://www.opendesign.com/blog/2025/december/mcad-sdk-solidworks-files).
 
@@ -186,6 +189,7 @@ For each component of the planned stack: notable adopters, why they picked it, k
 - **Adopters in CAD / DCC.** Autodesk Maya (Qt since 2011), MotionBuilder, Mudbox, parts of 3ds Max; The Foundry Nuke / Mari / Katana; SideFX Houdini; Foundry Modo; CATIA V6 / 3DEXPERIENCE; Allplan / Nemetschek; FreeCAD (Qt 5 → 6 in progress); QCAD; OpenSCAD. **Counter-example.** Blender (custom OpenGL UI).
 - **Why.** Cross-platform from a single codebase; mature OpenGL / Vulkan integration via QOpenGLWidget / QRhi; native theming; Qt Quick / QML for modern panels; signal-slot maps cleanly onto large C++ codebases.
 - **Known pain.** **Commercial cost.** Qt for Application Development Professional / Enterprise is ~$4,000–$6,000 per developer per year for desktop; Small Business tier (rev-gated, caps at ~$250K) is €530/year/dev. Add ~30–60% for mobile / embedded / Qt-for-WebAssembly. LGPL requires dynamic linking — static-link needs the paid license. Qt 5 → 6 migration is painful at scale (FreeCAD's Qt 6 work has been 2+ years and still partial).
+- **Cost (vendor-published).** **Qt for Small Business — Application Development: €530/yr per developer (Pro), USD 618/yr (Enterprise)** — gated to ≤ €1M company revenue, max 3 licenses. Standard Application Development tiers: **~$3,624/yr/dev (Pro), $3,948–$4,660/yr/dev (Enterprise)**. Device Creation: ~2× the Application tier; mobile / WebAssembly / embedded add-ons +30–60%. LGPL is free for dynamic linking only — **static linking, code-signed iOS distribution, and private modifications all require the commercial license**. Vendr reports buyers commonly negotiate 15–35% below first quote on multi-year contracts. ([Qt pricing](https://www.qt.io/pricing), [Vendr](https://www.vendr.com/marketplace/qt))
 - **Verdict.** **Good fit, with a decision-forcing legal call.** Industry-standard for this product category. The LGPL-vs-commercial call gets made in §9 spike item 6.
 - Sources: [Maya Qt SDK](https://help.autodesk.com/cloudhelp/2020/ENU/Maya-SDK-MERGED/developer/Working-with-Qt/Using-Qt-in-Plug-ins.html), [Qt pricing](https://www.qt.io/pricing), [Qt Small Business](https://www.qt.io/development/qt-for-small-business), [FreeCAD Qt 6 #6992](https://github.com/FreeCAD/FreeCAD/issues/6992).
 
@@ -194,6 +198,7 @@ For each component of the planned stack: notable adopters, why they picked it, k
 - **Adopters (Rust).** **Fornjot** (Hanno Braun) — experimental B-rep kernel, explicitly "reliability over features," no shipped product on it. **Truck** (RICOS-JP) — Rust B-rep kernel, compiles to WASM; used by **CADmium** (Matt Ferraro). **Zoo.dev / KittyCAD** — the most serious commercial Rust CAD play; Rust geometry engine on the server (Vulkan / Nvidia), React frontend, app shipping. **Figma** — C++ canvas, Rust used for multiplayer sync server and hot-path tooling. Pattern: Rust at the edges, not the kernel.
 - **Why.** Memory safety without GC, fearless concurrency, excellent WASM toolchain, cargo, no header / macro hell. For a from-scratch solver, type-checkable correctness.
 - **Known pain.** Hiring depth in CAD geometry is in C++ not Rust. No mature B-rep kernel in Rust (Truck / Fornjot are years behind OCCT, decades behind Parasolid). C++ FFI to ODA / OCCT / Parasolid is non-trivial — you pay it on every API boundary.
+- **Cost.** Both C++ and Rust toolchains are $0. Visual Studio Professional ~$1,199 first yr / $799 renewal per dev; **Enterprise $5,999 first / $2,569 renewal** for the C++ inner-loop devs (worth it for advanced profiling + IntelliTrace). Rust uses Cargo + free toolchains.
 - **Verdict.** **Mismatch for the kernel; selective fit at the edges.** Confirms §2.4 — Rust earns its place in `net`, `script` host, `agent` (MCP), and new geometry algorithms. C++20 stays primary.
 - Sources: [Fornjot](https://www.fornjot.app/), [Truck](https://github.com/ricosjp/truck), [CADmium](https://mattferraro.dev/posts/cadmium), [Zoo modeling-app](https://github.com/KittyCAD/modeling-app), [Figma WASM](https://www.figma.com/blog/webassembly-cut-figmas-load-time-by-3x/).
 
@@ -202,6 +207,7 @@ For each component of the planned stack: notable adopters, why they picked it, k
 - **Adopters.** **AutoCAD Web** — Autodesk transpiled a major part of AutoCAD's ~15M-line C++ via Emscripten to WASM; same engine as desktop. **Figma** — C++ → WASM via Emscripten, shipped WebGPU rendering in 2024. **Adobe Photoshop Web** — same pattern. **ODA Drawings inWEB / Visualize inWEB** — entire ODA C++ stack compiled to WASM. **CADmium** — Rust → WASM, three.js / WebGL today. **Tinkercad** — WebGL, JS-heavy. **Onshape** — NOT a WASM story: Parasolid runs native on AWS, browser only renders triangles via WebGL.
 - **WebGPU baseline as of May 2026.** Chrome (since 113, 2023), Edge, Safari 26 (Sept 2025 — macOS Tahoe, iOS 26, visionOS), Firefox 141+ on Windows (July 2025), Firefox 145 on Apple Silicon. Firefox on Linux / Android still in progress. Babylon.js shows ~10× rendering speedup vs WebGL; WebGPU is the only path to in-browser compute shaders.
 - **Known pain.** SharedArrayBuffer needs COOP / COEP headers — breaks embedding in customer intranets and some SaaS hosts. wasm32 caps at 4GB — large DWG / Revit forces wasm64 (narrower support). Filesystem assumptions need virtualizing via MEMFS / IDBFS. Binary size: stripped CAD WASM is tens of MB (need streaming compilation, dlopen-emulation code-splitting, `-Oz`). Debugging is dramatically worse than native.
+- **Cost.** WebGPU / WebAssembly / WebGL2 are royalty-free W3C / Khronos browser APIs. **$0.** No conformance fee.
 - **Verdict.** **Good fit for a Visualize-only browser companion now; the full-editor browser story is a multi-year program** matching AutoCAD Web's trajectory, not a Phase-1 launch deliverable.
 - Sources: [AutoCAD WebAssembly InfoQ](https://www.infoq.com/presentations/autocad-webassembly/), [WebGPU baseline 2026](https://www.webgpu.com/news/webgpu-hits-critical-mass-all-major-browsers/), [Figma WebGPU](https://www.figma.com/blog/figma-rendering-powered-by-webgpu/), [Onshape architecture](https://www.onshape.com/en/blog/how-does-onshape-really-work).
 
@@ -210,6 +216,7 @@ For each component of the planned stack: notable adopters, why they picked it, k
 - **Adopters.** Drawings inWEB SDK opened to ODA members October 2024 — **no major shipping CAD product is publicly known to be on it for primary editing yet.** Members are building CDE / viewer apps. Visualize inWEB (`@inweb/viewer-visualize` on npm) is further along; several ODA members use it as a HOOPS / 3D-PDF viewer replacement. ODA's own *ODA Viewer* and the **VisualizeJS** demo viewer are the reference implementations.
 - **Why.** Drawings inWEB is a **WASM transpilation of the C++ Drawings SDK** — file-format coverage is at parity with desktop Drawings SDK by construction.
 - **Known pain.** Performance on large DWG (>200MB, dense annotation) lags desktop on initial-load and pan / zoom; browser-tab memory ceilings bite earlier than native. What's NOT at parity: full constraint engine, full LISP / .NET, plot / publish round-trip, certain custom-object proxies.
+- **Cost.** Web/SaaS redistribution rights for inWEB begin at **ODA Sustaining ($7.5K first yr / $4.5K renewal)** — no per-deployment / per-seat royalty on top. Structurally cheaper than the Autodesk RealDWG path for a web product.
 - **Verdict.** **Good fit for viewer / markup web companion in Phase 1; risky as the sole platform for full editing today.** Aligns with our native-Windows-first phasing in §5.
 - Sources: [inWEB landing](https://www.opendesign.com/products/inweb), [Drawings inWEB SDK release](https://www.opendesign.com/blog/2024/october/drawings-inweb-sdk-oda), [@inweb/viewer-visualize npm](https://www.npmjs.com/package/@inweb/viewer-visualize).
 
@@ -217,6 +224,7 @@ For each component of the planned stack: notable adopters, why they picked it, k
 
 - **Successful CAD-scale codebases on this exact toolchain.** AutoCAD Web (15M-line C++ → WASM via Emscripten — the headline case). Figma (3× initial load improvement when they moved off asm.js). Adobe Photoshop Web. ODA Drawings inWEB / Visualize inWEB. VTK / Kitware (ships documented Emscripten build with `VTK_WEBASSEMBLY_64_BIT` for >4GB models). CAD Exchanger Web.
 - **Recurring failure modes.** Threading + SharedArrayBuffer requires COOP / COEP headers (breaks embeds, ads); 4GB pointer cap on wasm32 forces wasm64 for large models; filesystem virtualization (MEMFS / IDBFS) for every `fopen`; third-party C++ deps (Boost, ICU, OpenSSL) need patching for the Emscripten toolchain; binary size in the tens of MB needs streaming compilation + code-splitting; long compile / link cycles on kernel-sized code (hours for full rebuilds with LTO); GL / GLES → WebGL2 / WebGPU shader translation; debugging vastly worse than native.
+- **Cost.** CMake (BSD-3), Emscripten (MIT / NCSA), Cargo (MIT / Apache-2.0), Vcpkg (MIT), Conan (MIT) — **all $0**. Kitware sells optional CMake support starting ~$2,500 pre-paid blocks; nice-to-have, not required.
 - **Verdict.** **Good fit and well-trodden.** Every relevant precedent uses this toolchain; the failure modes are published and the playbook is public.
 - Sources: [AutoCAD WebAssembly InfoQ](https://www.infoq.com/presentations/autocad-webassembly/), [Figma WebAssembly](https://www.figma.com/blog/webassembly-cut-figmas-load-time-by-3x/), [Emscripten pthreads](https://emscripten.org/docs/porting/pthreads.html), [VTK Emscripten](https://docs.vtk.org/en/latest/advanced/build_wasm_emscripten.html).
 
@@ -413,11 +421,131 @@ Tool groups along Revit 2027 lines: entity queries, layer / style management, bl
 
 Sources: [AutoCAD AI features](https://www.autodesk.com/support/technical/article/caas/sfdcarticles/sfdcarticles/What-are-the-AutoCAD-AI-driven-features.html), [AutoCAD 2026](https://www.autodesk.com/blogs/autocad/autocad-2026/), [Project Bernini](https://www.research.autodesk.com/projects/project-bernini/), [Autodesk MCP Servers](https://www.autodesk.com/solutions/autodesk-ai/autodesk-mcp-servers), [Fusion MCP announcement](https://www.engineering.com/autodesk-announces-fusion-mcp-servers-and-more-ai-updates/), [Revit 2027 MCP Tech Preview](https://help.autodesk.com/cloudhelp/2027/ENU/Revit-WhatsNew/files/GUID-68D8FE6D-C5B0-4503-AE27-02C715BAC25B.htm), [Revit 2027 MCP analysis](https://archbim.cloud/en/blog/revit-2027-ai-assistant-mcp-new-features), [ARES 2027 A3](https://architosh.com/2026/04/graebert-releases-ares-2027-ai-push-and-forma-integration/), [BricsCAD AI](https://www.bricsys.com/bricscad/features/ai-driven-tools), [Adobe Firefly Vector Recolor](https://blog.adobe.com/en/publish/2023/04/20/introducing-vector-recoloring-with-adobe-firefly), [Snaptrude AI](https://www.snaptrude.com/), [Hypar 2.0](https://aecmag.com/features/hypar-2-0/), [Hypar text-to-BIM lesson](https://aecmag.com/ai/hypar-text-to-bim-and-beyond/), [Snyk MCP CAD list](https://snyk.io/articles/9-mcp-servers-for-computer-aided-drafting-cad-with-ai/), [Figma plugin docs](https://developers.figma.com/docs/plugins/how-plugins-run/).
 
-## 15. Next steps
+## 15. Cost of usage — third-party stack, shells, tools
 
-1. Review and approve this plan, or push back on specific decisions in §2, §12, §13, or §14.
+Per-component cost data appears inline in each §11 subsection. This section rolls those up into a single reference table and three modeled annual budget envelopes at typical Phase-1 / Phase-2 / Phase-3 team sizes.
+
+**All dollar figures are vendor-published or reported secondary-source estimates as of late 2025 / early 2026. Treat any opaque-OEM number as a directional placeholder — they need a live procurement conversation, not a guess.**
+
+### 15.1 Unified pricing reference
+
+| Component | License model | Public price | Per-seat / royalty | Source |
+|---|---|---|---|---|
+| **ODA — Limited Commercial** | Annual membership | $3K first yr / $2.25K renewal | None — but **100-seat cap** | [opendesign.com/pricing](https://www.opendesign.com/pricing) |
+| **ODA — Pro / Sustaining** | Annual membership | **$7.5K first / $4.5K renewal** | **None** — unlimited + Web/SaaS rights | [opendesign.com/pricing](https://www.opendesign.com/pricing) |
+| **ODA — Enterprise / Founding** | Annual membership | $37.5K first / $18K renewal | None — adds source code + Git | [opendesign.com/pricing](https://www.opendesign.com/pricing) |
+| **ODA extensions** (BimRv / BimNw / MCAD / Civil / Scan-to-BIM) | Add-on, Sustaining+ | $5K–$10K/yr each (reported) | None | [ODA FAQ](https://www.opendesign.com/faq/membership) |
+| **OCCT (LGPL path)** | LGPL 2.1 + linking exception | **$0** | None | [OCCT licensing](https://dev.opencascade.org/resources/licensing) |
+| **OCCT — Open Cascade SAS commercial support** | Contract | **Opaque** | None | — |
+| **Siemens Parasolid** | OEM | **Opaque** (industry consensus: 6-figure entry) | **Yes — per-seat or per-deployment royalty** + annual maintenance | [Parasolid](https://plm.sw.siemens.com/en-US/plm-components/parasolid/) |
+| **Spatial / Dassault ACIS** | OEM | Opaque | Yes — per-seat royalty + DELA | [Spatial ACIS](https://www.spatial.com/solutions/3d-modeling/3d-acis-modeler) |
+| **Qt for Small Business — App Dev** | Sub, per-dev | **€530/yr Pro, USD 618/yr Ent** | n/a — but **≤€1M revenue cap, max 3 licenses** | [Qt SBE](https://www.qt.io/development/qt-for-small-business) |
+| **Qt — Application Development (standard)** | Sub, per-dev | ~$3,624/yr Pro, $3,948–$4,660/yr Ent | n/a | [Qt pricing](https://www.qt.io/pricing) |
+| **Qt — Device Creation / Mobile / WASM add-ons** | Sub, per-dev | +30–60% over App Dev | n/a | [Qt pricing](https://www.qt.io/pricing) |
+| **Qt LGPL** | LGPL v3 | $0 | n/a — **but no static linking, no signed iOS** | [Qt LGPL](https://www.qt.io/development/open-source-lgpl-obligations) |
+| **CMake / Emscripten / Cargo / Vcpkg / Conan** | OSS | $0 | None | — |
+| **Kitware CMake support (optional)** | Pre-paid | $2,500 / 12 mo | None | [Kitware support](https://www.kitware.com/commercial/support/) |
+| **WebGPU / WebAssembly / WebGL2** | W3C / Khronos open | $0 | None | — |
+| **Tauri** (if used for launcher app) | MIT / Apache-2.0 | $0 | None | — |
+| **Electron** (rejected for editor) | MIT | $0 | None | — |
+| **.NET 8 / NativeAOT** | MIT | $0 | None | [.NET free](https://dotnet.microsoft.com/en-us/platform/free) |
+| **MCP protocol + SDKs** | MIT, donated to Linux Foundation | $0 | None | [MCP](https://www.anthropic.com/news/model-context-protocol) |
+| **AutoLISP runtime** | **No commercial library exists** — build in-house | $0 (ECL embedded LGPL viable starting point) | None | [AutoLISP history](https://en.wikipedia.org/wiki/AutoLISP) |
+| **Clerk Auth** | Per-MAU, vendor-published | Free ≤10K MAU; $25/mo base + $0.02/MAU | n/a | [Clerk pricing](https://clerk.com/pricing) |
+| **Auth0** | Per-MAU | $150/mo for 500 MAU; escalates fast — enterprise $30K+/yr | n/a | [Auth0 pricing](https://auth0.com/pricing) |
+| **Stripe Payments** | % of volume | **2.9% + $0.30** domestic card | n/a | [Stripe pricing](https://stripe.com/pricing) |
+| **Stripe Billing** | % of volume | 0.7% of billing volume | n/a | [Stripe Billing](https://stripe.com/billing/pricing) |
+| **AWS GPU — g4dn.xlarge (T4)** | On-demand | **$0.526/hr** ($4,608/yr 24×7) | n/a | [AWS GPU](https://handbook.vantage.sh/aws/reference/aws-gpu-instances/) |
+| **AWS GPU — g5.xlarge (A10G)** | On-demand | **$0.916/hr** ($8,024/yr 24×7) | n/a | [AWS G5](https://aws.amazon.com/ec2/instance-types/g5/) |
+| **JetBrains All Products Pack** | Sub, per-dev | **€979/yr (~$1,050)** | n/a — yr-2 ~20% off, yr-3 ~40% off | [JetBrains](https://www.jetbrains.com/store/) |
+| **Visual Studio Professional** | Sub, per-dev | $1,199 first / $799 renewal | n/a | [VS pricing](https://visualstudio.microsoft.com/vs/pricing/) |
+| **Visual Studio Enterprise** | Sub, per-dev | **$5,999 first / $2,569 renewal** | n/a | [VS pricing](https://visualstudio.microsoft.com/vs/pricing/) |
+| **GitHub Enterprise Cloud** | Sub, per-dev | $21/dev/mo ($252/yr) | n/a — 50-100 seat min on annual | [GitHub pricing](https://github.com/pricing) |
+| **GitHub Advanced Security** | Sub, per-dev | +$19/dev/mo ($228/yr) | n/a | [GitHub pricing](https://github.com/pricing) |
+| **GitHub Actions (standard)** | Per-minute | **$0.006/min** (2-core Linux, effective Jan 2026); 50K min/mo bundled in Enterprise Cloud | n/a | [Actions pricing](https://docs.github.com/en/billing/reference/actions-runner-pricing) |
+
+### 15.2 Modeled annual budget envelopes
+
+Three scenarios sized to the engineering org in §5's phasing. **These are modeled rollups, not committed numbers.** They assume Pro / Sustaining ODA tier from year 1 (we need Web/SaaS rights for the inWEB shell), standard Qt commercial tier (Small Business eligibility is unlikely at Jytra's scale), and the OCCT path on the 3D kernel (no Parasolid in the baseline). A "+Parasolid" line is shown separately so the Phase-3 escalation is visible.
+
+#### Phase 1 — 8 engineers (months 0–12)
+
+| Line item | Year 1 |
+|---|---|
+| ODA Sustaining (incl. inWEB rights) | $7,500 |
+| ODA Revit add-on (BimRv Standard) | $5,000 |
+| Qt commercial — App Dev Enterprise (8 devs × $4,000) | $32,000 |
+| OCCT (LGPL) | $0 |
+| Visual Studio Enterprise (4 C++ devs × $5,999) | $23,996 |
+| JetBrains All Products Pack (8 × $1,050) | $8,400 |
+| GitHub Enterprise Cloud (8 × $252) | $2,016 |
+| GitHub Advanced Security (8 × $228) | $1,824 |
+| GitHub Actions large runners + cache | $5,000 |
+| AWS dev infra (compute + storage + 1× g4dn dev box) | $8,000 |
+| Auth / billing (nominal — Clerk free tier, Stripe test mode) | $1,000 |
+| **Phase 1 yr 1 stack + tools + cloud total** | **~$94,700** |
+
+#### Phase 2 — 20 engineers (months 12–24, GA at month 24)
+
+| Line item | Year 2 (renewal-mode where applicable) |
+|---|---|
+| ODA Sustaining renewal | $4,500 |
+| ODA extensions (BimRv + MCAD + Civil) | $15,000 |
+| Qt commercial — App Dev Enterprise (20 × $4,000) | $80,000 |
+| Qt mobile / WASM add-ons (+40% on 5 web/mobile devs × $4,000) | $8,000 |
+| OCCT (LGPL) + optional Open Cascade SAS support contract | $50,000 (placeholder if engaged) |
+| Visual Studio Enterprise (10 C++ devs × $2,569 renewal) | $25,690 |
+| JetBrains All Products Pack (20 × $840 yr-2 disc.) | $16,800 |
+| GitHub Enterprise Cloud (20 × $252) | $5,040 |
+| GitHub Advanced Security (20 × $228) | $4,560 |
+| GitHub Actions + build infra | $15,000 |
+| AWS production cloud (compute + 4× g5 streaming + storage + egress) | $60,000 |
+| Auth (Clerk B2B, ~25K MAU) | $12,000 |
+| Stripe Billing (assume $200K ARR × 0.7%) | $1,400 |
+| Stripe Payments (assume $200K × 2.9%) | $5,800 |
+| **Phase 2 stack + tools + cloud total (baseline)** | **~$303,800** |
+| **+ Parasolid (if Phase-3-or-earlier escalation)** | + ~$200K–$300K (estimate; needs procurement) |
+
+#### Phase 3 — 30 engineers (months 24–36)
+
+| Line item | Year 3 |
+|---|---|
+| ODA — upgrade to Founding (source access) | $37,500 first / $18K renewal |
+| ODA extensions (full extension set) | $30,000 |
+| Qt commercial (30 × $4,000) | $120,000 |
+| Qt mobile / iOS / Android / WASM add-ons (10 devs × $4,000 × 50%) | $20,000 |
+| OCCT support (optional) | $50,000 |
+| Visual Studio Enterprise (15 C++ devs renewal) | $38,535 |
+| JetBrains All Products Pack (30 × $630 yr-3 disc.) | $18,900 |
+| GitHub Enterprise Cloud (30 × $252) | $7,560 |
+| GitHub Advanced Security (30 × $228) | $6,840 |
+| GitHub Actions + build infra | $30,000 |
+| AWS production (compute + 12× g5 streaming + CDN + egress at scale) | $200,000 |
+| Auth (Clerk B2B, ~100K MAU) | $30,000 |
+| Stripe Billing + Payments (assume $2M ARR) | $73,000 |
+| **Phase 3 stack + tools + cloud total (baseline)** | **~$680,000** |
+| **+ Parasolid (committed path)** | + ~$300K–$500K (estimate) |
+
+### 15.3 What's modeled vs what's opaque
+
+- **Modeled (vendor-published):** ODA, Qt, OCCT (LGPL path), all OSS tooling, AWS GPU, Clerk, Stripe, JetBrains, Visual Studio, GitHub.
+- **Opaque (needs procurement conversation):** Parasolid (Siemens), ACIS (Spatial), Auth0 enterprise, Microsoft Unified Support, Open Cascade SAS commercial. **All "opaque" numbers in the rollup are placeholders.**
+- **Variable with revenue / users:** Stripe (% of volume), Clerk (per-MAU), AWS (per-instance-hr × utilization).
+
+### 15.4 Cost-driven decisions implied by this data
+
+1. **ODA Sustaining from day 1.** $7.5K → $4.5K/yr for the inWEB redistribution rights alone is the single best-value line item in the entire stack — unlimited seats, no royalty, covers DWG + Visualize + IFC + BIM + web. Limited Commercial's 100-seat cap is a footgun at Jytra's scale.
+2. **OCCT first, Parasolid only if §9 spike fails.** Going to Parasolid at six-figure entry + per-seat royalty changes the Phase-2 budget by ~$200K–$300K and structurally changes pricing flexibility downstream. The §9 spike is decision-forcing for cost reasons, not just technical ones.
+3. **Qt commercial is the second-largest line item** after the kernel. Small Business tier (€530/dev) is *probably* not available to Jytra (€1M revenue cap likely exceeded), so model standard pricing. The LGPL path saves the line item but eliminates static linking and complicates iOS code-signing — confirm Phase-3 mobile scope before locking the choice.
+4. **All build / runtime tooling is free.** The cost story is dominated by ODA, Qt, kernel, and (at scale) GPU / auth / billing — not by toolchains.
+5. **AutoLISP must be built in-house.** No commercial runtime exists to license. Phase-1 LISP team is a real headcount commitment, not a vendor decision.
+6. **Total stack + tools + cloud envelope** — roughly **$95K Phase 1, $300K Phase 2 (baseline) / $500K–$600K with Parasolid, $680K Phase 3 (baseline) / $1.0M–$1.2M with Parasolid**. Dwarfed by salary at any phase, but a real budget conversation.
+
+## 16. Next steps
+
+1. Review and approve this plan, or push back on specific decisions in §2, §12, §13, §14, or §15.
 2. Run the feasibility spike (§9) — 4–6 weeks, small senior team, dedicated.
 3. Convert each locked decision in §2 into an ADR under `docs/decisions/`.
 4. Stand up the engineering org for Phase 1 (engine team, shell team, agent team, LISP-shim team, infra team).
 5. Lock the Phase 1 milestone definitions and the willing-customer cohort for the month-12 native Windows beta.
-6. Open commercial conversations: ODA membership tier upgrade, Parasolid evaluation license (gated on §9 spike item 1), Qt commercial-vs-LGPL decision.
+6. Open commercial conversations: **ODA Sustaining membership signup, Qt commercial-vs-LGPL legal review, Parasolid evaluation license (gated on §9 spike item 1), Open Cascade SAS support quote (optional).**
