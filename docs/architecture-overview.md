@@ -76,6 +76,46 @@ Jytra is a paying ITC member, so they receive full IntelliCAD source — that's 
 
 The point of writing this document before touching code is to surface the *decisions* the re-architecture must own. Each of these is a fork in the road:
 
+### 4.0 Why the engine decision is forced — three lived pains
+
+The §3 cons are the abstract case for change. What follows is the *concrete* case, drawn from real operating experience running ActCAD on top of IntelliCAD. These three pains are not separate issues — they are three faces of one root cause: **the platform layer isn't ours, so the things that need to be deeply rebuilt can't be.**
+
+#### 4.0.1 Rendering needs per-machine tuning and still isn't fast enough
+
+- ActCAD's viewport renders through ODA's Graphics System (GS), historically OpenGL-based. ODA has been migrating toward Vulkan and ships a DirectX backend, but each step is on ODA's schedule, then ITC's schedule, then ours.
+- Customers regularly need OpenGL driver tweaks, GPU-specific switches, and per-system tuning just to get usable performance. Even when tuned, performance ceiling is below what modern competitors deliver.
+- Compare: AutoCAD 2027 shipped its own "Graphics System Framework" (GSF) — Autodesk owns the rendering pipeline end-to-end and tunes it as a single product. We cannot match that as a downstream consumer of someone else's renderer.
+
+**What this rules out**: cosmetic fixes. The renderer can only be made truly fast if we own it.
+
+#### 4.0.2 Non-Windows platforms are not within reach
+
+- ODA Drawings and ACIS are cross-platform at the library level. The IntelliCAD shell technically has macOS and Linux ports through ITC, but the customer-facing surface (UI shell, installer, .NET/COM/VBA APIs, LISP/IRX ABI) is Windows-shaped.
+- Graebert (ARES) is the one ITC OEM that committed to Linux + macOS + web parity, and they invested at a level most consortium members will not.
+- The market has moved: customers expect at minimum macOS support, and increasingly Linux and web. We cannot deliver any of those credibly on the current stack within a reasonable horizon.
+
+**What this rules out**: "we'll port the existing app." The shell is too Windows-shaped to port; it has to be rebuilt with portability in the bones.
+
+#### 4.0.3 AI inside the codebase is structurally blocked
+
+This is the deepest of the three, with two layers:
+
+1. **Access.** ITC consortium license terms restrict sharing IntelliCAD source with third-party services (including AI assistants) and with outside contractors. For any non-employee engagement — code review, external development partner, AI-assisted refactor through a cloud LLM — the foundational engine is dark. We can put our patches and our product layer in front of an AI, but not the layer where the real work would be.
+
+2. **Leverage.** Even setting access aside, we cannot land changes upstream on our own clock. Every AI-assisted refactor on the engine becomes a permanent vendor patch that we carry forever and re-merge on every ITC version uptake. The economics of AI-assisted engineering invert when you can't merge what the AI writes.
+
+**What this rules out**: meaningfully accelerating engine-level work with modern tooling. AI assistance only pays off at the layers we own outright.
+
+#### 4.0.4 Consequence for §4.1
+
+The §3 cons could, in theory, be argued for or against. The §4.0 pains have all been *tried* and found to not be solvable inside the current arrangement. Together they collapse the §4.1 engine decision:
+
+- **Keep IntelliCAD** is not viable as a strategic 5-year posture. It is viable only as a near-term ship vehicle while the replacement is built.
+- **Replace, build on ODA directly** is the choice the operating reality is pushing us toward — own the engine, own the renderer, own the platform abstraction, own the codebase that AI can operate on.
+- **Replace with non-ODA stack** stays a non-starter (DWG fidelity loss).
+
+The decision below in §4.1 should be read as: *replace; sequencing and migration are what's open, not the direction.*
+
 ### 4.1 The four big decisions
 
 1. **Engine: keep or replace IntelliCAD?**
