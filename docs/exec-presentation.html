@@ -302,7 +302,7 @@
   </div>
   <div class="hero-stat" style="margin-top: 14px;">
     <span class="number">~$1.38M</span>
-    <span class="label">3-year total · <strong style="color:white;">~$780K</strong> stack + tools + cloud (incl. security + signing + IFC) · <strong style="color:white;">~$600K</strong> loaded India salary (top-of-band) · <strong style="color:white;">~₹13.3 Cr</strong>. Lean 7 / 16 / 25-person team (2 senior + mid/junior + QA from P1 day 1) with aggressive AI augmentation. No six-figure opaque-OEM commitments.</span>
+    <span class="label">3-year total · <strong style="color:white;">~$780K</strong> stack + tools + cloud · <strong style="color:white;">~$600K</strong> loaded India salary (top-of-band) · <strong style="color:white;">~₹13.3 Cr</strong>. Lean 7 / 16 / 25-person team (2 senior + mid / junior + QA from P1 day 1) with aggressive AI augmentation across the build.</span>
   </div>
 
   <aside class="notes">
@@ -488,10 +488,10 @@
   </ul>
   <h3 style="margin-top: 1em;">Four differentiators we commit to publicly</h3>
   <div class="card-grid cols-2" style="gap: 12px;">
-    <div class="card primary"><span class="big-num">1</span><h3>Drop ITC — go ODA-direct</h3><p class="body">Same foundation BricsCAD is built on. Removes the consortium cadence trap.</p></div>
-    <div class="card primary"><span class="big-num">2</span><h3>Two-tier server-authoritative co-edit</h3><p class="body">Leapfrog ARES Kudo's soft-lock ceiling. Op-log for geometry, LWW for annotations.</p></div>
-    <div class="card primary"><span class="big-num">3</span><h3>MCP with documented transactional undo</h3><p class="body">No competitor has documented this — defensible differentiator.</p></div>
-    <div class="card primary"><span class="big-num">4</span><h3>API-parity extension marketplace</h3><p class="body">BRX native + Onshape-pattern web sharing one internal RPC surface.</p></div>
+    <div class="card primary"><span class="big-num">1</span><h3>Drop IntelliCAD — go ODA-direct</h3><p class="body">Same foundation BricsCAD ships on. Removes the consortium release-cadence trap: we no longer wait for shared upstream fixes, we own every release.</p></div>
+    <div class="card primary"><span class="big-num">2</span><h3>Real-time multi-user editing on a shared DWG</h3><p class="body">Two designers can edit the same drawing live — like Google Docs for CAD. Server validates geometry edits (so doors stay attached to walls); comments and properties sync instantly. <em>The current ARES Kudo product hits this wall with soft-locking; we don't.</em></p></div>
+    <div class="card primary"><span class="big-num">3</span><h3>AI inside the drawing, with one-click undo</h3><p class="body">Every AI action — drafted, edited, or generated — lands in the host as a single undoable transaction. <em>No competitor has documented this publicly</em>; users get AI help without ever losing the safety net of Ctrl+Z.</p></div>
+    <div class="card primary"><span class="big-num">4</span><h3>Plugins that run on desktop <em>and</em> web</h3><p class="body">A single plugin developer writes once and reaches both the desktop product (BRX / .NET-style) and the browser product (Onshape-style). One marketplace, one revenue share — broader reach for partners, broader add-on catalogue for our customers.</p></div>
   </div>
 
   <aside class="notes">
@@ -535,17 +535,17 @@
   <div class="mermaid-wrap">
     <pre class="mermaid" style="display: block;">
 graph TB
-    QT[Qt Desktop Shell<br/>Win / Mac / Linux]
-    WEB[Browser Shell<br/>React + WASM]
-    BRIDGE[ui-bridge<br/>one C ABI / FlatBuffers]
-    CMD[cmd<br/>command bus]
-    AGENT[agent<br/>MCP server · Rust]
-    PLUGIN[plugin<br/>host · BRX + OAuth]
-    SCRIPT[script<br/>Python · LISP · JS]
-    DB[(db<br/>drawing database<br/>ONLY MUTATOR)]
-    RENDER[render<br/>Visualize · DX/Vulkan/Metal/WebGPU]
-    GEOM[geom<br/>OCCT KAL]
-    NET[net<br/>sync · auth · Rust]
+    QT["Qt Desktop Shell<br>Win / Mac / Linux"]
+    WEB["Browser Shell<br>React + WASM"]
+    BRIDGE["ui-bridge<br>one C ABI / FlatBuffers"]
+    CMD["cmd<br>command bus"]
+    AGENT["agent<br>MCP server · Rust"]
+    PLUGIN["plugin<br>host · BRX + OAuth"]
+    SCRIPT["script<br>Python · LISP · JS"]
+    DB[("db<br>drawing database<br>ONLY MUTATOR")]
+    RENDER["render<br>Visualize · DX/Vulkan/Metal/WebGPU"]
+    GEOM["geom<br>OCCT KAL"]
+    NET["net<br>sync · auth · Rust"]
 
     QT --> BRIDGE
     WEB --> BRIDGE
@@ -554,8 +554,8 @@ graph TB
     PLUGIN --> CMD
     SCRIPT --> CMD
     CMD --> DB
-    DB -.op-stream.-> RENDER
-    DB -.op-stream.-> NET
+    DB -.->|op-stream| RENDER
+    DB -.->|op-stream| NET
     DB --- GEOM
 
     classDef shell fill:#fff,stroke:#c08847,stroke-width:2px,color:#1e3a5c
@@ -568,7 +568,7 @@ graph TB
     class DB data
     </pre>
   </div>
-  <p class="small mt-2"><strong>Only <code>db</code> mutates state. The agent talks to <code>cmd</code>, never to <code>db</code>.</strong> Plugins, scripts, and agents share the same command bus → same audit trail, same undo semantics, same permission scoping.</p>
+  <p class="small mt-2"><strong>Two guarantees built into the architecture:</strong> (1) only one module (<code>db</code>, the drawing database) is allowed to change the drawing — everything else reads through it; (2) every command — user click, plugin call, LISP script, AI tool — flows through the same command bus (<code>cmd</code>) on its way in. <strong>Result:</strong> one undo stack, one audit trail, one permission model. AI can't sneak past the safety net even if it tried.</p>
 
   <aside class="notes">
     The two architectural guarantees in this diagram: (1) only db mutates state, so the
@@ -585,21 +585,26 @@ graph TB
   <h2>Three phases, three years</h2>
   <div class="timeline">
     <div class="timeline-row">
-      <div class="timeline-label">Phase 1<br><span class="tiny">0–12 mo</span></div>
-      <div class="timeline-bar p1">Foundation — engine + DWG fidelity + 2D drafting + Windows beta + browser viewer + AI-as-tool</div>
+      <div class="timeline-label">Phase 1<br><span class="tiny">0–12 mo</span><br><span class="tiny" style="color: var(--accent); font-weight: 600;">FOUNDATION</span></div>
+      <div class="timeline-bar p1">Engine on ODA + OCCT · DWG open / edit / save round-trip · 2D drafting commands · Windows daily-driver beta · browser viewer + markup · AI commands inside the editor</div>
     </div>
     <div class="timeline-row">
-      <div class="timeline-label">Phase 2<br><span class="tiny">12–24 mo</span></div>
-      <div class="timeline-bar p2">Production v1 — Mac/Linux parity, full browser editor, light 3D, cloud co-edit, AI GA, plugin host stabilizes, <strong>GA at month 24</strong></div>
+      <div class="timeline-label">Phase 2<br><span class="tiny">12–24 mo</span><br><span class="tiny" style="color: var(--accent); font-weight: 600;">PRODUCTION v1</span></div>
+      <div class="timeline-bar p2">Mac + Linux at parity with Windows · full browser editor · light 3D · live multi-user editing · AI assistant GA · plugin marketplace opens · <strong>NEW PRODUCT GA AT MONTH 24</strong></div>
     </div>
     <div class="timeline-row">
-      <div class="timeline-label">Phase 3<br><span class="tiny">24–36 mo</span></div>
-      <div class="timeline-bar p3">Parity-or-better — full 3D + BIM-lite, MEP/Electrical reshipped, mobile, perf tuning</div>
+      <div class="timeline-label">Phase 3<br><span class="tiny">24–36 mo</span><br><span class="tiny" style="color: var(--accent); font-weight: 600;">PARITY-OR-BETTER</span></div>
+      <div class="timeline-bar p3">Full 3D + lightweight BIM (IFC) · MEP + Electrical verticals reshipped as plugins · iOS / Android viewer · perf tuning end-to-end (now ours to own)</div>
     </div>
     <div class="timeline-row" style="margin-top: 20px; opacity: 0.9;">
       <div class="timeline-label" style="color: var(--text-2)">IntelliCAD<br>ActCAD<br><span class="tiny">today → sunset</span></div>
-      <div class="timeline-bar iccd-fade" style="color: #444;">Continues to ship through Phase 2 → revenue protected → sunset announced at GA, executed in Phase 3</div>
+      <div class="timeline-bar iccd-fade" style="color: #444;">Continues to ship through Phase 2 — revenue protected. Sunset date announced at GA, executed in Phase 3.</div>
     </div>
+  </div>
+  <div class="card-grid cols-3 mt-2" style="gap: 12px; font-size: 0.78em;">
+    <div class="card"><h4>Phase 1 deliverable</h4><p class="body">A native Windows beta of the new ActCAD running on ~50 willing customer drawings, plus a browser viewer / markup tool from the same engine. <strong>The new product is real, on the same DWG files.</strong></p></div>
+    <div class="card"><h4>Phase 2 deliverable</h4><p class="body">New product reaches GA — full editor on Windows / Mac / Linux / browser, live co-edit, AI assistant, plugin marketplace. <strong>Customers can switch.</strong> Existing ActCAD still ships in parallel.</p></div>
+    <div class="card"><h4>Phase 3 deliverable</h4><p class="body">Full 3D + BIM-lite, MEP / Electrical, mobile. <strong>New product is at parity or better than today's ActCAD on every dimension.</strong> IntelliCAD sunset executed.</p></div>
   </div>
   <p class="small mt-2 centered" style="color: var(--text-2);">Two product lines coexist for 24 months. Customers migrate when the new product reaches the feature they need.</p>
 
@@ -653,27 +658,28 @@ graph TB
 <!-- ============================================================== -->
 <section>
   <h2>Top 5 risks (of 10) with mitigations</h2>
+  <p class="small" style="margin-bottom: 0.8em;">Every CAD rebuild has the same shortlist of structural risks. We address each one in the architecture itself or with named, dated mitigations — not with optimism. <strong style="color: var(--danger);">⚠ risk</strong> · <strong style="color: var(--success);">→ what we do about it</strong></p>
   <div class="risk-row">
-    <div class="risk">ACIS B-rep fidelity in customer DWGs through OCCT</div>
-    <div class="mit">Spike item 1 is decision-forcing; KAL keeps swap option open</div>
+    <div class="risk"><strong>Will customer 3D drawings open cleanly in the new engine?</strong> Old DWGs carry "ACIS B-rep" 3D blobs that may not translate perfectly into Open Cascade (our new 3D kernel).</div>
+    <div class="mit">Spike item 1 measures this on 50 real customer drawings <em>before</em> we commit. If Open Cascade fails, our Kernel-Abstraction-Layer keeps the swap to Parasolid open.</div>
   </div>
   <div class="risk-row">
-    <div class="risk">LISP compatibility is multi-person-year, not a 12-month spike</div>
-    <div class="mit">Define coverage as % of measured customer-script corpus (80% P1 → 95% P2); migration tool for the tail</div>
+    <div class="risk"><strong>LISP compatibility is a multi-year job, not a one-quarter spike.</strong> Customers' AutoLISP scripts are critical to their workflow; missing a single one breaks their day.</div>
+    <div class="mit">Define "compatibility" as a measured % of the top-50 customer scripts (80% by end of P1 → 95% by end of P2). Ship a migration tool for the long tail in P2.</div>
   </div>
   <div class="risk-row">
-    <div class="risk">MCP without transactional undo corrupts drawings</div>
-    <div class="mit"><code>agent</code> wraps <code>cmd</code> only; every tool call = one host undo transaction committed publicly</div>
+    <div class="risk"><strong>An AI tool could silently corrupt a drawing.</strong> If the AI bypasses the drawing's transaction system, undo no longer rescues the user.</div>
+    <div class="mit">The agent talks only to the command bus (never directly to the database). Every AI tool call resolves to <strong>exactly one</strong> entry in the host undo stack. Backed by architecture, not discipline.</div>
   </div>
   <div class="risk-row">
-    <div class="risk">Two parallel product lines for 24 months is an org risk</div>
-    <div class="mit">Org plan for support + marketing context-switching; clear customer messaging from day 1</div>
+    <div class="risk"><strong>Running two products in parallel for 24 months</strong> stresses support, sales, and marketing — context-switching, dual messaging, upgrade conversations.</div>
+    <div class="mit">Dedicated org plan (separate from this deck) for support, marketing, and sales context-switching. Customer messaging locked from day 1: "current ActCAD keeps shipping, new product is your future home."</div>
   </div>
   <div class="risk-row">
-    <div class="risk">Cadence trap re-emerges with ODA (we trade one consortium for another)</div>
-    <div class="mit"><code>render</code> module abstraction lets a native Vulkan / DirectX backend slot in if Visualize stalls</div>
+    <div class="risk"><strong>The renderer trap could re-emerge with ODA.</strong> We trade dependency on one consortium (IntelliCAD) for another (ODA Visualize).</div>
+    <div class="mit">The <code>render</code> module is an abstraction, not a hard-wire. If ODA Visualize stalls, a native Vulkan / DirectX backend slots in without re-architecting the rest of the engine.</div>
   </div>
-  <p class="small mt-2">Full 10-risk register in <code>docs/rearchitecture-plan.md</code> §7 — each item has a named mitigation owner.</p>
+  <p class="small mt-2">Full 10-risk register in <code>docs/rearchitecture-plan.md</code> §7 — each item has a named mitigation owner and a measurable trigger.</p>
 
   <aside class="notes">
     Each of these has been pressure-tested by a separate planning agent. The structural risks
@@ -716,7 +722,7 @@ graph TB
   <div class="chapter-num">Chapter 03</div>
   <h1>The numbers</h1>
   <hr class="chapter-rule">
-  <p class="chapter-sub">~$1.38M over three years — every line is bounded by a published price, no six-figure opaque OEM commitment in any phase.</p>
+  <p class="chapter-sub">~$1.38M over three years. Stack, salary, and contingencies — every line bounded by a published price.</p>
 </section>
 
 <!-- ============================================================== -->
@@ -735,16 +741,16 @@ graph TB
       <div class="cost-line"><span class="item">Loaded India salary (slide 15)</span><span class="val">~$600K</span></div>
       <div class="cost-line total"><span>3-year total project envelope</span><span class="val">~$1,380K · ₹13.3 Cr</span></div>
       <h4 style="margin-top: 1em;">By phase (stack + salary, ramp-adjusted)</h4>
-      <div class="cost-line"><span class="item">Phase 1 — yr 1, ramp 4→7 ppl</span><span class="val">$75K + $96K = $171K</span></div>
-      <div class="cost-line"><span class="item">Phase 2 — yr 2, ramp 7→16 ppl</span><span class="val">$216K + $201K = $417K</span></div>
-      <div class="cost-line"><span class="item">Phase 3 — yr 3, ramp 16→25 ppl</span><span class="val">$489K + $301K = $790K</span></div>
+      <div class="cost-line"><span class="item"><strong>P1 · Foundation</strong> — Win beta + browser viewer<br><span class="tiny">ramp 4→7 ppl</span></span><span class="val">$75K + $96K = <strong>$171K</strong></span></div>
+      <div class="cost-line"><span class="item"><strong>P2 · Production v1</strong> — full editor, GA at mo 24<br><span class="tiny">ramp 7→16 ppl</span></span><span class="val">$216K + $201K = <strong>$417K</strong></span></div>
+      <div class="cost-line"><span class="item"><strong>P3 · Parity-or-better</strong> — 3D, BIM, mobile<br><span class="tiny">ramp 16→25 ppl</span></span><span class="val">$489K + $301K = <strong>$790K</strong></span></div>
       <h4 style="margin-top: 1em;">Not in scope (deferred)</h4>
       <div class="cost-line"><span class="item">Parasolid (year-4+ option only)</span><span class="val">$0</span></div>
       <div class="cost-line"><span class="item">Open Cascade SAS commercial support</span><span class="val">$0</span></div>
       <div class="cost-line"><span class="item">ACIS commercial OEM</span><span class="val">$0</span></div>
     </div>
   </div>
-  <p class="small mt-2 centered"><strong>No six-figure-plus opaque-OEM item carried in any phase.</strong> Every stack line is bounded by a published price. Next two slides drill into stack and salary respectively.</p>
+  <p class="small mt-2 centered"><strong>Every line is bounded by a published price.</strong> Stack is membership + per-seat tooling + metered cloud — no hidden variable contracts. Next two slides drill into stack and salary respectively.</p>
 
   <aside class="notes">
     This is the honest total — stack plus salary, end to end. Salary is the dominant line at
@@ -779,7 +785,7 @@ graph TB
   <div class="card-grid cols-3" style="margin-top: 1em; gap: 12px;">
     <div class="card primary"><h4>Observation 1</h4><p class="body"><strong>Cloud + Qt = 56% of 3-yr stack spend.</strong> Both scale with growth (MAU / devs). Both have multi-year negotiation room — §9 spike item 6 negotiates Qt.</p></div>
     <div class="card primary"><h4>Observation 2</h4><p class="body"><strong>AI tooling is the cheapest line that matters: ~$25K over 3 years (3.2% of stack).</strong> Buys the leverage on the next slide — 25 people at peak shipping what ~40 devs would have shipped pre-AI (sensitivity: 1.5× multiplier vs planned 1.8× burns ~$13K of margin to add a P1-month-4 mid hire).</p></div>
-    <div class="card primary"><h4>Observation 3</h4><p class="body"><strong>No six-figure opaque OEM line in any phase.</strong> Parasolid / ACIS / SAS-support all explicitly deferred — the $780K is bounded by published prices. Security + signing + IFC validator + GIS translators added as a discrete line ($43K · 5%) to close the validation gap.</p></div>
+    <div class="card primary"><h4>Observation 3</h4><p class="body"><strong>Every line is bounded by a published price.</strong> The $780K total is built from membership renewals, per-seat tooling, and metered cloud — no hidden variable contracts. Security + signing + IFC validator + GIS translators added as a discrete $43K (5%) line so audit and IT can plan ahead.</p></div>
   </div>
 
   <aside class="notes">
@@ -866,17 +872,18 @@ graph TB
 <!-- 16. LICENSING POSTURE -->
 <!-- ============================================================== -->
 <section>
-  <h2>Licensing posture — ActCAD is commercial closed-source</h2>
+  <h2>Licensing posture — ActCAD stays commercial closed-source</h2>
+  <p class="small" style="margin-bottom: 0.6em;">What we pay, what we get free, and when each one matters across the 3-year build.</p>
   <table>
-    <thead><tr><th>Component</th><th>Choice</th><th>Status</th></tr></thead>
+    <thead><tr><th>Component</th><th>Choice</th><th>When it matters</th><th>Status</th></tr></thead>
     <tbody>
-      <tr><td><strong>ODA</strong></td><td>Sustaining from day 1 — unlimited commercial seats + inWEB Web/SaaS, no per-seat royalty</td><td><span class="badge locked">Locked</span></td></tr>
-      <tr><td><strong>Qt 6</strong></td><td>Commercial App Dev Enterprise — LGPL forbids static linking, iOS code-signing, private modifications</td><td><span class="badge locked">Locked</span></td></tr>
-      <tr><td><strong>OCCT</strong></td><td>LGPL 2.1 + linking exception — explicitly permits closed-source commercial linking, including static</td><td><span class="badge free">Free</span></td></tr>
-      <tr><td><strong>Visual Studio Ent.</strong></td><td>2–3 perf devs only (IntelliTrace, Concurrency Visualizer); VS Code primary for the rest</td><td><span class="badge locked">Locked</span></td></tr>
-      <tr><td><strong>CMake / Emscripten / Cargo</strong></td><td>Permissive OSS; no commercial concern</td><td><span class="badge free">Free</span></td></tr>
-      <tr><td><strong>.NET / MCP / WebGPU</strong></td><td>MIT / W3C / Khronos — free open standards</td><td><span class="badge free">Free</span></td></tr>
-      <tr><td><strong>Parasolid / ACIS</strong></td><td>Year-4+ hypothetical only — not budgeted; KAL preserves the swap option</td><td><span class="badge deferred">Deferred</span></td></tr>
+      <tr><td><strong>ODA</strong></td><td>Sustaining from day 1 — unlimited commercial seats + inWEB Web/SaaS, no per-seat royalty</td><td><strong>P1:</strong> DWG fidelity + Visualize render · <strong>P2:</strong> inWEB browser editor · <strong>P3:</strong> BIM / IFC, MCAD translators</td><td><span class="badge locked">Locked</span></td></tr>
+      <tr><td><strong>Qt 6</strong></td><td>Commercial App Dev Enterprise — LGPL would forbid static linking, iOS code-signing, private modifications</td><td><strong>P1:</strong> Windows daily-driver shell · <strong>P2:</strong> Mac + Linux shells at parity · <strong>P3:</strong> iOS / Android viewer code-signing</td><td><span class="badge locked">Locked</span></td></tr>
+      <tr><td><strong>OCCT (3D kernel)</strong></td><td>LGPL 2.1 + linking exception — explicitly permits closed-source commercial linking, including static</td><td><strong>P2:</strong> light 3D in editor · <strong>P3:</strong> full 3D + BIM-lite (IFC import/export, parametric architectural objects)</td><td><span class="badge free">Free</span></td></tr>
+      <tr><td><strong>Visual Studio Ent.</strong></td><td>2–3 perf devs only (IntelliTrace, Concurrency Visualizer); VS Code primary for the rest</td><td><strong>P1–P3:</strong> render / boolean perf tuning across phases</td><td><span class="badge locked">Locked</span></td></tr>
+      <tr><td><strong>CMake / Emscripten / Cargo</strong></td><td>Permissive OSS; no commercial concern</td><td><strong>P1–P3:</strong> build pipeline · Emscripten gates the browser WASM target</td><td><span class="badge free">Free</span></td></tr>
+      <tr><td><strong>.NET / MCP / WebGPU</strong></td><td>MIT / W3C / Khronos — free open standards</td><td><strong>P1:</strong> AI assistant (MCP) · <strong>P2:</strong> .NET extension surface · <strong>P2–P3:</strong> WebGPU browser render</td><td><span class="badge free">Free</span></td></tr>
+      <tr><td><strong>Parasolid / ACIS</strong></td><td>Year-4+ hypothetical only — not budgeted; KAL preserves the swap option</td><td>Optional escape valve <strong>only if</strong> OCCT underperforms in P3 mechanical work</td><td><span class="badge deferred">Deferred</span></td></tr>
     </tbody>
   </table>
   <p class="small mt-2"><strong>The best-value line item in the entire stack:</strong> ODA Sustaining at ~$4.5K/yr renewal gets unlimited commercial seats + inWEB web redistribution with no per-seat royalty.</p>
@@ -893,6 +900,7 @@ graph TB
 <!-- ============================================================== -->
 <section>
   <h2>AI strategy — three steps, not a chat panel</h2>
+  <p class="small" style="margin-bottom: 0.6em;"><strong>MCP</strong> = Model Context Protocol, the open standard that lets an AI assistant (Claude, ChatGPT, Cursor) drive an application's commands like a co-pilot. Autodesk shipped it in Revit 2027 and Fusion 2026; we ship it inside the engine, transactional from day one.</p>
   <div class="card-grid cols-3">
     <div class="card primary">
       <h4>Step 1 · Phase 1</h4>
@@ -901,13 +909,13 @@ graph TB
     </div>
     <div class="card primary">
       <h4>Step 2 · Phase 1–2</h4>
-      <h3>MCP server</h3>
-      <p class="body"><strong>Local MCP</strong> (host running, commands inside transaction) + <strong>remote MCP data server</strong> (cloud, read-only DWG queries). Mirrors Fusion 2026's split. Works with Claude, Cursor, ChatGPT, any MCP HTTP client.</p>
+      <h3>AI as a co-pilot (MCP)</h3>
+      <p class="body"><strong>Local MCP</strong> — AI runs inside the host, every action is one undoable transaction. <strong>Remote MCP data server</strong> — cloud-side read-only DWG queries. Mirrors Fusion 2026's split. Works with Claude, Cursor, ChatGPT, any MCP-compatible AI client.</p>
     </div>
     <div class="card primary">
       <h4>Step 3 · Phase 3 (conditional)</h4>
       <h3>Generative CAD</h3>
-      <p class="body">Only when editable parametric round-tripping is proven. <strong>Hypar's lesson:</strong> text-to-BIM via chat alone was the wrong abstraction; they pivoted to "suggestions" in 2025.</p>
+      <p class="body">Only when AI-generated content can be edited and round-tripped reliably. <strong>The lesson from Hypar</strong> (a 2024 generative-BIM startup that pivoted in 2025): text-to-building via chat alone was the wrong abstraction — users want suggestions <em>inside</em> the editor, not a separate chat window. We start where they ended up.</p>
     </div>
   </div>
   <div class="hero-stat mt-2">
@@ -927,30 +935,30 @@ graph TB
 <!-- 16. COLLABORATION -->
 <!-- ============================================================== -->
 <section>
-  <h2>Collaboration — two-tier server-authoritative</h2>
+  <h2>Live multi-user editing — Google-Docs-style, but for DWG</h2>
+  <p class="small" style="margin-bottom: 0.6em;">Two designers on the same drawing, in real time. The challenge: a drawing isn't a text document — moving a door has to keep the wall it's attached to. We split the problem in two tiers.</p>
   <div class="tier-diagram">
     <div class="tier">
-      <div class="label">Tier 1 — Geometry</div>
-      <h3>Serialized op-log over the engine mutation stream</h3>
+      <div class="label">Tier 1 — The drawing itself (geometry)</div>
+      <h3>Server validates every edit before applying</h3>
       <ul>
-        <li>Server-validated for referential integrity (door↔wall, dim↔entity, hatch↔boundary)</li>
-        <li>Optimistic UI on the client</li>
-        <li>Same op-stream serves undo, replication, agent context, and audit</li>
-        <li>Presence + selection locks at the UI layer</li>
+        <li>Doors stay attached to walls. Dimensions stay attached to entities. Hatches stay inside their boundaries.</li>
+        <li>Each user sees their own edits instantly (optimistic UI); the server quietly checks for conflicts and rolls back the offending one if any.</li>
+        <li>Same edit log feeds undo, sync, AI context, and audit — one source of truth.</li>
+        <li>Presence indicators + click-to-lock for the entity you're holding.</li>
       </ul>
     </div>
     <div class="tier tier2">
-      <div class="label">Tier 2 — Annotations, comments, properties</div>
-      <h3>Figma-style last-writer-wins per property</h3>
+      <div class="label">Tier 2 — Annotations, comments, layer properties</div>
+      <h3>Figma-style: last edit wins, instantly synced</h3>
       <ul>
-        <li>Each field updates independently — concurrent edits resolve to A-or-B</li>
-        <li>Fractional indexing for ordering (z-order, draw-order)</li>
-        <li>Cycle-rejection for reparenting (sheet → layout → viewport)</li>
-        <li>Bounded scope for Yjs / Automerge if we ever want it</li>
+        <li>Comment threads, dimstyle tweaks, layer colors, plot setup — each updates independently, so two users editing different settings never collide.</li>
+        <li>Z-order and draw-order use fractional indexing — the same trick Figma and Notion use.</li>
+        <li>Sheets, layouts, and viewports can't be reparented into cycles (the system rejects the move).</li>
       </ul>
     </div>
   </div>
-  <p class="small mt-2"><strong>No generic CRDT on geometry.</strong> Yjs / Automerge OOM at the millions-of-entity scale typical for an MEP riser DWG. Industry has converged here: Figma rejected pure CRDT; Onshape uses op-log; ARES Kudo ships closer to soft-lock + sync. Our two-tier model <strong>leapfrogs ARES's ceiling</strong>.</p>
+  <p class="small mt-2"><strong>Why this beats today's competition:</strong> ARES Kudo (the closest peer) ships a softer "one person edits, others watch + comment" model — when two people want to edit the same drawing they take turns. Onshape solved the same problem with a server-validated edit log; we use the same pattern. The current research path (called "CRDT" — conflict-free replicated data types) runs out of memory on the million-entity drawings typical for MEP risers; we don't go there.</p>
 
   <aside class="notes">
     The two-tier model is what gives us both correctness (Tier 1 server-side validation
@@ -964,24 +972,26 @@ graph TB
 <!-- 17. EXTENSIONS -->
 <!-- ============================================================== -->
 <section>
-  <h2>Extensions — best of both worlds</h2>
+  <h2>Plugins + marketplace — desktop and web, one catalogue</h2>
+  <p class="small" style="margin-bottom: 0.6em;">For customers: more add-ons across more devices. For developers: one plugin, every product surface — desktop, browser, tablet.</p>
   <div class="card-grid cols-2">
     <div class="card primary">
-      <h4>Native desktop</h4>
-      <h3>BRX / ObjectARX-compatible plugins</h3>
-      <p class="body">Table-stakes for SMB AEC customers switching from AutoCAD. Single code stream that runs on both BricsCAD-style competitors and ActCAD. Authenticode signing + "verified publisher" badge.</p>
+      <h4>What runs where</h4>
+      <h3>Desktop plugins (Windows / Mac / Linux)</h3>
+      <p class="body">Compatible with the BricsCAD / AutoCAD plugin ecosystem (BRX-style). Today's customer plugins keep working. Each plugin is digitally signed; "verified publisher" badge in the marketplace.</p>
     </div>
     <div class="card" style="border-left-color: var(--accent);">
-      <h4>Web</h4>
-      <h3>Onshape-style iframe + OAuth REST</h3>
-      <p class="body">Sandboxed by the browser. Capability-scoped by OAuth. No third-party code in the host process. UI extension = HTTPS page in iframe; Action extension = REST call to dev's server.</p>
+      <h4>What runs where</h4>
+      <h3>Web + tablet plugins</h3>
+      <p class="body">Same plugin developer, same marketplace listing — extension runs in the browser product (and on iPad / Android tablet later). Sandboxed by the browser, permission-gated like a phone app.</p>
     </div>
   </div>
   <div class="hero-stat mt-2" style="background: linear-gradient(135deg, var(--accent) 0%, #8e6332 100%);">
-    <p style="margin: 0; font-size: 1.0em;">The trick: <strong style="color: white;">shared internal RPC surface</strong></p>
-    <p style="margin: 0.3em 0 0; font-size: 0.9em; color: var(--accent-light);">Same command/query API: native plugins call it in-process, web extensions via OAuth REST. <strong style="color: white;">Same scopes, same semantics, same audit trail.</strong></p>
+    <p style="margin: 0; font-size: 1.0em;">The customer story:</p>
+    <p style="margin: 0.3em 0 0; font-size: 1.0em; font-weight: 600;">One marketplace · one developer · works on desktop and web · same scope and security on both</p>
+    <p style="margin: 0.5em 0 0; font-size: 0.78em; color: var(--accent-light);">Same internal command + query surface under the hood — desktop calls it in-process, web calls it over a secure REST channel. Same audit trail, same permissions, same data.</p>
   </div>
-  <p class="small mt-2">Marketplace: 15% revenue share over a $5K/year free tier (Apple-equivalent for small developers) — avoids the SolidWorks anti-pattern of mandatory share with no storefront.</p>
+  <p class="small mt-2">Marketplace: 15% revenue share above a $5K / year free tier (Apple-style threshold for small developers). Avoids the SolidWorks pattern of demanding revenue share without a real storefront.</p>
 
   <aside class="notes">
     No shipping CAD product has true plugin parity across native and web today. We promise
@@ -996,14 +1006,14 @@ graph TB
 <section>
   <h2>What we deliberately don't do</h2>
   <ul class="dont-list">
-    <li><strong>No web-first to the installed base</strong> — protects revenue, gets real customer feedback</li>
-    <li><strong>No generic CRDTs for geometry</strong> — confined to non-spatial metadata only</li>
-    <li><strong>No SDS / DIESEL / VBA / COM / ADS</strong> — legacy maintenance with shrinking usage</li>
-    <li><strong>No ObjectARX-compatible .NET surface</strong> — opinionated and modern; set expectation early</li>
-    <li><strong>No Rust in <code>db</code> or <code>render</code> hot paths</strong> — C++20 stays primary; Rust at the edges</li>
-    <li><strong>No Parasolid in the 3-year budget</strong> — year-4+ strategic option only</li>
-    <li><strong>No chat-in-canvas as primary AI UX</strong> — Hypar's lesson</li>
-    <li><strong>No two products forever</strong> — IntelliCAD ActCAD enters sunset in Phase 3</li>
+    <li><strong>No web-first to the installed base.</strong> Our customers' hardware can't run a serious browser CAD editor today. Web ships in parallel as viewer + markup, not as the daily driver.</li>
+    <li><strong>No "let the database resolve conflicts automatically" for geometry.</strong> The trendy approach (called <em>CRDT</em> — conflict-free replicated data types) runs out of memory on real CAD drawings. We use a server-validated edit log instead, restricting auto-merge to comments and properties only.</li>
+    <li><strong>No SDS / DIESEL / VBA / COM / ADS.</strong> Legacy AutoLISP-era extension APIs with shrinking usage. Maintenance cost outweighs customer value.</li>
+    <li><strong>No ObjectARX-compatible .NET surface.</strong> Our .NET extension API is opinionated and modern, not bug-compatible with AutoCAD's. We say this up front so partners can plan.</li>
+    <li><strong>No experimental memory-safe languages in the engine hot path.</strong> C++20 stays the primary engine language. Rust is used only at the edges (sync, AI agent, scripting host).</li>
+    <li><strong>No Parasolid in the 3-year budget.</strong> The premium 3D kernel ($200K+) stays a year-4+ option, only if Open Cascade underperforms on mechanical work.</li>
+    <li><strong>No "describe your design to a chatbot and we'll generate it."</strong> <em>Hypar's lesson:</em> a 2024–25 BIM-via-chat startup that pivoted in 2025 — text-to-building was the wrong abstraction; they rebuilt around "suggestions in the editor" instead. We start there.</li>
+    <li><strong>No two products forever.</strong> Existing IntelliCAD-based ActCAD ships through Phase 2 to protect revenue, then enters published sunset in Phase 3.</li>
   </ul>
   <blockquote class="mt-2">Each <em>"don't"</em> closes a door that competitors keep open and pay for.</blockquote>
 
@@ -1173,6 +1183,7 @@ graph TB
 mermaid.initialize({
   startOnLoad: false,
   theme: 'base',
+  securityLevel: 'loose',
   themeVariables: {
     primaryColor: '#1e3a5c',
     primaryTextColor: '#ffffff',
