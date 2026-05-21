@@ -240,14 +240,14 @@
     </div>
   </div>
   <div class="hero-stat" style="margin-top: 14px;">
-    <span class="number">~$2.2M</span>
-    <span class="label">3-year total: <strong style="color:white;">~$0.92M</strong> stack + tools + cloud · <strong style="color:white;">~$1.3M</strong> loaded India salary (hybrid urban + tier-2 + remote-village, ramp-adjusted). No six-figure opaque-OEM commitments.</span>
+    <span class="number">~$1.66M</span>
+    <span class="label">3-year total · <strong style="color:white;">~$730K</strong> stack + tools + cloud · <strong style="color:white;">~$930K</strong> loaded India salary · <strong style="color:white;">~₹13.8 Cr</strong>. Lean 6 / 14 / 22-dev team with aggressive AI augmentation. No six-figure opaque-OEM commitments.</span>
   </div>
 
   <aside class="notes">
     The single most important framing: we are asking for a 4-6 week spike approval today, not
     the 3-year program. The spike returns measured data on the 7 highest-risk assumptions;
-    only then does management commit to the full ~$2.2M envelope ($0.92M stack + $1.3M loaded India salary, ramp-adjusted, hybrid urban / tier-2 / village mix).
+    only then does management commit to the full ~$1.66M envelope ($730K stack + $930K loaded India salary, ramp-adjusted, on a 6 / 14 / 22-dev lean AI-augmented team).
   </aside>
 </section>
 
@@ -637,13 +637,13 @@ graph TB
     </div>
     <div>
       <h4>3-year envelope</h4>
-      <div class="cost-line"><span class="item">Stack + tools + cloud (slide 14)</span><span class="val">~$920K</span></div>
-      <div class="cost-line"><span class="item">Loaded India salary (slide 15)</span><span class="val">~$1,285K</span></div>
-      <div class="cost-line total"><span>3-year total project envelope</span><span class="val">~$2,203K</span></div>
+      <div class="cost-line"><span class="item">Stack + tools + cloud (slide 14)</span><span class="val">~$727K</span></div>
+      <div class="cost-line"><span class="item">Loaded India salary (slide 15)</span><span class="val">~$930K</span></div>
+      <div class="cost-line total"><span>3-year total project envelope</span><span class="val">~$1,657K · ₹13.8 Cr</span></div>
       <h4 style="margin-top: 1em;">By phase (stack + salary, ramp-adjusted)</h4>
-      <div class="cost-line"><span class="item">Phase 1 — yr 1, ramp 4→8 devs</span><span class="val">$83K + $165K = $248K</span></div>
-      <div class="cost-line"><span class="item">Phase 2 — yr 2, ramp 8→20 devs</span><span class="val">$239K + $385K = $624K</span></div>
-      <div class="cost-line"><span class="item">Phase 3 — yr 3, ramp 20→30 devs</span><span class="val">$596K + $735K = $1,331K</span></div>
+      <div class="cost-line"><span class="item">Phase 1 — yr 1, ramp 3→6 devs</span><span class="val">$72K + $140K = $212K</span></div>
+      <div class="cost-line"><span class="item">Phase 2 — yr 2, ramp 6→14 devs</span><span class="val">$187K + $290K = $477K</span></div>
+      <div class="cost-line"><span class="item">Phase 3 — yr 3, ramp 14→22 devs</span><span class="val">$468K + $500K = $968K</span></div>
       <h4 style="margin-top: 1em;">Not in scope (deferred)</h4>
       <div class="cost-line"><span class="item">Parasolid (year-4+ option only)</span><span class="val">$0</span></div>
       <div class="cost-line"><span class="item">Open Cascade SAS commercial support</span><span class="val">$0</span></div>
@@ -665,33 +665,34 @@ graph TB
 <!-- 14. STACK DRILL-DOWN — third-party / tools / cloud -->
 <!-- ============================================================== -->
 <section>
-  <h2>Stack + tools + cloud — ~$0.92M over 3 years</h2>
-  <p class="small">High-level cost buckets per phase (USD thousands). Foundation libs + Qt + cloud dominate; AI dev tooling is ~3.8% of 3-yr stack spend.</p>
+  <h2>Stack + tools + cloud — ~$727K over 3 years</h2>
+  <p class="small">High-level cost buckets per phase, sized to the lean 6 / 14 / 22-dev plan. Per-seat lines (Qt, AI bundles, JetBrains, GitHub) scale down with headcount; ODA / VS Enterprise / cloud + auth scale independently.</p>
   <table style="font-size: 0.72em;">
     <thead>
-      <tr><th>Bucket</th><th>What's in it</th><th>P1 (8 devs)</th><th>P2 (20 devs)</th><th>P3 (30 devs)</th><th>3-yr total</th></tr>
+      <tr><th>Bucket</th><th>What's in it</th><th>P1 (6 devs)</th><th>P2 (14 devs)</th><th>P3 (22 devs)</th><th>3-yr total</th></tr>
     </thead>
     <tbody>
-      <tr><td><strong>Foundation libs</strong></td><td>ODA Sustaining → Founding + BIM/MCAD/Civil add-ons</td><td>$12.5K</td><td>$19.5K</td><td>$67.5K</td><td><strong>$99.5K · 11%</strong></td></tr>
-      <tr><td><strong>Engine shell</strong></td><td>Qt Commercial App Dev Enterprise + mobile/WASM add-ons</td><td>$32.0K</td><td>$88.0K</td><td>$140.0K</td><td><strong>$260.0K · 28%</strong></td></tr>
-      <tr><td><strong>Dev tools</strong></td><td>VS Code (free) + VS Ent × 2-3 perf devs + AI bundles ($50/dev/mo) + JetBrains + GitHub Cloud+AdvSec + Actions</td><td>$30.8K</td><td>$52.7K</td><td>$77.7K</td><td><strong>$161.2K · 18%</strong></td></tr>
-      <tr><td><strong>Cloud + infra</strong></td><td>AWS compute + g5 GPU streaming + CDN + egress</td><td>$8.0K</td><td>$60.0K</td><td>$200.0K</td><td><strong>$268.0K · 29%</strong></td></tr>
-      <tr><td><strong>Auth + billing</strong></td><td>Clerk B2B (per-MAU) + Stripe (% of ARR)</td><td>$1.0K</td><td>$19.2K</td><td>$103.0K</td><td><strong>$123.2K · 13%</strong></td></tr>
-      <tr><td><strong>3D kernel</strong></td><td>OCCT under LGPL 2.1 + linking exception</td><td colspan="3" class="centered" style="text-align:center;">$0 — free, closed-source-safe</td><td><strong>$0</strong></td></tr>
-      <tr style="background: var(--bg-cream); border-top: 2px solid var(--primary);"><td colspan="2"><strong>Phase total</strong></td><td><strong>$83.3K</strong></td><td><strong>$239.4K</strong></td><td><strong>$595.7K</strong></td><td><strong>~$918.4K</strong></td></tr>
+      <tr><td><strong>Foundation libs</strong></td><td>ODA Sustaining → Founding + BIM/MCAD/Civil add-ons</td><td>$12.5K</td><td>$19.5K</td><td>$67.5K</td><td><strong>$99.5K · 14%</strong></td></tr>
+      <tr><td><strong>Engine shell</strong></td><td>Qt Commercial App Dev Enterprise + mobile/WASM add-ons</td><td>$24.0K</td><td>$62.4K</td><td>$102.0K</td><td><strong>$188.4K · 26%</strong></td></tr>
+      <tr><td><strong>Dev tools</strong></td><td>VS Code (free) + VS Ent × 2-3 perf devs + AI bundles ($50/dev/mo) + JetBrains + GitHub Cloud+AdvSec + Actions</td><td>$26.7K</td><td>$40.7K</td><td>$62.1K</td><td><strong>$129.5K · 18%</strong></td></tr>
+      <tr><td><strong>Cloud + infra</strong></td><td>AWS compute + g5 GPU streaming + CDN + egress</td><td>$8.0K</td><td>$50.0K</td><td>$160.0K</td><td><strong>$218.0K · 30%</strong></td></tr>
+      <tr><td><strong>Auth + billing</strong></td><td>Clerk B2B (per-MAU) + Stripe (% of ARR)</td><td>$1.0K</td><td>$14.0K</td><td>$77.0K</td><td><strong>$92.0K · 13%</strong></td></tr>
+      <tr><td><strong>3D kernel</strong></td><td>OCCT under LGPL 2.1 + linking exception</td><td colspan="3" style="text-align:center;">$0 — free, closed-source-safe</td><td><strong>$0</strong></td></tr>
+      <tr style="background: var(--bg-cream); border-top: 2px solid var(--primary);"><td colspan="2"><strong>Phase total</strong></td><td><strong>$72.2K</strong></td><td><strong>$186.6K</strong></td><td><strong>$468.6K</strong></td><td><strong>~$727.4K</strong></td></tr>
     </tbody>
   </table>
   <div class="card-grid cols-3" style="margin-top: 1em; gap: 12px;">
-    <div class="card primary"><h4>Observation 1</h4><p class="body"><strong>Cloud + Qt = 57% of 3-yr stack spend.</strong> Both scale with growth (devs / MAU). Both have multi-year negotiation room — §9 spike item 6 negotiates Qt.</p></div>
-    <div class="card primary"><h4>Observation 2</h4><p class="body"><strong>AI tooling is the cheapest line that matters: ~$35K over 3 years.</strong> Buys the headcount leverage detailed on the next slide — 30 devs doing the work of ~50.</p></div>
-    <div class="card primary"><h4>Observation 3</h4><p class="body"><strong>No six-figure opaque OEM line in any phase.</strong> Parasolid / ACIS / SAS-support all explicitly deferred — the $918K is bounded by published prices.</p></div>
+    <div class="card primary"><h4>Observation 1</h4><p class="body"><strong>Cloud + Qt = 56% of 3-yr stack spend.</strong> Both scale with growth (MAU / devs). Both have multi-year negotiation room — §9 spike item 6 negotiates Qt.</p></div>
+    <div class="card primary"><h4>Observation 2</h4><p class="body"><strong>AI tooling is the cheapest line that matters: ~$25K over 3 years (3.4% of stack).</strong> Buys the leverage on the next slide — 22 devs at peak shipping what ~40 devs would have shipped pre-AI.</p></div>
+    <div class="card primary"><h4>Observation 3</h4><p class="body"><strong>No six-figure opaque OEM line in any phase.</strong> Parasolid / ACIS / SAS-support all explicitly deferred — the $727K is bounded by published prices.</p></div>
   </div>
 
   <aside class="notes">
-    All numbers come straight from §15.2 of the plan document. The interesting structural
-    fact is the shift in cost mix across phases — Phase 1 is dominated by per-dev Qt
-    licenses (38%), Phase 3 is dominated by cloud-at-scale (34%). Engine + foundation
-    library spend stays roughly flat as a fraction even as headcount triples.
+    Numbers reflect the lean-team rebudgeting. Per-seat tooling drops with headcount (Qt
+    down from $260K to $188K over 3 years, dev tools down from $161K to $130K). Cloud + auth
+    drop modestly to reflect slower customer ramp from a smaller team. Foundation libs are
+    membership-based, not per-seat, so they're unchanged. Phase 3 is still cloud-dominated
+    (~34% of P3 stack) — that's a customer-load fact, not a team-size fact.
   </aside>
 </section>
 
@@ -699,73 +700,61 @@ graph TB
 <!-- 15. TEAM COMPOSITION + INDIA SALARY ENVELOPE -->
 <!-- ============================================================== -->
 <section>
-  <h2 style="margin-bottom: 0.4em;">Team + loaded salary — India hybrid model</h2>
-  <p class="tiny" style="margin-bottom: 0.6em;"><strong>Hybrid geo mix:</strong> ~60% tier-1 urban (Hyderabad HQ + Bangalore satellites) · ~30% tier-2 (Vizag / Bhubaneswar / Coimbatore) · ~10% remote-village. <em>AI agents = headcount leverage, not licensee count.</em> The 8 / 20 / 30 figures below are <strong>already AI-augmented</strong> — pre-AI equivalent would have been ~13 / 33 / 50.</p>
+  <h2 style="margin-bottom: 0.4em;">Lean team + India salary — 6 / 14 / 22 devs · ~$930K loaded</h2>
+  <p class="tiny" style="margin-bottom: 0.6em;"><strong>AI as the lever, not the line item.</strong> 6 / 14 / 22 devs is what 8 / 20 / 30 was at moderate AI augmentation — pushing the multiplier from ~1.4× to ~1.8× lets us cut headcount ~25–30%. <strong>Geo mix:</strong> ~50% tier-1 (Hyderabad HQ + Bangalore satellites) · ~50% tier-2 / rural (Vizag / Bhubaneswar / Coimbatore + village-remote). <em># of AI bundles = # of devs.</em></p>
 
   <div class="cost-split" style="gap: 18px;">
     <div>
-      <h4>Salary anchors (fully loaded USD, 2026)</h4>
-      <table style="font-size: 0.7em;">
-        <thead><tr><th>Band</th><th>Tier-1 urban</th><th>Tier-2</th><th>Rural / village</th></tr></thead>
+      <h4>Salary anchors — loaded INR/mo · USD/yr (2026)</h4>
+      <table style="font-size: 0.66em;">
+        <thead><tr><th>Band</th><th>Tier-1 (Hyd / Blr)</th><th>Tier-2 / rural</th></tr></thead>
         <tbody>
-          <tr><td>Staff / Principal (12+ yrs)</td><td>$70K</td><td>$45K</td><td>rare</td></tr>
-          <tr><td>Senior (7–12 yrs)</td><td>$42K</td><td>$28K</td><td>$18K</td></tr>
-          <tr><td>Mid (3–7 yrs)</td><td>$22K</td><td>$14K</td><td>$10K</td></tr>
-          <tr><td>Junior (0–3 yrs)</td><td>$9K</td><td>$6K</td><td>$4K</td></tr>
+          <tr><td>Staff (12+ yrs)</td><td>₹3–4 L/mo · ~$50–65K</td><td>rare</td></tr>
+          <tr><td>Senior (7–12 yrs)</td><td>₹2–2.5 L/mo · ~$36–45K</td><td>₹1.5–1.8 L/mo · ~$27–33K</td></tr>
+          <tr><td>Mid (3–7 yrs)</td><td>₹1–1.2 L/mo · ~$18–22K</td><td>₹50–60 K/mo · ~$9–11K</td></tr>
+          <tr><td>Junior (0–3 yrs)</td><td>₹60–80 K/mo · ~$11–14K</td><td>₹30–35 K/mo · ~$5–7K</td></tr>
         </tbody>
       </table>
-      <p class="tiny mt-1">Loaded = base + bonus + PF + gratuity + healthcare + equipment + overhead (~1.25× base). C++ / Qt / CAD specialists sit at top-of-band in tier-1; talent pool thins above senior outside metros.</p>
+      <p class="tiny mt-1">Loaded = base + bonus + PF + gratuity + healthcare + equipment + overhead (~1.25× base). C++ / Qt / CAD specialists at top-of-band in tier-1; staff-level talent is thin outside metros, so the lean plan deliberately keeps staff hires in tier-1.</p>
 
       <h4 style="margin-top: 1em;">Per-phase salary (ramp-adjusted)</h4>
-      <div class="cost-line"><span class="item">Phase 1 — ramp 4 → 8 devs (avg ~6)</span><span class="val">~$165K</span></div>
-      <div class="cost-line"><span class="item">Phase 2 — ramp 8 → 20 devs (avg ~14)</span><span class="val">~$385K</span></div>
-      <div class="cost-line"><span class="item">Phase 3 — ramp 20 → 30 devs (avg ~25)</span><span class="val">~$735K</span></div>
-      <div class="cost-line total"><span>3-year salary</span><span class="val">~$1,285K</span></div>
+      <div class="cost-line"><span class="item">Phase 1 — ramp 3 → 6 (avg ~4)</span><span class="val">~$140K · ₹1.16 Cr</span></div>
+      <div class="cost-line"><span class="item">Phase 2 — ramp 6 → 14 (avg ~10)</span><span class="val">~$290K · ₹2.4 Cr</span></div>
+      <div class="cost-line"><span class="item">Phase 3 — ramp 14 → 22 (avg ~18)</span><span class="val">~$500K · ₹4.15 Cr</span></div>
+      <div class="cost-line total"><span>3-year salary</span><span class="val">~$930K · ₹7.7 Cr</span></div>
     </div>
 
     <div>
-      <h4>Phase 1 — 8 devs · 8 AI bundles</h4>
-      <table style="font-size: 0.68em; margin-bottom: 8px;">
-        <tr><td>Engine core (C++ · DWG · OCCT KAL)</td><td style="text-align:right;"><strong>3</strong></td></tr>
-        <tr><td>Shell team (Qt + ui-bridge ABI)</td><td style="text-align:right;"><strong>2</strong></td></tr>
-        <tr><td>Agent team (MCP server prototype)</td><td style="text-align:right;"><strong>1</strong></td></tr>
-        <tr><td>LISP shim (in-house interpreter)</td><td style="text-align:right;"><strong>1</strong></td></tr>
-        <tr><td>Infra (CMake / Emscripten / CI)</td><td style="text-align:right;"><strong>1</strong></td></tr>
-      </table>
-
-      <h4>Phase 2 — 20 devs · 20 AI bundles</h4>
-      <table style="font-size: 0.68em; margin-bottom: 8px;">
-        <tr><td>Engine core (Mac/Linux parity)</td><td style="text-align:right;"><strong>6</strong></td></tr>
-        <tr><td>Browser shell (WASM + WebGPU)</td><td style="text-align:right;"><strong>5</strong></td></tr>
-        <tr><td>Cloud team (two-tier co-edit)</td><td style="text-align:right;"><strong>3</strong></td></tr>
-        <tr><td>Agent team (MCP local + remote)</td><td style="text-align:right;"><strong>2</strong></td></tr>
-        <tr><td>Plugin host (BRX + web RPC)</td><td style="text-align:right;"><strong>2</strong></td></tr>
-        <tr><td>LISP shim + migration tool</td><td style="text-align:right;"><strong>1</strong></td></tr>
-        <tr><td>Infra / release</td><td style="text-align:right;"><strong>1</strong></td></tr>
-      </table>
-
-      <h4>Phase 3 — 30 devs · 30 AI bundles</h4>
+      <h4>Team composition by sub-team</h4>
       <table style="font-size: 0.68em;">
-        <tr><td>Engine core (3D + BIM + perf)</td><td style="text-align:right;"><strong>7</strong></td></tr>
-        <tr><td>Vertical extensions (MEP / Elec / Mech)</td><td style="text-align:right;"><strong>6</strong></td></tr>
-        <tr><td>Cloud team (scale + telemetry)</td><td style="text-align:right;"><strong>4</strong></td></tr>
-        <tr><td>Browser shell (at-parity perf)</td><td style="text-align:right;"><strong>4</strong></td></tr>
-        <tr><td>Mobile (iOS + Android viewer)</td><td style="text-align:right;"><strong>3</strong></td></tr>
-        <tr><td>Agent team (generative — conditional)</td><td style="text-align:right;"><strong>2</strong></td></tr>
-        <tr><td>Plugin host + marketplace</td><td style="text-align:right;"><strong>2</strong></td></tr>
-        <tr><td>Infra + sunset orchestration</td><td style="text-align:right;"><strong>2</strong></td></tr>
+        <thead><tr><th>Sub-team</th><th>P1 (6)</th><th>P2 (14)</th><th>P3 (22)</th></tr></thead>
+        <tbody>
+          <tr><td>Engine core (C++ · DWG · OCCT KAL)</td><td style="text-align:center;"><strong>2</strong></td><td style="text-align:center;"><strong>4</strong></td><td style="text-align:center;"><strong>5</strong></td></tr>
+          <tr><td>Shell (Qt desktop + ui-bridge ABI)</td><td style="text-align:center;"><strong>1</strong></td><td style="text-align:center;"><strong>2</strong></td><td style="text-align:center;"><strong>2</strong></td></tr>
+          <tr><td>Browser shell (WASM + WebGPU)</td><td style="text-align:center;">—</td><td style="text-align:center;"><strong>2</strong></td><td style="text-align:center;"><strong>2</strong></td></tr>
+          <tr><td>Cloud team (two-tier co-edit + scale)</td><td style="text-align:center;">—</td><td style="text-align:center;"><strong>2</strong></td><td style="text-align:center;"><strong>3</strong></td></tr>
+          <tr><td>Agent team (MCP server)</td><td style="text-align:center;"><strong>1</strong></td><td style="text-align:center;"><strong>1</strong></td><td style="text-align:center;"><strong>1</strong></td></tr>
+          <tr><td>Plugin host (BRX + web RPC)</td><td style="text-align:center;">—</td><td style="text-align:center;"><strong>1</strong></td><td style="text-align:center;"><strong>1</strong></td></tr>
+          <tr><td>Vertical extensions (MEP / Elec / Mech)</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;"><strong>4</strong></td></tr>
+          <tr><td>Mobile (iOS / Android viewer)</td><td style="text-align:center;">—</td><td style="text-align:center;">—</td><td style="text-align:center;"><strong>2</strong></td></tr>
+          <tr><td>LISP shim + migration tool</td><td style="text-align:center;"><strong>1</strong></td><td style="text-align:center;"><strong>1</strong></td><td style="text-align:center;">—</td></tr>
+          <tr><td>Infra + release + sunset</td><td style="text-align:center;"><strong>1</strong></td><td style="text-align:center;"><strong>1</strong></td><td style="text-align:center;"><strong>2</strong></td></tr>
+          <tr style="border-top: 2px solid var(--primary); background: var(--bg-cream);"><td><strong>Total devs · AI bundles</strong></td><td style="text-align:center;"><strong>6</strong></td><td style="text-align:center;"><strong>14</strong></td><td style="text-align:center;"><strong>22</strong></td></tr>
+        </tbody>
       </table>
+      <p class="tiny mt-1"><strong>Why this works leaner:</strong> Phase 1 senior-staffed for architecture leverage. AI agents handle ABI plumbing, test scaffolding, build / CI generation, LISP corpus migration tooling, vertical-extension boilerplate. Senior reviewers carry quality; AI carries volume.</p>
     </div>
   </div>
 
-  <p class="small mt-2" style="color: var(--text-2); margin-bottom: 0;"><strong>Sensitivity:</strong> shift the 60/30/10 mix to heavier rural and Phase-3 salary lands closer to ~$650K; shift toward more urban-senior and it lands closer to ~$850K. The ~$1.3M 3-yr salary is the middle estimate, not a ceiling.</p>
+  <p class="small mt-2" style="color: var(--text-2); margin-bottom: 0;"><strong>Sensitivity:</strong> mostly tier-1 (heavier urban-senior) lands 3-yr salary near ~$1.1M / ₹9 Cr. Mostly tier-2 / rural lands near ~$780K / ₹6.5 Cr. ~$930K / ~₹7.7 Cr is the middle case.</p>
 
   <aside class="notes">
-    The 60/30/10 hybrid is what gets the loaded average down to ~$28-30K/dev. A pure-Hyderabad
-    team would be ~$40-45K average; village-remote thins out above senior, which is precisely
-    the band we need most. Numbers are ramp-adjusted — Phase 1 doesn't run 8-dev all year, it
-    ramps in. AI tooling is the cheapest leverage we have on headcount — $35K of AI bundles
-    over 3 years lets a 30-dev team ship what would have been ~50 dev-years pre-AI.
+    The 6 / 14 / 22 plan is the lean variant of the original 8 / 20 / 30. We're trading some
+    execution-margin for cost — Phase 1 at 6 devs is tight if any single hire takes too long
+    to ramp. The 50/50 tier-1/tier-2-or-rural mix matches the user-provided salary anchors
+    (Jr ₹30-35K/mo tier-2/rural, Mid ₹1-1.2L/mo tier-1, Senior ₹2-2.5L/mo tier-1). AI tooling at ~$25K
+    over 3 years is the cheapest line item in the entire stack and the one buying the biggest
+    leverage on the salary number — every dev gets Claude Code + Cursor + Copilot from day 1.
   </aside>
 </section>
 
@@ -978,12 +967,12 @@ graph TB
       </ol>
     </div>
   </div>
-  <p class="centered mt-2" style="font-size: 0.85em; color: var(--text-2);"><strong>Total cost of today's decision:</strong> ~$8,000 + 4–6 weeks of senior engineer time. <strong>Information return:</strong> a measured Go / No-Go on a ~$2.2M envelope (stack + ramp-adjusted India salary, 3 years).</p>
+  <p class="centered mt-2" style="font-size: 0.85em; color: var(--text-2);"><strong>Total cost of today's decision:</strong> ~$8,000 + 4–6 weeks of senior engineer time. <strong>Information return:</strong> a measured Go / No-Go on a ~$1.66M envelope (lean 6 / 14 / 22-dev plan, stack + ramp-adjusted India salary, 3 years).</p>
 
   <aside class="notes">
     Frame the decision-cost-vs-information-return explicitly. We're not asking management to
-    commit to $2.2M today — we're asking them to spend $8K and 6 weeks to find out whether
-    $2.2M is the right envelope.
+    commit to $1.66M today — we're asking them to spend $8K and 6 weeks to find out whether
+    $1.66M is the right envelope.
   </aside>
 </section>
 
@@ -1117,11 +1106,11 @@ Reveal.initialize({
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Phase 1\n8 devs · yr 1', 'Phase 2\n20 devs · yr 2', 'Phase 3\n30 devs · yr 3'],
+        labels: ['Phase 1\n6 devs · yr 1', 'Phase 2\n14 devs · yr 2', 'Phase 3\n22 devs · yr 3'],
         datasets: [
           {
             label: 'Loaded India salary (ramp-adjusted)',
-            data: [165, 385, 735],
+            data: [140, 290, 500],
             backgroundColor: 'rgba(192, 136, 71, 0.85)',
             borderColor: 'rgba(142, 99, 50, 1)',
             borderWidth: 2,
@@ -1130,7 +1119,7 @@ Reveal.initialize({
           },
           {
             label: 'Stack + tools + cloud',
-            data: [83.3, 239.4, 595.7],
+            data: [72, 187, 468],
             backgroundColor: 'rgba(30, 58, 92, 0.9)',
             borderColor: 'rgba(16, 37, 66, 1)',
             borderWidth: 2,
