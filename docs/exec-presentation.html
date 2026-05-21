@@ -187,9 +187,63 @@
 .mt-2 { margin-top: 1em; }
 
 /* Progress bar */
-.reveal .progress { color: var(--accent); }
+.reveal .progress { color: var(--accent); height: 4px; }
 .reveal .controls { color: var(--primary); }
 .reveal .slide-number { background: transparent; color: var(--text-3); font-family: 'Inter', sans-serif; font-size: 0.7em; font-weight: 500; right: 24px; bottom: 8px; }
+
+/* ============== ENGAGEMENT UPGRADES ============== */
+
+/* Card hover lift */
+.card { transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: 0 1px 3px rgba(30, 58, 92, 0.04); }
+.card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(30, 58, 92, 0.14); }
+.force-col { transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: 0 1px 3px rgba(192, 136, 71, 0.06); }
+.force-col:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(192, 136, 71, 0.2); }
+.spike-item { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.spike-item:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(30, 58, 92, 0.12); }
+
+/* Hero stat enhanced */
+.hero-stat { position: relative; overflow: hidden; box-shadow: 0 14px 40px rgba(16, 37, 66, 0.35), inset 0 1px 0 rgba(255,255,255,0.1); }
+.hero-stat::before { content: ''; position: absolute; top: -40%; right: -10%; width: 320px; height: 320px; background: radial-gradient(circle, rgba(232, 213, 183, 0.18) 0%, transparent 65%); pointer-events: none; }
+.hero-stat::after { content: ''; position: absolute; bottom: -40%; left: -10%; width: 280px; height: 280px; background: radial-gradient(circle, rgba(192, 136, 71, 0.10) 0%, transparent 65%); pointer-events: none; }
+.hero-stat .number { background: linear-gradient(135deg, #fce8c3 0%, var(--accent) 45%, #ffd4a1 100%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: shimmer 5s ease-in-out infinite; font-size: 3.6em; display: inline-block; letter-spacing: -0.025em; position: relative; z-index: 1; }
+.hero-stat .label { position: relative; z-index: 1; }
+@keyframes shimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+/* Title slide polish */
+.title-slide { position: relative; overflow: hidden; }
+.title-slide::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px; background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%); }
+.title-slide::after { content: ''; position: absolute; bottom: -200px; right: -200px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(192, 136, 71, 0.08) 0%, transparent 70%); pointer-events: none; }
+.title-slide h1 { background: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 50%, var(--accent) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; position: relative; }
+
+/* Chapter divider slides */
+.chapter { background: linear-gradient(135deg, var(--primary-deep) 0%, var(--primary) 100%); color: white !important; text-align: center !important; position: relative; overflow: hidden; padding: 60px !important; }
+.chapter::before { content: ''; position: absolute; top: -30%; left: -10%; width: 70%; height: 200%; background: radial-gradient(ellipse, rgba(192, 136, 71, 0.18) 0%, transparent 65%); pointer-events: none; }
+.chapter::after { content: ''; position: absolute; bottom: -20%; right: -10%; width: 50%; height: 150%; background: radial-gradient(ellipse, rgba(232, 213, 183, 0.06) 0%, transparent 65%); pointer-events: none; }
+.chapter .chapter-num { font-size: 0.9em; color: var(--accent); letter-spacing: 0.4em; font-weight: 700; margin-bottom: 0.5em; text-transform: uppercase; position: relative; z-index: 1; }
+.chapter h1 { color: white !important; font-size: 3.8em; letter-spacing: -0.03em; margin: 0.2em 0; position: relative; z-index: 1; -webkit-text-fill-color: white; }
+.chapter .chapter-sub { color: var(--accent-light); font-size: 1.3em; font-weight: 300; max-width: 800px; margin: 0.8em auto 0; position: relative; z-index: 1; line-height: 1.45; }
+.chapter .chapter-rule { width: 60px; height: 3px; background: var(--accent); margin: 1.5em auto; border: none; border-radius: 2px; position: relative; z-index: 1; }
+
+/* Subtle top accent on regular slides */
+.reveal .slides > section:not(.title-slide):not(.chapter) > h2:first-of-type { position: relative; }
+.reveal .slides > section:not(.title-slide):not(.chapter) > h2:first-of-type::before { content: ''; position: absolute; top: -12px; left: 0; width: 50px; height: 3px; background: var(--accent); border-radius: 2px; }
+
+/* Pull quote */
+.pull-quote { border-left: 4px solid var(--accent); background: linear-gradient(90deg, var(--bg-cream) 0%, transparent 100%); padding: 18px 24px 18px 28px; margin: 1em 0; font-size: 1.05em; font-weight: 500; color: var(--primary-deep); position: relative; border-radius: 0 4px 4px 0; }
+.pull-quote::before { content: '"'; font-family: Georgia, serif; font-size: 3.5em; color: var(--accent); position: absolute; left: 14px; top: -8px; line-height: 1; opacity: 0.6; }
+.pull-quote .attribution { display: block; margin-top: 0.6em; font-size: 0.7em; color: var(--text-2); font-style: normal; font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* Decision col polish */
+.decision-col { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+.decision-col.approve { box-shadow: 0 10px 30px rgba(45, 111, 75, 0.25); }
+.decision-col.approve:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(45, 111, 75, 0.35); }
+
+/* Smooth section transitions */
+.reveal .slides section { transition: opacity 0.35s ease; }
+
+/* Table polish */
+.reveal table { border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(30, 58, 92, 0.06); }
+.reveal th { letter-spacing: 0.02em; }
 </style>
 </head>
 <body>
@@ -203,7 +257,14 @@
   <div class="brand">JYTRA TECHNOLOGY SOLUTIONS</div>
   <h1>ActCAD</h1>
   <div class="subtitle">Re-Architecting for the Next Decade</div>
-  <p class="small" style="color: var(--text-2); margin: 0;">A strategic decision briefing for management</p>
+  <p class="small" style="color: var(--text-2); margin: 0 0 1.5em 0;">A strategic decision briefing for management</p>
+  <div style="display: flex; justify-content: center; gap: 32px; margin: 1em 0 0; font-family: 'JetBrains Mono', monospace; font-size: 0.75em; color: var(--text-2);">
+    <span><strong style="color: var(--primary);">3</strong> years</span>
+    <span style="color: var(--border);">·</span>
+    <span><strong style="color: var(--primary);">25</strong> people at peak</span>
+    <span style="color: var(--border);">·</span>
+    <span><strong style="color: var(--accent);">$1.38M</strong> envelope</span>
+  </div>
   <div class="meta">
     Based on <code>architecture-overview.md</code>, <code>industry-outlook.md</code>, and
     <code>rearchitecture-plan.md</code> (563 lines, 16 sections).
@@ -222,19 +283,19 @@
 <section>
   <h2>The ask, in one slide</h2>
   <div class="card-grid cols-2" style="gap: 14px;">
-    <div class="card primary">
+    <div class="card primary fragment fade-in" data-fragment-index="1">
       <h4>What we propose</h4>
       <p>A <strong>3-year, phased re-architecture</strong> of ActCAD that replaces the IntelliCAD engine with a first-party engine on <strong>ODA SDKs + Open CASCADE</strong>.</p>
     </div>
-    <div class="card primary">
+    <div class="card primary fragment fade-in" data-fragment-index="2">
       <h4>Revenue protection</h4>
       <p>Existing ActCAD continues to ship through <strong>Phase 2 (24 months)</strong>. Sunset announced only when the new product reaches GA.</p>
     </div>
-    <div class="card primary">
+    <div class="card primary fragment fade-in" data-fragment-index="3">
       <h4>End-state by year 3</h4>
       <p>New product equals or beats today's ActCAD on every dimension: <strong>performance, web + native + mobile, AI assistance, BIM, extensibility</strong>.</p>
     </div>
-    <div class="card primary">
+    <div class="card primary fragment fade-in" data-fragment-index="4">
       <h4>Today's decision</h4>
       <p>Approve a <strong>4–6 week feasibility spike</strong>. Full 3-year Go/No-Go decided <em>after</em> the spike with measured data.</p>
     </div>
@@ -252,31 +313,44 @@
 </section>
 
 <!-- ============================================================== -->
+<!-- CHAPTER 01 -->
+<!-- ============================================================== -->
+<section class="chapter">
+  <div class="chapter-num">Chapter 01</div>
+  <h1>Why now</h1>
+  <hr class="chapter-rule">
+  <p class="chapter-sub">Three forces are converging on the CAD market in the next 24–36 months. The current stack is structurally blocked from meeting any of them.</p>
+</section>
+
+<!-- ============================================================== -->
 <!-- 3. WHY NOW -->
 <!-- ============================================================== -->
 <section>
   <h2>Why now — three forces converging</h2>
   <div class="card-grid cols-3">
-    <div class="force-col">
+    <div class="force-col fragment fade-in" data-fragment-index="1">
       <div class="icon">⚡</div>
       <h4>Force 1</h4>
       <h3>AI is table stakes</h3>
       <p>Autodesk shipped MCP servers in Revit 2027 and Fusion 2026. Graebert shipped A3 agent. BricsCAD shipped AI Assistant. <strong>We are structurally blocked</strong> — IntelliCAD's consortium license forbids operating AI on the foundational codebase.</p>
     </div>
-    <div class="force-col">
+    <div class="force-col fragment fade-in" data-fragment-index="2">
       <div class="icon">☁</div>
       <h4>Force 2</h4>
       <h3>Cloud + web are baseline</h3>
       <p>AutoCAD Web since 2018. Onshape cloud-native from founding. ARES Kudo ships a browser DWG editor. Snaptrude is cloud-native AEC. <strong>We are Windows-only</strong> because of how IntelliCAD's shell is structured.</p>
     </div>
-    <div class="force-col">
+    <div class="force-col fragment fade-in" data-fragment-index="3">
       <div class="icon">▣</div>
       <h4>Force 3</h4>
       <h3>BIM is moving downmarket</h3>
       <p>SMB AEC customers in India / SEA / EU increasingly ask for IFC import / export and lightweight BIM. Adding this on top of IntelliCAD is a <strong>renderer-tuning treadmill</strong> we don't win.</p>
     </div>
   </div>
-  <blockquote style="margin-top: 1em;">If we are not on the new architecture by year 3, we will be selling against products that are.</blockquote>
+  <div class="pull-quote fragment fade-in" data-fragment-index="4" style="margin-top: 1em;">
+    If we are not on the new architecture by year 3, we will be selling against products that are.
+    <span class="attribution">— Re-architecture plan, §0</span>
+  </div>
 
   <aside class="notes">
     These three forces are independent but compounding. The AI block is the most acute today.
@@ -388,6 +462,16 @@
     co-edit) are not independent — solving any one of them requires touching the engine, which
     is exactly what IntelliCAD's consortium license prevents.
   </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- CHAPTER 02 -->
+<!-- ============================================================== -->
+<section class="chapter">
+  <div class="chapter-num">Chapter 02</div>
+  <h1>The plan</h1>
+  <hr class="chapter-rule">
+  <p class="chapter-sub">Replace the engine in three phases, keep the existing product shipping through phase two, and own every layer of the new stack ourselves.</p>
 </section>
 
 <!-- ============================================================== -->
@@ -623,6 +707,16 @@ graph TB
     architecture changes. If the MCP agent can't draft a simple plan, the AI surface needs
     redesign. Better to learn these in 6 weeks than 6 months in.
   </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- CHAPTER 03 -->
+<!-- ============================================================== -->
+<section class="chapter">
+  <div class="chapter-num">Chapter 03</div>
+  <h1>The numbers</h1>
+  <hr class="chapter-rule">
+  <p class="chapter-sub">~$1.38M over three years — every line is bounded by a published price, no six-figure opaque OEM commitment in any phase.</p>
 </section>
 
 <!-- ============================================================== -->
@@ -953,6 +1047,16 @@ graph TB
 </section>
 
 <!-- ============================================================== -->
+<!-- CHAPTER 04 -->
+<!-- ============================================================== -->
+<section class="chapter">
+  <div class="chapter-num">Chapter 04</div>
+  <h1>The decision</h1>
+  <hr class="chapter-rule">
+  <p class="chapter-sub">$8K and 6 weeks today. The full $1.38M commitment only after the spike returns measured data.</p>
+</section>
+
+<!-- ============================================================== -->
 <!-- 20. DECISION TODAY -->
 <!-- ============================================================== -->
 <section>
@@ -1092,9 +1196,11 @@ Reveal.initialize({
   slideNumber: 'c/t',
   history: true,
   center: false,
-  transition: 'slide',
+  transition: 'fade',
   transitionSpeed: 'default',
   backgroundTransition: 'fade',
+  fragments: true,
+  fragmentInURL: false,
   width: 1400,
   height: 850,
   margin: 0.04,
