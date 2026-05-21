@@ -44,7 +44,7 @@ Communication: synchronous in-process calls within native; FlatBuffers over `pos
 | Layer | Choice |
 |---|---|
 | DWG / DXF + database | ODA Drawings SDK |
-| Rendering | ODA Visualize (native: Vulkan / Metal / DirectX backends; web: Visualize inWEB → WebGPU) |
+| Rendering | ODA Visualize. Native backends: **DirectX 11 (Windows default), DirectX 12, Vulkan (cross-platform), Metal (macOS / iOS)**. Web: Visualize inWEB → WebGPU (WebGL2 fallback). All driven through our `render` module's abstraction layer so backends are swappable. |
 | 3D Kernel | OCCT primary (KAL-abstracted); Parasolid as paid Phase-3+ option for MCAD-grade workflows |
 | MCAD format I/O | ODA MCAD SDK (SolidWorks / Inventor / CATIA / NX / Creo translators) — read-only initially |
 | BIM / IFC | ODA IFC SDK + BimRv / BimNw extensions |
@@ -105,6 +105,7 @@ Communication: synchronous in-process calls within native; FlatBuffers over `pos
 - Don't ship chat-in-canvas as the primary AI UX (Hypar pivoted away from text-to-BIM for this reason — see §14).
 - Don't chase Bernini-style generative-CAD demos until editable, parametric round-tripping is proven.
 - Don't use Yjs / Automerge for the geometry plane — confine generic CRDTs to non-spatial metadata only.
+- **Don't budget Parasolid into the 3-year plan.** It's a year-4+ strategic option only if the product ever pivots into MCAD parametric territory. The KAL keeps the swap technically possible; the budget envelopes don't carry it.
 
 ## 7. Risks and mitigations
 
@@ -135,7 +136,7 @@ Seven validations, in priority order. **If items 1, 2, 3, or 5 fail, the plan ch
 
 | # | What | Pass criterion |
 |---|---|---|
-| 1 | Read 50 customer DWGs containing ACIS B-rep through OCCT; for the 3D-heavy subset, run a side-by-side Parasolid trial. Measure geometric drift, boolean robustness on degenerate topology, and fillet survival. | OCCT pass = no visible drift, <0.001 unit tolerance on volume / area, booleans pass on ≥95% of customer parts. If <95%, escalate to Parasolid commercial conversation. |
+| 1 | Read 50 customer DWGs containing ACIS B-rep through OCCT. Measure geometric drift, boolean robustness on degenerate topology, fillet survival. **Parasolid trial is only triggered if OCCT clearly fails on the AEC subset** — not run by default. | OCCT pass = no visible drift, <0.001 unit tolerance on volume / area, booleans pass on ≥95% of customer parts. If OCCT clears this on the AEC corpus, **OCCT is locked for the 3-year plan**; the Parasolid escalation path closes. |
 | 2 | Render the same 50 DWGs through native Visualize (Vulkan) *and* through Visualize inWEB (WebGPU); compare frame time on a 250k-entity drawing | inWEB ≤ 3× slower than native |
 | 3 | Spike the `ui-bridge` C ABI / FlatBuffers seam: drive 10 commands from both a Qt shell and a React + WASM shell against a single `cmd` implementation | Seam is one source of truth; no shell-specific branching in `cmd` |
 | 4 | Run a real customer LISP script (largest one a top-5 customer uses) through a minimal LISP interpreter on top of `cmd` | Script runs and produces visually identical output to current ActCAD |
@@ -154,7 +155,7 @@ Seven validations, in priority order. **If items 1, 2, 3, or 5 fail, the plan ch
 - **Document service / auth / billing stack** — recommended Clerk + Stripe + self-hosted document service. **Open** pending data-residency review for EU / India customers.
 - **Customer-facing .NET API scope** — explicitly *not* ObjectARX-compatible. **Open** pending announcement / migration messaging review.
 - **IntelliCAD-ActCAD sunset date** — **open**, driven by Phase 2 GA quality, not a date picked up front.
-- **Parasolid / ACIS** — **open**, gated on §9 spike item 1. Only proceed to commercial OEM contract if OCCT fails on customer ACIS B-rep parts.
+- **Parasolid / ACIS** — **deferred / hypothetical.** Not budgeted in the 3-year plan. Year-4+ strategic option only if the product ever pivots into MCAD parametric assembly territory (SolidWorks / NX / Plasticity workloads — *not* ActCAD's current customer base). The KAL keeps the swap technically possible at ~6-12 weeks of focused work if it ever becomes necessary.
 
 ## 11. Industry adoption — who else picked these and why
 
@@ -176,7 +177,7 @@ For each component of the planned stack: notable adopters, why they picked it, k
 - **Why anyone picks OCCT.** Only open-source full-scale B-rep + STEP / IGES / BREP I/O; LGPL 2.1 with dynamic-linking exception allows commercial closed-source products; broad surface / curve / topology coverage; included tessellator + visualization.
 - **Known pain.** Boolean robustness on degenerate topology (FreeCAD issues #5619, #5782, #15599, #17497, #17705, #26119 all document this — workaround is the "Fuzzy Boolean" tolerance hack). Tolerance model is global-ish, breaks when small geometry sits next to large. Performance on large assemblies (FreeCAD bypasses the OCCT viewer for Coin3D). Surface intersection edge cases on trimmed NURBS produce empty / invalid edges. Multi-threaded booleans are sometimes *slower* than single-threaded.
 - **Cost.** **$0** under LGPL 2.1 + linking exception. The exception is explicit that **closed-source commercial linking is permitted, including static** — no commercial contract required for our use. Open Cascade SAS commercial support / indemnification is optional (undisclosed pricing); revisit only if a Phase-2 / 3 procurement gate or certification regime demands it.
-- **Verdict.** **Acceptable for ActCAD's AEC / drafting / light-3D scope.** Risky if customers ever want filleted assemblies — keep Parasolid as a paid Phase-3+ option. The §9 spike measures the boundary.
+- **Verdict.** **Locked for the 3-year plan, gated on §9 spike item 1.** ActCAD's workloads — 2D AEC drafting, MEP 2D + light routing, electrical schematics, mechanical *drafting* (not parametric assembly modeling), GIS, IFC-lite BIM, light 3D solids — are exactly what OCCT handles in production today (FreeCAD, KiCad, Salome, BIM Vision, IfcOpenShell). The one risk is customer DWGs with embedded ACIS B-rep solids — what the §9 spike measures. Confidence ~90% that OCCT covers full Phase-1-through-3 scope; if it clears the spike, Parasolid is **out of budget for the 3-year plan** (year-4+ hypothetical only).
 - Sources: [OCCT projects](https://dev.opencascade.org/about/projects_and_products), [FreeCAD #15599](https://github.com/FreeCAD/FreeCAD/issues/15599), [#5619](https://github.com/FreeCAD/FreeCAD/issues/5619), [Shapr3D migration](https://www.fabbaloo.com/2017/12/shapr3d-30-brings-parasolid-3d-modeling-to-ipad-pro).
 
 ### 11.3 ODA MCAD SDK — translator, not kernel
@@ -202,7 +203,7 @@ For each component of the planned stack: notable adopters, why they picked it, k
 - **Adopters (Rust).** **Fornjot** (Hanno Braun) — experimental B-rep kernel, explicitly "reliability over features," no shipped product on it. **Truck** (RICOS-JP) — Rust B-rep kernel, compiles to WASM; used by **CADmium** (Matt Ferraro). **Zoo.dev / KittyCAD** — the most serious commercial Rust CAD play; Rust geometry engine on the server (Vulkan / Nvidia), React frontend, app shipping. **Figma** — C++ canvas, Rust used for multiplayer sync server and hot-path tooling. Pattern: Rust at the edges, not the kernel.
 - **Why.** Memory safety without GC, fearless concurrency, excellent WASM toolchain, cargo, no header / macro hell. For a from-scratch solver, type-checkable correctness.
 - **Known pain.** Hiring depth in CAD geometry is in C++ not Rust. No mature B-rep kernel in Rust (Truck / Fornjot are years behind OCCT, decades behind Parasolid). C++ FFI to ODA / OCCT / Parasolid is non-trivial — you pay it on every API boundary.
-- **Cost.** Both C++ and Rust toolchains are $0. Visual Studio Professional ~$1,199 first yr / $799 renewal per dev; **Enterprise $5,999 first / $2,569 renewal** for the C++ inner-loop devs (worth it for advanced profiling + IntelliTrace). Rust uses Cargo + free toolchains.
+- **Cost.** C++ and Rust toolchains are $0. **Primary IDE is VS Code (or Cursor) + clangd + CMake Tools + Qt extension pack + AI agent (Claude Code / Cursor / Copilot)** — that's where the AI-augmented dev workflow lives in 2026. **Visual Studio Enterprise reserved for 2-3 designated Windows-perf devs** (IntelliTrace, Concurrency Visualizer, advanced profiler) at $5,999 first / $2,569 renewal. JetBrains CLion (~€979/yr) available to taste as an alternative. AI dev tooling budgeted at **~$50/dev/mo blended** (Cursor Business $40/mo, Copilot Business $19/mo, Claude Code usage on top).
 - **Verdict.** **Mismatch for the kernel; selective fit at the edges.** Confirms §2.4 — Rust earns its place in `net`, `script` host, `agent` (MCP), and new geometry algorithms. C++20 stays primary.
 - Sources: [Fornjot](https://www.fornjot.app/), [Truck](https://github.com/ricosjp/truck), [CADmium](https://mattferraro.dev/posts/cadmium), [Zoo modeling-app](https://github.com/KittyCAD/modeling-app), [Figma WASM](https://www.figma.com/blog/webassembly-cut-figmas-load-time-by-3x/).
 
@@ -441,8 +442,8 @@ Per-component cost data appears inline in each §11 subsection. This section rol
 | **ODA extensions** (BimRv / BimNw / MCAD / Civil / Scan-to-BIM) | Add-on, Sustaining+ | $5K–$10K/yr each (reported) | None | [ODA FAQ](https://www.opendesign.com/faq/membership) |
 | **OCCT (LGPL path)** | LGPL 2.1 + linking exception | **$0** | None | [OCCT licensing](https://dev.opencascade.org/resources/licensing) |
 | **OCCT — Open Cascade SAS commercial support** | Contract | **Opaque** | None | — |
-| **Siemens Parasolid** | OEM | **Opaque** (industry consensus: 6-figure entry) | **Yes — per-seat or per-deployment royalty** + annual maintenance | [Parasolid](https://plm.sw.siemens.com/en-US/plm-components/parasolid/) |
-| **Spatial / Dassault ACIS** | OEM | Opaque | Yes — per-seat royalty + DELA | [Spatial ACIS](https://www.spatial.com/solutions/3d-modeling/3d-acis-modeler) |
+| **Siemens Parasolid** *(deferred / hypothetical, year-4+)* | OEM | Opaque — industry consensus: 6-figure entry | Per-seat or per-deployment royalty + annual maintenance | [Parasolid](https://plm.sw.siemens.com/en-US/plm-components/parasolid/) |
+| **Spatial / Dassault ACIS** *(deferred)* | OEM | Opaque | Per-seat royalty + DELA | [Spatial ACIS](https://www.spatial.com/solutions/3d-modeling/3d-acis-modeler) |
 | **Qt for Small Business — App Dev** | Sub, per-dev | **€530/yr Pro, USD 618/yr Ent** | n/a — but **≤€1M revenue cap, max 3 licenses** | [Qt SBE](https://www.qt.io/development/qt-for-small-business) |
 | **Qt — Application Development (standard)** | Sub, per-dev | ~$3,624/yr Pro, $3,948–$4,660/yr Ent | n/a | [Qt pricing](https://www.qt.io/pricing) |
 | **Qt — Device Creation / Mobile / WASM add-ons** | Sub, per-dev | +30–60% over App Dev | n/a | [Qt pricing](https://www.qt.io/pricing) |
@@ -462,15 +463,16 @@ Per-component cost data appears inline in each §11 subsection. This section rol
 | **AWS GPU — g4dn.xlarge (T4)** | On-demand | **$0.526/hr** ($4,608/yr 24×7) | n/a | [AWS GPU](https://handbook.vantage.sh/aws/reference/aws-gpu-instances/) |
 | **AWS GPU — g5.xlarge (A10G)** | On-demand | **$0.916/hr** ($8,024/yr 24×7) | n/a | [AWS G5](https://aws.amazon.com/ec2/instance-types/g5/) |
 | **JetBrains All Products Pack** | Sub, per-dev | **€979/yr (~$1,050)** | n/a — yr-2 ~20% off, yr-3 ~40% off | [JetBrains](https://www.jetbrains.com/store/) |
-| **Visual Studio Professional** | Sub, per-dev | $1,199 first / $799 renewal | n/a | [VS pricing](https://visualstudio.microsoft.com/vs/pricing/) |
-| **Visual Studio Enterprise** | Sub, per-dev | **$5,999 first / $2,569 renewal** | n/a | [VS pricing](https://visualstudio.microsoft.com/vs/pricing/) |
+| **Visual Studio Enterprise** *(2-3 perf devs only)* | Sub, per-dev | $5,999 first / $2,569 renewal | n/a — reserved for Windows deep-profiling work | [VS pricing](https://visualstudio.microsoft.com/vs/pricing/) |
+| **VS Code + clangd + Qt extensions** *(primary IDE)* | OSS | **$0** | n/a | [VS Code](https://code.visualstudio.com/) |
+| **AI dev tooling** (Claude Code / Cursor / Copilot blended) | Per-dev sub | **~$50/dev/mo** ($600/yr); Cursor Business $40, Copilot Business $19, Claude Code usage on top | n/a | [Cursor pricing](https://cursor.com/pricing), [Copilot Business](https://github.com/features/copilot) |
 | **GitHub Enterprise Cloud** | Sub, per-dev | $21/dev/mo ($252/yr) | n/a — 50-100 seat min on annual | [GitHub pricing](https://github.com/pricing) |
 | **GitHub Advanced Security** | Sub, per-dev | +$19/dev/mo ($228/yr) | n/a | [GitHub pricing](https://github.com/pricing) |
 | **GitHub Actions (standard)** | Per-minute | **$0.006/min** (2-core Linux, effective Jan 2026); 50K min/mo bundled in Enterprise Cloud | n/a | [Actions pricing](https://docs.github.com/en/billing/reference/actions-runner-pricing) |
 
 ### 15.2 Modeled annual budget envelopes
 
-Three scenarios sized to the engineering org in §5's phasing. **These are modeled rollups, not committed numbers.** They assume Pro / Sustaining ODA tier from year 1 (we need Web/SaaS rights for the inWEB shell), standard Qt commercial tier (Small Business eligibility is unlikely at Jytra's scale), and the OCCT path on the 3D kernel (no Parasolid in the baseline). A "+Parasolid" line is shown separately so the Phase-3 escalation is visible.
+Three scenarios sized to the engineering org in §5's phasing. **These are modeled rollups, not committed numbers.** Assumptions: ODA Sustaining from year 1 (Web/SaaS rights for inWEB), Qt commercial App Dev Enterprise standard tier (Small Business eligibility unlikely at Jytra's scale), **OCCT-only on the 3D kernel for the entire 3-year plan** (Parasolid deferred / hypothetical — see §6 and §10), **VS Code primary + Visual Studio Enterprise for 2-3 designated Windows-perf devs only**, AI dev tooling at ~$50/dev/mo blended.
 
 #### Phase 1 — 8 engineers (months 0–12)
 
@@ -480,14 +482,16 @@ Three scenarios sized to the engineering org in §5's phasing. **These are model
 | ODA Revit add-on (BimRv Standard) | $5,000 |
 | Qt commercial — App Dev Enterprise (8 devs × $4,000) | $32,000 |
 | OCCT (LGPL) | $0 |
-| Visual Studio Enterprise (4 C++ devs × $5,999) | $23,996 |
-| JetBrains All Products Pack (8 × $1,050) | $8,400 |
+| **Visual Studio Enterprise (2 perf devs × $5,999)** | $11,998 |
+| VS Code + clangd + Qt extensions (rest of team) | $0 |
+| **AI dev tooling (8 devs × ~$50/mo)** | $4,800 |
+| JetBrains All Products Pack (4 devs to taste × $1,050) | $4,200 |
 | GitHub Enterprise Cloud (8 × $252) | $2,016 |
 | GitHub Advanced Security (8 × $228) | $1,824 |
 | GitHub Actions large runners + cache | $5,000 |
 | AWS dev infra (compute + storage + 1× g4dn dev box) | $8,000 |
 | Auth / billing (nominal — Clerk free tier, Stripe test mode) | $1,000 |
-| **Phase 1 yr 1 stack + tools + cloud total** | **~$94,700** |
+| **Phase 1 yr 1 stack + tools + cloud total** | **~$83,300** |
 
 #### Phase 2 — 20 engineers (months 12–24, GA at month 24)
 
@@ -497,9 +501,10 @@ Three scenarios sized to the engineering org in §5's phasing. **These are model
 | ODA extensions (BimRv + MCAD + Civil) | $15,000 |
 | Qt commercial — App Dev Enterprise (20 × $4,000) | $80,000 |
 | Qt mobile / WASM add-ons (+40% on 5 web/mobile devs × $4,000) | $8,000 |
-| OCCT (LGPL) + optional Open Cascade SAS support contract | $50,000 (placeholder if engaged) |
-| Visual Studio Enterprise (10 C++ devs × $2,569 renewal) | $25,690 |
-| JetBrains All Products Pack (20 × $840 yr-2 disc.) | $16,800 |
+| OCCT (LGPL) — no commercial contract | $0 |
+| **Visual Studio Enterprise (3 perf devs × $2,569 renewal)** | $7,707 |
+| **AI dev tooling (20 devs × ~$50/mo)** | $12,000 |
+| JetBrains All Products Pack (10 devs to taste × $840 yr-2 disc.) | $8,400 |
 | GitHub Enterprise Cloud (20 × $252) | $5,040 |
 | GitHub Advanced Security (20 × $228) | $4,560 |
 | GitHub Actions + build infra | $15,000 |
@@ -507,8 +512,7 @@ Three scenarios sized to the engineering org in §5's phasing. **These are model
 | Auth (Clerk B2B, ~25K MAU) | $12,000 |
 | Stripe Billing (assume $200K ARR × 0.7%) | $1,400 |
 | Stripe Payments (assume $200K × 2.9%) | $5,800 |
-| **Phase 2 stack + tools + cloud total (baseline)** | **~$303,800** |
-| **+ Parasolid (if Phase-3-or-earlier escalation)** | + ~$200K–$300K (estimate; needs procurement) |
+| **Phase 2 stack + tools + cloud total** | **~$239,400** |
 
 #### Phase 3 — 30 engineers (months 24–36)
 
@@ -518,17 +522,17 @@ Three scenarios sized to the engineering org in §5's phasing. **These are model
 | ODA extensions (full extension set) | $30,000 |
 | Qt commercial (30 × $4,000) | $120,000 |
 | Qt mobile / iOS / Android / WASM add-ons (10 devs × $4,000 × 50%) | $20,000 |
-| OCCT support (optional) | $50,000 |
-| Visual Studio Enterprise (15 C++ devs renewal) | $38,535 |
-| JetBrains All Products Pack (30 × $630 yr-3 disc.) | $18,900 |
+| OCCT (LGPL) — no commercial contract | $0 |
+| **Visual Studio Enterprise (3 perf devs renewal)** | $7,707 |
+| **AI dev tooling (30 devs × ~$50/mo)** | $18,000 |
+| JetBrains All Products Pack (12 devs to taste × $630 yr-3 disc.) | $7,560 |
 | GitHub Enterprise Cloud (30 × $252) | $7,560 |
 | GitHub Advanced Security (30 × $228) | $6,840 |
 | GitHub Actions + build infra | $30,000 |
 | AWS production (compute + 12× g5 streaming + CDN + egress at scale) | $200,000 |
 | Auth (Clerk B2B, ~100K MAU) | $30,000 |
 | Stripe Billing + Payments (assume $2M ARR) | $73,000 |
-| **Phase 3 stack + tools + cloud total (baseline)** | **~$680,000** |
-| **+ Parasolid (committed path)** | + ~$300K–$500K (estimate) |
+| **Phase 3 stack + tools + cloud total** | **~$595,700** |
 
 ### 15.3 What's modeled vs what's opaque
 
@@ -542,11 +546,12 @@ ActCAD is a closed-source commercial product. The license tier on every componen
 
 1. **ODA Sustaining from day 1 — LOCKED.** $7.5K first / $4.5K/yr renewal for unlimited commercial seats + inWEB Web/SaaS redistribution rights with **no per-seat royalty** is the single best-value line item in the entire stack. Limited Commercial's 100-seat cap is a footgun at our scale; Founding (~$37.5K) considered in Phase 3 for source + Git access + business-continuation rights.
 2. **Qt 6 commercial — LOCKED.** Standard Application Development Enterprise per developer. LGPL is *not* viable for ActCAD: static linking is forbidden under LGPL v3, code-signed iOS distribution can't satisfy the user-relinking clause, and we need to keep our Qt modifications private. Small Business tier is almost certainly not available at Jytra's revenue. §9 spike item 6 negotiates the multi-year quote; target 15–35% below first quote per Vendr-reported norm.
-3. **OCCT under LGPL 2.1 + linking exception — LOCKED.** The exception **explicitly permits closed-source commercial linking, including static** — no commercial contract required. We're free of license cost on the kernel as long as OCCT clears §9 spike item 1; if it fails, the Parasolid commercial OEM conversation opens (six-figure entry + per-seat royalty, opaque pricing, ~$200K–$500K/yr placeholder).
-4. **Visual Studio Enterprise — LOCKED for C++ inner-loop devs.** ~$6K first / $2.6K renewal per seat for advanced profiling + IntelliTrace earns its price on a CAD inner loop. Professional for the rest of the team.
-5. **All build / runtime tooling stays free.** CMake, Emscripten, Cargo, Vcpkg, Conan, WebGPU / WebAssembly, .NET 8 / NativeAOT, MCP, Tauri (for the launcher app only) are all permissive OSS — no commercial concern for our use.
-6. **AutoLISP must be built in-house.** No commercial runtime exists to license; every IntelliCAD-class vendor rolls its own. Phase-1 LISP team is a real headcount commitment, not a vendor decision.
-7. **Total stack + tools + cloud envelope** — roughly **$95K Phase 1, $300K Phase 2 (baseline) / $500K–$600K with Parasolid, $680K Phase 3 (baseline) / $1.0M–$1.2M with Parasolid**. Dwarfed by salary at any phase, but a real budget conversation. The Parasolid escalation is the only six-figure-plus item we don't already control; everything else is bounded by published prices.
+3. **OCCT under LGPL 2.1 + linking exception — LOCKED for the 3-year plan.** The exception **explicitly permits closed-source commercial linking, including static** — no commercial contract required. ActCAD's workloads (2D AEC drafting, MEP, electrical, mechanical *drafting*, GIS, IFC-lite, light 3D) are exactly the production zone OCCT is proven in (FreeCAD, KiCad, Salome, BIM Vision). ~90% confidence OCCT covers Phase-1-through-3 fully; §9 spike item 1 closes the remaining 10% before kickoff. **Parasolid is deferred to year-4+ strategic option only** if the product ever pivots into MCAD parametric assemblies — not in any 3-year budget envelope.
+4. **VS Code (or Cursor) primary, Visual Studio Enterprise reserved — LOCKED.** Primary IDE is **VS Code + clangd + CMake Tools + Qt extension pack + AI agent (Claude Code / Cursor / Copilot)** for the entire C++ team — that's where the AI-augmented dev workflow lives in 2026. Visual Studio Enterprise (~$6K first / $2.6K renewal) is **reserved for 2-3 designated Windows-perf devs** for IntelliTrace, Concurrency Visualizer, and advanced profiler work into ODA / Qt call stacks. JetBrains CLion available to taste as an alternative. Saves ~$12K Phase 1, ~$18K Phase 2, ~$30K Phase 3 versus the original plan of buying VS Enterprise for the whole C++ team.
+5. **AI-augmented team math.** Qt's commercial license is per-human-developer; AI agents are tools, not licensees. AI doesn't reduce the per-seat *rate*, it reduces the per-seat *count* — a 12-dev AI-augmented Phase-2 team can ship what 20 devs shipped pre-AI, so Qt's line drops from $80K to ~$48K via headcount, not via license loophole. Same logic applies to ODA seats (unlimited under Sustaining — no effect), GitHub / Visual Studio / JetBrains (per-human, scale with headcount). Budget for AI dev tooling itself at **~$50/dev/mo blended** (Cursor Business $40, Copilot Business $19, Claude Code on top).
+6. **All build / runtime tooling stays free.** CMake, Emscripten, Cargo, Vcpkg, Conan, WebGPU / WebAssembly, .NET 8 / NativeAOT, MCP, Tauri (launcher app only) are all permissive OSS — no commercial concern for our use.
+7. **AutoLISP must be built in-house.** No commercial runtime exists to license; every IntelliCAD-class vendor rolls its own. Phase-1 LISP team is a real headcount commitment, not a vendor decision.
+8. **Total stack + tools + cloud envelope** — roughly **$83K Phase 1, $239K Phase 2, $596K Phase 3.** Dwarfed by salary at any phase, but a real budget conversation. No six-figure-plus opaque-OEM item is carried in any of the three phases — everything is bounded by published prices.
 
 ## 16. Next steps
 
@@ -555,4 +560,4 @@ ActCAD is a closed-source commercial product. The license tier on every componen
 3. Convert each locked decision in §2 into an ADR under `docs/decisions/`.
 4. Stand up the engineering org for Phase 1 (engine team, shell team, agent team, LISP-shim team, infra team).
 5. Lock the Phase 1 milestone definitions and the willing-customer cohort for the month-12 native Windows beta.
-6. Open commercial conversations (commitments locked per §10 and §15.4 — these are execution, not decisions): **ODA Sustaining membership signup; Qt Commercial Application Development Enterprise multi-year quote negotiation (target 15–35% below first quote, with mobile / WASM add-ons and Phase-3 price protection); Visual Studio Enterprise seats for the C++ inner-loop team; Clerk + Stripe accounts.** Conditional / open: Parasolid evaluation license (gated on §9 spike item 1), Open Cascade SAS support (only if procurement / certification demands it).
+6. Open commercial conversations (commitments locked per §10 and §15.4 — these are execution, not decisions): **ODA Sustaining membership signup; Qt Commercial Application Development Enterprise multi-year quote (target 15–35% below first quote, with mobile / WASM add-ons and Phase-3 price protection); 2-3 Visual Studio Enterprise seats for designated Windows-perf devs; AI dev tooling subscriptions (Cursor Business / Copilot Business / Claude Code) for the whole team; Clerk + Stripe accounts.** Parasolid and Open Cascade SAS support are *not* on the conversation list — both deferred per §10.
