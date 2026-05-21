@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ActCAD Re-Architecture — Executive Briefing</title>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css" id="theme">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary: #1e3a5c;
+  --primary-deep: #102542;
+  --accent: #c08847;
+  --accent-light: #e8d5b7;
+  --bg: #ffffff;
+  --bg-cream: #faf7f2;
+  --bg-slate: #f4f1ec;
+  --text: #1a1a1a;
+  --text-2: #555;
+  --text-3: #888;
+  --border: #e0d8cc;
+  --danger: #b03c3c;
+  --success: #2d6f4b;
+  --warn: #b88130;
+}
+
+.reveal {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 26px;
+  color: var(--text);
+  font-weight: 400;
+}
+.reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: none;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5em;
+}
+.reveal h1 { font-size: 2.4em; line-height: 1.1; }
+.reveal h2 { font-size: 1.6em; line-height: 1.15; border-bottom: 3px solid var(--primary); padding-bottom: 0.3em; margin-bottom: 0.8em; }
+.reveal h3 { font-size: 1.2em; color: var(--primary-deep); }
+.reveal h4 { font-size: 1.0em; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+.reveal section { text-align: left; padding: 0 30px; }
+.reveal .slides > section, .reveal .slides > section > section { padding: 30px 40px; }
+.reveal strong { color: var(--primary); font-weight: 600; }
+.reveal em { color: var(--accent); font-style: normal; font-weight: 500; }
+.reveal a { color: var(--primary); text-decoration: underline; }
+.reveal code { font-family: 'JetBrains Mono', monospace; background: var(--bg-slate); padding: 0.1em 0.4em; border-radius: 3px; font-size: 0.85em; }
+.reveal ul, .reveal ol { margin-left: 0; padding-left: 1.2em; }
+.reveal li { margin: 0.3em 0; line-height: 1.4; }
+.reveal table { font-size: 0.78em; border-collapse: collapse; width: 100%; margin: 0.5em 0; }
+.reveal th { background: var(--primary); color: white; text-align: left; padding: 10px 12px; font-weight: 600; }
+.reveal td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.reveal tr:nth-child(even) td { background: var(--bg-cream); }
+.reveal blockquote { border-left: 4px solid var(--accent); background: var(--bg-cream); padding: 15px 20px; margin: 1em 0; font-style: normal; color: var(--text); box-shadow: none; font-size: 0.95em; }
+
+/* Title slide */
+.title-slide { text-align: center !important; padding: 60px !important; }
+.title-slide h1 { font-size: 3em; color: var(--primary-deep); margin-bottom: 0.2em; letter-spacing: -0.02em; }
+.title-slide .subtitle { font-size: 1.4em; color: var(--accent); font-weight: 500; margin-bottom: 2em; }
+.title-slide .meta { font-size: 0.7em; color: var(--text-3); border-top: 2px solid var(--border); padding-top: 1.5em; max-width: 700px; margin: 2em auto 0; }
+.title-slide .brand { font-family: 'Inter', sans-serif; font-weight: 800; letter-spacing: 0.25em; color: var(--primary); font-size: 0.6em; margin-bottom: 3em; }
+
+/* Hero / big stat */
+.hero-stat { text-align: center; padding: 30px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-deep) 100%); color: white; border-radius: 8px; margin: 0.6em 0; }
+.hero-stat .number { font-size: 3em; font-weight: 800; color: var(--accent-light); line-height: 1; }
+.hero-stat .label { font-size: 0.85em; opacity: 0.9; margin-top: 0.4em; }
+
+/* Cards */
+.card-grid { display: grid; gap: 18px; margin: 0.5em 0; }
+.cols-2 { grid-template-columns: 1fr 1fr; }
+.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.card { background: var(--bg-cream); border-left: 4px solid var(--accent); padding: 16px 20px; border-radius: 4px; }
+.card.primary { border-left-color: var(--primary); }
+.card.danger { border-left-color: var(--danger); }
+.card.success { border-left-color: var(--success); }
+.card h3 { margin: 0 0 0.4em 0; font-size: 1em; }
+.card h4 { margin: 0 0 0.5em 0; font-size: 0.75em; color: var(--accent); }
+.card p, .card ul, .card .body { margin: 0; font-size: 0.78em; line-height: 1.5; color: var(--text-2); }
+.card .big-num { font-size: 1.8em; font-weight: 800; color: var(--primary); display: block; line-height: 1; }
+.card .stat-label { font-size: 0.7em; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.4em; }
+
+/* Forces / icon columns */
+.force-col { padding: 20px; border-top: 4px solid var(--accent); background: var(--bg-cream); border-radius: 4px; }
+.force-col .icon { font-size: 2em; margin-bottom: 0.3em; }
+.force-col h3 { font-size: 1em; margin: 0.2em 0; }
+.force-col p { font-size: 0.78em; line-height: 1.5; color: var(--text-2); margin: 0.4em 0 0 0; }
+
+/* Status badges */
+.badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 0.75em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.badge.locked { background: var(--success); color: white; }
+.badge.deferred { background: var(--text-3); color: white; }
+.badge.free { background: var(--accent); color: white; }
+.badge.open { background: var(--warn); color: white; }
+.badge.danger { background: var(--danger); color: white; }
+.badge.ok { background: var(--success); color: white; }
+
+/* Peer comparison table */
+.peer-table td.gap { background: #fde8e8 !important; color: var(--danger); font-weight: 600; }
+.peer-table td.have { color: var(--success); }
+.peer-table tr.us td { background: #fff3cd !important; font-weight: 600; border-top: 2px solid var(--warn); border-bottom: 2px solid var(--warn); }
+
+/* Timeline */
+.timeline { margin: 1em 0; }
+.timeline-row { display: grid; grid-template-columns: 140px 1fr; gap: 16px; align-items: center; margin-bottom: 10px; }
+.timeline-label { font-size: 0.85em; font-weight: 600; color: var(--primary); text-align: right; padding-right: 10px; }
+.timeline-bar { height: 38px; border-radius: 4px; display: flex; align-items: center; padding-left: 16px; color: white; font-size: 0.8em; font-weight: 500; position: relative; }
+.timeline-bar.p1 { background: linear-gradient(90deg, #1e3a5c, #2a5285); width: 33%; }
+.timeline-bar.p2 { background: linear-gradient(90deg, #2a5285, #3a6fb0); width: 66%; margin-left: 0; }
+.timeline-bar.p3 { background: linear-gradient(90deg, #3a6fb0, #c08847); width: 100%; }
+.timeline-bar.iccd { background: repeating-linear-gradient(45deg, #a89478, #a89478 8px, #b8a488 8px, #b8a488 16px); width: 80%; color: white; }
+.timeline-bar.iccd-fade { background: linear-gradient(90deg, #a89478 0%, #a89478 80%, transparent 100%); width: 80%; }
+
+/* Mermaid container */
+.mermaid-wrap { background: var(--bg-cream); padding: 20px; border-radius: 4px; text-align: center; }
+
+/* Chart */
+.chart-wrap { background: var(--bg-cream); padding: 16px; border-radius: 4px; height: 380px; position: relative; }
+
+/* Risk grid */
+.risk-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 10px 14px; border-radius: 4px; margin-bottom: 8px; align-items: start; }
+.risk-row .risk { color: var(--danger); font-weight: 500; font-size: 0.85em; }
+.risk-row .mit { color: var(--success); font-size: 0.85em; }
+.risk-row .risk::before { content: "⚠ "; }
+.risk-row .mit::before { content: "→ "; color: var(--text-3); font-weight: 600; }
+.risk-row:nth-child(odd) { background: var(--bg-cream); }
+
+/* Spike grid */
+.spike-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.spike-item { background: var(--bg-cream); padding: 14px; border-radius: 4px; border-top: 3px solid var(--text-3); font-size: 0.72em; }
+.spike-item.critical { border-top-color: var(--danger); background: #fff5f5; }
+.spike-item .num { font-weight: 700; color: var(--primary); font-size: 1.4em; line-height: 1; }
+.spike-item .what { color: var(--text); font-weight: 500; margin-top: 0.5em; }
+.spike-item .pass { color: var(--text-2); margin-top: 0.5em; font-size: 0.95em; }
+
+/* Cost section */
+.cost-split { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.cost-line { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.78em; }
+.cost-line .item { color: var(--text-2); }
+.cost-line .val { font-weight: 600; color: var(--primary); font-family: 'JetBrains Mono', monospace; }
+.cost-line.total { border-top: 2px solid var(--primary); border-bottom: none; font-size: 0.9em; color: var(--primary); font-weight: 700; padding-top: 12px; margin-top: 6px; }
+
+/* Two-tier collab diagram */
+.tier-diagram { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 1em 0; }
+.tier { background: var(--bg-cream); padding: 20px; border-radius: 4px; border-top: 4px solid var(--primary); }
+.tier.tier2 { border-top-color: var(--accent); }
+.tier h3 { font-size: 0.95em; margin: 0 0 0.5em 0; }
+.tier .label { font-size: 0.7em; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+.tier ul { font-size: 0.78em; color: var(--text-2); margin-top: 0.5em; }
+
+/* Don't do */
+.dont-list { list-style: none; padding-left: 0; }
+.dont-list li { padding: 8px 0 8px 30px; position: relative; font-size: 0.9em; color: var(--text); border-bottom: 1px solid var(--border); }
+.dont-list li::before { content: "✕"; position: absolute; left: 0; color: var(--danger); font-weight: 700; font-size: 1.1em; }
+
+/* Decision columns */
+.decision-col { padding: 24px; border-radius: 6px; }
+.decision-col.approve { background: linear-gradient(135deg, #2d6f4b 0%, #4a8f6a 100%); color: white; }
+.decision-col.defer { background: var(--bg-slate); color: var(--text); border: 2px dashed var(--text-3); }
+.decision-col h3 { color: inherit; margin-top: 0; font-size: 1.1em; }
+.decision-col ol { font-size: 0.85em; line-height: 1.5; }
+.decision-col.approve strong { color: var(--accent-light); }
+
+/* Question list */
+.q-list { counter-reset: q; list-style: none; padding-left: 0; }
+.q-list li { counter-increment: q; padding: 12px 0 12px 50px; position: relative; font-size: 0.9em; border-bottom: 1px solid var(--border); }
+.q-list li::before { content: counter(q); position: absolute; left: 0; top: 12px; width: 32px; height: 32px; line-height: 32px; text-align: center; background: var(--primary); color: white; border-radius: 50%; font-weight: 700; font-size: 0.85em; }
+
+/* Footer */
+.slide-footer { position: absolute; bottom: 8px; right: 24px; font-size: 0.55em; color: var(--text-3); font-weight: 500; }
+
+/* Small text class */
+.small { font-size: 0.78em; color: var(--text-2); }
+.tiny { font-size: 0.65em; color: var(--text-3); }
+.centered { text-align: center; }
+.mt-1 { margin-top: 0.5em; }
+.mt-2 { margin-top: 1em; }
+
+/* Progress bar */
+.reveal .progress { color: var(--accent); }
+.reveal .controls { color: var(--primary); }
+</style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ============================================================== -->
+<!-- 1. TITLE -->
+<!-- ============================================================== -->
+<section class="title-slide">
+  <div class="brand">JYTRA TECHNOLOGY SOLUTIONS</div>
+  <h1>ActCAD</h1>
+  <div class="subtitle">Re-Architecting for the Next Decade</div>
+  <p class="small" style="color: var(--text-2); margin: 0;">A strategic decision briefing for management</p>
+  <div class="meta">
+    Based on <code>architecture-overview.md</code>, <code>industry-outlook.md</code>, and
+    <code>rearchitecture-plan.md</code> (563 lines, 16 sections).
+    <br><br>Confidential
+  </div>
+  <aside class="notes">
+    Welcome. This briefing is the discussion-starter for a 3-year re-architecture of ActCAD.
+    The full plan is in the repo; this deck is structured to surface the decisions that need
+    management attention today. Plan for ~40 minutes including discussion.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 2. THE ASK -->
+<!-- ============================================================== -->
+<section>
+  <h2>The ask, in one slide</h2>
+  <div class="card-grid cols-2" style="gap: 14px;">
+    <div class="card primary">
+      <h4>What we propose</h4>
+      <p>A <strong>3-year, phased re-architecture</strong> of ActCAD that replaces the IntelliCAD engine with a first-party engine on <strong>ODA SDKs + Open CASCADE</strong>.</p>
+    </div>
+    <div class="card primary">
+      <h4>Revenue protection</h4>
+      <p>Existing ActCAD continues to ship through <strong>Phase 2 (24 months)</strong>. Sunset announced only when the new product reaches GA.</p>
+    </div>
+    <div class="card primary">
+      <h4>End-state by year 3</h4>
+      <p>New product equals or beats today's ActCAD on every dimension: <strong>performance, web + native + mobile, AI assistance, BIM, extensibility</strong>.</p>
+    </div>
+    <div class="card primary">
+      <h4>Today's decision</h4>
+      <p>Approve a <strong>4–6 week feasibility spike</strong>. Full 3-year Go/No-Go decided <em>after</em> the spike with measured data.</p>
+    </div>
+  </div>
+  <div class="hero-stat" style="margin-top: 14px;">
+    <span class="number">~$920K</span>
+    <span class="label">Total stack + tools + cloud over 3 years (salary excluded). No six-figure opaque-OEM commitments.</span>
+  </div>
+  <div class="slide-footer">2 / 23</div>
+  <aside class="notes">
+    The single most important framing: we are asking for a 4-6 week spike approval today, not
+    the 3-year program. The spike returns measured data on the 7 highest-risk assumptions;
+    only then does management commit to the full plan. The $920K rolls up to ~$83K + $239K + $596K.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 3. WHY NOW -->
+<!-- ============================================================== -->
+<section>
+  <h2>Why now — three forces converging</h2>
+  <div class="card-grid cols-3">
+    <div class="force-col">
+      <div class="icon">⚡</div>
+      <h4>Force 1</h4>
+      <h3>AI is table stakes</h3>
+      <p>Autodesk shipped MCP servers in Revit 2027 and Fusion 2026. Graebert shipped A3 agent. BricsCAD shipped AI Assistant. <strong>We are structurally blocked</strong> — IntelliCAD's consortium license forbids operating AI on the foundational codebase.</p>
+    </div>
+    <div class="force-col">
+      <div class="icon">☁</div>
+      <h4>Force 2</h4>
+      <h3>Cloud + web are baseline</h3>
+      <p>AutoCAD Web since 2018. Onshape cloud-native from founding. ARES Kudo ships a browser DWG editor. Snaptrude is cloud-native AEC. <strong>We are Windows-only</strong> because of how IntelliCAD's shell is structured.</p>
+    </div>
+    <div class="force-col">
+      <div class="icon">▣</div>
+      <h4>Force 3</h4>
+      <h3>BIM is moving downmarket</h3>
+      <p>SMB AEC customers in India / SEA / EU increasingly ask for IFC import / export and lightweight BIM. Adding this on top of IntelliCAD is a <strong>renderer-tuning treadmill</strong> we don't win.</p>
+    </div>
+  </div>
+  <blockquote style="margin-top: 1em;">If we are not on the new architecture by year 3, we will be selling against products that are.</blockquote>
+  <div class="slide-footer">3 / 23</div>
+  <aside class="notes">
+    These three forces are independent but compounding. The AI block is the most acute today.
+    The web gap is the most visible to customers. The BIM downmarket is the slowest-moving but
+    the most consequential for our segment positioning over 5 years.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 4. LIVED PAIN -->
+<!-- ============================================================== -->
+<section>
+  <h2>The lived pain today</h2>
+  <p class="small">From <code>docs/architecture-overview.md</code> §4 — what running on IntelliCAD costs us operationally.</p>
+  <div class="card-grid cols-2" style="gap: 12px;">
+    <div class="card danger">
+      <h3>Renderer needs per-machine tuning</h3>
+      <p class="body">at customer sites — and still underperforms vs AutoCAD / BricsCAD on the same hardware.</p>
+    </div>
+    <div class="card danger">
+      <h3>Non-Windows targets are out of reach</h3>
+      <p class="body">IntelliCAD's shell is Windows-bound by design.</p>
+    </div>
+    <div class="card danger">
+      <h3>AI cannot operate on the foundational codebase</h3>
+      <p class="body">Consortium license blocks structural changes required for agentic refactoring.</p>
+    </div>
+    <div class="card danger">
+      <h3>We ride IntelliCAD's release cadence</h3>
+      <p class="body">Gated on AutoCAD version-tracking + consortium QA — not on customer urgency.</p>
+    </div>
+    <div class="card danger" style="grid-column: 1 / -1;">
+      <h3>Every fix we ship into IntelliCAD is shared with direct competitors</h3>
+      <p class="body">Consortium membership means our differentiated work flows back into the pool.</p>
+    </div>
+  </div>
+  <div class="slide-footer">4 / 23</div>
+  <aside class="notes">
+    These are not theoretical concerns — every one of them has been a documented support
+    ticket, customer escalation, or competitive loss. The "fix shared with competitors" one
+    is the strategic killer: we cannot build durable differentiation on a shared codebase.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 5. PEER COMPARISON -->
+<!-- ============================================================== -->
+<section>
+  <h2>Where our direct peers are today</h2>
+  <table class="peer-table">
+    <thead>
+      <tr>
+        <th>Vendor</th>
+        <th>Engine</th>
+        <th>Web</th>
+        <th>AI</th>
+        <th>Co-edit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>BricsCAD</strong></td>
+        <td class="have">ODA-direct, in-house engine</td>
+        <td>Limited</td>
+        <td class="have">AI Assistant V26</td>
+        <td>None</td>
+      </tr>
+      <tr>
+        <td><strong>ARES Graebert</strong></td>
+        <td>Own DWG + selective ODA</td>
+        <td class="have">Kudo (full browser)</td>
+        <td class="have">A3 agent (2027)</td>
+        <td>Soft-lock sync</td>
+      </tr>
+      <tr>
+        <td><strong>Onshape</strong></td>
+        <td>Cloud-native, Parasolid on AWS</td>
+        <td class="have">Browser-only</td>
+        <td>Limited</td>
+        <td class="have">Real-time + branch/merge</td>
+      </tr>
+      <tr>
+        <td><strong>Snaptrude</strong></td>
+        <td>Cloud-native AEC</td>
+        <td class="have">Yes</td>
+        <td class="have">RFP → LOD-300 generation</td>
+        <td class="have">Real-time</td>
+      </tr>
+      <tr>
+        <td><strong>AutoCAD</strong></td>
+        <td>First-party (Autodesk)</td>
+        <td class="have">WASM transpile</td>
+        <td class="have">MCP, Markup Assist, Smart Blocks</td>
+        <td class="have">Serialized + audit</td>
+      </tr>
+      <tr class="us">
+        <td><strong>ActCAD today</strong></td>
+        <td class="gap">IntelliCAD (downstream)</td>
+        <td class="gap">No</td>
+        <td class="gap">Blocked</td>
+        <td class="gap">None</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="small mt-2" style="color: var(--danger); font-weight: 500;">The peer set is moving on three dimensions at once. We are not on any of them yet.</p>
+  <div class="slide-footer">5 / 23</div>
+  <aside class="notes">
+    The yellow row is the most important visual in the deck. The four gaps (engine, web, AI,
+    co-edit) are not independent — solving any one of them requires touching the engine, which
+    is exactly what IntelliCAD's consortium license prevents.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 6. STRATEGIC BET -->
+<!-- ============================================================== -->
+<section>
+  <h2>The strategic bet</h2>
+  <p>Replace IntelliCAD with a first-party engine on:</p>
+  <ul style="font-size: 0.9em;">
+    <li><strong>ODA SDKs direct</strong> — the same foundation Bricsys, GstarCAD, ZWCAD, NanoCAD build on</li>
+    <li><strong>Open CASCADE (OCCT)</strong> — for AEC / drafting / light 3D / IFC; free under LGPL</li>
+    <li><strong>C++ core + Qt 6 native + WebAssembly browser</strong> — Maya / Houdini / AutoCAD-Web pattern</li>
+    <li><strong>AI-native from the foundation</strong> — MCP server inside the engine, transactional undo, day one</li>
+  </ul>
+  <h3 style="margin-top: 1em;">Four differentiators we commit to publicly</h3>
+  <div class="card-grid cols-2" style="gap: 12px;">
+    <div class="card primary"><span class="big-num">1</span><h3>Drop ITC — go ODA-direct</h3><p class="body">Same foundation BricsCAD is built on. Removes the consortium cadence trap.</p></div>
+    <div class="card primary"><span class="big-num">2</span><h3>Two-tier server-authoritative co-edit</h3><p class="body">Leapfrog ARES Kudo's soft-lock ceiling. Op-log for geometry, LWW for annotations.</p></div>
+    <div class="card primary"><span class="big-num">3</span><h3>MCP with documented transactional undo</h3><p class="body">No competitor has documented this — defensible differentiator.</p></div>
+    <div class="card primary"><span class="big-num">4</span><h3>API-parity extension marketplace</h3><p class="body">BRX native + Onshape-pattern web sharing one internal RPC surface.</p></div>
+  </div>
+  <div class="slide-footer">6 / 23</div>
+  <aside class="notes">
+    The four differentiators are deliberately scoped to things competitors have not yet
+    committed to publicly. We can ship to market with these as headline claims and back
+    each one with shipping code.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 7. STACK AT A GLANCE -->
+<!-- ============================================================== -->
+<section>
+  <h2>Stack at a glance</h2>
+  <table>
+    <tr><td><strong>DWG / DXF + database</strong></td><td>ODA Drawings SDK (direct membership)</td></tr>
+    <tr><td><strong>Rendering</strong></td><td>ODA Visualize — <strong>DirectX 11 (Win default), DirectX 12, Vulkan, Metal</strong>; web: Visualize inWEB → WebGPU</td></tr>
+    <tr><td><strong>3D kernel</strong></td><td><strong>OCCT (LGPL, free)</strong> — locked for the 3-year plan</td></tr>
+    <tr><td><strong>MCAD format I/O</strong></td><td>ODA MCAD translator (SolidWorks / Inventor / CATIA <em>read</em>)</td></tr>
+    <tr><td><strong>BIM / IFC</strong></td><td>ODA IFC + BimRv / BimNw</td></tr>
+    <tr><td><strong>Engine language</strong></td><td><strong>C++20 primary</strong>, Rust selectively for <code>net</code> / <code>agent</code> / <code>script</code></td></tr>
+    <tr><td><strong>Desktop shell</strong></td><td><strong>Qt 6 Commercial</strong> (App Dev Enterprise)</td></tr>
+    <tr><td><strong>Browser shell</strong></td><td>TypeScript + React + WebGPU + WebAssembly</td></tr>
+    <tr><td><strong>Build</strong></td><td>CMake + Emscripten + Cargo</td></tr>
+    <tr><td><strong>Co-edit</strong></td><td>Two-tier: op-log (geometry) + LWW per property (annotations)</td></tr>
+    <tr><td><strong>Agent</strong></td><td>MCP server in the engine, transactional, permission-scoped</td></tr>
+  </table>
+  <div class="slide-footer">7 / 23</div>
+  <aside class="notes">
+    Every component is either industry-standard (Qt, CMake, Emscripten, C++), commercially
+    proven for our exact category (ODA, OCCT, Visualize), or a deliberate forward bet (MCP,
+    WebGPU). Nothing here is experimental.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 8. ARCHITECTURE DIAGRAM -->
+<!-- ============================================================== -->
+<section>
+  <h2>Architecture — one ABI, one command bus</h2>
+  <div class="mermaid-wrap">
+    <pre class="mermaid" style="display: block;">
+graph TB
+    QT[Qt Desktop Shell<br/>Win / Mac / Linux]
+    WEB[Browser Shell<br/>React + WASM]
+    BRIDGE[ui-bridge<br/>one C ABI / FlatBuffers]
+    CMD[cmd<br/>command bus]
+    AGENT[agent<br/>MCP server · Rust]
+    PLUGIN[plugin<br/>host · BRX + OAuth]
+    SCRIPT[script<br/>Python · LISP · JS]
+    DB[(db<br/>drawing database<br/>ONLY MUTATOR)]
+    RENDER[render<br/>Visualize · DX/Vulkan/Metal/WebGPU]
+    GEOM[geom<br/>OCCT KAL]
+    NET[net<br/>sync · auth · Rust]
+
+    QT --> BRIDGE
+    WEB --> BRIDGE
+    BRIDGE --> CMD
+    AGENT --> CMD
+    PLUGIN --> CMD
+    SCRIPT --> CMD
+    CMD --> DB
+    DB -.op-stream.-> RENDER
+    DB -.op-stream.-> NET
+    DB --- GEOM
+
+    classDef shell fill:#fff,stroke:#c08847,stroke-width:2px,color:#1e3a5c
+    classDef core fill:#1e3a5c,stroke:#102542,stroke-width:2px,color:#fff
+    classDef rust fill:#c08847,stroke:#8e6332,stroke-width:2px,color:#fff
+    classDef data fill:#102542,stroke:#000,stroke-width:3px,color:#fff
+    class QT,WEB shell
+    class BRIDGE,CMD,GEOM,RENDER,PLUGIN,SCRIPT core
+    class AGENT,NET rust
+    class DB data
+    </pre>
+  </div>
+  <p class="small mt-2"><strong>Only <code>db</code> mutates state. The agent talks to <code>cmd</code>, never to <code>db</code>.</strong> Plugins, scripts, and agents share the same command bus → same audit trail, same undo semantics, same permission scoping.</p>
+  <div class="slide-footer">8 / 23</div>
+  <aside class="notes">
+    The two architectural guarantees in this diagram: (1) only db mutates state, so the
+    op-stream is the single source of truth for replication, undo, and agent context;
+    (2) only cmd is the agent seam, which is what makes "every MCP tool call = one undo
+    transaction" enforceable as a property of the architecture, not as a discipline.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 9. THREE PHASES -->
+<!-- ============================================================== -->
+<section>
+  <h2>Three phases, three years</h2>
+  <div class="timeline">
+    <div class="timeline-row">
+      <div class="timeline-label">Phase 1<br><span class="tiny">0–12 mo</span></div>
+      <div class="timeline-bar p1">Foundation — engine + DWG fidelity + 2D drafting + Windows beta + browser viewer + AI-as-tool</div>
+    </div>
+    <div class="timeline-row">
+      <div class="timeline-label">Phase 2<br><span class="tiny">12–24 mo</span></div>
+      <div class="timeline-bar p2">Production v1 — Mac/Linux parity, full browser editor, light 3D, cloud co-edit, AI GA, plugin host stabilizes, <strong>GA at month 24</strong></div>
+    </div>
+    <div class="timeline-row">
+      <div class="timeline-label">Phase 3<br><span class="tiny">24–36 mo</span></div>
+      <div class="timeline-bar p3">Parity-or-better — full 3D + BIM-lite, MEP/Electrical reshipped, mobile, perf tuning</div>
+    </div>
+    <div class="timeline-row" style="margin-top: 20px; opacity: 0.9;">
+      <div class="timeline-label" style="color: var(--text-2)">IntelliCAD<br>ActCAD<br><span class="tiny">today → sunset</span></div>
+      <div class="timeline-bar iccd-fade" style="color: #444;">Continues to ship through Phase 2 → revenue protected → sunset announced at GA, executed in Phase 3</div>
+    </div>
+  </div>
+  <p class="small mt-2 centered" style="color: var(--text-2);">Two product lines coexist for 24 months. Customers migrate when the new product reaches the feature they need.</p>
+  <div class="slide-footer">9 / 23</div>
+  <aside class="notes">
+    The dual-product-line is an operational reality that needs separate org planning —
+    support engineers context-switching between two engines, marketing positioning both lines,
+    sales handling the upgrade conversation. The plan covers it (§8 of the plan doc) but the
+    org work happens outside this deck.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 10. PHASING INVERSION -->
+<!-- ============================================================== -->
+<section>
+  <h2>Why we don't ship web-first</h2>
+  <div class="card-grid cols-2" style="gap: 18px;">
+    <div class="card" style="background: #f4f1ec; border-left-color: var(--text-3);">
+      <h4>Industry default</h4>
+      <h3>Web-first because the future is cloud</h3>
+      <ul style="font-size: 0.82em; color: var(--text-2);">
+        <li>SaaS-style validation cycles</li>
+        <li>Fastest path to a usable demo</li>
+        <li>Maximum market reach</li>
+      </ul>
+    </div>
+    <div class="card primary">
+      <h4>ActCAD reality</h4>
+      <h3>Native Windows first, web in parallel</h3>
+      <ul style="font-size: 0.82em; color: var(--text);">
+        <li>Installed base is Windows desktop SMBs in India / SEA</li>
+        <li>Their hardware has unreliable browser WebGPU</li>
+        <li>Web-only beta would produce <strong>zero useful signal</strong></li>
+        <li>Revenue protection requires daily-driver to ship first</li>
+      </ul>
+    </div>
+  </div>
+  <blockquote class="mt-2">The <em>architectural</em> discipline that forces portability (the C ABI, kernel layer, op-stream) is preserved either way. What changes is which shell sees production first.</blockquote>
+  <p class="small mt-2"><strong>Phase 1 native Windows daily-driver.</strong> Browser ships as viewer + markup in parallel. Full browser editor in Phase 2.</p>
+  <div class="slide-footer">10 / 23</div>
+  <aside class="notes">
+    This is the most likely place management will push back ("why not just go web?"). The
+    answer is customer-segment specific: our installed base is on hardware where browser
+    perf is the limiting factor. AutoCAD Web took 7+ years to be a credible editor — we
+    don't have that runway against our installed base's needs.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 11. TOP RISKS -->
+<!-- ============================================================== -->
+<section>
+  <h2>Top 5 risks (of 10) with mitigations</h2>
+  <div class="risk-row">
+    <div class="risk">ACIS B-rep fidelity in customer DWGs through OCCT</div>
+    <div class="mit">Spike item 1 is decision-forcing; KAL keeps swap option open</div>
+  </div>
+  <div class="risk-row">
+    <div class="risk">LISP compatibility is multi-person-year, not a 12-month spike</div>
+    <div class="mit">Define coverage as % of measured customer-script corpus (80% P1 → 95% P2); migration tool for the tail</div>
+  </div>
+  <div class="risk-row">
+    <div class="risk">MCP without transactional undo corrupts drawings</div>
+    <div class="mit"><code>agent</code> wraps <code>cmd</code> only; every tool call = one host undo transaction committed publicly</div>
+  </div>
+  <div class="risk-row">
+    <div class="risk">Two parallel product lines for 24 months is an org risk</div>
+    <div class="mit">Org plan for support + marketing context-switching; clear customer messaging from day 1</div>
+  </div>
+  <div class="risk-row">
+    <div class="risk">Cadence trap re-emerges with ODA (we trade one consortium for another)</div>
+    <div class="mit"><code>render</code> module abstraction lets a native Vulkan / DirectX backend slot in if Visualize stalls</div>
+  </div>
+  <p class="small mt-2">Full 10-risk register in <code>docs/rearchitecture-plan.md</code> §7 — each item has a named mitigation owner.</p>
+  <div class="slide-footer">11 / 23</div>
+  <aside class="notes">
+    Each of these has been pressure-tested by a separate planning agent. The structural risks
+    (ACIS fidelity, MCP undo, render escape valve) are all addressed in the architecture itself
+    via abstractions. The human risks (LISP scope, two product lines) require organizational
+    discipline more than technical work.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 12. FEASIBILITY SPIKE -->
+<!-- ============================================================== -->
+<section>
+  <h2>Feasibility spike — 4–6 weeks before kickoff</h2>
+  <p class="small">Seven pass/fail items. <strong style="color: var(--danger);">Items 1, 2, 3, 5 are deal-breakers</strong> if they fail — plan changes before kickoff, not at the Phase-2 boundary.</p>
+  <div class="spike-grid">
+    <div class="spike-item critical"><div class="num">1</div><div class="what">OCCT fidelity on customer ACIS B-rep parts</div><div class="pass">Pass: &lt;0.001 unit drift; booleans ≥95%. <strong>Locks 3D kernel.</strong></div></div>
+    <div class="spike-item critical"><div class="num">2</div><div class="what">inWEB perf vs native Visualize (Vulkan / DirectX)</div><div class="pass">Pass: inWEB ≤ 3× slower than native</div></div>
+    <div class="spike-item critical"><div class="num">3</div><div class="what">ui-bridge C ABI driving Qt + WASM from one cmd</div><div class="pass">Pass: one source of truth; no shell-specific branching</div></div>
+    <div class="spike-item"><div class="num">4</div><div class="what">Real customer LISP script on minimal interpreter</div><div class="pass">Pass: visually identical to current ActCAD</div></div>
+    <div class="spike-item critical"><div class="num">5</div><div class="what">MCP "draw a 3-bed apartment plan" via Claude/GPT</div><div class="pass">Pass: agent-shaped commands; no drawing corruption</div></div>
+    <div class="spike-item"><div class="num">6</div><div class="what">Qt Commercial multi-year quote negotiated</div><div class="pass">Pass: signed quote, 15–35% below first offer</div></div>
+    <div class="spike-item"><div class="num">7</div><div class="what">2-user op-log co-edit on a real drawing</div><div class="pass">Pass: replication works; sane conflict semantics</div></div>
+  </div>
+  <p class="small mt-2 centered" style="color: var(--text-2);">The spike is <em>the</em> decision-forcing moment. Full 3-year program Go/No-Go follows the spike, not this briefing.</p>
+  <div class="slide-footer">12 / 23</div>
+  <aside class="notes">
+    The four red-bordered items are the structural ones. If OCCT can't read customer ACIS,
+    we need a different kernel strategy. If inWEB is 10x slower than native, the web story
+    changes. If the ui-bridge ABI doesn't work in practice, the whole "one core, two shells"
+    architecture changes. If the MCP agent can't draft a simple plan, the AI surface needs
+    redesign. Better to learn these in 6 weeks than 6 months in.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 13. COST -->
+<!-- ============================================================== -->
+<section>
+  <h2>Modeled cost envelopes (salary excluded)</h2>
+  <div class="cost-split">
+    <div>
+      <div class="chart-wrap"><canvas id="costChart"></canvas></div>
+      <p class="tiny mt-1 centered">Stack + dev tools + cloud, USD thousands per year</p>
+    </div>
+    <div>
+      <h4>What's in scope</h4>
+      <div class="cost-line"><span class="item">ODA Sustaining ($7.5K → $4.5K renewal)</span><span class="val">incl.</span></div>
+      <div class="cost-line"><span class="item">Qt Commercial Enterprise (~$4K/dev/yr)</span><span class="val">incl.</span></div>
+      <div class="cost-line"><span class="item">OCCT (LGPL — free)</span><span class="val">$0</span></div>
+      <div class="cost-line"><span class="item">VS Code primary + 2-3 VS Enterprise seats</span><span class="val">incl.</span></div>
+      <div class="cost-line"><span class="item">AI dev tooling (~$50/dev/mo)</span><span class="val">incl.</span></div>
+      <div class="cost-line"><span class="item">AWS (compute + GPU streaming + storage)</span><span class="val">incl.</span></div>
+      <div class="cost-line"><span class="item">Clerk auth + Stripe billing</span><span class="val">incl.</span></div>
+      <h4 style="margin-top: 1em;">Not in scope (deferred / hypothetical)</h4>
+      <div class="cost-line"><span class="item">Parasolid (year-4+ option only)</span><span class="val">$0</span></div>
+      <div class="cost-line"><span class="item">Open Cascade SAS commercial support</span><span class="val">$0</span></div>
+      <div class="cost-line"><span class="item">ACIS commercial OEM</span><span class="val">$0</span></div>
+      <div class="cost-line total"><span>3-year total</span><span class="val">~$920K</span></div>
+    </div>
+  </div>
+  <p class="small mt-2 centered"><strong>No six-figure-plus opaque-OEM item carried in any phase.</strong> Every line item is bounded by a published price.</p>
+  <div class="slide-footer">13 / 23</div>
+  <aside class="notes">
+    The Phase 3 spike to $596K is driven mostly by AWS infrastructure at scale (~$200K) and
+    ODA Founding tier upgrade for source access ($37.5K first year). Everything else scales
+    linearly with headcount. The "not in scope" section is the most important — we explicitly
+    do not carry the Parasolid / ACIS / SAS-support scenarios in the budget.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 14. LICENSING POSTURE -->
+<!-- ============================================================== -->
+<section>
+  <h2>Licensing posture — ActCAD is commercial closed-source</h2>
+  <table>
+    <thead><tr><th>Component</th><th>Choice</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td><strong>ODA</strong></td><td>Sustaining from day 1 — unlimited commercial seats + inWEB Web/SaaS, no per-seat royalty</td><td><span class="badge locked">Locked</span></td></tr>
+      <tr><td><strong>Qt 6</strong></td><td>Commercial App Dev Enterprise — LGPL forbids static linking, iOS code-signing, private modifications</td><td><span class="badge locked">Locked</span></td></tr>
+      <tr><td><strong>OCCT</strong></td><td>LGPL 2.1 + linking exception — explicitly permits closed-source commercial linking, including static</td><td><span class="badge free">Free</span></td></tr>
+      <tr><td><strong>Visual Studio Ent.</strong></td><td>2–3 perf devs only (IntelliTrace, Concurrency Visualizer); VS Code primary for the rest</td><td><span class="badge locked">Locked</span></td></tr>
+      <tr><td><strong>CMake / Emscripten / Cargo</strong></td><td>Permissive OSS; no commercial concern</td><td><span class="badge free">Free</span></td></tr>
+      <tr><td><strong>.NET / MCP / WebGPU</strong></td><td>MIT / W3C / Khronos — free open standards</td><td><span class="badge free">Free</span></td></tr>
+      <tr><td><strong>Parasolid / ACIS</strong></td><td>Year-4+ hypothetical only — not budgeted; KAL preserves the swap option</td><td><span class="badge deferred">Deferred</span></td></tr>
+    </tbody>
+  </table>
+  <p class="small mt-2"><strong>The best-value line item in the entire stack:</strong> ODA Sustaining at ~$4.5K/yr renewal gets unlimited commercial seats + inWEB web redistribution with no per-seat royalty.</p>
+  <div class="slide-footer">14 / 23</div>
+  <aside class="notes">
+    Every component has been deliberately chosen for closed-source commercial safety. The
+    OCCT linking exception is the critical legal fact — it's why we get a free, mature B-rep
+    kernel without commercial contract obligations. Verify with legal before kickoff.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 15. AI STRATEGY -->
+<!-- ============================================================== -->
+<section>
+  <h2>AI strategy — three steps, not a chat panel</h2>
+  <div class="card-grid cols-3">
+    <div class="card primary">
+      <h4>Step 1 · Phase 1</h4>
+      <h3>AI as a tool</h3>
+      <p class="body">Markup Assist (PDF redline → DWG edits), Smart Blocks (block detection), Drawing Health (layer / dimstyle cleanup). Inline commands, deterministic, undoable. <em>This is the floor every competitor is already at.</em></p>
+    </div>
+    <div class="card primary">
+      <h4>Step 2 · Phase 1–2</h4>
+      <h3>MCP server</h3>
+      <p class="body"><strong>Local MCP</strong> (host running, commands inside transaction) + <strong>remote MCP data server</strong> (cloud, read-only DWG queries). Mirrors Fusion 2026's split. Works with Claude, Cursor, ChatGPT, any MCP HTTP client.</p>
+    </div>
+    <div class="card primary">
+      <h4>Step 3 · Phase 3 (conditional)</h4>
+      <h3>Generative CAD</h3>
+      <p class="body">Only when editable parametric round-tripping is proven. <strong>Hypar's lesson:</strong> text-to-BIM via chat alone was the wrong abstraction; they pivoted to "suggestions" in 2025.</p>
+    </div>
+  </div>
+  <div class="hero-stat mt-2">
+    <p style="margin: 0; font-size: 1.0em; color: var(--accent-light);">The public commitment no competitor has made:</p>
+    <p style="margin: 0.3em 0 0; font-size: 1.1em; font-weight: 600;">Every MCP tool call resolves to <strong style="color: white;">exactly one transaction</strong> in the host undo stack.</p>
+  </div>
+  <div class="slide-footer">15 / 23</div>
+  <aside class="notes">
+    Revit 2027, Fusion 2026, and ARES A3 all shipped MCP / agent surfaces in 2026 without
+    documenting transactional undo semantics publicly. Making that commitment up front and
+    backing it with architecture is a competitive differentiator that becomes harder to copy
+    the longer they ship without it.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 16. COLLABORATION -->
+<!-- ============================================================== -->
+<section>
+  <h2>Collaboration — two-tier server-authoritative</h2>
+  <div class="tier-diagram">
+    <div class="tier">
+      <div class="label">Tier 1 — Geometry</div>
+      <h3>Serialized op-log over the engine mutation stream</h3>
+      <ul>
+        <li>Server-validated for referential integrity (door↔wall, dim↔entity, hatch↔boundary)</li>
+        <li>Optimistic UI on the client</li>
+        <li>Same op-stream serves undo, replication, agent context, and audit</li>
+        <li>Presence + selection locks at the UI layer</li>
+      </ul>
+    </div>
+    <div class="tier tier2">
+      <div class="label">Tier 2 — Annotations, comments, properties</div>
+      <h3>Figma-style last-writer-wins per property</h3>
+      <ul>
+        <li>Each field updates independently — concurrent edits resolve to A-or-B</li>
+        <li>Fractional indexing for ordering (z-order, draw-order)</li>
+        <li>Cycle-rejection for reparenting (sheet → layout → viewport)</li>
+        <li>Bounded scope for Yjs / Automerge if we ever want it</li>
+      </ul>
+    </div>
+  </div>
+  <p class="small mt-2"><strong>No generic CRDT on geometry.</strong> Yjs / Automerge OOM at the millions-of-entity scale typical for an MEP riser DWG. Industry has converged here: Figma rejected pure CRDT; Onshape uses op-log; ARES Kudo ships closer to soft-lock + sync. Our two-tier model <strong>leapfrogs ARES's ceiling</strong>.</p>
+  <div class="slide-footer">16 / 23</div>
+  <aside class="notes">
+    The two-tier model is what gives us both correctness (Tier 1 server-side validation
+    prevents inconsistent drawings) and responsiveness (Tier 2 LWW for everything that
+    doesn't have referential constraints). This is the design Onshape, Figma, and academic
+    geometry-aware CRDT papers have all converged on.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 17. EXTENSIONS -->
+<!-- ============================================================== -->
+<section>
+  <h2>Extensions — best of both worlds</h2>
+  <div class="card-grid cols-2">
+    <div class="card primary">
+      <h4>Native desktop</h4>
+      <h3>BRX / ObjectARX-compatible plugins</h3>
+      <p class="body">Table-stakes for SMB AEC customers switching from AutoCAD. Single code stream that runs on both BricsCAD-style competitors and ActCAD. Authenticode signing + "verified publisher" badge.</p>
+    </div>
+    <div class="card" style="border-left-color: var(--accent);">
+      <h4>Web</h4>
+      <h3>Onshape-style iframe + OAuth REST</h3>
+      <p class="body">Sandboxed by the browser. Capability-scoped by OAuth. No third-party code in the host process. UI extension = HTTPS page in iframe; Action extension = REST call to dev's server.</p>
+    </div>
+  </div>
+  <div class="hero-stat mt-2" style="background: linear-gradient(135deg, var(--accent) 0%, #8e6332 100%);">
+    <p style="margin: 0; font-size: 1.0em;">The trick: <strong style="color: white;">shared internal RPC surface</strong></p>
+    <p style="margin: 0.3em 0 0; font-size: 0.9em; color: var(--accent-light);">Same command/query API: native plugins call it in-process, web extensions via OAuth REST. <strong style="color: white;">Same scopes, same semantics, same audit trail.</strong></p>
+  </div>
+  <p class="small mt-2">Marketplace: 15% revenue share over a $5K/year free tier (Apple-equivalent for small developers) — avoids the SolidWorks anti-pattern of mandatory share with no storefront.</p>
+  <div class="slide-footer">17 / 23</div>
+  <aside class="notes">
+    No shipping CAD product has true plugin parity across native and web today. We promise
+    API parity (not binary parity) — same RPC contract on both sides. Plugins that need raw
+    geometry-kernel access stay native-only; everything else can ship on both.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 18. DON'T DO -->
+<!-- ============================================================== -->
+<section>
+  <h2>What we deliberately don't do</h2>
+  <ul class="dont-list">
+    <li><strong>No web-first to the installed base</strong> — protects revenue, gets real customer feedback</li>
+    <li><strong>No generic CRDTs for geometry</strong> — confined to non-spatial metadata only</li>
+    <li><strong>No SDS / DIESEL / VBA / COM / ADS</strong> — legacy maintenance with shrinking usage</li>
+    <li><strong>No ObjectARX-compatible .NET surface</strong> — opinionated and modern; set expectation early</li>
+    <li><strong>No Rust in <code>db</code> or <code>render</code> hot paths</strong> — C++20 stays primary; Rust at the edges</li>
+    <li><strong>No Parasolid in the 3-year budget</strong> — year-4+ strategic option only</li>
+    <li><strong>No chat-in-canvas as primary AI UX</strong> — Hypar's lesson</li>
+    <li><strong>No two products forever</strong> — IntelliCAD ActCAD enters sunset in Phase 3</li>
+  </ul>
+  <blockquote class="mt-2">Each <em>"don't"</em> closes a door that competitors keep open and pay for.</blockquote>
+  <div class="slide-footer">18 / 23</div>
+  <aside class="notes">
+    The boundary-setting is as important as what we commit to. Every "don't" represents a
+    cost we're not paying — whether that's maintenance burden (VBA), brand confusion (two
+    products forever), or a strategic dead-end (Bernini-style chat-CAD).
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 19. MIGRATION -->
+<!-- ============================================================== -->
+<section>
+  <h2>Migration story for existing customers</h2>
+  <div class="card-grid cols-2">
+    <div class="card primary">
+      <h4>Product</h4>
+      <p class="body"><strong>IntelliCAD ActCAD ships through Phase 2.</strong> Sunset date announced when new product reaches GA, not picked up front. Customers migrate when the new product reaches the feature they need.</p>
+    </div>
+    <div class="card primary">
+      <h4>LISP scripts</h4>
+      <p class="body"><strong>Compatibility shim covers measured customer corpus</strong> — 80% percentile in Phase 1, 95% in Phase 2. <strong>Migration tool ships in Phase 2</strong> for the long tail.</p>
+    </div>
+    <div class="card primary">
+      <h4>.NET / IRX extensions</h4>
+      <p class="body"><strong>Paid migration service</strong> delivered by the same team that built the new APIs. Strategic-customer scripts get hands-on transition support.</p>
+    </div>
+    <div class="card primary">
+      <h4>File formats</h4>
+      <p class="body"><strong>Full DWG round-trip parity from Phase 1</strong>, validated against a corpus that includes real customer drawings. No file-format conversation needed.</p>
+    </div>
+  </div>
+  <p class="small mt-2 centered">Pricing: existing perpetual licenses upgrade to new perpetual tier. <strong>AI / cloud features are the new subscription line.</strong></p>
+  <div class="slide-footer">19 / 23</div>
+  <aside class="notes">
+    The migration story has to be told three times: to existing customers, to the support team,
+    and to sales / marketing. Each audience needs a different level of detail; the principles
+    (revenue protection, no forced upgrade, paid help where it matters) stay the same.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 20. DECISION TODAY -->
+<!-- ============================================================== -->
+<section>
+  <h2>What management is being asked to decide today</h2>
+  <div class="card-grid cols-2" style="gap: 18px;">
+    <div class="decision-col approve">
+      <h3>✓ Approve today</h3>
+      <ol>
+        <li>The <strong>4–6 week feasibility spike</strong> — small senior team, dedicated</li>
+        <li><strong>ODA Sustaining membership signup</strong> ($7,500) — required for the spike</li>
+        <li><strong>AI dev tooling subscriptions</strong> (Cursor + Copilot + Claude Code) for the spike team — ~$400 for 6 weeks</li>
+        <li><strong>Reaffirm strategic intent</strong> — this is a 3-year program with revenue-protected migration, not a 12-month deliverable</li>
+      </ol>
+    </div>
+    <div class="decision-col defer">
+      <h3>○ Defer until after the spike</h3>
+      <ol>
+        <li>Full 3-year program Go / No-Go (decided on spike data, not on this briefing)</li>
+        <li>Qt Commercial multi-year quote negotiation</li>
+        <li>Engineering org standup for Phase 1</li>
+        <li>Phase 1 willing-customer cohort selection</li>
+      </ol>
+    </div>
+  </div>
+  <p class="centered mt-2" style="font-size: 0.85em; color: var(--text-2);"><strong>Total cost of today's decision:</strong> ~$8,000 + 4–6 weeks of senior engineer time. <strong>Information return:</strong> a measured Go / No-Go on a $920K program.</p>
+  <div class="slide-footer">20 / 23</div>
+  <aside class="notes">
+    Frame the decision-cost-vs-information-return explicitly. We're not asking management to
+    commit to $920K today — we're asking them to spend $8K and 6 weeks to find out whether
+    $920K is the right number.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 21. DISCUSSION QUESTIONS -->
+<!-- ============================================================== -->
+<section>
+  <h2>Discussion — questions for the room</h2>
+  <ol class="q-list">
+    <li>Are the four differentiating bets (ODA-direct, two-tier co-edit, transactional MCP, API-parity marketplace) the right four? Which would we drop or add?</li>
+    <li>Is the <strong>native-Windows-first / web-in-parallel</strong> phasing correct for our customer base, or should we revisit web-first?</li>
+    <li>What's the willing-customer cohort look like — are there 5–10 strategic customers we'd commit to a Phase-1 Windows beta in month 12?</li>
+    <li>Is the 24-month two-product-line plan operationally acceptable to support + marketing?</li>
+    <li>What's our public position on <strong>AI in CAD</strong> going to be — leader, fast-follower, or quiet adopter?</li>
+    <li>What competitive-intelligence gap do we want to close before the spike?</li>
+  </ol>
+  <div class="slide-footer">21 / 23</div>
+  <aside class="notes">
+    Open the floor on these. Question 3 (willing-customer cohort) is the most actionable —
+    we need names and a relationship plan before the spike kicks off. Question 5 (public AI
+    position) drives marketing and PR planning for the next 12 months.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 22. APPENDIX -->
+<!-- ============================================================== -->
+<section>
+  <h2>Appendix — source documents</h2>
+  <p class="small">This briefing summarizes three repository documents on branch <code>claude/review-skills-plugins-B8xQd</code>:</p>
+  <table>
+    <thead><tr><th>File</th><th>Lines</th><th>Scope</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>docs/architecture-overview.md</code></td>
+        <td>183</td>
+        <td>Current ActCAD stack, IntelliCAD dependency, lived operational pains</td>
+      </tr>
+      <tr>
+        <td><code>docs/industry-outlook.md</code></td>
+        <td>119</td>
+        <td>CAD segment outlook, 2–5 year horizon, AI / cloud / BIM / pricing trends</td>
+      </tr>
+      <tr>
+        <td><code>docs/rearchitecture-plan.md</code></td>
+        <td><strong>563</strong></td>
+        <td><strong>Full re-architecture plan — 16 sections covering goal, decisions, modules, stack, phasing, risks, migration, feasibility spike, industry adoption, collaboration, extensions, AI strategy, cost of usage, next steps</strong></td>
+      </tr>
+      <tr>
+        <td><code>docs/exec-presentation.md</code></td>
+        <td>340</td>
+        <td>Marp/Markdown source of this briefing (alternate format)</td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="small mt-2"><strong>The plan document is the source of truth.</strong> This presentation is the discussion-starter, not the spec.</p>
+  <div class="slide-footer">22 / 23</div>
+</section>
+
+<!-- ============================================================== -->
+<!-- 23. CLOSING -->
+<!-- ============================================================== -->
+<section class="title-slide">
+  <h1 style="font-size: 4em; color: var(--primary-deep);">Thank you</h1>
+  <p class="subtitle">Questions?</p>
+  <p class="small" style="margin-top: 3em; color: var(--text-2);">
+    <code>docs/rearchitecture-plan.md</code><br>
+    branch <code>claude/review-skills-plugins-B8xQd</code>
+  </p>
+  <div class="slide-footer">23 / 23</div>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+
+<script>
+// Init Mermaid with brand-themed colors
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  themeVariables: {
+    primaryColor: '#1e3a5c',
+    primaryTextColor: '#ffffff',
+    primaryBorderColor: '#102542',
+    lineColor: '#888',
+    secondaryColor: '#c08847',
+    tertiaryColor: '#f4f1ec',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '14px'
+  },
+  flowchart: {
+    htmlLabels: true,
+    curve: 'basis'
+  }
+});
+
+Reveal.initialize({
+  hash: true,
+  controls: true,
+  progress: true,
+  slideNumber: false,
+  history: true,
+  center: false,
+  transition: 'slide',
+  transitionSpeed: 'default',
+  backgroundTransition: 'fade',
+  width: 1400,
+  height: 850,
+  margin: 0.04,
+  minScale: 0.2,
+  maxScale: 2.0,
+  plugins: [ RevealNotes, RevealHighlight ]
+}).then(() => {
+  // Render mermaid on initial load
+  mermaid.run({ querySelector: '.mermaid' });
+
+  // Re-run mermaid when slide changes (handles late-rendered diagrams)
+  Reveal.on('slidechanged', () => {
+    mermaid.run({ querySelector: '.mermaid:not([data-processed])' });
+  });
+
+  // Render Chart.js bar chart for cost envelopes
+  const ctx = document.getElementById('costChart');
+  if (ctx) {
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Phase 1\n(8 devs · yr 1)', 'Phase 2\n(20 devs · yr 2)', 'Phase 3\n(30 devs · yr 3)'],
+        datasets: [{
+          label: 'USD thousands',
+          data: [83.3, 239.4, 595.7],
+          backgroundColor: [
+            'rgba(30, 58, 92, 0.85)',
+            'rgba(58, 111, 176, 0.85)',
+            'rgba(192, 136, 71, 0.85)'
+          ],
+          borderColor: [
+            'rgba(30, 58, 92, 1)',
+            'rgba(58, 111, 176, 1)',
+            'rgba(192, 136, 71, 1)'
+          ],
+          borderWidth: 2,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => `$${ctx.raw}K`
+            }
+          },
+          title: {
+            display: true,
+            text: 'Annual stack + tools + cloud spend',
+            font: { family: 'Inter', size: 14, weight: '600' },
+            color: '#1e3a5c'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: (v) => '$' + v + 'K',
+              font: { family: 'Inter', size: 11 }
+            },
+            grid: { color: '#e0d8cc' }
+          },
+          x: {
+            ticks: {
+              font: { family: 'Inter', size: 11, weight: '500' },
+              color: '#1e3a5c'
+            },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+});
+</script>
+</body>
+</html>
