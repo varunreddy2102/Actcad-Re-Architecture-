@@ -189,6 +189,7 @@
 /* Progress bar */
 .reveal .progress { color: var(--accent); }
 .reveal .controls { color: var(--primary); }
+.reveal .slide-number { background: transparent; color: var(--text-3); font-family: 'Inter', sans-serif; font-size: 0.7em; font-weight: 500; right: 24px; bottom: 8px; }
 </style>
 </head>
 <body>
@@ -239,14 +240,14 @@
     </div>
   </div>
   <div class="hero-stat" style="margin-top: 14px;">
-    <span class="number">~$920K</span>
-    <span class="label">Total stack + tools + cloud over 3 years (salary excluded). No six-figure opaque-OEM commitments.</span>
+    <span class="number">~$3.44M</span>
+    <span class="label">3-year total: <strong style="color:white;">$0.92M</strong> stack + tools + cloud · <strong style="color:white;">$2.52M</strong> loaded India salary (hybrid urban + tier-2 + remote-village). No six-figure opaque-OEM commitments.</span>
   </div>
-  <div class="slide-footer">2 / 23</div>
+
   <aside class="notes">
     The single most important framing: we are asking for a 4-6 week spike approval today, not
     the 3-year program. The spike returns measured data on the 7 highest-risk assumptions;
-    only then does management commit to the full plan. The $920K rolls up to ~$83K + $239K + $596K.
+    only then does management commit to the full ~$3.44M program ($0.92M stack + $2.52M loaded India salary, hybrid urban / tier-2 / village mix).
   </aside>
 </section>
 
@@ -276,7 +277,7 @@
     </div>
   </div>
   <blockquote style="margin-top: 1em;">If we are not on the new architecture by year 3, we will be selling against products that are.</blockquote>
-  <div class="slide-footer">3 / 23</div>
+
   <aside class="notes">
     These three forces are independent but compounding. The AI block is the most acute today.
     The web gap is the most visible to customers. The BIM downmarket is the slowest-moving but
@@ -312,7 +313,7 @@
       <p class="body">Consortium membership means our differentiated work flows back into the pool.</p>
     </div>
   </div>
-  <div class="slide-footer">4 / 23</div>
+
   <aside class="notes">
     These are not theoretical concerns — every one of them has been a documented support
     ticket, customer escalation, or competitive loss. The "fix shared with competitors" one
@@ -381,7 +382,7 @@
     </tbody>
   </table>
   <p class="small mt-2" style="color: var(--danger); font-weight: 500;">The peer set is moving on three dimensions at once. We are not on any of them yet.</p>
-  <div class="slide-footer">5 / 23</div>
+
   <aside class="notes">
     The yellow row is the most important visual in the deck. The four gaps (engine, web, AI,
     co-edit) are not independent — solving any one of them requires touching the engine, which
@@ -408,7 +409,7 @@
     <div class="card primary"><span class="big-num">3</span><h3>MCP with documented transactional undo</h3><p class="body">No competitor has documented this — defensible differentiator.</p></div>
     <div class="card primary"><span class="big-num">4</span><h3>API-parity extension marketplace</h3><p class="body">BRX native + Onshape-pattern web sharing one internal RPC surface.</p></div>
   </div>
-  <div class="slide-footer">6 / 23</div>
+
   <aside class="notes">
     The four differentiators are deliberately scoped to things competitors have not yet
     committed to publicly. We can ship to market with these as headline claims and back
@@ -434,7 +435,7 @@
     <tr><td><strong>Co-edit</strong></td><td>Two-tier: op-log (geometry) + LWW per property (annotations)</td></tr>
     <tr><td><strong>Agent</strong></td><td>MCP server in the engine, transactional, permission-scoped</td></tr>
   </table>
-  <div class="slide-footer">7 / 23</div>
+
   <aside class="notes">
     Every component is either industry-standard (Qt, CMake, Emscripten, C++), commercially
     proven for our exact category (ODA, OCCT, Visualize), or a deliberate forward bet (MCP,
@@ -484,7 +485,7 @@ graph TB
     </pre>
   </div>
   <p class="small mt-2"><strong>Only <code>db</code> mutates state. The agent talks to <code>cmd</code>, never to <code>db</code>.</strong> Plugins, scripts, and agents share the same command bus → same audit trail, same undo semantics, same permission scoping.</p>
-  <div class="slide-footer">8 / 23</div>
+
   <aside class="notes">
     The two architectural guarantees in this diagram: (1) only db mutates state, so the
     op-stream is the single source of truth for replication, undo, and agent context;
@@ -517,7 +518,7 @@ graph TB
     </div>
   </div>
   <p class="small mt-2 centered" style="color: var(--text-2);">Two product lines coexist for 24 months. Customers migrate when the new product reaches the feature they need.</p>
-  <div class="slide-footer">9 / 23</div>
+
   <aside class="notes">
     The dual-product-line is an operational reality that needs separate org planning —
     support engineers context-switching between two engines, marketing positioning both lines,
@@ -554,7 +555,7 @@ graph TB
   </div>
   <blockquote class="mt-2">The <em>architectural</em> discipline that forces portability (the C ABI, kernel layer, op-stream) is preserved either way. What changes is which shell sees production first.</blockquote>
   <p class="small mt-2"><strong>Phase 1 native Windows daily-driver.</strong> Browser ships as viewer + markup in parallel. Full browser editor in Phase 2.</p>
-  <div class="slide-footer">10 / 23</div>
+
   <aside class="notes">
     This is the most likely place management will push back ("why not just go web?"). The
     answer is customer-segment specific: our installed base is on hardware where browser
@@ -589,7 +590,7 @@ graph TB
     <div class="mit"><code>render</code> module abstraction lets a native Vulkan / DirectX backend slot in if Visualize stalls</div>
   </div>
   <p class="small mt-2">Full 10-risk register in <code>docs/rearchitecture-plan.md</code> §7 — each item has a named mitigation owner.</p>
-  <div class="slide-footer">11 / 23</div>
+
   <aside class="notes">
     Each of these has been pressure-tested by a separate planning agent. The structural risks
     (ACIS fidelity, MCP undo, render escape valve) are all addressed in the architecture itself
@@ -614,7 +615,7 @@ graph TB
     <div class="spike-item"><div class="num">7</div><div class="what">2-user op-log co-edit on a real drawing</div><div class="pass">Pass: replication works; sane conflict semantics</div></div>
   </div>
   <p class="small mt-2 centered" style="color: var(--text-2);">The spike is <em>the</em> decision-forcing moment. Full 3-year program Go/No-Go follows the spike, not this briefing.</p>
-  <div class="slide-footer">12 / 23</div>
+
   <aside class="notes">
     The four red-bordered items are the structural ones. If OCCT can't read customer ACIS,
     we need a different kernel strategy. If inWEB is 10x slower than native, the web story
@@ -628,40 +629,152 @@ graph TB
 <!-- 13. COST -->
 <!-- ============================================================== -->
 <section>
-  <h2>Modeled cost envelopes (salary excluded)</h2>
+  <h2>Total cost envelope — stack + salary, by phase</h2>
   <div class="cost-split">
     <div>
       <div class="chart-wrap"><canvas id="costChart"></canvas></div>
-      <p class="tiny mt-1 centered">Stack + dev tools + cloud, USD thousands per year</p>
+      <p class="tiny mt-1 centered">Stacked: stack + tools + cloud (navy) on top of loaded India salary (copper). USD thousands per year.</p>
     </div>
     <div>
-      <h4>What's in scope</h4>
-      <div class="cost-line"><span class="item">ODA Sustaining ($7.5K → $4.5K renewal)</span><span class="val">incl.</span></div>
-      <div class="cost-line"><span class="item">Qt Commercial Enterprise (~$4K/dev/yr)</span><span class="val">incl.</span></div>
-      <div class="cost-line"><span class="item">OCCT (LGPL — free)</span><span class="val">$0</span></div>
-      <div class="cost-line"><span class="item">VS Code primary + 2-3 VS Enterprise seats</span><span class="val">incl.</span></div>
-      <div class="cost-line"><span class="item">AI dev tooling (~$50/dev/mo)</span><span class="val">incl.</span></div>
-      <div class="cost-line"><span class="item">AWS (compute + GPU streaming + storage)</span><span class="val">incl.</span></div>
-      <div class="cost-line"><span class="item">Clerk auth + Stripe billing</span><span class="val">incl.</span></div>
-      <h4 style="margin-top: 1em;">Not in scope (deferred / hypothetical)</h4>
+      <h4>3-year envelope</h4>
+      <div class="cost-line"><span class="item">Stack + tools + cloud (slide 14)</span><span class="val">~$0.92M</span></div>
+      <div class="cost-line"><span class="item">Loaded India salary (slide 15)</span><span class="val">~$2.52M</span></div>
+      <div class="cost-line total"><span>3-year total project envelope</span><span class="val">~$3.44M</span></div>
+      <h4 style="margin-top: 1em;">By phase</h4>
+      <div class="cost-line"><span class="item">Phase 1 (yr 1, 8 devs)</span><span class="val">$83K + $336K = $419K</span></div>
+      <div class="cost-line"><span class="item">Phase 2 (yr 2, 20 devs)</span><span class="val">$239K + $844K = $1.08M</span></div>
+      <div class="cost-line"><span class="item">Phase 3 (yr 3, 30 devs)</span><span class="val">$596K + $1.34M = $1.93M</span></div>
+      <h4 style="margin-top: 1em;">Not in scope (deferred)</h4>
       <div class="cost-line"><span class="item">Parasolid (year-4+ option only)</span><span class="val">$0</span></div>
       <div class="cost-line"><span class="item">Open Cascade SAS commercial support</span><span class="val">$0</span></div>
       <div class="cost-line"><span class="item">ACIS commercial OEM</span><span class="val">$0</span></div>
-      <div class="cost-line total"><span>3-year total</span><span class="val">~$920K</span></div>
     </div>
   </div>
-  <p class="small mt-2 centered"><strong>No six-figure-plus opaque-OEM item carried in any phase.</strong> Every line item is bounded by a published price.</p>
-  <div class="slide-footer">13 / 23</div>
+  <p class="small mt-2 centered"><strong>No six-figure-plus opaque-OEM item carried in any phase.</strong> Every stack line is bounded by a published price. Next two slides drill into stack and salary respectively.</p>
+
   <aside class="notes">
-    The Phase 3 spike to $596K is driven mostly by AWS infrastructure at scale (~$200K) and
-    ODA Founding tier upgrade for source access ($37.5K first year). Everything else scales
-    linearly with headcount. The "not in scope" section is the most important — we explicitly
-    do not carry the Parasolid / ACIS / SAS-support scenarios in the budget.
+    This is the honest total — stack plus salary, end to end. Salary is the dominant line at
+    every phase, which is the right shape for a software engineering investment. The
+    Phase 3 spike in stack is driven by AWS at scale (~$200K) and ODA Founding tier upgrade
+    ($37.5K). The Phase 3 spike in salary is driven by the 30-dev team, which is itself the
+    AI-augmented equivalent of a ~50-dev pre-AI team.
   </aside>
 </section>
 
 <!-- ============================================================== -->
-<!-- 14. LICENSING POSTURE -->
+<!-- 14. STACK DRILL-DOWN — third-party / tools / cloud -->
+<!-- ============================================================== -->
+<section>
+  <h2>Stack + tools + cloud — ~$0.92M over 3 years</h2>
+  <p class="small">High-level cost buckets per phase (USD thousands). Foundation libs + Qt + cloud dominate; AI dev tooling is ~3.8% of 3-yr stack spend.</p>
+  <table style="font-size: 0.72em;">
+    <thead>
+      <tr><th>Bucket</th><th>What's in it</th><th>P1 (8 devs)</th><th>P2 (20 devs)</th><th>P3 (30 devs)</th><th>3-yr total</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Foundation libs</strong></td><td>ODA Sustaining → Founding + BIM/MCAD/Civil add-ons</td><td>$12.5K</td><td>$19.5K</td><td>$67.5K</td><td><strong>$99.5K · 11%</strong></td></tr>
+      <tr><td><strong>Engine shell</strong></td><td>Qt Commercial App Dev Enterprise + mobile/WASM add-ons</td><td>$32.0K</td><td>$88.0K</td><td>$140.0K</td><td><strong>$260.0K · 28%</strong></td></tr>
+      <tr><td><strong>Dev tools</strong></td><td>VS Code (free) + VS Ent × 2-3 perf devs + AI bundles ($50/dev/mo) + JetBrains + GitHub Cloud+AdvSec + Actions</td><td>$30.8K</td><td>$52.7K</td><td>$77.7K</td><td><strong>$161.2K · 18%</strong></td></tr>
+      <tr><td><strong>Cloud + infra</strong></td><td>AWS compute + g5 GPU streaming + CDN + egress</td><td>$8.0K</td><td>$60.0K</td><td>$200.0K</td><td><strong>$268.0K · 29%</strong></td></tr>
+      <tr><td><strong>Auth + billing</strong></td><td>Clerk B2B (per-MAU) + Stripe (% of ARR)</td><td>$1.0K</td><td>$19.2K</td><td>$103.0K</td><td><strong>$123.2K · 13%</strong></td></tr>
+      <tr><td><strong>3D kernel</strong></td><td>OCCT under LGPL 2.1 + linking exception</td><td colspan="3" class="centered" style="text-align:center;">$0 — free, closed-source-safe</td><td><strong>$0</strong></td></tr>
+      <tr style="background: var(--bg-cream); border-top: 2px solid var(--primary);"><td colspan="2"><strong>Phase total</strong></td><td><strong>$83.3K</strong></td><td><strong>$239.4K</strong></td><td><strong>$595.7K</strong></td><td><strong>~$918.4K</strong></td></tr>
+    </tbody>
+  </table>
+  <div class="card-grid cols-3" style="margin-top: 1em; gap: 12px;">
+    <div class="card primary"><h4>Observation 1</h4><p class="body"><strong>Cloud + Qt = 57% of 3-yr stack spend.</strong> Both scale with growth (devs / MAU). Both have multi-year negotiation room — §9 spike item 6 negotiates Qt.</p></div>
+    <div class="card primary"><h4>Observation 2</h4><p class="body"><strong>AI tooling is the cheapest line that matters: ~$35K over 3 years.</strong> Buys the headcount leverage detailed on the next slide — 30 devs doing the work of ~50.</p></div>
+    <div class="card primary"><h4>Observation 3</h4><p class="body"><strong>No six-figure opaque OEM line in any phase.</strong> Parasolid / ACIS / SAS-support all explicitly deferred — the $918K is bounded by published prices.</p></div>
+  </div>
+
+  <aside class="notes">
+    All numbers come straight from §15.2 of the plan document. The interesting structural
+    fact is the shift in cost mix across phases — Phase 1 is dominated by per-dev Qt
+    licenses (38%), Phase 3 is dominated by cloud-at-scale (34%). Engine + foundation
+    library spend stays roughly flat as a fraction even as headcount triples.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 15. TEAM COMPOSITION + INDIA SALARY ENVELOPE -->
+<!-- ============================================================== -->
+<section>
+  <h2 style="margin-bottom: 0.4em;">Team + loaded salary — India hybrid model</h2>
+  <p class="tiny" style="margin-bottom: 0.6em;"><strong>Hybrid geo mix:</strong> ~60% tier-1 urban (Hyderabad HQ + Bangalore satellites) · ~30% tier-2 (Vizag / Bhubaneswar / Coimbatore) · ~10% remote-village. <em>AI agents = headcount leverage, not licensee count.</em> The 8 / 20 / 30 figures below are <strong>already AI-augmented</strong> — pre-AI equivalent would have been ~13 / 33 / 50.</p>
+
+  <div class="cost-split" style="gap: 18px;">
+    <div>
+      <h4>Salary anchors (fully loaded USD, 2026)</h4>
+      <table style="font-size: 0.7em;">
+        <thead><tr><th>Band</th><th>Tier-1 urban</th><th>Tier-2</th><th>Rural / village</th></tr></thead>
+        <tbody>
+          <tr><td>Staff / Principal (12+ yrs)</td><td>$100K</td><td>$65K</td><td>rare</td></tr>
+          <tr><td>Senior (7–12 yrs)</td><td>$65K</td><td>$40K</td><td>$25K</td></tr>
+          <tr><td>Mid (3–7 yrs)</td><td>$35K</td><td>$20K</td><td>$12K</td></tr>
+          <tr><td>Junior (0–3 yrs)</td><td>$14K</td><td>$8K</td><td>$5K</td></tr>
+        </tbody>
+      </table>
+      <p class="tiny mt-1">Loaded = base + bonus + PF + gratuity + healthcare + equipment + office overhead. Specialist C++ / Qt / CAD-domain talent commands top-of-band in tier-1; pool thins rapidly outside metros above senior level.</p>
+
+      <h4 style="margin-top: 1em;">Per-phase salary envelope</h4>
+      <div class="cost-line"><span class="item">Phase 1 — 8 devs avg $42K loaded</span><span class="val">~$336K</span></div>
+      <div class="cost-line"><span class="item">Phase 2 — 20 devs avg $42K loaded</span><span class="val">~$844K</span></div>
+      <div class="cost-line"><span class="item">Phase 3 — 30 devs avg $45K loaded</span><span class="val">~$1.34M</span></div>
+      <div class="cost-line total"><span>3-year salary envelope</span><span class="val">~$2.52M</span></div>
+    </div>
+
+    <div>
+      <h4>Phase 1 — 8 devs · 8 AI bundles</h4>
+      <table style="font-size: 0.68em; margin-bottom: 8px;">
+        <tr><td>Engine core (C++ · DWG · OCCT KAL)</td><td style="text-align:right;"><strong>3</strong></td></tr>
+        <tr><td>Shell team (Qt + ui-bridge ABI)</td><td style="text-align:right;"><strong>2</strong></td></tr>
+        <tr><td>Agent team (MCP server prototype)</td><td style="text-align:right;"><strong>1</strong></td></tr>
+        <tr><td>LISP shim (in-house interpreter)</td><td style="text-align:right;"><strong>1</strong></td></tr>
+        <tr><td>Infra (CMake / Emscripten / CI)</td><td style="text-align:right;"><strong>1</strong></td></tr>
+      </table>
+
+      <h4>Phase 2 — 20 devs · 20 AI bundles</h4>
+      <table style="font-size: 0.68em; margin-bottom: 8px;">
+        <tr><td>Engine core (Mac/Linux parity)</td><td style="text-align:right;"><strong>6</strong></td></tr>
+        <tr><td>Browser shell (WASM + WebGPU)</td><td style="text-align:right;"><strong>5</strong></td></tr>
+        <tr><td>Cloud team (two-tier co-edit)</td><td style="text-align:right;"><strong>3</strong></td></tr>
+        <tr><td>Agent team (MCP local + remote)</td><td style="text-align:right;"><strong>2</strong></td></tr>
+        <tr><td>Plugin host (BRX + web RPC)</td><td style="text-align:right;"><strong>2</strong></td></tr>
+        <tr><td>LISP shim + migration tool</td><td style="text-align:right;"><strong>1</strong></td></tr>
+        <tr><td>Infra / release</td><td style="text-align:right;"><strong>1</strong></td></tr>
+      </table>
+
+      <h4>Phase 3 — 30 devs · 30 AI bundles</h4>
+      <table style="font-size: 0.7em;">
+        <tr><td>Engine core (3D + BIM + perf)</td><td style="text-align:right;"><strong>7</strong></td></tr>
+        <tr><td>Vertical extensions (MEP / Elec / Mech)</td><td style="text-align:right;"><strong>6</strong></td></tr>
+        <tr><td>Cloud team (scale + telemetry)</td><td style="text-align:right;"><strong>4</strong></td></tr>
+        <tr><td>Browser shell (at-parity perf)</td><td style="text-align:right;"><strong>4</strong></td></tr>
+        <tr><td>Mobile (iOS + Android viewer)</td><td style="text-align:right;"><strong>3</strong></td></tr>
+        <tr><td>Agent team (generative — conditional)</td><td style="text-align:right;"><strong>2</strong></td></tr>
+        <tr><td>Plugin host + marketplace</td><td style="text-align:right;"><strong>2</strong></td></tr>
+        <tr><td>Infra + sunset orchestration</td><td style="text-align:right;"><strong>2</strong></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="hero-stat" style="margin-top: 12px; padding: 14px;">
+    <span class="number" style="font-size: 2.2em;">~$3.44M</span>
+    <span class="label">3-year total project envelope · $0.92M stack + $2.52M loaded India salary · sensitivity: ±20% on salary mix (heavier rural → ~$3.0M, heavier urban-senior → ~$4.2M)</span>
+  </div>
+
+  <aside class="notes">
+    The hybrid 60/30/10 mix is what makes the loaded average land at ~$42K/dev across the
+    program. A pure-Hyderabad team would be ~$60K average; a remote-heavy team thins out
+    above senior, which is precisely the band we need most. AI tooling is the cheapest
+    leverage we have on this number — $35K of AI bundles over 3 years saves an estimated
+    ~20 headcount-years of work, which is worth several hundred thousand in salary even at
+    blended India rates.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 16. LICENSING POSTURE -->
 <!-- ============================================================== -->
 <section>
   <h2>Licensing posture — ActCAD is commercial closed-source</h2>
@@ -678,7 +791,7 @@ graph TB
     </tbody>
   </table>
   <p class="small mt-2"><strong>The best-value line item in the entire stack:</strong> ODA Sustaining at ~$4.5K/yr renewal gets unlimited commercial seats + inWEB web redistribution with no per-seat royalty.</p>
-  <div class="slide-footer">14 / 23</div>
+
   <aside class="notes">
     Every component has been deliberately chosen for closed-source commercial safety. The
     OCCT linking exception is the critical legal fact — it's why we get a free, mature B-rep
@@ -712,7 +825,7 @@ graph TB
     <p style="margin: 0; font-size: 1.0em; color: var(--accent-light);">The public commitment no competitor has made:</p>
     <p style="margin: 0.3em 0 0; font-size: 1.1em; font-weight: 600;">Every MCP tool call resolves to <strong style="color: white;">exactly one transaction</strong> in the host undo stack.</p>
   </div>
-  <div class="slide-footer">15 / 23</div>
+
   <aside class="notes">
     Revit 2027, Fusion 2026, and ARES A3 all shipped MCP / agent surfaces in 2026 without
     documenting transactional undo semantics publicly. Making that commitment up front and
@@ -749,7 +862,7 @@ graph TB
     </div>
   </div>
   <p class="small mt-2"><strong>No generic CRDT on geometry.</strong> Yjs / Automerge OOM at the millions-of-entity scale typical for an MEP riser DWG. Industry has converged here: Figma rejected pure CRDT; Onshape uses op-log; ARES Kudo ships closer to soft-lock + sync. Our two-tier model <strong>leapfrogs ARES's ceiling</strong>.</p>
-  <div class="slide-footer">16 / 23</div>
+
   <aside class="notes">
     The two-tier model is what gives us both correctness (Tier 1 server-side validation
     prevents inconsistent drawings) and responsiveness (Tier 2 LWW for everything that
@@ -780,7 +893,7 @@ graph TB
     <p style="margin: 0.3em 0 0; font-size: 0.9em; color: var(--accent-light);">Same command/query API: native plugins call it in-process, web extensions via OAuth REST. <strong style="color: white;">Same scopes, same semantics, same audit trail.</strong></p>
   </div>
   <p class="small mt-2">Marketplace: 15% revenue share over a $5K/year free tier (Apple-equivalent for small developers) — avoids the SolidWorks anti-pattern of mandatory share with no storefront.</p>
-  <div class="slide-footer">17 / 23</div>
+
   <aside class="notes">
     No shipping CAD product has true plugin parity across native and web today. We promise
     API parity (not binary parity) — same RPC contract on both sides. Plugins that need raw
@@ -804,7 +917,7 @@ graph TB
     <li><strong>No two products forever</strong> — IntelliCAD ActCAD enters sunset in Phase 3</li>
   </ul>
   <blockquote class="mt-2">Each <em>"don't"</em> closes a door that competitors keep open and pay for.</blockquote>
-  <div class="slide-footer">18 / 23</div>
+
   <aside class="notes">
     The boundary-setting is as important as what we commit to. Every "don't" represents a
     cost we're not paying — whether that's maintenance burden (VBA), brand confusion (two
@@ -836,7 +949,7 @@ graph TB
     </div>
   </div>
   <p class="small mt-2 centered">Pricing: existing perpetual licenses upgrade to new perpetual tier. <strong>AI / cloud features are the new subscription line.</strong></p>
-  <div class="slide-footer">19 / 23</div>
+
   <aside class="notes">
     The migration story has to be told three times: to existing customers, to the support team,
     and to sales / marketing. Each audience needs a different level of detail; the principles
@@ -869,12 +982,12 @@ graph TB
       </ol>
     </div>
   </div>
-  <p class="centered mt-2" style="font-size: 0.85em; color: var(--text-2);"><strong>Total cost of today's decision:</strong> ~$8,000 + 4–6 weeks of senior engineer time. <strong>Information return:</strong> a measured Go / No-Go on a $920K program.</p>
-  <div class="slide-footer">20 / 23</div>
+  <p class="centered mt-2" style="font-size: 0.85em; color: var(--text-2);"><strong>Total cost of today's decision:</strong> ~$8,000 + 4–6 weeks of senior engineer time. <strong>Information return:</strong> a measured Go / No-Go on a ~$3.44M program (stack + salary, 3-year envelope).</p>
+
   <aside class="notes">
     Frame the decision-cost-vs-information-return explicitly. We're not asking management to
-    commit to $920K today — we're asking them to spend $8K and 6 weeks to find out whether
-    $920K is the right number.
+    commit to $3.44M today — we're asking them to spend $8K and 6 weeks to find out whether
+    $3.44M is the right envelope.
   </aside>
 </section>
 
@@ -891,7 +1004,7 @@ graph TB
     <li>What's our public position on <strong>AI in CAD</strong> going to be — leader, fast-follower, or quiet adopter?</li>
     <li>What competitive-intelligence gap do we want to close before the spike?</li>
   </ol>
-  <div class="slide-footer">21 / 23</div>
+
   <aside class="notes">
     Open the floor on these. Question 3 (willing-customer cohort) is the most actionable —
     we need names and a relationship plan before the spike kicks off. Question 5 (public AI
@@ -931,7 +1044,7 @@ graph TB
     </tbody>
   </table>
   <p class="small mt-2"><strong>The plan document is the source of truth.</strong> This presentation is the discussion-starter, not the spec.</p>
-  <div class="slide-footer">22 / 23</div>
+
 </section>
 
 <!-- ============================================================== -->
@@ -944,7 +1057,7 @@ graph TB
     <code>docs/rearchitecture-plan.md</code><br>
     branch <code>claude/review-skills-plugins-B8xQd</code>
   </p>
-  <div class="slide-footer">23 / 23</div>
+
 </section>
 
 </div>
@@ -981,7 +1094,7 @@ Reveal.initialize({
   hash: true,
   controls: true,
   progress: true,
-  slideNumber: false,
+  slideNumber: 'c/t',
   history: true,
   center: false,
   transition: 'slide',
@@ -1008,37 +1121,54 @@ Reveal.initialize({
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ['Phase 1\n(8 devs · yr 1)', 'Phase 2\n(20 devs · yr 2)', 'Phase 3\n(30 devs · yr 3)'],
-        datasets: [{
-          label: 'USD thousands',
-          data: [83.3, 239.4, 595.7],
-          backgroundColor: [
-            'rgba(30, 58, 92, 0.85)',
-            'rgba(58, 111, 176, 0.85)',
-            'rgba(192, 136, 71, 0.85)'
-          ],
-          borderColor: [
-            'rgba(30, 58, 92, 1)',
-            'rgba(58, 111, 176, 1)',
-            'rgba(192, 136, 71, 1)'
-          ],
-          borderWidth: 2,
-          borderRadius: 6
-        }]
+        labels: ['Phase 1\n8 devs · yr 1', 'Phase 2\n20 devs · yr 2', 'Phase 3\n30 devs · yr 3'],
+        datasets: [
+          {
+            label: 'Loaded India salary',
+            data: [336, 844, 1340],
+            backgroundColor: 'rgba(192, 136, 71, 0.85)',
+            borderColor: 'rgba(142, 99, 50, 1)',
+            borderWidth: 2,
+            borderRadius: 4,
+            stack: 'total'
+          },
+          {
+            label: 'Stack + tools + cloud',
+            data: [83.3, 239.4, 595.7],
+            backgroundColor: 'rgba(30, 58, 92, 0.9)',
+            borderColor: 'rgba(16, 37, 66, 1)',
+            borderWidth: 2,
+            borderRadius: 4,
+            stack: 'total'
+          }
+        ]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: false },
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              font: { family: 'Inter', size: 11, weight: '500' },
+              color: '#1a1a1a',
+              boxWidth: 14,
+              padding: 12
+            }
+          },
           tooltip: {
             callbacks: {
-              label: (ctx) => `$${ctx.raw}K`
+              label: (c) => `${c.dataset.label}: $${c.raw}K`,
+              footer: (items) => {
+                const total = items.reduce((s, i) => s + i.raw, 0);
+                return `Phase total: $${total.toFixed(0)}K`;
+              }
             }
           },
           title: {
             display: true,
-            text: 'Annual stack + tools + cloud spend',
+            text: 'Annual total burn — stacked stack + salary',
             font: { family: 'Inter', size: 14, weight: '600' },
             color: '#1e3a5c'
           }
@@ -1046,6 +1176,7 @@ Reveal.initialize({
         scales: {
           y: {
             beginAtZero: true,
+            stacked: true,
             ticks: {
               callback: (v) => '$' + v + 'K',
               font: { family: 'Inter', size: 11 }
@@ -1053,6 +1184,7 @@ Reveal.initialize({
             grid: { color: '#e0d8cc' }
           },
           x: {
+            stacked: true,
             ticks: {
               font: { family: 'Inter', size: 11, weight: '500' },
               color: '#1e3a5c'
