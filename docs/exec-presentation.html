@@ -305,8 +305,33 @@
 
 /* Progress bar */
 .reveal .progress { color: var(--accent); height: 4px; }
-.reveal .controls { color: var(--primary); }
-.reveal .slide-number { background: transparent; color: var(--text-3); font-family: 'Inter', sans-serif; font-size: 0.7em; font-weight: 500; right: 24px; bottom: 8px; }
+/* Reveal controls (prev/next arrows) — copper accent reads on both
+   the white content slides and the navy chapter / title backgrounds */
+.reveal .controls { color: var(--accent); }
+.reveal .controls button { color: inherit; }
+.reveal .controls .navigate-left.enabled,
+.reveal .controls .navigate-right.enabled,
+.reveal .controls .navigate-up.enabled,
+.reveal .controls .navigate-down.enabled { color: var(--accent); opacity: 0.85; }
+.reveal .controls .navigate-left.enabled:hover,
+.reveal .controls .navigate-right.enabled:hover { opacity: 1; }
+
+/* Slide number — moved to bottom-LEFT so it no longer collides with the
+   bottom-right arrow cluster. Lifted on dark backgrounds via :has(). */
+.reveal .slide-number {
+  background: transparent;
+  color: var(--text-3);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.7em;
+  font-weight: 500;
+  left: 24px;
+  right: auto;
+  bottom: 10px;
+}
+.reveal:has(.slides > section.present.chapter) .slide-number,
+.reveal:has(.slides > section.present.title-slide) .slide-number {
+  color: rgba(255, 255, 255, 0.7);
+}
 
 /* ============== ENGAGEMENT UPGRADES ============== */
 
