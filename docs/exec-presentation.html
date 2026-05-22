@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>ActCAD Re-Architecture — Executive Briefing</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
@@ -358,9 +361,80 @@
 /* Table polish */
 .reveal table { border-radius: 6px; overflow: hidden; box-shadow: 0 1px 3px rgba(30, 58, 92, 0.06); }
 .reveal th { letter-spacing: 0.02em; }
+
+/* ----------------------------------------------------------------------
+   Mobile / landscape-lock affordance
+   The deck is authored at 1400×850 — a portrait phone scales the whole
+   stage to ~30% width and text is unreadable. When orientation:portrait
+   AND the viewport is narrower than the deck width, swap the deck out
+   for a rotate-prompt overlay. On desktop / tablet-landscape this rule
+   never fires.
+   --------------------------------------------------------------------- */
+.rotate-prompt { display: none; }
+
+@media (orientation: portrait) and (max-width: 1100px) {
+  .rotate-prompt {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #102542 0%, #1e3a5c 60%, #2a5285 100%);
+    color: white;
+    z-index: 100000;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 28px;
+    font-family: 'Inter', sans-serif;
+  }
+  .rotate-prompt-inner { max-width: 360px; }
+  .rotate-icon { width: 92px; height: 92px; margin: 0 auto 22px; display: block; animation: rotate-hint 2.6s ease-in-out infinite; transform-origin: 50% 50%; }
+  .rotate-prompt h2 { color: #d49968; font-size: 1.5em; margin: 0 0 0.4em; font-weight: 700; line-height: 1.2; border: none; }
+  .rotate-prompt p { font-size: 0.95em; line-height: 1.55; opacity: 0.92; margin: 0 0 1.6em; }
+  .rotate-prompt p em { color: #d49968; font-style: normal; font-weight: 600; }
+  .rotate-prompt button {
+    background: #c08847; color: white; border: none; padding: 13px 30px;
+    font-size: 0.95em; font-weight: 700; border-radius: 6px; cursor: pointer;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    box-shadow: 0 4px 14px rgba(192, 136, 71, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .rotate-prompt button:active { transform: translateY(1px); box-shadow: 0 2px 8px rgba(192, 136, 71, 0.3); }
+  .rotate-prompt .hint { margin-top: 1.2em; font-size: 0.78em; opacity: 0.65; line-height: 1.4; }
+
+  /* Hide the deck behind the prompt so partial renders don't bleed through */
+  .reveal { visibility: hidden; }
+}
+
+@keyframes rotate-hint {
+  0%, 15%   { transform: rotate(0deg); }
+  50%, 65%  { transform: rotate(-90deg); }
+  100%      { transform: rotate(0deg); }
+}
+
+/* Allow Reveal's touch nav (next-slide swipe) without browser fighting it */
+.reveal .slides { touch-action: pan-y; }
 </style>
 </head>
 <body>
+
+<!-- Rotate-to-landscape prompt: visible only on portrait mobile/tablet (CSS-gated). -->
+<div class="rotate-prompt" role="dialog" aria-label="Please rotate your device">
+  <div class="rotate-prompt-inner">
+    <svg class="rotate-icon" viewBox="0 0 64 64" fill="none" stroke="#d49968" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="18" y="6" width="28" height="52" rx="4"/>
+      <line x1="18" y1="14" x2="46" y2="14"/>
+      <line x1="18" y1="50" x2="46" y2="50"/>
+      <circle cx="32" cy="54" r="1.5" fill="#d49968" stroke="none"/>
+      <path d="M 8 30 A 24 24 0 0 1 32 6" stroke="#c08847" stroke-dasharray="3 3"/>
+      <polyline points="8,22 8,30 16,30" stroke="#c08847"/>
+    </svg>
+    <h2>Please rotate your device</h2>
+    <p>This briefing is laid out for <em>landscape</em>.<br>Turn your phone sideways, or tap below for fullscreen.</p>
+    <button type="button" onclick="goLandscapeFullscreen()">Fullscreen &amp; rotate</button>
+    <p class="hint">Tip: on iPhone, make sure the rotation-lock icon in Control Centre is off.</p>
+  </div>
+</div>
+
 <div class="reveal">
 <div class="slides">
 
@@ -1419,6 +1493,25 @@ real-time co-edit · sign-in`"]
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
 
 <script>
+// Mobile landscape-lock helper. iOS Safari ignores screen.orientation.lock()
+// entirely; we still try it for Chrome / Edge / Firefox on Android, then
+// fall back to fullscreen (which rotates the viewport automatically on many
+// Android browsers). On iOS the rotate-prompt overlay carries the message.
+function goLandscapeFullscreen() {
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  const tryLock = () => {
+    if (screen.orientation && typeof screen.orientation.lock === 'function') {
+      screen.orientation.lock('landscape').catch(() => { /* not supported here */ });
+    }
+  };
+  if (req) {
+    Promise.resolve(req.call(el)).then(tryLock).catch(tryLock);
+  } else {
+    tryLock();
+  }
+}
+
 // Init Mermaid with brand-themed colors
 mermaid.initialize({
   startOnLoad: false,
