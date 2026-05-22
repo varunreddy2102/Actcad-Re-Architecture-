@@ -87,9 +87,9 @@
 .card h3 { margin: 0 0 0.4em 0; font-size: 1em; }
 .card h4 { margin: 0 0 0.5em 0; font-size: 0.75em; color: var(--accent); }
 .card p, .card ul, .card .body { margin: 0; font-size: 0.78em; line-height: 1.5; color: var(--text-2); }
-.compact-cards .card { padding: 10px 14px; }
-.compact-cards .card h4 { font-size: 0.65em; margin-bottom: 0.25em; }
-.compact-cards .card .body { font-size: 0.68em; line-height: 1.4; }
+.compact-cards .card { padding: 7px 11px; }
+.compact-cards .card h4 { font-size: 0.6em; margin-bottom: 0.2em; }
+.compact-cards .card .body { font-size: 0.6em; line-height: 1.35; }
 .card .big-num { font-size: 1.8em; font-weight: 800; color: var(--primary); display: block; line-height: 1; }
 .card .stat-label { font-size: 0.7em; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.4em; }
 
@@ -176,14 +176,14 @@
 .phase-deliv .phase-promise { font-size: 0.66em; margin: 0.4em 0 0; color: var(--primary); line-height: 1.35; }
 
 /* Strategic-bet foundations row + tighter cards */
-.bet-foundations { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 0.3em; }
-.bet-foundation { background: var(--bg-cream); border-radius: 5px; padding: 8px 12px; border-left: 3px solid var(--accent); display: flex; flex-direction: column; gap: 2px; }
+.bet-foundations { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0 0 0.3em; }
+.bet-foundation { background: var(--bg-cream); border-radius: 5px; padding: 6px 10px; border-left: 3px solid var(--accent); display: flex; flex-direction: column; gap: 2px; }
 .bet-pill { font-size: 0.7em; font-weight: 700; color: var(--primary-deep); line-height: 1.2; }
 .bet-desc { font-size: 0.6em; color: var(--text-2); line-height: 1.3; }
-.bet-cards .card { padding: 10px 14px; }
-.bet-cards .card .big-num { font-size: 1.4em; }
-.bet-cards .card h3 { font-size: 0.9em; margin-bottom: 0.25em; }
-.bet-cards .card .body { font-size: 0.7em; line-height: 1.4; }
+.bet-cards .card { padding: 8px 12px; }
+.bet-cards .card .big-num { font-size: 1.3em; }
+.bet-cards .card h3 { font-size: 0.85em; margin-bottom: 0.2em; line-height: 1.25; }
+.bet-cards .card .body { font-size: 0.66em; line-height: 1.35; }
 
 /* Stack-at-a-glance layered cards */
 .stack-layers { display: flex; flex-direction: column; gap: 5px; margin: 0.3em 0; }
@@ -242,9 +242,9 @@
 .tier ul { font-size: 0.78em; color: var(--text-2); margin-top: 0.5em; }
 
 /* Don't do */
-.dont-list { list-style: none; padding-left: 0; margin: 0.3em 0; }
-.dont-list li { padding: 6px 0 6px 26px; position: relative; font-size: 0.74em; line-height: 1.4; color: var(--text); border-bottom: 1px solid var(--border); }
-.dont-list li::before { content: "✕"; position: absolute; left: 0; top: 6px; color: var(--danger); font-weight: 700; font-size: 1.1em; }
+.dont-list { list-style: none; padding-left: 0; margin: 0.25em 0; }
+.dont-list li { padding: 5px 0 5px 24px; position: relative; font-size: 0.65em; line-height: 1.35; color: var(--text); border-bottom: 1px solid var(--border); }
+.dont-list li::before { content: "✕"; position: absolute; left: 0; top: 5px; color: var(--danger); font-weight: 700; font-size: 1.1em; }
 
 /* Decision columns */
 .decision-col { padding: 24px; border-radius: 6px; }
@@ -666,30 +666,31 @@
     <div class="mermaid-wrap arch-mermaid">
       <pre class="mermaid" style="display: block;">
 flowchart TB
-    QT["`**Desktop App**
-Qt 6 · Windows / Mac / Linux`"]
-    WEB["`**Browser App**
-React + WebAssembly`"]
-    BRIDGE["`**Shared API Layer**
-one C ABI · FlatBuffers`"]
-    AGENT["`**AI Assistant**
-MCP server · Claude / GPT compatible`"]
+    subgraph SHELLS[" "]
+      direction LR
+      QT["`**Desktop app**
+Windows · Mac · Linux`"]
+      WEB["`**Browser app**
+any modern browser`"]
+    end
+    BRIDGE["`**Shared interface**
+the same engine, both shells`"]
+    AGENT["`**AI assistant**
+plugs into Claude, GPT, Cursor`"]
     PLUGIN["`**Plugins**
-BRX-style · 3rd-party catalogue`"]
+third-party add-ons · same on both`"]
     SCRIPT["`**Scripts**
-Python · LISP · JS`"]
-    CMD["`**Command Bus**
+Python · LISP · JavaScript`"]
+    CMD["`**Command bus**
 every action lands here · one undo stack`"]
-    DB[("`**Drawing Database**
-ODA Drawings SDK
-ONLY writer`")]
+    DB[("`**Drawing database**
+the one place edits get written`")]
     RENDER["`**Rendering**
-ODA Visualize
-DirectX / Vulkan / Metal / WebGPU`"]
-    GEOM["`**3D Geometry**
-OCCT · open-source kernel`"]
-    NET["`**Cloud Sync**
-real-time co-edit · auth`"]
+uses each device's native graphics`"]
+    GEOM["`**3D geometry**
+Open Cascade (open-source)`"]
+    NET["`**Cloud sync**
+real-time co-edit · sign-in`"]
 
     QT --> BRIDGE
     WEB --> BRIDGE
@@ -701,6 +702,7 @@ real-time co-edit · auth`"]
     DB -.->|reads| RENDER
     DB -.->|reads| NET
     DB --- GEOM
+    RENDER -.->|pixels back to shells| SHELLS
 
     classDef shell fill:#fff,stroke:#c08847,stroke-width:2.5px,color:#1e3a5c
     classDef bridge fill:#f4f1ec,stroke:#3a6fb0,stroke-width:2.5px,color:#1e3a5c
@@ -708,12 +710,14 @@ real-time co-edit · auth`"]
     classDef bus fill:#1e3a5c,stroke:#102542,stroke-width:3px,color:#fff
     classDef data fill:#102542,stroke:#000,stroke-width:3.5px,color:#fff
     classDef service fill:#2d6f4b,stroke:#1d5236,stroke-width:2px,color:#fff
+    classDef shellsGroup fill:transparent,stroke:#c08847,stroke-width:1px,stroke-dasharray:4 3
     class QT,WEB shell
     class BRIDGE bridge
     class AGENT,PLUGIN,SCRIPT input
     class CMD bus
     class DB data
     class RENDER,GEOM,NET service
+    class SHELLS shellsGroup
       </pre>
     </div>
   </div>
@@ -723,7 +727,7 @@ real-time co-edit · auth`"]
     <div class="arch-legend-item"><span class="arch-sw" style="background:#1e3a5c;"></span><strong>Command bus &amp; database</strong> <span>— the two architectural guarantees</span></div>
     <div class="arch-legend-item"><span class="arch-sw" style="background:#2d6f4b;"></span><strong>Engine services</strong> <span>— read from the database, never write</span></div>
   </div>
-  <p class="small mt-2"><strong>Two guarantees built into the architecture:</strong> (1) only one module — the <strong>drawing database</strong> — is allowed to change the drawing; (2) every command — user click, plugin call, LISP script, AI tool — flows through the same <strong>command bus</strong> on its way in. <strong>Result:</strong> one undo stack, one audit trail, one permission model. AI can't sneak past the safety net even if it tried.</p>
+  <p class="tiny" style="margin: 6px 0 0; line-height: 1.35;"><strong>Two guarantees in the architecture:</strong> only the <strong>drawing database</strong> writes; every command — user, plugin, script, AI — funnels through the same <strong>command bus</strong>. <strong>Result:</strong> one undo stack, one audit trail, one permission model. The dotted arrows are read-only — engine services produce pixels, never write to the drawing.</p>
 
   <aside class="notes">
     The two architectural guarantees in this diagram: (1) only db mutates state, so the
@@ -920,7 +924,7 @@ real-time co-edit · auth`"]
       <div class="cost-line"><span class="item">ACIS commercial OEM</span><span class="val">$0</span></div>
     </div>
   </div>
-  <p class="small mt-2 centered"><strong>Every line is bounded by a published price.</strong> Stack is membership + per-seat tooling + metered cloud — no hidden variable contracts. Next two slides drill into stack and salary respectively.</p>
+  <p class="tiny centered" style="margin: 6px 0 0; line-height: 1.35;"><strong>Every line is bounded by a published price.</strong> Stack is membership + per-seat tooling + metered cloud — no hidden variable contracts. Next two slides drill into stack and salary respectively.</p>
 
   <aside class="notes">
     This is the honest total — stack plus salary, end to end. Salary is the dominant line at
@@ -935,9 +939,9 @@ real-time co-edit · auth`"]
 <!-- 14. STACK DRILL-DOWN — third-party / tools / cloud -->
 <!-- ============================================================== -->
 <section>
-  <h2>Stack + tools + cloud — ~$780K over 3 years</h2>
-  <p class="small">High-level cost buckets per phase, sized to the lean 7 / 16 / 25-person plan (6 / 15 / 23 devs + 1 / 1 / 2 QA). Per-seat lines (Qt, AI bundles, JetBrains, GitHub) scale with headcount; ODA / VS Enterprise / cloud + auth scale independently. QA gets AI bundles + JetBrains but not Qt Commercial.</p>
-  <table style="font-size: 0.7em;">
+  <h2 style="margin-bottom: 0.25em;">Stack + tools + cloud — ~$780K over 3 years</h2>
+  <p class="tiny" style="margin-bottom: 0.4em; line-height: 1.35;">High-level cost buckets per phase, sized to the lean 7 / 16 / 25-person plan (6 / 15 / 23 devs + 1 / 1 / 2 QA). Per-seat lines (Qt, AI bundles, JetBrains, GitHub) scale with headcount; ODA / VS Enterprise / cloud + auth scale independently. QA gets AI bundles + JetBrains but not Qt Commercial.</p>
+  <table style="font-size: 0.62em;">
     <thead>
       <tr><th>Bucket</th><th>What's in it</th><th>P1 (7 ppl)</th><th>P2 (16 ppl)</th><th>P3 (25 ppl)</th><th>3-yr total</th></tr>
     </thead>
@@ -972,13 +976,13 @@ real-time co-edit · auth`"]
 <!-- 15. TEAM COMPOSITION + INDIA SALARY ENVELOPE -->
 <!-- ============================================================== -->
 <section>
-  <h2 style="margin-bottom: 0.3em;">Lean team + India salary — 7 / 16 / 25 people · ~$600K loaded</h2>
-  <p class="tiny" style="margin-bottom: 0.5em; line-height: 1.35;"><strong>AI as the lever, not the line item.</strong> 7 / 16 / 25 people (<strong>2 senior tech-leads</strong> — #1 in Engine core from P1, #2 added at P2 as scope expands · rest mid + junior · <strong>1 QA from P1 day 1</strong>, 2 in P3 · 1 junior on LISP corpus end of P1). At ~1.8× AI multiplier this matches what 8 / 20 / 30 would have shipped pre-AI. <strong>No new staff hires</strong> — existing Jytra staff carry the deepest architecture review. <strong>Geo mix:</strong> ~50% tier-1 (Hyd + Blr) · ~50% tier-2 / rural (Vizag / Bhubaneswar / Coimbatore + village-remote).</p>
+  <h2 style="margin-bottom: 0.25em;">Lean team + India salary — 7 / 16 / 25 people · ~$600K loaded</h2>
+  <p class="tiny" style="margin-bottom: 0.4em; line-height: 1.3; font-size: 0.6em;"><strong>AI as the lever, not the line item.</strong> 7 / 16 / 25 people · <strong>2 senior tech-leads</strong> (#1 Engine core P1, #2 added P2) · rest mid + junior · <strong>QA from P1 day 1</strong>, 2 in P3 · 1 junior on LISP corpus end of P1. At ~1.8× AI multiplier this matches what 8 / 20 / 30 would have shipped pre-AI. <strong>No new staff hires.</strong> <strong>Geo mix:</strong> ~50% tier-1 (Hyd + Blr) · ~50% tier-2 / rural (Vizag · Bhubaneswar · Coimbatore + village-remote).</p>
 
   <div class="cost-split" style="gap: 18px;">
     <div>
       <h4>Salary anchors — base INR/mo · USD/mo (2026, ₹96.30/$)</h4>
-      <table style="font-size: 0.66em;">
+      <table style="font-size: 0.6em;">
         <thead><tr><th>Band</th><th>Tier-1 (Hyd / Blr)</th><th>Tier-2 / rural</th></tr></thead>
         <tbody>
           <tr style="opacity: 0.55;"><td>Staff (12+ yrs) <em style="font-size:0.85em;">— ref only, no new hire</em></td><td>₹3.0–4.0 L/mo · ~$3.1–4.2K/mo</td><td>rare</td></tr>
@@ -987,9 +991,9 @@ real-time co-edit · auth`"]
           <tr><td>Junior (0–3 yrs)</td><td>₹0.6–0.8 L/mo · ~$0.6–0.8K/mo</td><td>₹0.3–0.35 L/mo · ~$0.3–0.4K/mo</td></tr>
         </tbody>
       </table>
-      <p class="tiny mt-1">Anchors are <strong>base monthly</strong>. Per-phase numbers below apply the <strong>loaded multiplier</strong> (~1.25× base = base + bonus + PF + gratuity + healthcare + equipment + overhead), then annualise <strong>at top-of-band</strong> for hire-realism (a ~12% calibration up from midpoint to reflect real C++ / Qt / CAD specialist offers in 2026). No new staff hires — existing Jytra staff carry that band.</p>
+      <p class="tiny" style="margin: 4px 0 0; font-size: 0.58em; line-height: 1.3;">Anchors are <strong>base monthly</strong>. Per-phase below applies <strong>~1.25× loaded multiplier</strong> (bonus + PF + gratuity + healthcare + equipment + overhead), then annualises <strong>at top-of-band</strong> (+12% vs midpoint) for real 2026 C++ / Qt / CAD specialist offer realism.</p>
 
-      <h4 style="margin-top: 1em;">Per-phase salary (ramp-adjusted)</h4>
+      <h4 style="margin-top: 0.6em;">Per-phase salary (ramp-adjusted)</h4>
       <div class="cost-line"><span class="item">Phase 1 — ramp 4 → 7 (avg ~5.5, QA from day 1)</span><span class="val">~$96K · ₹0.92 Cr</span></div>
       <div class="cost-line"><span class="item">Phase 2 — ramp 7 → 16 (avg ~11.5, +1 senior)</span><span class="val">~$201K · ₹1.94 Cr</span></div>
       <div class="cost-line"><span class="item">Phase 3 — ramp 16 → 25 (avg ~20.5)</span><span class="val">~$301K · ₹2.90 Cr</span></div>
@@ -998,7 +1002,7 @@ real-time co-edit · auth`"]
 
     <div>
       <h4>Team composition by sub-team</h4>
-      <table style="font-size: 0.68em;">
+      <table style="font-size: 0.6em;">
         <thead><tr><th>Sub-team</th><th>P1 (7)</th><th>P2 (16)</th><th>P3 (25)</th></tr></thead>
         <tbody>
           <tr><td>Engine core (C++ · DWG · OCCT KAL) <em style="font-size:0.85em;">— houses senior #1 (P1) and senior #2 (P2)</em></td><td style="text-align:center;"><strong>2</strong></td><td style="text-align:center;"><strong>5</strong></td><td style="text-align:center;"><strong>6</strong></td></tr>
@@ -1015,11 +1019,11 @@ real-time co-edit · auth`"]
           <tr style="border-top: 2px solid var(--primary); background: var(--bg-cream);"><td><strong>Total team · AI bundles</strong></td><td style="text-align:center;"><strong>7</strong></td><td style="text-align:center;"><strong>16</strong></td><td style="text-align:center;"><strong>25</strong></td></tr>
         </tbody>
       </table>
-      <p class="tiny mt-1" style="line-height: 1.35;"><strong>Why this works leaner:</strong> 2 senior tech-leads in Engine core (#1 anchors DWG / OCCT KAL from P1; #2 added at P2 as scope expands). AI agents handle ABI plumbing, test scaffolding, build / CI, LISP corpus migration, vertical boilerplate. <strong>QA owns from day 1:</strong> golden DWG regression corpus, cross-platform visual diff, perf regression, LISP top-50 corpus end of P1, beta-cohort triage.</p>
+      <p class="tiny" style="margin: 4px 0 0; line-height: 1.3; font-size: 0.58em;"><strong>Why this works leaner:</strong> 2 senior tech-leads in Engine core (#1 anchors DWG / OCCT KAL P1; #2 added P2). AI handles ABI plumbing, test scaffolding, CI, LISP corpus, vertical boilerplate. <strong>QA from day 1:</strong> golden DWG regression corpus, cross-platform visual diff, perf regression, LISP top-50, beta triage.</p>
     </div>
   </div>
 
-  <p class="tiny mt-1" style="color: var(--text-2); margin-bottom: 0; line-height: 1.4;"><strong>Sensitivity:</strong> middle case (50/50 geo, 2 seniors, top-of-band) lands ~$600K / ₹5.8 Cr · mostly tier-1 ~$760K / ₹7.3 Cr · mostly tier-2 / rural ~$430K / ₹4.1 Cr. If AI multiplier underperforms at 1.5× (vs planned 1.8×), +1 mid hire by P1 month 4 adds ~$13K to keep schedule honest.</p>
+  <p class="tiny" style="color: var(--text-2); margin: 4px 0 0; line-height: 1.3; font-size: 0.58em;"><strong>Sensitivity:</strong> middle case (50/50 geo, 2 seniors, top-of-band) ~$600K / ₹5.8 Cr · mostly tier-1 ~$760K / ₹7.3 Cr · mostly tier-2 / rural ~$430K / ₹4.1 Cr. If AI multiplier slips to 1.5× (vs 1.8×), +1 mid hire P1 month 4 adds ~$13K.</p>
 
   <aside class="notes">
     The 7 / 16 / 25 plan is the post-validation revision of the original lean 8 / 20 / 30.
