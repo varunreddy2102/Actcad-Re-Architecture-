@@ -339,11 +339,15 @@
 .stack-layer-head .stack-sub { font-size: 0.55em; color: var(--text-2); font-style: italic; }
 .stack-layer-body { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
 .stack-layer.data .stack-layer-body { grid-template-columns: 1fr 1fr 1fr; }
-.stack-pick { font-size: 0.62em; line-height: 1.3; color: var(--text); display: flex; flex-direction: column; gap: 1px; }
-.stack-pick strong { color: var(--primary-deep); font-weight: 700; }
-.stack-pick .ven-tag { color: var(--accent); font-style: normal; font-weight: 500; font-size: 0.85em; }
-.stack-pick span { color: var(--text-2); font-size: 0.95em; }
-.stack-pick code { font-size: 0.85em; }
+/* Stack picks: tech name (bold, primary) and vendor tag (copper) sit on
+   the same first line, so the plain-English takeaway gets its own line
+   below at a readable size — execs read the takeaway, engineers read
+   the version-numbered tech name above it. */
+.stack-pick { font-size: 0.62em; line-height: 1.35; color: var(--text); display: block; }
+.stack-pick strong { color: var(--primary-deep); font-weight: 700; font-size: 1.02em; }
+.stack-pick .ven-tag { color: var(--accent); font-style: normal; font-weight: 600; font-size: 0.82em; margin-left: 6px; }
+.stack-pick span { display: block; color: var(--text-2); font-size: 1.1em; margin-top: 3px; line-height: 1.4; }
+.stack-pick code { font-size: 0.9em; }
 
 /* Chart */
 .chart-wrap { background: var(--bg-cream); padding: 16px; border-radius: 4px; height: 380px; position: relative; }
@@ -452,6 +456,56 @@
 .spike-item .num { font-weight: 700; color: var(--primary); font-size: 1.4em; line-height: 1; }
 .spike-item .what { color: var(--text); font-weight: 500; margin-top: 0.5em; }
 .spike-item .pass { color: var(--text-2); margin-top: 0.5em; font-size: 0.95em; }
+
+/* Feasibility spike — numbered rows (slide 14). Reuses .insight-row chrome
+   so it matches the lived-pain + risk lists. The question (plain English)
+   is the visual hero; the technical pass-criteria sit below in smaller
+   text with a green ✓ PASS marker; the outcome chip on the right echoes
+   the status pills on slide 13. */
+.spike-list .insight-row { grid-template-columns: 28px 1fr 132px; align-items: center; padding: 7px 12px; }
+.spike-list .insight-row.critical { border-left-color: var(--danger); }
+.spike-list .insight-row:not(.critical) { border-left-color: var(--text-3); }
+.spike-list .insight-row:not(.critical) .ins-num { color: var(--text-3); }
+.spike-q {
+  font-size: 0.78em;
+  font-weight: 700;
+  color: var(--primary-deep);
+  display: block;
+  line-height: 1.25;
+}
+.spike-proof {
+  display: block;
+  font-size: 0.58em;
+  color: var(--text-3);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+.spike-proof::before {
+  content: '✓ PASS';
+  font-weight: 800;
+  color: var(--success);
+  letter-spacing: 0.08em;
+  margin-right: 6px;
+  font-size: 0.95em;
+}
+.spike-outcome {
+  font-size: 0.5em;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--primary);
+  background: rgba(30, 58, 92, 0.08);
+  padding: 5px 9px;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid rgba(30, 58, 92, 0.18);
+  line-height: 1.3;
+}
+.spike-list .insight-row.critical .spike-outcome {
+  color: var(--danger);
+  background: rgba(212, 84, 80, 0.10);
+  border-color: rgba(212, 84, 80, 0.28);
+}
 
 /* Cost section */
 .cost-split { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 22px; }
@@ -1204,18 +1258,67 @@
 <!-- 12. FEASIBILITY SPIKE -->
 <!-- ============================================================== -->
 <section>
-  <h2>Feasibility spike — 4–6 weeks before kickoff</h2>
-  <p class="small">Seven pass/fail items. <strong style="color: var(--danger);">Items 1, 2, 3, 5 are deal-breakers</strong> if they fail — plan changes before kickoff, not at the Phase-2 boundary.</p>
-  <div class="spike-grid">
-    <div class="spike-item critical"><div class="num">1</div><div class="what">OCCT fidelity on customer ACIS B-rep parts</div><div class="pass">Pass: &lt;0.001 unit drift; booleans ≥95%. <strong>Locks 3D kernel.</strong></div></div>
-    <div class="spike-item critical"><div class="num">2</div><div class="what">inWEB perf vs native Visualize (Vulkan / DirectX)</div><div class="pass">Pass: inWEB ≤ 3× slower than native</div></div>
-    <div class="spike-item critical"><div class="num">3</div><div class="what">ui-bridge C ABI driving Qt + WASM from one cmd</div><div class="pass">Pass: one source of truth; no shell-specific branching</div></div>
-    <div class="spike-item"><div class="num">4</div><div class="what">Real customer LISP script on minimal interpreter</div><div class="pass">Pass: visually identical to current ActCAD</div></div>
-    <div class="spike-item critical"><div class="num">5</div><div class="what">MCP "draw a 3-bed apartment plan" via Claude/GPT</div><div class="pass">Pass: agent-shaped commands; no drawing corruption</div></div>
-    <div class="spike-item"><div class="num">6</div><div class="what">Qt Commercial multi-year quote negotiated</div><div class="pass">Pass: signed quote, 15–35% below first offer</div></div>
-    <div class="spike-item"><div class="num">7</div><div class="what">2-user op-log co-edit on a real drawing</div><div class="pass">Pass: replication works; sane conflict semantics</div></div>
+  <h2 style="margin-bottom: 0.3em;">Feasibility spike — 4–6 weeks before kickoff</h2>
+  <p class="small" style="margin-bottom: 0.5em;">Seven questions we answer before signing the 3-year commit. <strong style="color: var(--danger);">Items 1, 2, 3, 5 are deal-breakers</strong> — if any fails, the plan changes before kickoff, not at Phase 2.</p>
+  <div class="insight-list spike-list">
+    <div class="insight-row critical">
+      <div class="ins-num">01</div>
+      <div>
+        <span class="spike-q">Will customer 3D drawings open cleanly in the new engine?</span>
+        <span class="spike-proof"><strong>50 real customer files round-trip</strong> · &lt;0.001 unit drift · booleans ≥95% on Open Cascade</span>
+      </div>
+      <div class="spike-outcome">Locks 3D kernel</div>
+    </div>
+    <div class="insight-row critical">
+      <div class="ins-num">02</div>
+      <div>
+        <span class="spike-q">Is the browser fast enough next to the desktop?</span>
+        <span class="spike-proof">Browser renderer <strong>≤ 3× slower</strong> than the native desktop renderer on the same drawing (DirectX / Vulkan baseline)</span>
+      </div>
+      <div class="spike-outcome">Locks dual-shell story</div>
+    </div>
+    <div class="insight-row critical">
+      <div class="ins-num">03</div>
+      <div>
+        <span class="spike-q">Can one engine really drive both shells from one command?</span>
+        <span class="spike-proof">Shared interface (ui-bridge ABI): <strong>one source of truth</strong> · zero shell-specific branching in the engine</span>
+      </div>
+      <div class="spike-outcome">Locks "one engine" promise</div>
+    </div>
+    <div class="insight-row">
+      <div class="ins-num">04</div>
+      <div>
+        <span class="spike-q">Will real customer LISP scripts still run on day one?</span>
+        <span class="spike-proof">Pick a real customer-supplied AutoLISP script — runs and <strong>looks identical</strong> to today's ActCAD</span>
+      </div>
+      <div class="spike-outcome">De-risks LISP migration</div>
+    </div>
+    <div class="insight-row critical">
+      <div class="ins-num">05</div>
+      <div>
+        <span class="spike-q">Can an AI assistant draft real CAD content without breaking the drawing?</span>
+        <span class="spike-proof">Claude / GPT via MCP draws a <strong>3-bed apartment plan</strong> · agent-shaped commands · zero drawing corruption</span>
+      </div>
+      <div class="spike-outcome">Validates AI surface</div>
+    </div>
+    <div class="insight-row">
+      <div class="ins-num">06</div>
+      <div>
+        <span class="spike-q">Did we get a workable Qt Commercial deal?</span>
+        <span class="spike-proof"><strong>Signed multi-year quote</strong> · 15–35% below the first offer (single biggest negotiable line in the stack)</span>
+      </div>
+      <div class="spike-outcome">Confirms desktop cost</div>
+    </div>
+    <div class="insight-row">
+      <div class="ins-num">07</div>
+      <div>
+        <span class="spike-q">Does live co-edit actually work on a real drawing?</span>
+        <span class="spike-proof">Two users edit the same drawing simultaneously · op-log replication works · <strong>sane conflict semantics</strong></span>
+      </div>
+      <div class="spike-outcome">Locks collaboration story</div>
+    </div>
   </div>
-  <p class="small mt-2 centered" style="color: var(--text-2);">The spike is <em>the</em> decision-forcing moment. Full 3-year program Go/No-Go follows the spike, not this briefing.</p>
+  <p class="tiny centered" style="margin-top: 8px; color: var(--text-2); line-height: 1.4;">The spike is <em>the</em> decision-forcing moment. Full 3-year program Go/No-Go follows the spike, not this briefing. Red-bordered rows are the structural deal-breakers (kernel, browser perf, shared engine, AI surface).</p>
 
   <aside class="notes">
     The four red-bordered items are the structural ones. If OCCT can't read customer ACIS,
