@@ -252,6 +252,95 @@
 .risk-row .mit::before { content: "→ "; color: var(--text-3); font-weight: 600; }
 .risk-row:nth-child(odd) { background: var(--bg-cream); }
 
+/* ----------------------------------------------------------------------
+   Numbered insight rows — shared visual rhythm for "lived pain" (slide 5)
+   and "top risks + mitigations" (slide 13). Same chrome as the stack
+   layers on slide 9: cream background, danger left-border, numbered tag,
+   per-slide grid template.
+   --------------------------------------------------------------------- */
+.insight-list { display: flex; flex-direction: column; gap: 5px; margin: 0.4em 0; }
+.insight-row {
+  background: var(--bg-cream);
+  border-radius: 5px;
+  border-left: 4px solid var(--danger);
+  padding: 8px 14px;
+  display: grid;
+  gap: 14px;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(30, 58, 92, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.insight-row:hover { transform: translateX(2px); box-shadow: 0 4px 12px rgba(212, 84, 80, 0.08); }
+.insight-row .ins-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.05em;
+  font-weight: 800;
+  color: var(--danger);
+  opacity: 0.55;
+  text-align: center;
+  line-height: 1.2;
+}
+.insight-row .ins-title {
+  font-size: 0.78em;
+  font-weight: 700;
+  color: var(--primary-deep);
+  line-height: 1.25;
+  display: block;
+}
+.insight-row .ins-body {
+  font-size: 0.62em;
+  color: var(--text-2);
+  line-height: 1.4;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Pain layout (slide 5): num · title+body · "what this costs us" tag */
+.pain-list .insight-row { grid-template-columns: 32px 1fr 260px; }
+.pain-cost {
+  text-align: right;
+  font-size: 0.6em;
+  font-weight: 700;
+  color: var(--danger);
+  line-height: 1.3;
+  letter-spacing: 0.02em;
+}
+.pain-cost-label {
+  display: block;
+  font-size: 0.85em;
+  color: var(--text-3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1px;
+}
+
+/* Risk layout (slide 13): num · risk · mit · status pill */
+.risk-list .insight-row { grid-template-columns: 28px 1fr 1.15fr 108px; align-items: start; padding: 8px 12px; }
+.risk-list .insight-row .ins-num { padding-top: 1px; }
+.risk-side { font-size: 0.62em; color: var(--text); line-height: 1.4; }
+.risk-side .risk-warn { color: var(--danger); font-weight: 700; }
+.mit-side { font-size: 0.62em; color: var(--text); line-height: 1.4; padding-left: 14px; border-left: 1px dashed rgba(0,0,0,0.1); position: relative; }
+.mit-side::before { content: "→"; position: absolute; left: 0; top: -1px; color: var(--success); font-weight: 800; font-size: 1.1em; }
+.mit-side strong { color: var(--primary-deep); }
+.risk-status {
+  font-size: 0.52em;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  text-align: center;
+  padding: 5px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  align-self: start;
+  border: 1px solid transparent;
+}
+.risk-status.measured  { background: rgba(45, 111, 75, 0.12);  color: var(--success);  border-color: rgba(45, 111, 75, 0.25); }
+.risk-status.scoped    { background: rgba(58, 111, 176, 0.12); color: #3a6fb0;          border-color: rgba(58, 111, 176, 0.25); }
+.risk-status.enforced  { background: rgba(30, 58, 92, 0.10);   color: var(--primary);   border-color: rgba(30, 58, 92, 0.25); }
+.risk-status.bounded   { background: rgba(192, 136, 71, 0.15); color: var(--accent);    border-color: rgba(192, 136, 71, 0.3); }
+.risk-status.swappable { background: rgba(139, 94, 156, 0.12); color: #8b5e9c;          border-color: rgba(139, 94, 156, 0.25); }
+
 /* Spike grid */
 .spike-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .spike-item { background: var(--bg-cream); padding: 14px; border-radius: 4px; border-top: 3px solid var(--text-3); font-size: 0.72em; }
@@ -576,28 +665,48 @@
 <!-- 4. LIVED PAIN -->
 <!-- ============================================================== -->
 <section>
-  <h2>The lived pain today</h2>
-  <p class="small">From <code>docs/architecture-overview.md</code> §4 — what running on IntelliCAD costs us operationally.</p>
-  <div class="card-grid cols-2" style="gap: 12px;">
-    <div class="card danger">
-      <h3>Renderer needs per-machine tuning</h3>
-      <p class="body">at customer sites — and still underperforms vs AutoCAD / BricsCAD on the same hardware.</p>
+  <h2 style="margin-bottom: 0.3em;">The lived pain today</h2>
+  <p class="small" style="margin-bottom: 0.5em;">From <code>docs/architecture-overview.md</code> §4 — what running on IntelliCAD costs us operationally. Each pain has a measurable business cost we keep paying as long as the stack is unchanged.</p>
+  <div class="insight-list pain-list">
+    <div class="insight-row">
+      <div class="ins-num">01</div>
+      <div>
+        <span class="ins-title">Renderer needs per-machine tuning at customer sites</span>
+        <span class="ins-body">…and still underperforms vs AutoCAD / BricsCAD on the same hardware. Every deployment becomes a tuning errand.</span>
+      </div>
+      <div class="pain-cost"><span class="pain-cost-label">What it costs</span>Lose every render bake-off · on-site engineering hours per install</div>
     </div>
-    <div class="card danger">
-      <h3>Non-Windows targets are out of reach</h3>
-      <p class="body">IntelliCAD's shell is Windows-bound by design.</p>
+    <div class="insight-row">
+      <div class="ins-num">02</div>
+      <div>
+        <span class="ins-title">Non-Windows targets are out of reach</span>
+        <span class="ins-body">IntelliCAD's shell is Windows-bound by design — no Mac, no Linux, no browser, no mobile path.</span>
+      </div>
+      <div class="pain-cost"><span class="pain-cost-label">What it costs</span>Caps addressable market · ceiling on multi-platform deals</div>
     </div>
-    <div class="card danger">
-      <h3>AI cannot operate on the foundational codebase</h3>
-      <p class="body">Consortium license blocks structural changes required for agentic refactoring.</p>
+    <div class="insight-row">
+      <div class="ins-num">03</div>
+      <div>
+        <span class="ins-title">AI cannot operate on the foundational codebase</span>
+        <span class="ins-body">Consortium license blocks the structural changes that agentic refactoring needs — we can't put AI agents on the engine itself.</span>
+      </div>
+      <div class="pain-cost"><span class="pain-cost-label">What it costs</span>Locks us out of the AI engineering compounding curve</div>
     </div>
-    <div class="card danger">
-      <h3>We ride IntelliCAD's release cadence</h3>
-      <p class="body">Gated on AutoCAD version-tracking + consortium QA — not on customer urgency.</p>
+    <div class="insight-row">
+      <div class="ins-num">04</div>
+      <div>
+        <span class="ins-title">We ride IntelliCAD's release cadence</span>
+        <span class="ins-body">Gated on AutoCAD version-tracking + consortium QA — not on customer urgency. Our roadmap moves at someone else's speed.</span>
+      </div>
+      <div class="pain-cost"><span class="pain-cost-label">What it costs</span>Velocity gated on competitors · customer-urgency tickets stall</div>
     </div>
-    <div class="card danger" style="grid-column: 1 / -1;">
-      <h3>Every fix we ship into IntelliCAD is shared with direct competitors</h3>
-      <p class="body">Consortium membership means our differentiated work flows back into the pool.</p>
+    <div class="insight-row">
+      <div class="ins-num">05</div>
+      <div>
+        <span class="ins-title">Every fix we ship into IntelliCAD is shared with direct competitors</span>
+        <span class="ins-body">Consortium membership means our differentiated work flows back into the shared pool — the rivals we compete with get our fixes too.</span>
+      </div>
+      <div class="pain-cost"><span class="pain-cost-label">What it costs</span>Strategic killer: differentiation leaks to GstarCAD, ZWCAD, etc.</div>
     </div>
   </div>
 
@@ -961,29 +1070,41 @@ real-time co-edit · sign-in`"]
 <!-- 11. TOP RISKS -->
 <!-- ============================================================== -->
 <section>
-  <h2>Top 5 risks (of 10) with mitigations</h2>
-  <p class="small" style="margin-bottom: 0.8em;">Every CAD rebuild has the same shortlist of structural risks. We address each one in the architecture itself or with named, dated mitigations — not with optimism. <strong style="color: var(--danger);">⚠ risk</strong> · <strong style="color: var(--success);">→ what we do about it</strong></p>
-  <div class="risk-row">
-    <div class="risk"><strong>Will customer 3D drawings open cleanly in the new engine?</strong> Old DWGs carry "ACIS B-rep" 3D blobs that may not translate perfectly into Open Cascade (our new 3D kernel).</div>
-    <div class="mit">Spike item 1 measures this on 50 real customer drawings <em>before</em> we commit. If Open Cascade fails, our Kernel-Abstraction-Layer keeps the swap to Parasolid open.</div>
+  <h2 style="margin-bottom: 0.3em;">Top 5 risks (of 10) with mitigations</h2>
+  <p class="small" style="margin-bottom: 0.5em;">Every CAD rebuild has the same shortlist of structural risks. We address each in the architecture itself or with a named, dated mitigation — not with optimism. <span style="color: var(--danger); font-weight: 700;">⚠ risk</span> · <span style="color: var(--success); font-weight: 700;">→ mitigation</span> · status pill = the mitigation pattern.</p>
+  <div class="insight-list risk-list">
+    <div class="insight-row">
+      <div class="ins-num">01</div>
+      <div class="risk-side"><strong class="risk-warn">Will customer 3D drawings open cleanly in the new engine?</strong> Old DWGs carry <em>ACIS B-rep</em> 3D blobs that may not translate perfectly into Open Cascade.</div>
+      <div class="mit-side">Spike item 1 measures this on <strong>50 real customer drawings before we commit</strong>. If Open Cascade fails, the Kernel-Abstraction Layer keeps the Parasolid swap open.</div>
+      <div class="risk-status measured">Measured</div>
+    </div>
+    <div class="insight-row">
+      <div class="ins-num">02</div>
+      <div class="risk-side"><strong class="risk-warn">LISP compatibility is a multi-year job, not a one-quarter spike.</strong> Customers' AutoLISP scripts are critical to their workflow — missing one breaks their day.</div>
+      <div class="mit-side">Define "compatibility" as <strong>measured % of the top-50 customer scripts</strong> (80% end-of-P1 → 95% end-of-P2). Migration tool for the long tail in P2.</div>
+      <div class="risk-status scoped">Scoped</div>
+    </div>
+    <div class="insight-row">
+      <div class="ins-num">03</div>
+      <div class="risk-side"><strong class="risk-warn">An AI tool could silently corrupt a drawing.</strong> If the AI bypasses the drawing's transaction system, undo no longer rescues the user.</div>
+      <div class="mit-side">Agent talks <strong>only to the command bus</strong>, never to the database. Every MCP tool call resolves to <strong>exactly one</strong> undo-stack entry. Backed by architecture, not discipline.</div>
+      <div class="risk-status enforced">Enforced</div>
+    </div>
+    <div class="insight-row">
+      <div class="ins-num">04</div>
+      <div class="risk-side"><strong class="risk-warn">Running two products in parallel for 24 months</strong> stresses support, sales, and marketing — context-switching, dual messaging, upgrade conversations.</div>
+      <div class="mit-side">Dedicated org plan (separate from this deck). Customer messaging <strong>locked from day 1</strong>: "current ActCAD keeps shipping, new product is your future home."</div>
+      <div class="risk-status bounded">Bounded</div>
+    </div>
+    <div class="insight-row">
+      <div class="ins-num">05</div>
+      <div class="risk-side"><strong class="risk-warn">The renderer trap could re-emerge with ODA.</strong> We trade dependency on one consortium (IntelliCAD) for another (ODA Visualize).</div>
+      <div class="mit-side">The <code>render</code> module is an <strong>abstraction, not a hard-wire</strong>. If ODA Visualize stalls, a native Vulkan / DirectX backend slots in without re-architecting the rest of the engine.</div>
+      <div class="risk-status swappable">Swappable</div>
+    </div>
   </div>
-  <div class="risk-row">
-    <div class="risk"><strong>LISP compatibility is a multi-year job, not a one-quarter spike.</strong> Customers' AutoLISP scripts are critical to their workflow; missing a single one breaks their day.</div>
-    <div class="mit">Define "compatibility" as a measured % of the top-50 customer scripts (80% by end of P1 → 95% by end of P2). Ship a migration tool for the long tail in P2.</div>
-  </div>
-  <div class="risk-row">
-    <div class="risk"><strong>An AI tool could silently corrupt a drawing.</strong> If the AI bypasses the drawing's transaction system, undo no longer rescues the user.</div>
-    <div class="mit">The agent talks only to the command bus (never directly to the database). Every AI tool call resolves to <strong>exactly one</strong> entry in the host undo stack. Backed by architecture, not discipline.</div>
-  </div>
-  <div class="risk-row">
-    <div class="risk"><strong>Running two products in parallel for 24 months</strong> stresses support, sales, and marketing — context-switching, dual messaging, upgrade conversations.</div>
-    <div class="mit">Dedicated org plan (separate from this deck) for support, marketing, and sales context-switching. Customer messaging locked from day 1: "current ActCAD keeps shipping, new product is your future home."</div>
-  </div>
-  <div class="risk-row">
-    <div class="risk"><strong>The renderer trap could re-emerge with ODA.</strong> We trade dependency on one consortium (IntelliCAD) for another (ODA Visualize).</div>
-    <div class="mit">The <code>render</code> module is an abstraction, not a hard-wire. If ODA Visualize stalls, a native Vulkan / DirectX backend slots in without re-architecting the rest of the engine.</div>
-  </div>
-  <p class="small mt-2">Full 10-risk register in <code>docs/rearchitecture-plan.md</code> §7 — each item has a named mitigation owner and a measurable trigger.</p>
+  <p class="tiny" style="margin: 6px 0 0; line-height: 1.4;">Full 10-risk register in <code>docs/rearchitecture-plan.md</code> §7 — each item has a named mitigation owner and a measurable trigger. The status pill labels the <em>type</em> of mitigation: <strong>measured</strong> (proof from the spike), <strong>scoped</strong> (defined boundary), <strong>enforced</strong> (architectural), <strong>bounded</strong> (org plan), <strong>swappable</strong> (abstraction).</p>
 
   <aside class="notes">
     Each of these has been pressure-tested by a separate planning agent. The structural risks
