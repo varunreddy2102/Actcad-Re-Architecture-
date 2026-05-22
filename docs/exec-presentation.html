@@ -1219,13 +1219,31 @@ Reveal.initialize({
   maxScale: 2.0,
   plugins: [ RevealNotes, RevealHighlight ]
 }).then(() => {
-  // Render mermaid on initial load
-  mermaid.run({ querySelector: '.mermaid' });
+  // Render mermaid OUTSIDE the Reveal slide, then inject the SVG back in.
+  // Reveal applies a CSS transform to slides; rendering directly into a
+  // transformed element makes D3 / dagre's curve-fitting fail with
+  // "Could not find a suitable point for the given distance", which
+  // mermaid then surfaces as a generic "Syntax error in text".
+  const renderMermaid = async () => {
+    const pres = document.querySelectorAll('pre.mermaid:not([data-processed])');
+    for (const pre of pres) {
+      const decoder = document.createElement('textarea');
+      decoder.innerHTML = pre.innerHTML;
+      const src = decoder.value.trim().replace(/<br\s*\/?>/gi, '<br/>');
+      try {
+        const id = 'mm-' + Math.random().toString(36).slice(2);
+        const { svg } = await mermaid.render(id, src);
+        pre.innerHTML = svg;
+        pre.setAttribute('data-processed', 'true');
+      } catch (err) {
+        console.error('Mermaid render failed:', err);
+      }
+    }
+  };
+  renderMermaid();
 
-  // Re-run mermaid when slide changes (handles late-rendered diagrams)
-  Reveal.on('slidechanged', () => {
-    mermaid.run({ querySelector: '.mermaid:not([data-processed])' });
-  });
+  // Re-run on slide change for late-rendered diagrams
+  Reveal.on('slidechanged', renderMermaid);
 
   // Render Chart.js bar chart for cost envelopes
   const ctx = document.getElementById('costChart');
