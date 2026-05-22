@@ -509,8 +509,8 @@
   <table>
     <tr><td><strong>DWG / DXF + database</strong></td><td>ODA Drawings SDK (direct membership)</td></tr>
     <tr><td><strong>Rendering</strong></td><td>ODA Visualize — <strong>DirectX 11 (Win default), DirectX 12, Vulkan, Metal</strong>; web: Visualize inWEB → WebGPU</td></tr>
-    <tr><td><strong>3D kernel</strong></td><td><strong>OCCT (LGPL, free)</strong> — locked for the 3-year plan</td></tr>
-    <tr><td><strong>MCAD format I/O</strong></td><td>ODA MCAD translator (SolidWorks / Inventor / CATIA <em>read</em>)</td></tr>
+    <tr><td><strong>3D kernel</strong></td><td><strong>OCCT (LGPL, free)</strong> — the only open-source full-scale B-rep kernel. Locked for the 3-year plan. Paid <strong>Parasolid</strong> stays the year-4+ escape valve if mechanical workloads outgrow OCCT.</td></tr>
+    <tr><td><strong>MCAD format I/O</strong></td><td>ODA MCAD translator (SolidWorks / Inventor / CATIA / NX / Creo <em>read</em>). <em>This is a file translator, not a modeling kernel — it feeds geometry into OCCT.</em></td></tr>
     <tr><td><strong>BIM / IFC</strong></td><td>ODA IFC + BimRv / BimNw</td></tr>
     <tr><td><strong>Engine language</strong></td><td><strong>C++20 primary</strong>, Rust selectively for <code>net</code> / <code>agent</code> / <code>script</code></td></tr>
     <tr><td><strong>Desktop shell</strong></td><td><strong>Qt 6 Commercial</strong> (App Dev Enterprise)</td></tr>
@@ -534,18 +534,18 @@
   <h2>Architecture — one ABI, one command bus</h2>
   <div class="mermaid-wrap">
     <pre class="mermaid" style="display: block;">
-graph TB
-    QT["Qt Desktop Shell<br>Win / Mac / Linux"]
-    WEB["Browser Shell<br>React + WASM"]
-    BRIDGE["ui-bridge<br>one C ABI / FlatBuffers"]
-    CMD["cmd<br>command bus"]
-    AGENT["agent<br>MCP server · Rust"]
-    PLUGIN["plugin<br>host · BRX + OAuth"]
-    SCRIPT["script<br>Python · LISP · JS"]
-    DB[("db<br>drawing database<br>ONLY MUTATOR")]
-    RENDER["render<br>Visualize · DX/Vulkan/Metal/WebGPU"]
-    GEOM["geom<br>OCCT KAL"]
-    NET["net<br>sync · auth · Rust"]
+flowchart TB
+    QT[Qt Desktop Shell<br>Win / Mac / Linux]
+    WEB[Browser Shell<br>React + WASM]
+    BRIDGE[ui-bridge<br>one C ABI / FlatBuffers]
+    CMD[cmd<br>command bus]
+    AGENT[agent<br>MCP server / Rust]
+    PLUGIN[plugin host<br>BRX + OAuth]
+    SCRIPT[script<br>Python / LISP / JS]
+    DB[(db<br>drawing database<br>ONLY MUTATOR)]
+    RENDER[render<br>Visualize / DX / Vulkan / Metal / WebGPU]
+    GEOM[geom<br>OCCT KAL]
+    NET[net<br>sync / auth / Rust]
 
     QT --> BRIDGE
     WEB --> BRIDGE
@@ -879,7 +879,7 @@ graph TB
     <tbody>
       <tr><td><strong>ODA</strong></td><td>Sustaining from day 1 — unlimited commercial seats + inWEB Web/SaaS, no per-seat royalty</td><td><strong>P1:</strong> DWG fidelity + Visualize render · <strong>P2:</strong> inWEB browser editor · <strong>P3:</strong> BIM / IFC, MCAD translators</td><td><span class="badge locked">Locked</span></td></tr>
       <tr><td><strong>Qt 6</strong></td><td>Commercial App Dev Enterprise — LGPL would forbid static linking, iOS code-signing, private modifications</td><td><strong>P1:</strong> Windows daily-driver shell · <strong>P2:</strong> Mac + Linux shells at parity · <strong>P3:</strong> iOS / Android viewer code-signing</td><td><span class="badge locked">Locked</span></td></tr>
-      <tr><td><strong>OCCT (3D kernel)</strong></td><td>LGPL 2.1 + linking exception — explicitly permits closed-source commercial linking, including static</td><td><strong>P2:</strong> light 3D in editor · <strong>P3:</strong> full 3D + BIM-lite (IFC import/export, parametric architectural objects)</td><td><span class="badge free">Free</span></td></tr>
+      <tr><td><strong>OCCT (3D kernel)</strong></td><td>LGPL 2.1 + linking exception — explicitly permits closed-source commercial linking, including static. <strong>The only viable open-source B-rep kernel</strong> for our scope.</td><td><strong>P2:</strong> light 3D in editor · <strong>P3:</strong> full 3D + BIM-lite (IFC import/export, parametric architectural objects)</td><td><span class="badge free">Free</span></td></tr>
       <tr><td><strong>Visual Studio Ent.</strong></td><td>2–3 perf devs only (IntelliTrace, Concurrency Visualizer); VS Code primary for the rest</td><td><strong>P1–P3:</strong> render / boolean perf tuning across phases</td><td><span class="badge locked">Locked</span></td></tr>
       <tr><td><strong>CMake / Emscripten / Cargo</strong></td><td>Permissive OSS; no commercial concern</td><td><strong>P1–P3:</strong> build pipeline · Emscripten gates the browser WASM target</td><td><span class="badge free">Free</span></td></tr>
       <tr><td><strong>.NET / MCP / WebGPU</strong></td><td>MIT / W3C / Khronos — free open standards</td><td><strong>P1:</strong> AI assistant (MCP) · <strong>P2:</strong> .NET extension surface · <strong>P2–P3:</strong> WebGPU browser render</td><td><span class="badge free">Free</span></td></tr>
@@ -1175,7 +1175,7 @@ graph TB
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.6.0/dist/mermaid.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
 
 <script>
