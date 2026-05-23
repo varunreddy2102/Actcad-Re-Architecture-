@@ -128,7 +128,7 @@ The decision below in §4.1 should be read as: *replace; sequencing and migratio
    - ActCAD already uses ACIS today (via IntelliCAD); the re-architecture takes the contract direct, drops the IntelliCAD middleman, and keeps customer file fidelity unchanged.
    - All kernel access goes through a **Kernel Abstraction Layer (KAL)** so the engine never depends on ACIS-specific types in public headers; a kernel swap stays technically possible (~6–12 weeks of focused work) if business conditions ever require it.
    - Alternative kernels were considered and rejected on the same basis: anything that isn't ACIS introduces translation drift on AutoCAD-origin SAT blobs. See `docs/rearchitecture-plan.md` §11.2.
-   - Commercial terms (initial OEM fee + maintenance + per-seat or per-deployment royalty + component module fees + DELA) are negotiated in Spike 1b under NDA — see `docs/rearchitecture-plan.md` §15.1 for the cost structure.
+   - Commercial terms (initial OEM fee + maintenance + royalty + component module fees + DELA) are negotiated in Spike 1b under NDA — see `docs/rearchitecture-plan.md` §15.1 for the cost structure, and §15.1.1 for the **per-deployment royalty model decision** (locked as the negotiating ask; ~10× cheaper than per-seat at ActCAD's SMB scale).
 
 3. **API surface: which legacies survive?**
    - LISP almost certainly must survive — that's the migration story from AutoCAD.

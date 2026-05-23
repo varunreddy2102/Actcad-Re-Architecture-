@@ -140,7 +140,7 @@ Seven validations, in priority order. **If items 1, 2, 3, or 5 fail, the plan ch
 | # | What | Pass criterion |
 |---|---|---|
 | 1 | **ACIS round-trip fidelity test vs AutoCAD.** Take 50 customer DWGs containing ACIS / ASM B-rep solids. Open through ACIS, edit (move / boolean / fillet), save, re-open in AutoCAD. Measure geometric drift on volume / surface area / bounding box, boolean robustness, fillet survival, attribute preservation. | No visible drift, <0.001 unit tolerance on volume / area, identical entity handle set, booleans pass on ≥98% of customer solids. **If this passes, ACIS is locked for the 3-year plan and the contract is signed.** If it fails, the assumption that direct-ACIS gives lossless AutoCAD fidelity is wrong and we re-open the kernel decision. |
-| 1b | **ACIS commercial scoping under NDA.** Procurement + legal track running parallel to spike item 1. Get written term sheet from Spatial naming: module list (Local Ops, Healing, Defeaturing, Polyhedral, etc.), royalty model (per-seat vs per-deployment), WASM / Linux / macOS SKU availability, source-escrow option, DELA full text, change-of-control + business-continuation clauses, support-hour bundle. | Signed term sheet in hand before Phase-1 kickoff. Module list scoped to ActCAD's actual use case (no surprise component fees later). Per-deployment royalty preferred for SMB scale. |
+| 1b | **ACIS commercial scoping under NDA.** Procurement + legal track running parallel to spike item 1. Get written term sheet from Spatial naming: module list (Local Ops, Healing, Defeaturing, Polyhedral, etc.); **royalty model — per-deployment is the ask, per-seat is the documented fallback only** (see §15.1.1 for the comparison math, ~10× cost variance, and full negotiating sequence); WASM / Linux / macOS SKU availability; source-escrow option; DELA full text; change-of-control + business-continuation clauses; support-hour bundle. | Signed term sheet in hand before Phase-1 kickoff. Module list scoped to ActCAD's actual use case (no surprise component fees later). **Per-deployment royalty locked as the primary ask per §15.1.1**; per-seat accepted only if the 5-year amortized cost beats the per-deployment alternative Spatial would have offered. Volume tier breakpoints + annual minimum floor + carve-outs (trials / education / internal QA) all in writing. |
 | 2 | Render the same 50 DWGs through native Visualize (Vulkan) *and* through Visualize inWEB (WebGPU); compare frame time on a 250k-entity drawing | inWEB ≤ 3× slower than native |
 | 3 | Spike the `ui-bridge` C ABI / FlatBuffers seam: drive 10 commands from both a Qt shell and a React + WASM shell against a single `cmd` implementation | Seam is one source of truth; no shell-specific branching in `cmd` |
 | 4 | Run a real customer LISP script (largest one a top-5 customer uses) through a minimal LISP interpreter on top of `cmd` | Script runs and produces visually identical output to current ActCAD |
@@ -446,7 +446,7 @@ Per-component cost data appears inline in each §11 subsection. This section rol
 | **ODA extensions** (BimRv / BimNw / MCAD / Civil / Scan-to-BIM) | Add-on, Sustaining+ | $5K–$10K/yr each (reported) | None | [ODA FAQ](https://www.opendesign.com/faq/membership) |
 | **Spatial / Dassault ACIS — Initial OEM license** | One-time OEM fee | **Opaque — industry estimate $150K–$300K, procurement-gated** | One-time, gates access to headers + libs | [Spatial ACIS](https://www.spatial.com/solutions/3d-modeling/3d-acis-modeler) |
 | **ACIS — Annual maintenance** | % of license fee | **15–20% of initial fee** (~$30K–$60K/yr typical) | Required for updates, hotfixes, CTC access | [Spatial support](https://www.spatial.com/support) |
-| **ACIS — Per-seat or per-deployment royalty** | Volume-tiered | **Opaque, tiered** | Choice of per-seat vs per-deployment has 10× cost implications at SMB scale; negotiate per-deployment | — |
+| **ACIS — Per-deployment royalty** *(primary ask)* / **per-seat** *(fallback only)* | Volume-tiered | **Opaque, tiered** | **Per-deployment is the locked negotiating ask** — ~10× cheaper than per-seat over 3 years at ActCAD scale. Full comparison math, gotchas, and negotiating sequence in **§15.1.1**. | — |
 | **ACIS — Component modules** (Local Ops, Healing, Defeaturing, Polyhedral, AGM, HLR, Lop) | Each priced separately on top of base | **Opaque, per-module** | A "complete" ACIS for our scope typically needs 3–5 modules; scope module list before signing | [ACIS components](https://www.spatial.com/products/3d-acis-modeling) |
 | **ACIS — CTC support hours** | Bundled + overage | ~20–40 hr bundled; $300–$500/hr beyond (estimate) | Engineering-level support from Spatial's Corporate Technical Consulting | — |
 | **ACIS — Source escrow** *(optional, recommended)* | Annual | ~$5K–$15K/yr typical | Business-continuation insurance if Spatial discontinues | — |
@@ -476,6 +476,54 @@ Per-component cost data appears inline in each §11 subsection. This section rol
 | **GitHub Enterprise Cloud** | Sub, per-dev | $21/dev/mo ($252/yr) | n/a — 50-100 seat min on annual | [GitHub pricing](https://github.com/pricing) |
 | **GitHub Advanced Security** | Sub, per-dev | +$19/dev/mo ($228/yr) | n/a | [GitHub pricing](https://github.com/pricing) |
 | **GitHub Actions (standard)** | Per-minute | **$0.006/min** (2-core Linux, effective Jan 2026); 50K min/mo bundled in Enterprise Cloud | n/a | [Actions pricing](https://docs.github.com/en/billing/reference/actions-runner-pricing) |
+
+### 15.1.1 ACIS royalty model — per-deployment vs per-seat
+
+The single largest variance in the ACIS commercial envelope is the **royalty model** (line item 3 in §15.1's cost-structure table). The two models can differ by ~10× over a 3-year window for an SMB-volume / low-price product like ActCAD. This subsection is the negotiating reference for Spike 1b.
+
+**The two structures, plainly:**
+
+| | Per-seat royalty | Per-deployment royalty |
+|---|---|---|
+| What triggers payment | Each active licensed user, recurring (annual) | Each unique install, typically one-time |
+| Scales with | Total customer base × time | New installs per year |
+| Risk shape | Linear forever; punishes long-lived perpetual customers | Front-loaded; amortizes over seat lifetime |
+| Friendly to | Low-volume / high-price MCAD products (Plasticity, Shapr3D, KeyShot) | High-volume / low-price SMB CAD products (ActCAD, BricsCAD-class) |
+| Reporting overhead | Per-customer active seat counts each quarter | Install events with unique deployment IDs |
+
+**Illustrative math at ActCAD scale.** Hypothetical $50 royalty unit, 30,000 installed seats today, 3,000 new installs / year, 5-year average seat lifetime. Numbers are illustrative — actual rates come from Spatial's term sheet — but the relative shape holds:
+
+| Year | Per-seat ($50/seat/yr) | Per-deployment ($50/install, one-time) |
+|---|---|---|
+| Y1 | 30,000 × $50 = **$1.50M** | 3,000 × $50 = **$150K** |
+| Y2 | 33,000 × $50 = **$1.65M** | 3,000 × $50 = **$150K** |
+| Y3 | 36,000 × $50 = **$1.80M** | 3,000 × $50 = **$150K** |
+| **3-yr total** | **$4.95M** | **$450K** |
+
+**~10× difference.** This is why the Phase 2 / 3 royalty placeholders in §15.2 assume per-deployment. If Spike 1b returns a per-seat-only offer at comparable headline rates, the Phase 3 envelope grows by roughly $1M+.
+
+**When per-seat actually wins** (none of these describe ActCAD, but document them so the comparison is honest):
+1. **High-price low-volume MCAD products.** Plasticity / Shapr3D / KeyShot — selling $500–$5K perpetuals at 5K–50K seats. A $50/seat royalty is 1–10% of revenue and reporting is simpler.
+2. **Pure subscription with high churn.** 40%+ annual churn — per-seat self-terminates with the lapsed seat; per-deployment is sunk cost regardless.
+3. **Single-customer enterprise / site license.** One customer, hundreds of seats — Spatial usually offers a flat site fee that beats both row-level models.
+
+**Contract gotchas that change the actual cost** (must be in writing before signing):
+- **Per-deployment "unique" definition.** Does reinstall on the same machine count? Hardware change? VM migration? OS reinstall? Vague language turns "one-time" into "recurring." Push for *machine-fingerprint or install-ID-based* with reinstalls on same machine excluded.
+- **Per-seat "seat" definition.** Lapsed-subscription seats still counted for the quarter? Concurrent vs named users? Trial / evaluation seats counted? 30-day grace period for inactive seats?
+- **Volume tier breakpoints.** A $50/seat headline might drop to $20 above 50K seats. Per-deployment might have no tiers, or steep tiers. **Tier shape matters more than the headline rate.**
+- **Minimum annual royalty floor.** Most OEM contracts carry a minimum regardless of volume — sets the actual cost at low volumes. Push for $25K–$50K floor rather than $100K+.
+- **Subscription vs perpetual treatment.** Some contracts charge differently for subscription vs perpetual customers. Ask explicitly.
+- **Audit + true-up cadence.** Quarterly reporting + annual true-up is standard; some contracts allow annual reporting which reduces our internal overhead (line item 9 in §15.1).
+- **Education / trial / internal-QA carve-outs.** Excluded from royalty count? Get it written.
+
+**The negotiating ask sequence for Spike 1b** (ordered by priority):
+1. **Per-deployment royalty, one-time**, with a precise unique-deployment definition (machine-fingerprint based, same-machine reinstalls excluded).
+2. **Volume-tiered**, with breakpoints at 5K / 25K / 100K cumulative deployments and a meaningful tier decay (e.g., $50 → $30 → $15 → $5).
+3. **Carve-outs**: trials, education, internal QA, evaluation copies all excluded from royalty count.
+4. **Annual minimum floor** as low as possible — target $25K–$50K rather than $100K+.
+5. **Per-seat as a fallback only** if per-deployment isn't on offer — and only with a steep volume curve (e.g., $50 → $5 above 50K seats) where 5-year amortized cost beats their per-deployment alternative.
+
+**The decision rule.** Accept per-seat only if Spatial refuses per-deployment AND the 5-year amortized per-seat cost (using realistic seat-count + churn projections) is lower than the per-deployment alternative they would have offered. That comparison — both quotes side by side — is the negotiating leverage. **The plan locks in per-deployment as the default ask, with per-seat documented as an explicit fallback decision, not an accident.**
 
 ### 15.2 Modeled annual budget envelopes
 
@@ -567,7 +615,7 @@ ActCAD is a closed-source commercial product. The license tier on every componen
 
 1. **ODA Sustaining from day 1 — LOCKED.** $7.5K first / $4.5K/yr renewal for unlimited commercial seats + inWEB Web/SaaS redistribution rights with **no per-seat royalty** is the single best-value line item in the entire stack. Limited Commercial's 100-seat cap is a footgun at our scale; Founding (~$37.5K) considered in Phase 3 for source + Git access + business-continuation rights.
 2. **Qt 6 commercial — LOCKED.** Standard Application Development Enterprise per developer. LGPL is *not* viable for ActCAD: static linking is forbidden under LGPL v3, code-signed iOS distribution can't satisfy the user-relinking clause, and we need to keep our Qt modifications private. Small Business tier is almost certainly not available at Jytra's revenue. §9 spike item 6 negotiates the multi-year quote; target 15–35% below first quote per Vendr-reported norm.
-3. **ACIS commercial OEM contract — LOCKED as the kernel choice; commercial terms OPEN pending Spike 1b.** Rationale: AutoCAD's 3D solids are stored as ASM (ACIS fork) SAT blobs in DWG; only ACIS round-trips them without drift. ActCAD already uses ACIS today through IntelliCAD; this decision puts the contract directly in our name and removes the IntelliCAD middleman. Cost shape is initial OEM license + 15–20% annual maintenance + per-seat or per-deployment royalty + per-module fees + DELA — see §15.1. **All §15.2 ACIS line items are industry-estimate placeholders pending the term sheet from Spatial.** Once that lands, Phase-1 budget firms up to a real number.
+3. **ACIS commercial OEM contract — LOCKED as the kernel choice; commercial terms OPEN pending Spike 1b.** Rationale: AutoCAD's 3D solids are stored as ASM (ACIS fork) SAT blobs in DWG; only ACIS round-trips them without drift. ActCAD already uses ACIS today through IntelliCAD; this decision puts the contract directly in our name and removes the IntelliCAD middleman. Cost shape is initial OEM license + 15–20% annual maintenance + royalty + per-module fees + DELA — see §15.1. **Royalty model — per-deployment is the LOCKED negotiating ask** (per-seat documented as fallback only; ~10× cost variance over 3 years at ActCAD scale — see §15.1.1 for the comparison math and full negotiating sequence). **All §15.2 ACIS line items are industry-estimate placeholders pending the term sheet from Spatial.** Once that lands, Phase-1 budget firms up to a real number.
 4. **VS Code (or Cursor) primary, Visual Studio Enterprise reserved — LOCKED.** Primary IDE is **VS Code + clangd + CMake Tools + Qt extension pack + AI agent (Claude Code / Cursor / Copilot)** for the entire C++ team — that's where the AI-augmented dev workflow lives in 2026. Visual Studio Enterprise (~$6K first / $2.6K renewal) is **reserved for 2-3 designated Windows-perf devs** for IntelliTrace, Concurrency Visualizer, and advanced profiler work into ODA / Qt call stacks. JetBrains CLion available to taste as an alternative. Saves ~$12K Phase 1, ~$18K Phase 2, ~$30K Phase 3 versus the original plan of buying VS Enterprise for the whole C++ team.
 5. **AI-augmented team math.** Qt's commercial license is per-human-developer; AI agents are tools, not licensees. AI doesn't reduce the per-seat *rate*, it reduces the per-seat *count* — a 12-dev AI-augmented Phase-2 team can ship what 20 devs shipped pre-AI, so Qt's line drops from $80K to ~$48K via headcount, not via license loophole. Same logic applies to ODA seats (unlimited under Sustaining — no effect), GitHub / Visual Studio / JetBrains (per-human, scale with headcount). Budget for AI dev tooling itself at **~$50/dev/mo blended** (Cursor Business $40, Copilot Business $19, Claude Code on top).
 6. **All build / runtime tooling stays free.** CMake, Emscripten, Cargo, Vcpkg, Conan, WebGPU / WebAssembly, .NET 8 / NativeAOT, MCP, Tauri (launcher app only) are all permissive OSS — no commercial concern for our use.
@@ -687,4 +735,4 @@ Hold the drawing in memory; that's correct and unchanged from how every serious 
 4. Stand up the engineering org for Phase 1 (engine team, shell team, agent team, LISP-shim team, infra team).
 5. Lock the Phase 1 milestone definitions and the willing-customer cohort for the month-12 native Windows beta.
 6. Open commercial conversations (commitments locked per §10 and §15.4 — these are execution, not decisions): **ODA Sustaining membership signup; Qt Commercial Application Development Enterprise multi-year quote (target 15–35% below first quote, with mobile / WASM add-ons and Phase-3 price protection); 2-3 Visual Studio Enterprise seats for designated Windows-perf devs; AI dev tooling subscriptions (Cursor Business / Copilot Business / Claude Code) for the whole team; Clerk + Stripe accounts.**
-7. **Open the ACIS commercial conversation with Spatial under NDA (Spike 1b workstream)** — request a term sheet covering: module list scoped to ActCAD use case (Local Ops + Healing + Defeaturing as floor; Polyhedral + AGM if Phase-3 BIM needs them), royalty model (push for per-deployment over per-seat), WASM / Linux / macOS SKU availability, source-escrow option, full DELA text, change-of-control + business-continuation clauses, CTC support-hour bundle. Legal review of the DELA before signing.
+7. **Open the ACIS commercial conversation with Spatial under NDA (Spike 1b workstream)** — request a term sheet covering: module list scoped to ActCAD use case (Local Ops + Healing + Defeaturing as floor; Polyhedral + AGM if Phase-3 BIM needs them); **royalty model — per-deployment is the primary ask, per-seat the documented fallback only** (see §15.1.1: ~10× cost variance at SMB scale, full negotiating sequence with tier breakpoints, minimum floor, and carve-outs); WASM / Linux / macOS SKU availability; source-escrow option; full DELA text; change-of-control + business-continuation clauses; CTC support-hour bundle. Legal review of the DELA before signing.

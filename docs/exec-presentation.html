@@ -1553,6 +1553,48 @@
 </section>
 
 <!-- ============================================================== -->
+<!-- 15b. ACIS ROYALTY — PER-DEPLOYMENT IS THE LOCKED ASK -->
+<!-- ============================================================== -->
+<section>
+  <h2 style="margin-bottom: 0.25em;">ACIS royalty — per-deployment is the locked negotiating ask</h2>
+  <p class="tiny" style="margin-bottom: 0.4em; line-height: 1.35;">The single largest variance in the cost envelope. Choice between per-seat and per-deployment can mean <strong>~10× over 3 years</strong> at ActCAD's SMB scale. Full math + contract gotchas in plan <strong>§15.1.1</strong>.</p>
+
+  <table style="font-size: 0.8em; margin-bottom: 0.5em;">
+    <thead><tr><th>Year (30K seats today · 3K new installs/yr · $50 royalty unit illustrative)</th><th>Per-seat ($50/seat/yr)</th><th>Per-deployment ($50/install, one-time)</th></tr></thead>
+    <tbody>
+      <tr><td>Year 1</td><td>30,000 × $50 = <strong>$1.50M</strong></td><td>3,000 × $50 = <strong>$150K</strong></td></tr>
+      <tr><td>Year 2</td><td>33,000 × $50 = <strong>$1.65M</strong></td><td>3,000 × $50 = <strong>$150K</strong></td></tr>
+      <tr><td>Year 3</td><td>36,000 × $50 = <strong>$1.80M</strong></td><td>3,000 × $50 = <strong>$150K</strong></td></tr>
+      <tr style="background: #fff8eb;"><td><strong>3-year total</strong></td><td><strong>$4.95M</strong></td><td><strong>$450K</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="card-grid cols-2 compact-cards" style="gap: 10px;">
+    <div class="card">
+      <h4>Why per-deployment for ActCAD</h4>
+      <p class="body tiny" style="line-height: 1.4;">SMB scale, high-volume / low-price product, mix of perpetual + subscription. Per-seat creates a <strong>linear-forever liability</strong> on every perpetual seat we've ever shipped. Per-deployment is a one-time amortized hit over 5+ year seat lifetimes.</p>
+    </div>
+    <div class="card">
+      <h4>When per-seat would win (none describe ActCAD)</h4>
+      <p class="body tiny" style="line-height: 1.4;">High-price low-volume MCAD (Plasticity / Shapr3D / KeyShot), or pure subscription with 40%+ churn, or single-customer site licenses. Documented for honest comparison only.</p>
+    </div>
+  </div>
+
+  <div class="card primary" style="margin-top: 0.5em; padding: 8px 12px;">
+    <h4 style="margin-bottom: 4px;">Spike 1b negotiating sequence (ordered)</h4>
+    <ol class="tiny" style="margin: 0; padding-left: 1.2em; line-height: 1.4;">
+      <li><strong>Per-deployment, one-time</strong>, with precise unique-deployment definition (machine-fingerprint based; same-machine reinstalls excluded)</li>
+      <li><strong>Volume tiers</strong> at 5K / 25K / 100K cumulative deployments with steep decay (e.g., $50 → $30 → $15 → $5)</li>
+      <li><strong>Carve-outs:</strong> trials, education, internal QA, evaluation copies all excluded from royalty count</li>
+      <li><strong>Annual minimum floor</strong> target $25K–$50K, not $100K+</li>
+      <li><strong>Per-seat as fallback only</strong> — and only with both quotes side-by-side proving 5-year amortized cost beats per-deployment</li>
+    </ol>
+  </div>
+
+  <p class="tiny centered" style="margin: 0.4em 0 0; line-height: 1.35;"><strong>Decision rule:</strong> per-deployment is locked as the default ask. Per-seat is accepted only if Spatial refuses per-deployment AND their per-seat quote beats their own per-deployment alternative on 5-year amortized cost. That side-by-side is the negotiating leverage.</p>
+</section>
+
+<!-- ============================================================== -->
 <!-- 16. LICENSING POSTURE -->
 <!-- ============================================================== -->
 <section>

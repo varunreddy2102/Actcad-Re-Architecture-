@@ -218,9 +218,36 @@ Full risk register (10 items, each with named mitigation) in `docs/rearchitectur
 | **Phase 2** (months 12–24) | 20 | **~$449K** (incl. ~$210K ACIS recurring + royalty at GA) |
 | **Phase 3** (months 24–36) | 30 | **~$1.26M** (incl. ~$660K ACIS recurring + royalty at scale) |
 
-**What's in scope:** ODA Sustaining ($7.5K → $4.5K renewal, unlimited seats + Web/SaaS), Qt Commercial Enterprise (~$4K/dev/yr), **ACIS commercial OEM** (initial fee + 15–20% maintenance + per-seat or per-deployment royalty + component module fees + DELA), VS Code primary + 2-3 VS Enterprise seats for perf devs, AI dev tooling (~$50/dev/mo), AWS infra (compute + GPU streaming), Clerk + Stripe.
+**What's in scope:** ODA Sustaining ($7.5K → $4.5K renewal, unlimited seats + Web/SaaS), Qt Commercial Enterprise (~$4K/dev/yr), **ACIS commercial OEM** (initial fee + 15–20% maintenance + **per-deployment royalty** (locked ask; per-seat is documented fallback only — see plan §15.1.1) + component module fees + DELA), VS Code primary + 2-3 VS Enterprise seats for perf devs, AI dev tooling (~$50/dev/mo), AWS infra (compute + GPU streaming), Clerk + Stripe.
 
 > **ACIS line items are industry-estimate placeholders** pending the §9 Spike 1b term sheet from Spatial. Real Phase-1 budget firms up once the contract conversation is closed. Royalty in Phase 2 / 3 scales with deployment volume — per-deployment vs per-seat negotiation has 10× cost implications at SMB scale.
+
+---
+
+## ACIS royalty — per-deployment is the locked negotiating ask
+
+ACIS royalty model is the **single largest variance** in the cost envelope — choice between per-seat and per-deployment can mean ~10× over 3 years at ActCAD's SMB scale.
+
+**Illustrative — 30K installed seats, 3K new installs/yr, hypothetical $50 royalty unit:**
+
+| Year | Per-seat ($50/seat/yr) | Per-deployment ($50/install, one-time) |
+|---|---|---|
+| Y1 | $1.50M | $150K |
+| Y2 | $1.65M | $150K |
+| Y3 | $1.80M | $150K |
+| **3-yr total** | **$4.95M** | **$450K** |
+
+**Why per-deployment for ActCAD:** SMB scale, high-volume / low-price product, mix of perpetual + subscription — per-seat creates a linear-forever liability on every perpetual seat we've ever shipped; per-deployment is a one-time amortized hit over 5+ year seat lifetimes.
+
+**Spike 1b negotiating sequence (ordered):**
+
+1. Per-deployment, one-time, with precise unique-deployment definition (machine-fingerprint based, same-machine reinstalls excluded)
+2. Volume tiers at 5K / 25K / 100K cumulative deployments with steep decay
+3. Carve-outs: trials, education, internal QA all excluded
+4. Annual minimum floor target $25K–$50K, not $100K+
+5. Per-seat **only as fallback** if Spatial refuses per-deployment AND 5-year amortized cost beats their per-deployment alternative
+
+> **Decision rule:** accept per-seat only with both quotes side-by-side proving it costs less. Full math + contract gotchas in plan **§15.1.1**.
 
 ---
 
