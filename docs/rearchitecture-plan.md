@@ -624,6 +624,8 @@ ActCAD is a closed-source commercial product. The license tier on every componen
 
 ## 16. Memory architecture — designing for headroom from day 1
 
+> **Executive summary.** Full engineering reference is in **`docs/memory-architecture.md`** (~900 lines: concurrency model, KAL contract, eviction protocol, failure modes, CI gates, anti-patterns, IntelliCAD-migration teaching, phase-by-phase rollout, glossary, references). Read this section for the strategic picture; read the companion document before writing code that touches `db`, `geom`, `render`, or any cache.
+
 The CAD operating model is simple to state and hard to make fast: **open the drawing once, hold it entirely in memory, do all reads and writes against that in-memory state, write back to disk on save.** This is what AutoCAD has done since 1982 and what every serious DWG editor still does today. The model itself is correct and not up for debate. What turns it into a bottleneck is that "in memory" is doing more work than people think — a 250MB DWG can expand to several GB of working set once you add the kernel's body graph, the tessellation cache, spatial indexes, the undo log, and the renderer's GPU buffers. If the architecture doesn't budget that memory and police access patterns from commit 1, you ship a product whose user reviews say *"moderately large drawings frequently get stuck"* — the exact reputation the current ActCAD inherited from IntelliCAD and the exact reputation this re-architecture exists to escape.
 
 This section is the architectural commitment for how we avoid that. It is written in plain language by design: every engineer joining the team should be able to read it once and know what the rules are.

@@ -132,7 +132,7 @@ Four differentiators we commit to publicly:
 
 ## Memory architecture — designing for headroom from day 1
 
-CAD model: **open the drawing once, hold it entirely in memory, edit there, write back on save.** Correct and unchanged. Bottleneck risk lives in *how* we manage that memory. Five layers, one rule, eight commitments — full detail in `docs/rearchitecture-plan.md` §16.
+CAD model: **open the drawing once, hold it entirely in memory, edit there, write back on save.** Correct and unchanged. Bottleneck risk lives in *how* we manage that memory. Five layers, one rule, eight commitments — strategic picture in `docs/rearchitecture-plan.md` §16; **full engineering reference in `docs/memory-architecture.md`** (~900 lines: concurrency model, KAL contract, eviction protocol, failure modes, CI gates, anti-patterns).
 
 | Layer | What | Evictable? |
 |---|---|---|

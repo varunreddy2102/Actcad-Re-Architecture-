@@ -1124,7 +1124,7 @@
 <!-- ============================================================== -->
 <section>
   <h2 style="margin-bottom: 0.3em;">Memory architecture — designing for headroom from day 1</h2>
-  <p class="small" style="margin: 0 0 0.5em;">CAD model: <strong>open the drawing once, hold it entirely in memory, edit there, write back on save.</strong> Correct and unchanged. Bottleneck risk lives in <em>how</em> we manage that memory. Five layers, one rule, eight commitments — full detail in <code>docs/rearchitecture-plan.md</code> §16.</p>
+  <p class="small" style="margin: 0 0 0.5em;">CAD model: <strong>open the drawing once, hold it entirely in memory, edit there, write back on save.</strong> Correct and unchanged. Bottleneck risk lives in <em>how</em> we manage that memory. Five layers, one rule, eight commitments — strategic picture in <code>docs/rearchitecture-plan.md</code> §16; <strong>full engineering reference in <code>docs/memory-architecture.md</code></strong> (~900 lines: concurrency model, KAL contract, eviction protocol, failure modes, CI gates, anti-patterns).</p>
 
   <div style="display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 18px;">
     <div>
