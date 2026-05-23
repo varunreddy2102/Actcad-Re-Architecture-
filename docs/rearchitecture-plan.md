@@ -806,13 +806,57 @@ ODA Visualize handles text internally; for Phase 1 using Visualize as the backen
 
 The `render` module abstraction needs a `submit_tessellation(entity, mesh)` path whose backends implement the correct upload strategy for their API. This is a backend-specific concern but the seam must be in the abstraction from commit 1.
 
-### 17.6 Gap 5 — Dirty region / incremental redraw (deferred, document the deferral)
+### 17.6 Gap 5 — Tile cache for pan and progressive zoom (Phase 1)
 
-**The problem.** The plan says the op-stream tells `render` which spatial regions need redraw, but does not say whether the engine redraws the full frame every frame or only redraws dirty tiles. Full-frame redraws at 60fps on a 4K display are roughly 2 GB/s of framebuffer write — modern GPUs handle this, but for the edit interaction loop (move one wall → only two dirty rectangles need to change) full redraws are wasted work.
+Pan and zoom are the most frequent interactions in CAD — performed hundreds of times per session. An earlier draft deferred tile-based rendering to Phase 2. That is revised here: the tile cache ships in Phase 1. The design must be locked before the `render` module header is written because it changes the shape of the frame loop.
 
-**Decision: full-frame redraws for Phase 1; dirty tiles deferred to Phase 2.** This is the correct trade-off — dirty-tile invalidation is a meaningful engineering investment and is premature before the basic render pipeline is working and measured. ODA Visualize has tile-based invalidation built in; use it when Visualize is the backend.
+#### 17.6.1 Screen-space tile cache (pan)
 
-**What must not be closed off.** The `render` module abstraction must not permanently hardcode full-frame semantics. The op-stream's spatial region invalidation (already in the plan) is the correct substrate for dirty-tile updates — preserve it so Phase 2 can layer dirty-tile redraws onto the same invalidation signal without changing the module interface.
+During a pan, roughly 80% of the screen is showing exactly what it showed before, just shifted. A full redraw wastes that.
+
+**The approach.** Divide the viewport into a grid of off-screen GPU framebuffer tiles (512×512 px default; a 1920×1080 display ≈ 12 tiles). Each tile is rendered independently and cached as a GPU texture. On each frame:
+
+1. **Composite existing tiles** via GPU blit — a texture offset + draw quad, sub-millisecond for the whole screen
+2. **Render only dirty tiles** — the newly revealed strip on pan (typically 1–3 tiles), or tiles marked dirty by an entity edit
+3. **Pre-render halo tiles** adjacent to the viewport on the render worker in background priority
+
+Result: ~85% of pan frames render zero new geometry. The user sees smooth 60fps pan; the GPU is doing texture compositing, not geometry processing.
+
+**Entities crossing tile boundaries.** A long wall or xref block can span multiple tiles. Use a **bleed region** of 10–20 px: each tile renders any entity whose AABB intersects the expanded tile bounds. The overlap is correct (no gaps at edges) and wastes at most one entity's worth of work per boundary.
+
+**Halo pre-rendering.** Budget ~1.5× the viewport area (~18 tiles for a 1080p screen). At 512×512×16 bytes = 4 MB per tile, 18 tiles ≈ 72 MB — well within the tessellation cache sub-budget. When the user pans into the halo, those tiles are already on the GPU: zero latency.
+
+**Dirty tile tracking.** The op-stream already carries the spatial bounding box of every committed mutation. Map each mutation's AABB onto the tile grid (O(tiles intersected) — typically 1–4) and mark those tiles dirty. A layer toggle or style change marks all tiles dirty; this is acceptable since it is a deliberate user action, not a frame-rate-sensitive interaction.
+
+#### 17.6.2 Scale-then-refine for zoom
+
+During a zoom gesture (pinch or scroll wheel):
+
+1. **Scale the current frame texture on the GPU** — one shader call, sub-millisecond, slightly blurry but instant. The user sees immediate response.
+2. **Render tiles at the correct LOD in the background**, center-outward priority.
+3. **Swap refined tiles in as they complete**, blending over a few frames.
+
+This is the pattern used by Google Maps, Apple Maps, and Mapbox. The user perceives zoom as instant because they are watching a texture scale, not waiting for geometry. The LOD system (§17.3) compounds on zoom-out: as projected AABB sizes shrink, LOD tier drops, and entities below the `NONE` threshold are skipped entirely — zoom-out gets *faster* the further out the user goes.
+
+#### 17.6.3 Resolution scaling during fast interaction
+
+During high-velocity pan or pinch-zoom, drop render resolution to 50%:
+
+- Renders 4× fewer pixels
+- Slight blur, imperceptible at high frame rate
+- Snap to full resolution when interaction velocity drops below a threshold (~50 ms of stillness)
+
+Low implementation cost; meaningful GPU budget recovery during the interaction burst. Standard in mobile CAD and game engine camera systems.
+
+#### 17.6.4 What CAD tiling is not (vs GIS)
+
+GIS (Google Maps, Mapbox) uses pre-baked raster tiles — PNG/WebP images generated server-side. This does not work for CAD:
+
+- Layer visibility toggles invalidate all tiles instantly — no server to regenerate from
+- Entity edits must invalidate affected tiles and re-render as vector, not as a cached image
+- CAD requires sub-pixel accuracy at full zoom — raster tiles blur at the wrong zoom level
+
+ActCAD tiles are **live GPU framebuffer textures**, rendered on demand and invalidated by the op-stream. The tile cache is a runtime GPU resource, not a static file store.
 
 ### 17.7 Design decisions before writing the `render` module header
 
@@ -822,14 +866,17 @@ The `render` module abstraction needs a `submit_tessellation(entity, mesh)` path
 | **LOD tier calculation** — pixel-projected AABB size maps to `{NONE, DOT, LOW, MED, HIGH}` tiers, computed in the BVH cull pass | Before writing the `render` module header | Adding LOD later changes the cache key and the frustum-cull loop |
 | **`submit_tessellation()` upload-heap path** — backend-specific seam in the render abstraction | Before writing the `render` module header | Synchronous upload is sticky once code depends on it |
 | **Text rendering seam** — `render_text(string, transform, style)` in the backend interface | Phase 1 design | Hard to add cleanly to the backend abstraction after backends are written |
-| **Full-frame redraws confirmed for Phase 1** — dirty tile deferral explicitly documented | Phase 1 design | Not a code risk; a communication risk if engineers assume dirty tiles from day 1 |
+| **Tile cache design** — `TileManager` in `render`, 512×512 px tile grid, 10–20 px bleed region, 1.5× viewport halo budget, dirty-tile tracking from op-stream AABB | Before writing the `render` module header | Retrofitting tile compositing onto a full-frame loop requires restructuring the frame loop |
+| **Scale-then-refine for zoom** — hold previous frame texture, scale during gesture, dispatch tile renders at new LOD, blend as tiles complete | Before writing the `render` module header | If the frame loop always discards the previous frame, this pattern cannot be added without restructuring |
+| **Resolution scaling** — render to half-res offscreen target during high-velocity interaction, upscale to display | Phase 1 design | Low risk if deferred to Phase 2; performance enhancement only |
 
 ### 17.8 What we deliberately don't do
 
 - Don't design LOD tiers before measuring projected-AABB distribution on the real customer DWG corpus — the tier breakpoints above are starting points, not locked values.
 - Don't implement GPU-driven culling (compute-shader cull pass) for Phase 1 — the CPU BVH is correct and sufficient; GPU-driven culling is a Phase-3 optimisation if the corpus grows to millions of entities.
-- Don't add deferred / tiled rendering — this is 3D game engine complexity that is not warranted for ActCAD's 2D-primary use case in the 3-year plan.
+- Don't use pre-baked raster tiles (GIS-style PNG/WebP tile stores) — ActCAD tiles are live GPU framebuffer textures, invalidated dynamically by the op-stream.
 - Don't build the SDF text atlas in Phase 1 if ODA Visualize is handling text rendering — build the seam, not the implementation; implement SDF only if / when a custom backend is needed.
+- Don't add deferred shading or tiled-deferred rendering — 3D game engine techniques that are not warranted for ActCAD's 2D-primary use case.
 
 ## 18. Next steps
 
