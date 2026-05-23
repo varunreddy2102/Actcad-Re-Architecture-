@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAD Industry Outlook — ActCAD&rsquo;s Segment, 2–5 Year Horizon — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#scope">Scope</a></li>
+<li><a href="#1-five-forces-reshaping-the-segment">1. Five forces reshaping the segment</a><ul>
+<li><a href="#11-ai-assistance-becomes-table-stakes-1224-months">1.1 AI assistance becomes table stakes (12–24 months)</a></li>
+<li><a href="#12-cloud-web-mobile-parity-becomes-baseline-2436-months">1.2 Cloud + web + mobile parity becomes baseline (24–36 months)</a></li>
+<li><a href="#13-bim-cad-convergence-moves-downmarket-2460-months">1.3 BIM / CAD convergence moves downmarket (24–60 months)</a></li>
+<li><a href="#14-pricing-models-fragment-perpetual-partially-returns-ongoing">1.4 Pricing models fragment, perpetual partially returns (ongoing)</a></li>
+<li><a href="#15-digital-twin-iot-enters-the-smb-mep-conversation-3660-months">1.5 Digital twin + IoT enters the SMB MEP conversation (36–60 months)</a></li>
+</ul>
+</li>
+<li><a href="#2-where-actcads-user-base-is-going">2. Where ActCAD&rsquo;s user base is going</a></li>
+<li><a href="#3-geographic-forecast">3. Geographic forecast</a></li>
+<li><a href="#4-what-this-means-for-the-re-architecture">4. What this means for the re-architecture</a></li>
+<li><a href="#sources">Sources</a></li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">industry-outlook.md</p>
+    </div>
+    <h1 id="cad-industry-outlook-actcads-segment-25-year-horizon"><a class="toclink" href="#cad-industry-outlook-actcads-segment-25-year-horizon">CAD Industry Outlook — ActCAD&rsquo;s Segment, 2–5 Year Horizon</a></h1>
+<h2 id="scope"><a class="toclink" href="#scope">Scope</a></h2>
+<p>This document looks forward 2–5 years (≈ 2026 → 2031) at the slice of the CAD market ActCAD competes in:</p>
+<ul>
+<li><strong>Product class</strong>: DWG-native 2D drafting plus light/mid 3D; AutoCAD-alternative positioning.</li>
+<li><strong>Pricing class</strong>: low perpetual / affordable subscription (typically &lt;$500 / seat).</li>
+<li><strong>Verticals</strong>: AEC SMBs, MEP, Electrical, Mechanical drafting, GIS, Civil/Survey.</li>
+<li><strong>Geographies</strong>: India + SEA + LATAM + EU SMBs + NA cost-conscious.</li>
+<li><strong>Direct peers</strong>: BricsCAD, ZWCAD, GstarCAD, progeCAD, ARES (Graebert), DraftSight, NanoCAD; plus free/open (LibreCAD, FreeCAD, NanoCAD Free).</li>
+</ul>
+<p>It is paired with <code>docs/architecture-overview.md</code>. Every trend below ends with an implication that feeds §4 of that document.</p>
+<hr />
+<h2 id="1-five-forces-reshaping-the-segment"><a class="toclink" href="#1-five-forces-reshaping-the-segment">1. Five forces reshaping the segment</a></h2>
+<h3 id="11-ai-assistance-becomes-table-stakes-1224-months"><a class="toclink" href="#11-ai-assistance-becomes-table-stakes-1224-months">1.1 AI assistance becomes table stakes (12–24 months)</a></h3>
+<ul>
+<li>AutoCAD 2027 ships native integration with Anthropic&rsquo;s Model Context Protocol so the editor exposes drawing context to LLM agents.</li>
+<li>Graebert ARES 2027 ships <strong>A3</strong> (AI assistant) with multi-task prompting, AI-generated blocks, command recommendations, and voice interaction in Kudo.</li>
+<li>Industry estimates put AI handling 20–30 % of routine drafting work today, growing fast.</li>
+<li>By 2028, products without an in-editor AI assistant will read as legacy to evaluators.</li>
+</ul>
+<p><strong>Implication for ActCAD re-arch</strong>: AI is no longer a feature; it&rsquo;s a layer. The new architecture must expose a stable, structured representation of the drawing database to an LLM/agent runtime — an MCP-style server or equivalent — <em>before</em> anything else gets modernized. This is the single most consequential decision in §4.1 of the architecture doc, ahead of the &ldquo;keep or replace the engine&rdquo; question.</p>
+<h3 id="12-cloud-web-mobile-parity-becomes-baseline-2436-months"><a class="toclink" href="#12-cloud-web-mobile-parity-becomes-baseline-2436-months">1.2 Cloud + web + mobile parity becomes baseline (24–36 months)</a></h3>
+<ul>
+<li>AutoCAD 2027 introduced real-time multi-user editing of the same DWG plus Forma cloud integration.</li>
+<li>ARES delivers near-feature-parity desktop + web + mobile + Linux — the line industry analysts now use to define &ldquo;modern&rdquo; CAD.</li>
+<li>Onshape and Fusion&rsquo;s web app already define &ldquo;cloud-native CAD&rdquo; (app + database in cloud, microservices, multi-tenant co-edit) as the reference posture for new entrants.</li>
+<li>Quote that frames the period: <em>&ldquo;In 2026, cloud-based CAD collaboration is no longer a nice-to-have — it is the standard.&rdquo;</em></li>
+</ul>
+<p><strong>Implication for ActCAD re-arch</strong>: even if the primary deliverable stays a desktop binary, the <em>database and command model</em> must permit a server-side / multi-user mode. Decisions in §4.1 (&ldquo;engine: keep or replace&rdquo;) and §4.4 (&ldquo;Windows-only vs cross-platform / web&rdquo;) of the architecture doc become joined — the engine choice has to leave a path to web. The Graebert ARES + ARES Kudo pattern (shared engine, three UIs) is the most credible reference architecture for ActCAD&rsquo;s size.</p>
+<h3 id="13-bim-cad-convergence-moves-downmarket-2460-months"><a class="toclink" href="#13-bim-cad-convergence-moves-downmarket-2460-months">1.3 BIM / CAD convergence moves downmarket (24–60 months)</a></h3>
+<ul>
+<li>Global BIM market growing ~14.7 % CAGR through 2028.</li>
+<li>Mandated BIM adoption rising globally; estimates put adoption at ≈80 % by 2026 and ≈90 % by 2028 in mature regions.</li>
+<li>SMB BIM adoption is blocked by license + hardware cost (often &gt;$50 k / firm) and by the trained-staff shortage (48 % of construction firms cite hiring difficulty).</li>
+<li>That gap — &ldquo;BIM-light for SMBs&rdquo; — is the largest underserved opportunity in this segment.</li>
+</ul>
+<p><strong>Implication for ActCAD re-arch</strong>: invest in ActCAD&rsquo;s BIM vertical at a multiple of investment in pure 2D drafting. The architecture must let BIM share a unified object model with 2D drawing entities (not a bolted-on side database), so SMB users can climb the BIM curve incrementally rather than buying a separate product. Revisit §3.2 of the architecture doc — &ldquo;Vertical apps are loosely integrated&rdquo; — this is the bullet that hurts most in the 5-year horizon.</p>
+<h3 id="14-pricing-models-fragment-perpetual-partially-returns-ongoing"><a class="toclink" href="#14-pricing-models-fragment-perpetual-partially-returns-ongoing">1.4 Pricing models fragment, perpetual partially returns (ongoing)</a></h3>
+<ul>
+<li>Subscriptions hit 68 % of new US CAD purchases in 2024.</li>
+<li>Counter-trend in 2026: notable customer-side migration <em>back</em> to perpetual where available, driven by subscription fatigue and Autodesk&rsquo;s named-user enforcement.</li>
+<li>Indian SME market, conversely, is moving <em>toward</em> subscription — low IT budgets favour opex.</li>
+<li>Net direction is hybrid: perpetual base license + optional cloud/AI subscription add-on.</li>
+</ul>
+<p><strong>Implication for ActCAD re-arch</strong>: ActCAD&rsquo;s perpetual model is an asset, not a liability — but only if the architecture cleanly separates the <em>local desktop core</em> (perpetual) from <em>cloud-delivered services</em> (AI assistant, co-edit, asset library, twin-data sync). The license boundary needs to be an architectural seam, not a business afterthought. This becomes a fifth bullet in §4.1&rsquo;s decisions.</p>
+<h3 id="15-digital-twin-iot-enters-the-smb-mep-conversation-3660-months"><a class="toclink" href="#15-digital-twin-iot-enters-the-smb-mep-conversation-3660-months">1.5 Digital twin + IoT enters the SMB MEP conversation (36–60 months)</a></h3>
+<ul>
+<li>MEP digital twins via IoT — sensors livestreaming into the BIM model — are normalizing for facilities operators.</li>
+<li>AI-driven segmentation of point clouds / reality-capture scans is collapsing the time to produce as-built MEP models.</li>
+<li>Currently big-firm / big-budget, but the tooling stack (ODA&rsquo;s ifc/point-cloud SDKs, AI segmentation libraries, MQTT/IoT brokers) commoditizes fast.</li>
+</ul>
+<p><strong>Implication for ActCAD re-arch</strong>: the MEP and Electrical verticals — the most loyal portion of ActCAD&rsquo;s user base — need a 3-year story for ingesting reality-capture data and a 5-year story for streaming IoT data into the model. The object model needs an extensible &ldquo;non-CAD payload&rdquo; hook from the start, not retrofitted.</p>
+<hr />
+<h2 id="2-where-actcads-user-base-is-going"><a class="toclink" href="#2-where-actcads-user-base-is-going">2. Where ActCAD&rsquo;s user base is going</a></h2>
+<table>
+<thead>
+<tr>
+<th>User segment</th>
+<th>2–5 year direction</th>
+<th>ActCAD posture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AEC SMBs (architects)</strong></td>
+<td>Pulled toward BIM, priced out of Revit; want Revit-lite</td>
+<td><strong>Invest</strong> — best fit for BIM-light bet (§1.3)</td>
+</tr>
+<tr>
+<td><strong>Mechanical drafting / job-shop manufacturing</strong></td>
+<td>Pulled toward Onshape / Fusion cloud-MCAD; desktop DWG share declines</td>
+<td><strong>Defend, don&rsquo;t grow</strong> — table-stakes MCAD, not a growth area</td>
+</tr>
+<tr>
+<td><strong>Electrical / MEP contractors</strong></td>
+<td>Most loyal to ActCAD-class tools; digital-twin overhang</td>
+<td><strong>Invest</strong> — verticalize hard; this is the moat</td>
+</tr>
+<tr>
+<td><strong>Civil / survey</strong></td>
+<td>Increasingly tied to Carlson, Civil 3D, OpenRoads</td>
+<td><strong>Partner or exit</strong> — not a defensible standalone position</td>
+</tr>
+<tr>
+<td><strong>GIS</strong></td>
+<td>Losing share to QGIS, ArcGIS Pro</td>
+<td><strong>De-emphasize</strong> — not where to put R&amp;D dollars</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-geographic-forecast"><a class="toclink" href="#3-geographic-forecast">3. Geographic forecast</a></h2>
+<ul>
+<li><strong>APAC ≈ 40 %</strong> of new CAD-startup funding globally; the gravitational center of the SMB CAD market is moving east.</li>
+<li><strong>India</strong> SMB market is shifting to subscription / cloud — ActCAD&rsquo;s home turf but actively contested by ZWCAD (China) and GstarCAD; home-field advantage is real but not durable without product differentiation.</li>
+<li><strong>EU</strong> consolidating around Graebert (ARES) for mid-market DWG-CAD; perpetual licensing remains viable.</li>
+<li><strong>NA</strong> subscription fatigue creates a window for low-cost perpetual, but evaluators now expect AI + cloud as baseline.</li>
+</ul>
+<hr />
+<h2 id="4-what-this-means-for-the-re-architecture"><a class="toclink" href="#4-what-this-means-for-the-re-architecture">4. What this means for the re-architecture</a></h2>
+<p>Mapping each trend back to the decisions in <code>docs/architecture-overview.md</code> §4:</p>
+<table>
+<thead>
+<tr>
+<th>Trend</th>
+<th>Affects decision</th>
+<th>New posture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>§1.1 AI assistance</td>
+<td>§4.1 engine choice; new &ldquo;AI/agent surface&rdquo; decision</td>
+<td>AI/agent API is the <strong>first</strong> modernization layer, ahead of engine swap</td>
+</tr>
+<tr>
+<td>§1.2 Cloud parity</td>
+<td>§4.1 engine + §4.4 platform</td>
+<td>Engine choice must preserve a server-side / multi-user path</td>
+</tr>
+<tr>
+<td>§1.3 BIM downmarket</td>
+<td>§3.2 vertical integration</td>
+<td>Unified object model across 2D + BIM; vertical apps move from plug-ins to first-class</td>
+</tr>
+<tr>
+<td>§1.4 Hybrid pricing</td>
+<td>new decision: license seam</td>
+<td>Architectural separation of local-perpetual core vs cloud-subscription services</td>
+</tr>
+<tr>
+<td>§1.5 Digital twin / IoT</td>
+<td>§4.2 3D kernel and object model</td>
+<td>Object model must allow non-CAD payloads (sensor streams, reality-capture meta) without engine forks</td>
+</tr>
+</tbody>
+</table>
+<p>The bigger picture: a 2-year-out ActCAD that is just &ldquo;cheaper AutoCAD with AI sprinkled in&rdquo; is the losing position, because every peer (BricsCAD, ZWCAD, ARES, GstarCAD) will be there too and Autodesk will outspend everyone on AI. A defensible 5-year-out position is <strong>&ldquo;AI-assisted, cloud-collaborative, BIM-capable CAD for SMB AEC and MEP, priced perpetual + optional cloud subscription, India-first&rdquo;</strong>. The architecture work is what makes that position physically possible.</p>
+<hr />
+<h2 id="sources"><a class="toclink" href="#sources">Sources</a></h2>
+<ul>
+<li><a href="https://architosh.com/2026/04/autodesk-2027-adds-strong-new-features/">Autodesk AutoCAD 2027 — Architosh</a></li>
+<li><a href="https://architosh.com/2026/05/ares-2027-deep-dive-ai-automation-and-bim-to-dwg-workflows/">ARES 2027 deep dive — Architosh</a></li>
+<li><a href="https://architosh.com/2026/04/graebert-releases-ares-2027-ai-push-and-forma-integration/">Graebert ARES 2027 + Forma — Architosh</a></li>
+<li><a href="https://shalindesigns.com/blog/cad-design-trends-2026-ai-cloud-digital-twin/">7 CAD design trends 2026 — Shalin Designs</a></li>
+<li><a href="https://caddrafter.us/cad-drafting-trends/">CAD drafting trends 2026 — CADdrafter</a></li>
+<li><a href="https://fabrixon.com/ai-in-cad/">AI in CAD 2026 — Fabrixon</a></li>
+<li><a href="https://www.united-bim.com/5-innovative-trends-shaping-the-future-of-bim-technology/">5 BIM trends 2026 — United-BIM</a></li>
+<li><a href="https://www.novatr.com/blog/bim-adoption-around-the-world-global-overview">BIM adoption worldwide 2026 — Novatr</a></li>
+<li><a href="https://dataintelo.com/report/bim-software-market">BIM software market 2034 — Dataintelo</a></li>
+<li><a href="https://www.onshape.com/en/blog/features-defining-cloud-native-cad">Cloud-native CAD features — Onshape</a></li>
+<li><a href="https://orbittraining.ae/software/easily-collaborate-with-others-using-cloud-based-cad-tools/">Cloud CAD collaboration 2026 — Orbit Training</a></li>
+<li><a href="https://www.psmarketresearch.com/market-analysis/india-cad-software-market">India CAD software market — PS Market Research</a></li>
+<li><a href="https://www.zwsoft.com/blog/autocad-perpetual-license">AutoCAD perpetual license 2026 — ZWSoft</a></li>
+<li><a href="https://dev.to/olivier_moussalli_e3492f5/perpetual-vs-subscription-licenses-which-business-model-wins-in-2026-19nb">Perpetual vs subscription 2026 — DEV.to</a></li>
+<li><a href="https://www.autodesk.com/autodesk-university/article/Digital-Twin-Bringing-MEP-Models-Life-2021">Digital twin for MEP — Autodesk University</a></li>
+<li><a href="https://www.businessresearchinsights.com/market-reports/electrical-digital-twin-software-market-117162">Electrical digital twin market — BRI</a></li>
+</ul>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="rearchitecture-plan.html">plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry outlook</a> ·
+        <a href="memory-architecture.html">memory architecture</a> ·
+        <a href="exec-presentation.html">exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

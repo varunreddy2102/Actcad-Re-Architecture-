@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ActCAD Memory Architecture — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#table-of-contents">Table of contents</a></li>
+<li><a href="#1-why-this-document-exists">1. Why this document exists</a></li>
+<li><a href="#2-goals-and-non-goals">2. Goals and non-goals</a><ul>
+<li><a href="#21-goals">2.1 Goals</a></li>
+<li><a href="#22-non-goals">2.2 Non-goals</a></li>
+<li><a href="#23-success-criteria">2.3 Success criteria</a></li>
+</ul>
+</li>
+<li><a href="#3-the-cad-memory-model-in-plain-terms">3. The CAD memory model in plain terms</a><ul>
+<li><a href="#31-open-once-edit-in-memory-save-back">3.1 Open-once, edit-in-memory, save-back</a></li>
+<li><a href="#32-why-naive-in-memory-blows-up">3.2 Why naive in-memory blows up</a></li>
+<li><a href="#33-what-the-drawing-in-memory-actually-contains">3.3 What &ldquo;the drawing in memory&rdquo; actually contains</a></li>
+</ul>
+</li>
+<li><a href="#4-the-five-layer-model">4. The five-layer model</a><ul>
+<li><a href="#41-layer-1-dwg-database-db">4.1 Layer 1 — DWG database (db)</a></li>
+<li><a href="#42-layer-2-acis-kernel-bodies-geom-via-kal">4.2 Layer 2 — ACIS kernel bodies (geom via KAL)</a></li>
+<li><a href="#43-layer-3-tessellation-cache-render">4.3 Layer 3 — Tessellation cache (render)</a></li>
+<li><a href="#44-layer-4-spatial-indexes-db-render">4.4 Layer 4 — Spatial indexes (db + render)</a></li>
+<li><a href="#45-layer-5-undo-op-log-db">4.5 Layer 5 — Undo / op-log (db)</a></li>
+<li><a href="#46-ownership-matrix">4.6 Ownership matrix</a></li>
+<li><a href="#47-eviction-order-under-pressure">4.7 Eviction order under pressure</a></li>
+</ul>
+</li>
+<li><a href="#5-the-eight-commitments-full-detail">5. The eight commitments — full detail</a><ul>
+<li><a href="#51-single-mutator-db-owns-all-drawing-state">5.1 Single mutator: db owns all drawing state</a></li>
+<li><a href="#52-mvcc-reads-never-block-writes-and-writes-never-block-reads">5.2 MVCC: reads never block writes (and writes never block reads)</a></li>
+<li><a href="#53-spatial-index-built-at-load-time">5.3 Spatial index built at load time</a></li>
+<li><a href="#54-lazy-materialization-of-acis-bodies">5.4 Lazy materialization of ACIS bodies</a></li>
+<li><a href="#55-gpu-resident-evictable-tessellation">5.5 GPU-resident, evictable tessellation</a></li>
+<li><a href="#56-delta-based-undo">5.6 Delta-based undo</a></li>
+<li><a href="#57-declared-memory-budget-fail-loudly-never-silently-swap">5.7 Declared memory budget; fail loudly, never silently swap</a></li>
+<li><a href="#58-8-ms-ui-thread-budget">5.8 8 ms UI-thread budget</a></li>
+</ul>
+</li>
+<li><a href="#6-concurrency-model-in-depth">6. Concurrency model in depth</a><ul>
+<li><a href="#61-threads-we-use">6.1 Threads we use</a></li>
+<li><a href="#62-the-transaction-queue">6.2 The transaction queue</a></li>
+<li><a href="#63-snapshot-mechanics-copy-on-write">6.3 Snapshot mechanics (copy-on-write)</a></li>
+<li><a href="#64-the-op-stream-as-the-universal-substrate">6.4 The op-stream as the universal substrate</a></li>
+</ul>
+</li>
+<li><a href="#7-the-memory-budget-machinery">7. The memory-budget machinery</a><ul>
+<li><a href="#71-budget-declaration-and-discovery">7.1 Budget declaration and discovery</a></li>
+<li><a href="#72-sub-budgets-per-layer">7.2 Sub-budgets per layer</a></li>
+<li><a href="#73-eviction-protocol">7.3 Eviction protocol</a></li>
+<li><a href="#74-pressure-signals-and-os-apis">7.4 Pressure signals and OS APIs</a></li>
+<li><a href="#75-loud-failure-ux">7.5 Loud-failure UX</a></li>
+</ul>
+</li>
+<li><a href="#8-the-kernel-abstraction-layer-kal">8. The Kernel Abstraction Layer (KAL)</a><ul>
+<li><a href="#81-what-the-kal-hides">8.1 What the KAL hides</a></li>
+<li><a href="#82-opaque-handle-convention">8.2 Opaque handle convention</a></li>
+<li><a href="#83-lazy-materialization-contract">8.3 Lazy materialization contract</a></li>
+<li><a href="#84-memory-ownership-rules-across-the-kal-boundary">8.4 Memory ownership rules across the KAL boundary</a></li>
+</ul>
+</li>
+<li><a href="#9-integration-with-other-modules">9. Integration with other modules</a><ul>
+<li><a href="#91-render-and-the-tessellation-cache">9.1 render and the tessellation cache</a></li>
+<li><a href="#92-cmd-and-transaction-boundaries">9.2 cmd and transaction boundaries</a></li>
+<li><a href="#93-agent-and-read-only-snapshots">9.3 agent and read-only snapshots</a></li>
+<li><a href="#94-net-and-op-stream-replication">9.4 net and op-stream replication</a></li>
+<li><a href="#95-script-and-plugin-sandboxed-access-patterns">9.5 script and plugin — sandboxed access patterns</a></li>
+</ul>
+</li>
+<li><a href="#10-wasm-and-the-browser-shell">10. WASM and the browser shell</a><ul>
+<li><a href="#101-the-4-gb-browser-memory-ceiling">10.1 The 4 GB browser memory ceiling</a></li>
+<li><a href="#102-allocator-implications">10.2 Allocator implications</a></li>
+<li><a href="#103-tessellation-differences-webgpu-vs-native">10.3 Tessellation differences (WebGPU vs native)</a></li>
+<li><a href="#104-acis-in-the-browser-translator-path-only">10.4 ACIS in the browser — translator path only</a></li>
+</ul>
+</li>
+<li><a href="#11-mobile-implications-phase-3">11. Mobile implications (Phase 3)</a><ul>
+<li><a href="#111-ios-app-memory-limits">11.1 iOS app memory limits</a></li>
+<li><a href="#112-android-vulkan-considerations">11.2 Android Vulkan considerations</a></li>
+<li><a href="#113-when-to-refuse-to-open">11.3 When to refuse to open</a></li>
+</ul>
+</li>
+<li><a href="#12-failure-modes-and-recovery">12. Failure modes and recovery</a></li>
+<li><a href="#13-telemetry-and-observability">13. Telemetry and observability</a><ul>
+<li><a href="#131-what-we-log">13.1 What we log</a></li>
+<li><a href="#132-what-we-never-log-pii">13.2 What we never log (PII)</a></li>
+<li><a href="#133-the-performance-health-customer-visible-badge">13.3 The &ldquo;performance health&rdquo; customer-visible badge</a></li>
+</ul>
+</li>
+<li><a href="#14-testing-strategy">14. Testing strategy</a><ul>
+<li><a href="#141-the-dwg-corpus">14.1 The DWG corpus</a></li>
+<li><a href="#142-synthetic-loops">14.2 Synthetic loops</a></li>
+<li><a href="#143-long-session-soak">14.3 Long-session soak</a></li>
+<li><a href="#144-sanitizers-in-ci">14.4 Sanitizers in CI</a></li>
+</ul>
+</li>
+<li><a href="#15-ci-gates-exact-specifications">15. CI gates — exact specifications</a><ul>
+<li><a href="#151-open-time-gate">15.1 Open-time gate</a></li>
+<li><a href="#152-frame-time-gate">15.2 Frame-time gate</a></li>
+<li><a href="#153-memory-ceiling-gate">15.3 Memory ceiling gate</a></li>
+<li><a href="#154-allocation-count-gate">15.4 Allocation count gate</a></li>
+<li><a href="#155-leak-gate">15.5 Leak gate</a></li>
+<li><a href="#156-soak-gate">15.6 Soak gate</a></li>
+<li><a href="#157-failure-handling-what-counts-as-a-flake">15.7 Failure handling — what counts as a flake</a></li>
+</ul>
+</li>
+<li><a href="#16-tools">16. Tools</a><ul>
+<li><a href="#161-tracy-always-on">16.1 Tracy (always-on)</a></li>
+<li><a href="#162-intel-vtune-deep-dives">16.2 Intel VTune (deep dives)</a></li>
+<li><a href="#163-heaptrack-and-massif">16.3 Heaptrack and Massif</a></li>
+<li><a href="#164-visual-studio-diagnostics-wpa">16.4 Visual Studio Diagnostics + WPA</a></li>
+<li><a href="#165-addresssanitizer-leaksanitizer">16.5 AddressSanitizer + LeakSanitizer</a></li>
+<li><a href="#166-mimalloc-jemalloc-as-system-malloc">16.6 mimalloc / jemalloc as system malloc</a></li>
+</ul>
+</li>
+<li><a href="#17-expertise-sourcing">17. Expertise sourcing</a><ul>
+<li><a href="#171-spatial-ctc">17.1 Spatial CTC</a></li>
+<li><a href="#172-external-performance-engineers">17.2 External performance engineers</a></li>
+<li><a href="#173-peer-back-channels">17.3 Peer back-channels</a></li>
+</ul>
+</li>
+<li><a href="#18-anti-patterns-what-we-will-not-allow">18. Anti-patterns — what we will not allow</a><ul>
+<li><a href="#181-snapshot-based-undo">18.1 Snapshot-based undo</a></li>
+<li><a href="#182-eager-attribute-loading">18.2 Eager attribute loading</a></li>
+<li><a href="#183-linear-scan-hit-testing">18.3 Linear-scan hit-testing</a></li>
+<li><a href="#184-synchronous-file-io-on-the-ui-thread">18.4 Synchronous file I/O on the UI thread</a></li>
+<li><a href="#185-allocator-of-the-week-thrash">18.5 Allocator-of-the-week thrash</a></li>
+<li><a href="#186-plugin-direct-db-access">18.6 Plugin direct-db access</a></li>
+<li><a href="#187-gc-based-memory-management-in-the-engine-hot-path">18.7 GC-based memory management in the engine hot path</a></li>
+<li><a href="#188-hidden-caches">18.8 Hidden caches</a></li>
+</ul>
+</li>
+<li><a href="#19-migration-from-intellicad-patterns">19. Migration from IntelliCAD patterns</a><ul>
+<li><a href="#191-what-we-inherit-nothing">19.1 What we inherit (nothing)</a></li>
+<li><a href="#192-patterns-we-deliberately-dont-copy">19.2 Patterns we deliberately don&rsquo;t copy</a></li>
+<li><a href="#193-what-to-teach-engineers-coming-from-intellicad">19.3 What to teach engineers coming from IntelliCAD</a></li>
+</ul>
+</li>
+<li><a href="#20-phase-by-phase-rollout">20. Phase-by-phase rollout</a><ul>
+<li><a href="#201-phase-1-months-012-foundations">20.1 Phase 1 (months 0–12) — foundations</a></li>
+<li><a href="#202-phase-2-months-1224-co-edit-ai-integration">20.2 Phase 2 (months 12–24) — co-edit + AI integration</a></li>
+<li><a href="#203-phase-3-months-2436-mobile-scale-out">20.3 Phase 3 (months 24–36) — mobile + scale-out</a></li>
+</ul>
+</li>
+<li><a href="#21-open-questions">21. Open questions</a></li>
+<li><a href="#22-glossary">22. Glossary</a></li>
+<li><a href="#23-references">23. References</a><ul>
+<li><a href="#oda-sdks">ODA SDKs</a></li>
+<li><a href="#acis">ACIS</a></li>
+<li><a href="#mvcc-and-database-concurrency">MVCC and database concurrency</a></li>
+<li><a href="#tooling">Tooling</a></li>
+<li><a href="#companion-documents">Companion documents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">memory-architecture.md</p>
+    </div>
+    <h1 id="actcad-memory-architecture"><a class="toclink" href="#actcad-memory-architecture">ActCAD Memory Architecture</a></h1>
+<blockquote>
+<p><strong>Status:</strong> Architecture document. Companion to <code>docs/rearchitecture-plan.md</code> §16 (executive summary). This document is the engineering reference — read it before writing code that touches <code>db</code>, <code>geom</code>, <code>render</code>, or any cache.</p>
+</blockquote>
+<h2 id="table-of-contents"><a class="toclink" href="#table-of-contents">Table of contents</a></h2>
+<ol>
+<li><a href="#1-why-this-document-exists">Why this document exists</a></li>
+<li><a href="#2-goals-and-non-goals">Goals and non-goals</a></li>
+<li><a href="#3-the-cad-memory-model-in-plain-terms">The CAD memory model in plain terms</a></li>
+<li><a href="#4-the-five-layer-model">The five-layer model</a></li>
+<li><a href="#5-the-eight-commitments--full-detail">The eight commitments — full detail</a></li>
+<li><a href="#6-concurrency-model-in-depth">Concurrency model in depth</a></li>
+<li><a href="#7-the-memory-budget-machinery">The memory-budget machinery</a></li>
+<li><a href="#8-the-kernel-abstraction-layer-kal">The Kernel Abstraction Layer (KAL)</a></li>
+<li><a href="#9-integration-with-other-modules">Integration with other modules</a></li>
+<li><a href="#10-wasm-and-the-browser-shell">WASM and the browser shell</a></li>
+<li><a href="#11-mobile-implications-phase-3">Mobile implications (Phase 3)</a></li>
+<li><a href="#12-failure-modes-and-recovery">Failure modes and recovery</a></li>
+<li><a href="#13-telemetry-and-observability">Telemetry and observability</a></li>
+<li><a href="#14-testing-strategy">Testing strategy</a></li>
+<li><a href="#15-ci-gates--exact-specifications">CI gates — exact specifications</a></li>
+<li><a href="#16-tools">Tools</a></li>
+<li><a href="#17-expertise-sourcing">Expertise sourcing</a></li>
+<li><a href="#18-anti-patterns--what-we-will-not-allow">Anti-patterns — what we will not allow</a></li>
+<li><a href="#19-migration-from-intellicad-patterns">Migration from IntelliCAD patterns</a></li>
+<li><a href="#20-phase-by-phase-rollout">Phase-by-phase rollout</a></li>
+<li><a href="#21-open-questions">Open questions</a></li>
+<li><a href="#22-glossary">Glossary</a></li>
+<li><a href="#23-references">References</a></li>
+</ol>
+<hr />
+<h2 id="1-why-this-document-exists"><a class="toclink" href="#1-why-this-document-exists">1. Why this document exists</a></h2>
+<p>The single most consistent complaint in public reviews of ActCAD today is some variation of: <em>&ldquo;moderately large drawings frequently get stuck&rdquo;</em>, <em>&ldquo;freezes on opening big files&rdquo;</em>, <em>&ldquo;hangs when saving&rdquo;</em>, <em>&ldquo;crashes after a long session&rdquo;</em>. That reputation is inherited from the IntelliCAD shell — synchronous main-thread command + render loop, no enforced memory budget, eager kernel materialization, linear-scan hit-testing in places where indexes should exist.</p>
+<p><strong>The re-architecture exists in significant part to escape that reputation.</strong> Memory architecture is the place where this is either won or lost. Geometry kernels are fast; renderers are fast; the bottleneck is almost always how the application manages the working set of an active edit session.</p>
+<p>This document is the engineering commitment for how the new ActCAD engine manages that working set. It is not a roadmap, not a feature list, and not a survey of options. <strong>It is the rules.</strong> Every engineer joining the team should read this once and know what is allowed, what is forbidden, and which symptoms in the code or in customer reports map to which architectural commitment.</p>
+<p>The executive summary lives in <code>docs/rearchitecture-plan.md</code> §16. Strategic and budget framing lives in <code>docs/exec-presentation.md</code>. This document is the depth.</p>
+<hr />
+<h2 id="2-goals-and-non-goals"><a class="toclink" href="#2-goals-and-non-goals">2. Goals and non-goals</a></h2>
+<h3 id="21-goals"><a class="toclink" href="#21-goals">2.1 Goals</a></h3>
+<ol>
+<li><strong>Predictable responsiveness across drawing-size distribution.</strong> A 250 MB DWG with 500 3D solids opens, edits, and saves at the same UI fluidity as a 5 MB DWG with 50 entities. Performance degrades gracefully, not in a cliff.</li>
+<li><strong>Bounded memory footprint with declared, enforced limits.</strong> Working set is a budget, not an emergent property. Exceeding the budget triggers loud, recoverable failure, never silent paging.</li>
+<li><strong>Concurrent edit + render + agent query, with no readers blocked by writers.</strong> The UI stays responsive during a long ACIS boolean. The AI agent can query state during an edit. Co-edit peers replicate without lock storms.</li>
+<li><strong>Crash-resilient long sessions.</strong> 8-hour edit sessions don&rsquo;t accumulate heap. Undo storage is bounded. Tessellation cache cannot starve the database.</li>
+<li><strong>Measured, not hoped for.</strong> Every commitment in §5 is enforced by CI gates from commit 1, not retrofitted after GA.</li>
+</ol>
+<h3 id="22-non-goals"><a class="toclink" href="#22-non-goals">2.2 Non-goals</a></h3>
+<ol>
+<li><strong>Out-of-core / streaming database.</strong> AutoCAD has one. Revit has one. They are multi-person-year investments. We commit to in-RAM-only for the 3-year plan with the budget enforcement that makes in-RAM viable for ActCAD&rsquo;s drawing-size distribution. Out-of-core is a Phase-4+ option only.</li>
+<li><strong>Lock-free everything.</strong> We use locks where they&rsquo;re the right tool. The rule is <em>no reader blocks on a writer</em>, not <em>no thread ever waits</em>.</li>
+<li><strong>GPU-resident <code>db</code>.</strong> Tessellation lives on the GPU. The drawing database does not. ResizeBAR / GPU-direct-storage are not in scope.</li>
+<li><strong>Custom OS-level memory manager.</strong> We use the OS allocator (or mimalloc as a drop-in) plus targeted object pools and arenas. We do not write a slab allocator from scratch.</li>
+<li><strong>Pluggable kernels in v1.</strong> The KAL keeps a kernel swap technically possible at ~6–12 weeks of focused work. It is not a runtime-swappable abstraction. ACIS is the only kernel that ships.</li>
+</ol>
+<h3 id="23-success-criteria"><a class="toclink" href="#23-success-criteria">2.3 Success criteria</a></h3>
+<p>A 250 MB DWG with 500 3D solids, opened on a 16 GB / 8-core developer laptop:</p>
+<ul>
+<li><strong>Open time</strong> ≤ 8 seconds, of which ≥ 80% is disk I/O + DWG parse, ≤ 20% is index build, 0% is eager kernel materialization</li>
+<li><strong>Steady-state RSS</strong> ≤ 3× the on-disk DWG size (target ≤ 2× for AEC drawings without dense 3D)</li>
+<li><strong>Pan / zoom / hover P99 frame time</strong> ≤ 16 ms during normal interaction; ≤ 33 ms during background regen</li>
+<li><strong>Save time</strong> ≤ 4 seconds with a progress bar; UI remains interactive</li>
+<li><strong>Long-session test</strong> (10,000 edits + undos across 8 hours) ends with RSS within 5% of the post-load baseline</li>
+<li><strong>Out-of-budget drawing</strong> produces a clear modal: <em>&ldquo;This drawing requires X GB; your current budget is Y GB. Close other drawings or raise the limit in Preferences.&rdquo;</em> — never a force-quit-and-lose-work situation</li>
+</ul>
+<hr />
+<h2 id="3-the-cad-memory-model-in-plain-terms"><a class="toclink" href="#3-the-cad-memory-model-in-plain-terms">3. The CAD memory model in plain terms</a></h2>
+<h3 id="31-open-once-edit-in-memory-save-back"><a class="toclink" href="#31-open-once-edit-in-memory-save-back">3.1 Open-once, edit-in-memory, save-back</a></h3>
+<p>Every serious CAD product since AutoCAD R1 (1982) follows the same shape: open the drawing once, hold it entirely in memory, do all reads and writes against that in-memory state, write back to disk on save. This is not negotiable and not up for redesign. Out-of-core databases exist (Bentley MicroStation has one, Revit has one) but each represents many engineer-years of investment we do not take on.</p>
+<p>What this model gives us:</p>
+<ul>
+<li><strong>O(1) random access</strong> to any entity by handle</li>
+<li><strong>Transactional semantics</strong> — a single user gesture maps to a single durable mutation</li>
+<li><strong>Single source of truth</strong> for renderers, agents, plugins, and the network layer</li>
+<li><strong>No I/O on the read path</strong> — every query is in-RAM</li>
+</ul>
+<p>What this model demands of us:</p>
+<ul>
+<li>The entire working set fits in process memory, or we refuse to open</li>
+<li>Every cache or derived structure must declare its budget and respect a global cap</li>
+<li>Every consumer that holds a reference to a long-lived entity participates in the lifecycle protocol</li>
+</ul>
+<h3 id="32-why-naive-in-memory-blows-up"><a class="toclink" href="#32-why-naive-in-memory-blows-up">3.2 Why naive in-memory blows up</a></h3>
+<p>The naive implementation of &ldquo;open and hold in memory&rdquo; loads a 250 MB DWG and assumes the process will use ~250 MB. In practice:</p>
+<ul>
+<li>The DWG <strong>parses to ~2–3×</strong> its on-disk size due to handle tables, attribute dictionaries, xref expansion</li>
+<li>Every 3D solid touched by the user <strong>materializes a kernel <code>ENTITY</code> graph</strong> that can be 5–50× the SAT blob size</li>
+<li>Every rendered entity has <strong>GPU-resident tessellation</strong> that scales with view detail</li>
+<li>Every edit appends to an <strong>undo log</strong> that, if implemented as snapshots, can grow unbounded over a long session</li>
+<li>The <strong>renderer caches</strong> invalidation regions, frustum-cull results, and material binds independently</li>
+<li><strong>Spatial indexes</strong> add 5–10% on top of the entity model</li>
+<li><strong>Plugins</strong> allocate against the same heap with no accounting</li>
+</ul>
+<p>Result: a 250 MB DWG can occupy 4–6 GB of working set, then page when the OS notices, then appear <em>&ldquo;frozen&rdquo;</em> to the user, then get force-quit. <strong>Every one of these failure modes is preventable. None is prevented by the IntelliCAD shell pattern we are leaving behind.</strong></p>
+<h3 id="33-what-the-drawing-in-memory-actually-contains"><a class="toclink" href="#33-what-the-drawing-in-memory-actually-contains">3.3 What &ldquo;the drawing in memory&rdquo; actually contains</a></h3>
+<p>The phrase &ldquo;the drawing in memory&rdquo; is misleading. There is no single object. There are five distinct things, each with its own size, owner, lifecycle, and pressure-response policy. The architecture in §4 makes this separation explicit so that under pressure, the eviction story is mechanical rather than emergent.</p>
+<hr />
+<h2 id="4-the-five-layer-model"><a class="toclink" href="#4-the-five-layer-model">4. The five-layer model</a></h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Name</th>
+<th>What lives here</th>
+<th>Typical size on a 250 MB DWG with 3D solids</th>
+<th>Owner module</th>
+<th>Pressure response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1</strong></td>
+<td>DWG database</td>
+<td>Entities, handles, layers, blocks, xrefs, dimstyles, attribute dictionaries, the on-disk SAT blob for every 3D solid (before kernel materialization)</td>
+<td>400–800 MB</td>
+<td><code>db</code></td>
+<td><strong>Never evicted</strong> — single source of truth</td>
+</tr>
+<tr>
+<td><strong>2</strong></td>
+<td>ACIS kernel bodies</td>
+<td>The materialized <code>ENTITY</code> graph for every 3D solid the user has touched since open</td>
+<td>200 MB – 2 GB</td>
+<td><code>geom</code> via KAL</td>
+<td><strong>Partial</strong> — body graphs are lazy-loaded on first geometric operation; non-essential attributes can be discarded</td>
+</tr>
+<tr>
+<td><strong>3</strong></td>
+<td>Tessellation cache</td>
+<td>Triangle meshes + GPU vertex / index buffers for everything currently or recently in view</td>
+<td>500 MB – 4 GB</td>
+<td><code>render</code></td>
+<td><strong>Yes</strong> — LRU evict on pressure; regenerate from B-rep on next view</td>
+</tr>
+<tr>
+<td><strong>4</strong></td>
+<td>Spatial indexes</td>
+<td>R-tree / BVH for hit-test, snap, frustum cull, selection-window, agent spatial queries</td>
+<td>50–200 MB</td>
+<td><code>db</code> (entity index) + <code>render</code> (view index)</td>
+<td><strong>Rebuildable</strong> — can be discarded and recomputed from Layer 1</td>
+</tr>
+<tr>
+<td><strong>5</strong></td>
+<td>Undo / op-log</td>
+<td>Delta records: every committed transaction&rsquo;s inverse, plus replication and audit fan-out</td>
+<td>100–500 MB over a long session</td>
+<td><code>db</code></td>
+<td><strong>Truncatable</strong> — drop oldest beyond a configurable threshold; warn before truncation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="41-layer-1-dwg-database-db"><a class="toclink" href="#41-layer-1-dwg-database-db">4.1 Layer 1 — DWG database (<code>db</code>)</a></h3>
+<p>The canonical entity model. Held in process memory for the lifetime of the open document. Mutations go through one transaction queue; reads go through MVCC snapshots (§6). Layer 1 is the <strong>only writable layer</strong> — every other layer is a cache or derived view.</p>
+<p>Layer 1 includes the on-disk SAT blob for each 3D solid, <strong>kept in its parsed-but-not-materialized form</strong> until first geometric operation. This is the lazy boundary between Layer 1 and Layer 2.</p>
+<p><strong>Eviction policy: none.</strong> Layer 1 is never evicted. If pressure forces a choice between Layer 1 and any other layer, every other layer evicts first.</p>
+<p><strong>Size discipline:</strong> Layer 1 is bounded by the DWG file content itself. Growth during a session is bounded by user edits (which append to Layer 5 as deltas, not by inflating Layer 1).</p>
+<h3 id="42-layer-2-acis-kernel-bodies-geom-via-kal"><a class="toclink" href="#42-layer-2-acis-kernel-bodies-geom-via-kal">4.2 Layer 2 — ACIS kernel bodies (<code>geom</code> via KAL)</a></h3>
+<p>The materialized <code>ENTITY</code> graph for each 3D solid the user has performed a geometric operation on. ACIS supports lazy attribute loading natively; we plumb this through the KAL (§8.3) so the engine never materializes 500 solids on file open just because the file contains 500.</p>
+<p><strong>Eviction policy: partial.</strong> When pressure hits, the KAL can drop derived attributes (tessellation hints, healing metadata) but <strong>not the body graph itself</strong> if any consumer holds a reference. Bodies with no active references can be fully unloaded back to SAT-blob form in Layer 1.</p>
+<p><strong>Reference counting</strong> is enforced at the KAL boundary. The KAL holds the only <code>ENTITY*</code> pointers; the rest of the engine only sees opaque handles. This is what makes pressure-driven unload safe.</p>
+<h3 id="43-layer-3-tessellation-cache-render"><a class="toclink" href="#43-layer-3-tessellation-cache-render">4.3 Layer 3 — Tessellation cache (<code>render</code>)</a></h3>
+<p>Triangle meshes + GPU vertex / index buffers for everything in or near view. Backed by the render backend&rsquo;s native GPU memory (DirectX / Vulkan / Metal / WebGPU).</p>
+<p><strong>Eviction policy: LRU with a hard cap.</strong> Default cap: 30% of process working set, or 1.5 GB, whichever is smaller. The cap is enforced <em>before</em> any allocation that would exceed it — evict-then-allocate, never allocate-then-evict.</p>
+<p><strong>Regeneration:</strong> any evicted tessellation can be regenerated from the cached B-rep in Layer 2 (or from Layer 1&rsquo;s SAT blob if Layer 2 was also evicted). Regeneration is a worker-thread task with a progress signal to the render frame loop.</p>
+<h3 id="44-layer-4-spatial-indexes-db-render"><a class="toclink" href="#44-layer-4-spatial-indexes-db-render">4.4 Layer 4 — Spatial indexes (<code>db</code> + <code>render</code>)</a></h3>
+<p>Two kinds:</p>
+<ul>
+<li><strong>Entity spatial index</strong> in <code>db</code> — R-tree over entity bounding boxes; serves hit-test, snap, selection-window, agent &ldquo;find entities in region&rdquo; queries. Built at file load (§5.3).</li>
+<li><strong>View spatial index</strong> in <code>render</code> — BVH over visible tessellation; serves frustum cull and ray-cast for picking under the cursor. Rebuilt on view change.</li>
+</ul>
+<p><strong>Eviction policy: rebuildable.</strong> Either index can be discarded and recomputed. The entity index rebuild cost is proportional to entity count (single-digit milliseconds for 100K entities); the view index rebuilds incrementally as the camera moves.</p>
+<h3 id="45-layer-5-undo-op-log-db"><a class="toclink" href="#45-layer-5-undo-op-log-db">4.5 Layer 5 — Undo / op-log (<code>db</code>)</a></h3>
+<p>A delta record for every committed transaction. The same op-stream that drives:</p>
+<ul>
+<li><strong>Local undo / redo</strong> — apply the inverse delta</li>
+<li><strong>Co-edit replication</strong> — ship the delta to the server for fan-out (<code>docs/rearchitecture-plan.md</code> §12)</li>
+<li><strong>AI agent context</strong> — the agent observes the op-stream to track what changed since its last query</li>
+<li><strong>Audit</strong> — security-relevant operations log to the audit sink</li>
+</ul>
+<p>One stream, five consumers. Building it any other way means writing the same plumbing five times.</p>
+<p><strong>Eviction policy: truncate-oldest.</strong> Configurable threshold (default: 10,000 operations or 200 MB, whichever first). When approaching the threshold, the user is warned that further undo will lose history. Replication and audit consumers checkpoint independently and are not affected by local truncation.</p>
+<h3 id="46-ownership-matrix"><a class="toclink" href="#46-ownership-matrix">4.6 Ownership matrix</a></h3>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th><code>db</code></th>
+<th><code>geom</code> (KAL)</th>
+<th><code>render</code></th>
+<th><code>cmd</code></th>
+<th><code>agent</code></th>
+<th><code>net</code></th>
+<th><code>script</code> / <code>plugin</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mutate entity state</td>
+<td>✅ (only)</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌ (mediates)</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Read entity state</td>
+<td>✅ (live)</td>
+<td>✅ (snapshot)</td>
+<td>✅ (snapshot)</td>
+<td>✅ (snapshot)</td>
+<td>✅ (snapshot)</td>
+<td>✅ (snapshot)</td>
+<td>✅ (snapshot via <code>cmd</code>)</td>
+</tr>
+<tr>
+<td>Hold kernel <code>ENTITY*</code></td>
+<td>❌</td>
+<td>✅ (only)</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Own tessellation cache</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅ (only)</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Own undo log</td>
+<td>✅ (only)</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌ (appends via txn)</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>Open spatial-index queries</td>
+<td>✅</td>
+<td>❌</td>
+<td>✅ (view index)</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>✅ (via <code>cmd</code>)</td>
+</tr>
+<tr>
+<td>Trigger eviction</td>
+<td>❌</td>
+<td>✅ (kernel bodies)</td>
+<td>✅ (tess)</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<h3 id="47-eviction-order-under-pressure"><a class="toclink" href="#47-eviction-order-under-pressure">4.7 Eviction order under pressure</a></h3>
+<p>Fixed. Not configurable per-customer because mistakes here cost data integrity.</p>
+<pre><code>Pressure detected
+  ↓
+1. Evict LRU tessellation (Layer 3) until below 70% of layer cap
+  ↓ still under pressure?
+2. Drop view spatial index (Layer 4 render) — will rebuild on next camera change
+  ↓ still under pressure?
+3. Unload ACIS bodies with no active references (Layer 2 → Layer 1)
+  ↓ still under pressure?
+4. Truncate oldest entries from undo log (Layer 5), warning the user
+  ↓ still under pressure?
+5. Drop entity spatial index (Layer 4 db) — will rebuild on next query
+  ↓ still under pressure?
+6. **Fail loudly to the user** (§7.5) — Layer 1 is never evicted
+</code></pre>
+<p>Layer 1 stays put. The user&rsquo;s work is never at risk from a memory-management decision.</p>
+<hr />
+<h2 id="5-the-eight-commitments-full-detail"><a class="toclink" href="#5-the-eight-commitments-full-detail">5. The eight commitments — full detail</a></h2>
+<h3 id="51-single-mutator-db-owns-all-drawing-state"><a class="toclink" href="#51-single-mutator-db-owns-all-drawing-state">5.1 Single mutator: <code>db</code> owns all drawing state</a></h3>
+<p><strong>Rule.</strong> <code>db</code> is the only module that holds writable drawing state. Every other module&rsquo;s view of the document is either (a) read-only against a snapshot, or (b) a derived cache that can be discarded.</p>
+<p><strong>Why.</strong> When something is wrong in memory, you always know who to ask. When you want to invalidate everything and start fresh, you blow away every cache and Layer 1 is intact. When two modules need to agree on what the document says, they look at the same source.</p>
+<p><strong>Enforcement.</strong> Public mutation API on <code>db</code> is a small surface (<code>begin_transaction</code>, <code>add_entity</code>, <code>remove_entity</code>, <code>modify_entity</code>, <code>commit_transaction</code>, <code>abort_transaction</code>). No other module exports a function that returns a writable handle to a <code>db</code> entity. Code review rejects any PR that introduces one. CI rule (clang-tidy custom check) flags non-<code>db</code> modules that return non-<code>const</code> references to entity types.</p>
+<p><strong>Tradeoff accepted.</strong> Every cross-module change to the document costs a transaction round-trip. This is the price of integrity and we pay it cheerfully.</p>
+<h3 id="52-mvcc-reads-never-block-writes-and-writes-never-block-reads"><a class="toclink" href="#52-mvcc-reads-never-block-writes-and-writes-never-block-reads">5.2 MVCC: reads never block writes (and writes never block reads)</a></h3>
+<p><strong>Rule.</strong> Mutations on <code>db</code> happen on one worker thread, serialized through a transaction queue. Reads happen on any thread, against a <strong>copy-on-write snapshot</strong> of the committed state.</p>
+<p><strong>Why.</strong> This is the single most important commitment in the architecture. It is what makes the UI stay at 60fps while a long ACIS boolean runs, what makes the AI agent able to query state during an edit, what makes co-edit possible without lock storms. The pattern is decades-old (PostgreSQL, every modern RDBMS); the CAD industry has been slow to adopt it because CAD databases were historically single-threaded.</p>
+<p><strong>Mechanics (§6 has the full detail).</strong> Every entity is internally versioned. A snapshot is a (lightweight) reference to a version vector. Mutations write new versions; old versions are reclaimed once no snapshot references them. Snapshots are cheap to acquire (<code>O(1)</code>) and cheap to release (<code>O(1)</code> amortized).</p>
+<p><strong>What this is not.</strong> It is not optimistic concurrency control — there are no merge conflicts in this layer because mutations are serialized. It is not lock-free — there are locks, but they&rsquo;re short and on the write path. It is not generic CRDTs — see §6.4.</p>
+<p><strong>Enforcement.</strong> Every public read API on <code>db</code> takes a <code>Snapshot</code> parameter. No public read API operates on &ldquo;current state.&rdquo; Code that wants &ldquo;current&rdquo; calls <code>db.snapshot()</code> to acquire one. CI rule rejects any read API that omits the snapshot parameter.</p>
+<h3 id="53-spatial-index-built-at-load-time"><a class="toclink" href="#53-spatial-index-built-at-load-time">5.3 Spatial index built at load time</a></h3>
+<p><strong>Rule.</strong> The moment a drawing finishes parsing, the entity R-tree is built. Hit-test, snap, frustum cull, selection-window, and agent spatial queries all go through the index. <strong>Linear scan over entities is not a public API on <code>db</code>.</strong></p>
+<p><strong>Why.</strong> This is the single decision that separates snappy from unusable on a 250K-entity drawing. The index build is a one-time cost at load (single-digit milliseconds per 10K entities); without it, every hover, every pick, every snap is <code>O(N)</code>.</p>
+<p><strong>Mechanics.</strong> R-tree built bottom-up from entity AABBs. Updates on commit: each transaction&rsquo;s modified-entity list drives <code>O(k log N)</code> index updates where <code>k</code> is the modified count.</p>
+<p><strong>Enforcement.</strong> <code>db</code> does not export <code>for_each_entity()</code>. Spatial queries are <code>db.query(region, filter)</code>. Code review rejects any traversal that bypasses the index for performance-sensitive paths. CI gate measures hit-test P99 on the synthetic drawing corpus.</p>
+<h3 id="54-lazy-materialization-of-acis-bodies"><a class="toclink" href="#54-lazy-materialization-of-acis-bodies">5.4 Lazy materialization of ACIS bodies</a></h3>
+<p><strong>Rule.</strong> ACIS bodies stay as opaque SAT blobs in <code>db</code> until the first geometric operation on that body. Open time is bounded by parse + index, <strong>not</strong> by kernel materialization.</p>
+<p><strong>Why.</strong> A drawing with 500 3D solids that the user never touches should not pay 500× the kernel-materialization cost on open. The user clicks one solid; we materialize one solid.</p>
+<p><strong>Mechanics.</strong> The KAL <code>Body::ensure_materialized()</code> is called by every geometric operation. If the body is already a kernel <code>ENTITY</code>, no-op. If it&rsquo;s still a SAT blob, parse + materialize on the calling thread (typically a worker), record the materialization in the KAL&rsquo;s reference map.</p>
+<p><strong>Eviction.</strong> Materialized bodies with no active references can be unloaded back to SAT-blob form under pressure (Layer 2 → Layer 1). The KAL tracks references via opaque handle counts.</p>
+<p><strong>Enforcement.</strong> KAL is the only module that calls into ACIS. No <code>ENTITY*</code> appears in any public header outside the KAL. CI rule (header grep) fails if <code>ENTITY</code> or any ACIS type appears in a non-<code>geom</code> header.</p>
+<h3 id="55-gpu-resident-evictable-tessellation"><a class="toclink" href="#55-gpu-resident-evictable-tessellation">5.5 GPU-resident, evictable tessellation</a></h3>
+<p><strong>Rule.</strong> Once a body is tessellated, the triangles go to GPU memory (vertex + index buffers in the active render backend) and stay there for the render loop. Under CPU memory pressure, LRU tessellation is evicted; on next view, it&rsquo;s regenerated from the cached B-rep.</p>
+<p><strong>Why.</strong> GPU-resident tessellation is what makes the render loop run at GPU speed instead of bus speed. Eviction policy keeps Layer 3 bounded so it can never starve Layer 1.</p>
+<p><strong>Mechanics.</strong> Render backend abstraction (<code>docs/rearchitecture-plan.md</code> §4) presents a uniform vertex buffer API across DirectX 11/12, Vulkan, Metal, WebGPU. Tessellation cache is keyed on (body handle, view-detail level). LRU tracks last-frame-used.</p>
+<p><strong>Hard cap.</strong> Default 30% of process working set, or 1.5 GB, whichever is smaller. Tunable per-platform (mobile defaults are lower; see §11). Allocation that would exceed the cap evicts first.</p>
+<p><strong>Regeneration.</strong> Worker-thread task. The render loop draws a placeholder (wireframe, low-LOD proxy) while regeneration is in flight. Frame time stays under 16 ms even during a regeneration burst.</p>
+<h3 id="56-delta-based-undo"><a class="toclink" href="#56-delta-based-undo">5.6 Delta-based undo</a></h3>
+<p><strong>Rule.</strong> Every undoable operation stores its inverse, not a snapshot of the world. Reversing <code>move(handle, dx, dy)</code> is <code>move(handle, -dx, -dy)</code> — bytes, not megabytes.</p>
+<p><strong>Why.</strong> Full-state snapshots are what blow heap in long sessions. AutoCAD survives 8-hour edit sessions because undo is incremental. We do the same.</p>
+<p><strong>The op-stream is the universal substrate.</strong> The same delta record drives:</p>
+<ol>
+<li><strong>Local undo / redo</strong></li>
+<li><strong>Co-edit replication</strong> (<code>docs/rearchitecture-plan.md</code> §12)</li>
+<li><strong>AI agent context</strong> (<code>docs/rearchitecture-plan.md</code> §14)</li>
+<li><strong>Audit log</strong> (security-relevant ops only)</li>
+<li><strong>Render invalidation</strong> (which regions need redraw)</li>
+</ol>
+<p><strong>Mechanics.</strong> Each delta is <code>(op_id, timestamp, txn_handle, inverse_payload, forward_payload)</code>. The forward payload is what was applied (for replication); the inverse is what undo applies. Both are typed FlatBuffers messages.</p>
+<p><strong>Truncation.</strong> When the op-log exceeds threshold, oldest entries are dropped. User sees a warning before truncation. Replication and audit consumers checkpoint independently — local truncation doesn&rsquo;t lose their state.</p>
+<h3 id="57-declared-memory-budget-fail-loudly-never-silently-swap"><a class="toclink" href="#57-declared-memory-budget-fail-loudly-never-silently-swap">5.7 Declared memory budget; fail loudly, never silently swap</a></h3>
+<p><strong>Rule.</strong> The engine boots with a declared memory budget. Each cache layer has a sub-budget. When a sub-budget is exceeded, the layer evicts per §4.7. When the total budget is exceeded after eviction, <strong>the engine fails loudly to the user</strong> with a clear modal — never silently swaps to disk.</p>
+<p><strong>Why.</strong> Silent swap is the worst possible failure mode. The user thinks the app is frozen, force-quits, and loses work. Loud failure is recoverable; silent swap is a support ticket and a churn risk. <em>&ldquo;The app is slow&rdquo;</em> is a 1-star review. <em>&ldquo;The app told me I needed more RAM and pointed me to the setting&rdquo;</em> is a question we can answer.</p>
+<p><strong>Budget formula (default).</strong></p>
+<pre><code>budget = min(
+    2 × loaded_DWG_size_on_disk,
+    process_working_set_limit − OS_headroom
+)
+</code></pre>
+<p>Where <code>OS_headroom = 1 GB</code> on desktop, <code>512 MB</code> on mobile, <code>256 MB</code> in WASM. User can raise the cap in Preferences up to the OS limit; reducing below the working-set requirement triggers a refusal to open.</p>
+<p><strong>Sub-budgets.</strong> Layer 1 has no sub-budget (it&rsquo;s whatever the document needs). Layer 2 capped at 50% of remaining budget. Layer 3 capped at 30%. Layers 4 + 5 each capped at 10%.</p>
+<p><strong>Loud-failure UX.</strong> Modal dialog:</p>
+<blockquote>
+<p><em>&ldquo;This drawing requires X.X GB of memory. Your current budget is Y.Y GB. Options:</em>
+- <em>Close other open drawings (currently using Z.Z GB)</em>
+- <em>Raise the memory budget in Preferences → Performance</em>
+- <em>Open this drawing in a separate ActCAD process (uses fresh budget)</em>
+- <em>Open in read-only mode (uses 60% less memory)&rdquo;</em></p>
+</blockquote>
+<p>No silent failures. No vague <em>&ldquo;out of memory&rdquo;</em> errors. Always a recoverable action.</p>
+<h3 id="58-8-ms-ui-thread-budget"><a class="toclink" href="#58-8-ms-ui-thread-budget">5.8 8 ms UI-thread budget</a></h3>
+<p><strong>Rule.</strong> The UI thread does input + render only. Every operation that could take more than 8 ms goes to a worker. Frame budget asserts in debug builds: any UI-thread work over 8 ms triggers a debug break.</p>
+<p><strong>Why.</strong> <em>&ldquo;Slow on the UI thread&rdquo;</em> is a build-breaking error from commit 1. Customers don&rsquo;t file tickets for <em>&ldquo;the cursor lagged for 30 ms&rdquo;</em> — they just churn. Profilers in CI catch this; debug-build asserts catch it locally before commit.</p>
+<p><strong>What goes to a worker.</strong></p>
+<ul>
+<li>File I/O of any kind (open, save, plot)</li>
+<li>ACIS operations (boolean, fillet, sweep, blend)</li>
+<li>Regen (full or partial)</li>
+<li>Index build / rebuild</li>
+<li>Tessellation generation</li>
+<li>Network round-trips (sync, agent, telemetry)</li>
+<li>Plugin operations longer than 1 ms (enforced at the <code>cmd</code> boundary)</li>
+</ul>
+<p><strong>What stays on the UI thread.</strong></p>
+<ul>
+<li>Mouse / keyboard input parsing</li>
+<li>Snapshot acquisition (<code>O(1)</code>)</li>
+<li>Spatial index queries (sub-millisecond on a 100K-entity drawing)</li>
+<li>Render command submission (GPU-resident; CPU work is bounded)</li>
+<li>Cursor / selection-marquee updates</li>
+<li>Property panel redraws against the current snapshot</li>
+</ul>
+<p><strong>Frame budget assertion.</strong> Debug builds wrap each main-loop iteration with a timer; if the iteration exceeds 8 ms, the assertion logs the call stack and breaks into the debugger. Release builds log to telemetry without breaking. CI gates on P99 frame time prevent regression.</p>
+<hr />
+<h2 id="6-concurrency-model-in-depth"><a class="toclink" href="#6-concurrency-model-in-depth">6. Concurrency model in depth</a></h2>
+<h3 id="61-threads-we-use"><a class="toclink" href="#61-threads-we-use">6.1 Threads we use</a></h3>
+<table>
+<thead>
+<tr>
+<th>Thread</th>
+<th>Count</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>UI</strong></td>
+<td>1</td>
+<td>Input parsing, render-command submission, snapshot acquisition, fast read-only queries</td>
+</tr>
+<tr>
+<td><strong>Mutation worker</strong></td>
+<td>1</td>
+<td>All <code>db</code> mutations, serialized through the transaction queue</td>
+</tr>
+<tr>
+<td><strong>Render worker</strong></td>
+<td>1</td>
+<td>Tessellation regeneration, GPU buffer uploads, view-index incremental updates</td>
+</tr>
+<tr>
+<td><strong>Kernel worker pool</strong></td>
+<td>2–8 (CPU-count dependent)</td>
+<td>ACIS operations (booleans, fillets), heavy geometric computation</td>
+</tr>
+<tr>
+<td><strong>I/O worker</strong></td>
+<td>1</td>
+<td>File open, save, plot, telemetry flush</td>
+</tr>
+<tr>
+<td><strong>Net worker</strong></td>
+<td>1</td>
+<td>Sync, agent, MCP, document service</td>
+</tr>
+<tr>
+<td><strong>Agent worker</strong></td>
+<td>1</td>
+<td>MCP request handling, tool dispatch</td>
+</tr>
+</tbody>
+</table>
+<p>Total at idle: 8–14 threads, of which most are blocked on a condition variable. Active threads at any moment in a typical edit session: 2–4.</p>
+<h3 id="62-the-transaction-queue"><a class="toclink" href="#62-the-transaction-queue">6.2 The transaction queue</a></h3>
+<p>The mutation worker pulls one transaction at a time from a single-producer-multi-consumer queue. Every command (from <code>cmd</code>) that mutates state enqueues a transaction; the worker dequeues, executes, validates, and commits.</p>
+<pre><code>        cmd (UI thread or worker)
+              ↓ enqueue
+        transaction queue
+              ↓ dequeue (serialized)
+        mutation worker
+          1. begin_transaction()  → working_copy
+          2. apply ops              → working_copy
+          3. validate              (referential integrity, kernel checks)
+          4. commit_transaction()  → publish new snapshot version
+          5. emit op-stream record → consumers (undo, sync, agent, audit, render)
+</code></pre>
+<p><strong>Why a single mutation thread instead of fine-grained locking.</strong></p>
+<ul>
+<li>Serialization eliminates an entire class of race conditions</li>
+<li>The mutation worker is throughput-bound, not latency-bound — adding more threads doesn&rsquo;t help when the bottleneck is <code>O(log N)</code> index updates</li>
+<li>Validation logic is simpler when mutations are serial</li>
+<li>ACIS itself is largely single-threaded within one body — multi-threading the mutation worker would not help kernel operations</li>
+</ul>
+<h3 id="63-snapshot-mechanics-copy-on-write"><a class="toclink" href="#63-snapshot-mechanics-copy-on-write">6.3 Snapshot mechanics (copy-on-write)</a></h3>
+<p>Every entity carries an internal version counter. When a transaction commits, modified entities get incremented versions; the previous versions stick around in a per-entity version chain.</p>
+<p>A <code>Snapshot</code> is a (lightweight) timestamp plus a reference count. Acquiring a snapshot is <code>O(1)</code>. Reads through a snapshot walk the version chain to find the largest version ≤ snapshot timestamp.</p>
+<p>Old versions are reclaimed when no live snapshot references them (reference-counted GC at the snapshot level, not the entity level). The reclamation happens on the mutation worker after commit; it does not block readers.</p>
+<p><strong>Snapshot lifetimes.</strong></p>
+<ul>
+<li><strong>Frame snapshot</strong> — render thread acquires at the start of each frame, releases at frame end. Lifetime: ~16 ms.</li>
+<li><strong>Query snapshot</strong> — hit-test, snap, agent query. Lifetime: &lt; 1 ms typically.</li>
+<li><strong>Long-running snapshot</strong> — agent that wants a stable view during a multi-step plan; co-edit peer that&rsquo;s applying a remote op-stream. Lifetime: seconds to minutes. Bounded by a maximum snapshot age (default: 30 seconds) after which the snapshot is forcibly released and re-acquired.</li>
+</ul>
+<p><strong>Memory cost.</strong> Version chains are bounded by the snapshot horizon. Typical overhead: 1.05–1.15× the base entity size. Under sustained edit load with no long-running snapshots, overhead converges to ~1.02×.</p>
+<h3 id="64-the-op-stream-as-the-universal-substrate"><a class="toclink" href="#64-the-op-stream-as-the-universal-substrate">6.4 The op-stream as the universal substrate</a></h3>
+<p>The op-stream emitted by <code>db</code> on every commit serves five consumers:</p>
+<ol>
+<li><strong>Undo</strong> — stores the inverse delta in Layer 5</li>
+<li><strong>Co-edit replication</strong> — <code>net</code> ships the forward delta to the server (<code>docs/rearchitecture-plan.md</code> §12)</li>
+<li><strong>AI agent context</strong> — <code>agent</code> observes the stream to track changes between queries (<code>docs/rearchitecture-plan.md</code> §14)</li>
+<li><strong>Render invalidation</strong> — <code>render</code> reads the stream to know which spatial regions need redraw</li>
+<li><strong>Audit</strong> — security-sensitive operations (signed save, license validation) log to the audit sink</li>
+</ol>
+<p><strong>Stream guarantees.</strong></p>
+<ul>
+<li><strong>Ordered</strong> — strictly in commit order</li>
+<li><strong>Lossless to subscribers</strong> — each consumer has a checkpoint; if a consumer falls behind, the stream backpressures (rare; mutation throughput is bounded)</li>
+<li><strong>Typed</strong> — FlatBuffers schema with versioning</li>
+<li><strong>Replayable</strong> — given a checkpoint, the stream can be replayed to rebuild downstream state</li>
+</ul>
+<p><strong>What this is NOT.</strong></p>
+<ul>
+<li>Not a generic CRDT — see <code>docs/rearchitecture-plan.md</code> §2.7 for the co-edit model</li>
+<li>Not eventual-consistency — the stream is server-authoritative at the network boundary</li>
+<li>Not append-only forever — Layer 5 truncates oldest entries past threshold</li>
+</ul>
+<hr />
+<h2 id="7-the-memory-budget-machinery"><a class="toclink" href="#7-the-memory-budget-machinery">7. The memory-budget machinery</a></h2>
+<h3 id="71-budget-declaration-and-discovery"><a class="toclink" href="#71-budget-declaration-and-discovery">7.1 Budget declaration and discovery</a></h3>
+<p>On engine boot, the runtime queries:</p>
+<ul>
+<li><strong>Process working set limit</strong> — OS-specific (Windows: <code>GetProcessMemoryInfo</code>; macOS / Linux: <code>getrlimit(RLIMIT_AS)</code>; WASM: <code>wasm_memory_max</code>)</li>
+<li><strong>Available physical RAM</strong> — for the loud-failure UX hint</li>
+<li><strong>User Preferences override</strong> — defaults to <em>&ldquo;computed&rdquo;</em>, can be raised to a hard cap</li>
+</ul>
+<p>Budget formula (default):</p>
+<pre><code>hard_cap = min(
+    user_preference_cap (if set),
+    OS_working_set_limit − OS_headroom
+)
+
+soft_target = min(
+    2 × sum(open_DWG_sizes_on_disk),
+    hard_cap
+)
+</code></pre>
+<p><code>soft_target</code> drives eviction. <code>hard_cap</code> drives loud failure.</p>
+<h3 id="72-sub-budgets-per-layer"><a class="toclink" href="#72-sub-budgets-per-layer">7.2 Sub-budgets per layer</a></h3>
+<p>Defaults, expressed as fractions of <code>(hard_cap − Layer_1_actual)</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Default sub-budget</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Layer 2 (ACIS bodies)</td>
+<td>50%</td>
+</tr>
+<tr>
+<td>Layer 3 (tessellation)</td>
+<td>30%</td>
+</tr>
+<tr>
+<td>Layer 4 (indexes)</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>Layer 5 (undo log)</td>
+<td>10%</td>
+</tr>
+</tbody>
+</table>
+<p>Sub-budgets are advisory in the sense that any layer can briefly exceed its share if others are below theirs. They are enforcing in the sense that <code>total ≤ hard_cap</code> is hard.</p>
+<h3 id="73-eviction-protocol"><a class="toclink" href="#73-eviction-protocol">7.3 Eviction protocol</a></h3>
+<p>When a layer is asked to allocate and would exceed its sub-budget:</p>
+<ol>
+<li>Layer attempts internal eviction (LRU or layer-specific policy)</li>
+<li>If still over: layer requests budget extension from the engine&rsquo;s memory broker</li>
+<li>Memory broker checks global state; if other layers are under their sub-budget, extension granted</li>
+<li>If no slack available globally: broker triggers pressure-cascade per §4.7</li>
+</ol>
+<p>The broker is a single small module (<code>mem_broker</code>) owned by <code>platform</code>. It is the single point of truth for budget state. All allocations go through it for accounting (it doesn&rsquo;t replace <code>malloc</code>; it tracks).</p>
+<h3 id="74-pressure-signals-and-os-apis"><a class="toclink" href="#74-pressure-signals-and-os-apis">7.4 Pressure signals and OS APIs</a></h3>
+<p>The engine subscribes to OS memory pressure notifications:</p>
+<ul>
+<li><strong>Windows:</strong> <code>CreateMemoryResourceNotification</code> + WM_COMPACTING</li>
+<li><strong>macOS:</strong> <code>dispatch_source_create(DISPATCH_SOURCE_TYPE_MEMORYPRESSURE)</code></li>
+<li><strong>Linux:</strong> <code>cgroup memory.pressure_level</code> (where available); fallback to RSS polling</li>
+<li><strong>iOS / Android:</strong> OS lifecycle callbacks (<code>didReceiveMemoryWarning</code>, <code>onTrimMemory</code>)</li>
+<li><strong>WASM:</strong> allocator failure (no OS signal; we react to <code>malloc</code> returning null)</li>
+</ul>
+<p>On any pressure signal, the broker triggers a level-appropriate eviction cascade before the OS starts paging.</p>
+<h3 id="75-loud-failure-ux"><a class="toclink" href="#75-loud-failure-ux">7.5 Loud-failure UX</a></h3>
+<p>When the engine cannot satisfy a memory request after exhausting eviction:</p>
+<ol>
+<li>The operation that triggered the allocation is <strong>aborted cleanly</strong> (transactional — no partial state)</li>
+<li>The UI surfaces a modal with <strong>concrete options</strong> (close other drawings, raise budget, separate process, read-only mode)</li>
+<li>The current document state is <strong>untouched</strong> — Layer 1 is intact, all committed work is preserved</li>
+<li>Auto-save fires (if enabled) before the modal appears, as a belt-and-braces measure</li>
+</ol>
+<p>What we never do:</p>
+<ul>
+<li>Display <em>&ldquo;Out of memory&rdquo;</em> with no actionable guidance</li>
+<li>Silently degrade to disk-backed mode without telling the user</li>
+<li>Force-quit</li>
+<li>Lose any committed mutation</li>
+</ul>
+<hr />
+<h2 id="8-the-kernel-abstraction-layer-kal"><a class="toclink" href="#8-the-kernel-abstraction-layer-kal">8. The Kernel Abstraction Layer (KAL)</a></h2>
+<h3 id="81-what-the-kal-hides"><a class="toclink" href="#81-what-the-kal-hides">8.1 What the KAL hides</a></h3>
+<p>The KAL is the only module that imports ACIS headers. Its purpose:</p>
+<ol>
+<li><strong>Hide ACIS-specific types</strong> so they never appear in non-<code>geom</code> headers</li>
+<li><strong>Encapsulate ACIS memory semantics</strong> (<code>ENTITY</code> derivation, <code>lose()</code> lifecycle, attribute attachment) behind a clean RAII surface</li>
+<li><strong>Make lazy materialization (§5.4) a property of the layer</strong>, not a discipline of every caller</li>
+<li><strong>Preserve the kernel-swap escape hatch</strong> at ~6–12 weeks of focused work if business conditions ever require it</li>
+</ol>
+<h3 id="82-opaque-handle-convention"><a class="toclink" href="#82-opaque-handle-convention">8.2 Opaque handle convention</a></h3>
+<p>Public types in <code>geom</code>:</p>
+<ul>
+<li><code>BodyHandle</code> — opaque 64-bit identifier; valid for the lifetime of the document</li>
+<li><code>FaceHandle</code>, <code>EdgeHandle</code>, <code>VertexHandle</code> — opaque 64-bit identifiers; valid for the lifetime of their parent body</li>
+<li><code>BodyRef</code> — RAII guard that holds a body materialized while the ref is alive</li>
+</ul>
+<p>No public type exposes an ACIS <code>ENTITY*</code>, <code>BODY*</code>, <code>FACE*</code>, or any kernel-specific structure.</p>
+<h3 id="83-lazy-materialization-contract"><a class="toclink" href="#83-lazy-materialization-contract">8.3 Lazy materialization contract</a></h3>
+<pre><code>BodyRef KAL::acquire(BodyHandle h)
+    // If h refers to an already-materialized body: returns immediately, increments ref count
+    // If h is still SAT-only: parses SAT, materializes, increments ref count
+    // BodyRef destructor decrements; if count reaches zero AND under pressure, body
+    //   is unloaded back to SAT form on a worker thread
+
+template&lt;typename Op&gt;
+auto KAL::with_body(BodyHandle h, Op op)
+    // Scoped acquire+execute+release
+    // Preferred API for callers that don't need long-lived refs
+</code></pre>
+<p>Callers in <code>cmd</code> and <code>script</code> use <code>with_body</code> for one-shot operations. The render module holds <code>BodyRef</code>s for currently-visible bodies, releasing them as bodies move out of view.</p>
+<h3 id="84-memory-ownership-rules-across-the-kal-boundary"><a class="toclink" href="#84-memory-ownership-rules-across-the-kal-boundary">8.4 Memory ownership rules across the KAL boundary</a></h3>
+<ul>
+<li>The KAL <strong>owns</strong> every materialized kernel object</li>
+<li><code>BodyHandle</code> etc. are values that callers can store freely; they do not own memory</li>
+<li><code>BodyRef</code> is a refcount guard; callers must release (RAII handles this)</li>
+<li>No caller may <code>delete</code> a kernel object — there is no public API that returns one</li>
+<li>The KAL is single-threaded internally for kernel operations on a given body; cross-body parallelism is delegated to the kernel-worker pool</li>
+</ul>
+<hr />
+<h2 id="9-integration-with-other-modules"><a class="toclink" href="#9-integration-with-other-modules">9. Integration with other modules</a></h2>
+<h3 id="91-render-and-the-tessellation-cache"><a class="toclink" href="#91-render-and-the-tessellation-cache">9.1 <code>render</code> and the tessellation cache</a></h3>
+<p><code>render</code> subscribes to the op-stream and invalidates affected tessellation entries on each commit. The tessellation cache is keyed on <code>(BodyHandle, detail_level)</code>; invalidation drops all detail levels for the affected body.</p>
+<p>Render frames operate against a <code>Snapshot</code> acquired at frame start. The frame loop:</p>
+<pre><code>1. snapshot = db.snapshot()
+2. visible = view_index.query(camera_frustum, snapshot)
+3. for each entity in visible:
+       if tessellation_cache.has(entity): submit_draw_call(entity)
+       else: enqueue_tessellation(entity); submit_placeholder(entity)
+4. snapshot release (automatic at scope exit)
+</code></pre>
+<p>The frame loop never blocks on a missing tessellation; it submits a placeholder (wireframe or low-LOD) and renders the real version on a subsequent frame.</p>
+<h3 id="92-cmd-and-transaction-boundaries"><a class="toclink" href="#92-cmd-and-transaction-boundaries">9.2 <code>cmd</code> and transaction boundaries</a></h3>
+<p>Every <code>cmd</code> invocation (LISP call, .NET call, MCP tool call, UI command) maps to <strong>exactly one</strong> <code>db</code> transaction:</p>
+<pre><code>cmd.execute(command, args):
+  1. parse + validate args
+  2. txn = db.begin_transaction()
+  3. try:
+       run command logic; mutations go through txn
+       db.commit_transaction(txn)
+     except:
+       db.abort_transaction(txn)
+       re-raise
+  4. emit op-stream record (on successful commit)
+  5. surface UI feedback / return value
+</code></pre>
+<p><strong>Public commitment.</strong> Every MCP tool call resolves to exactly one transaction in the host undo stack (<code>docs/rearchitecture-plan.md</code> §2.6). This commitment is enforced at the <code>cmd</code> boundary; no module bypasses it.</p>
+<h3 id="93-agent-and-read-only-snapshots"><a class="toclink" href="#93-agent-and-read-only-snapshots">9.3 <code>agent</code> and read-only snapshots</a></h3>
+<p>The MCP agent operates against snapshots for read queries, and through <code>cmd</code> for mutations. The agent <strong>never holds a snapshot for longer than 30 seconds</strong> without re-acquiring; long-running plans re-query as they go.</p>
+<p>The agent observes the op-stream to update its working context between queries; this is how it tracks <em>&ldquo;what changed since I last looked&rdquo;</em> without holding a stale snapshot indefinitely.</p>
+<h3 id="94-net-and-op-stream-replication"><a class="toclink" href="#94-net-and-op-stream-replication">9.4 <code>net</code> and op-stream replication</a></h3>
+<p><code>net</code> subscribes to the op-stream, batches deltas, and ships them to the document service for fan-out to co-edit peers. The local engine does not wait for ack before considering the local commit final — server authority resolves any conflicts at the geometry plane (<code>docs/rearchitecture-plan.md</code> §12).</p>
+<p><code>net</code> maintains its own checkpoint into the op-stream; local truncation of Layer 5 does not affect replication state.</p>
+<h3 id="95-script-and-plugin-sandboxed-access-patterns"><a class="toclink" href="#95-script-and-plugin-sandboxed-access-patterns">9.5 <code>script</code> and <code>plugin</code> — sandboxed access patterns</a></h3>
+<p>Scripts (LISP, Python, JS bridge) and plugins (.NET, native) reach <code>db</code> only through <code>cmd</code>. There is no public read API on <code>db</code> exposed to plugins — they go through <code>cmd.query(...)</code> which acquires a snapshot per call.</p>
+<p><strong>Long-running plugin operations</strong> (more than ~1 ms estimated, or any I/O) are dispatched to a worker by <code>cmd</code>. The UI thread is never held by plugin code longer than the budget allows.</p>
+<p><strong>Plugin memory accounting.</strong> All plugin allocations route through the memory broker (<code>platform.mem_broker</code>) so the budget includes plugin overhead. A plugin that blows the budget is killed cleanly with a user notification — it does not bring down the engine.</p>
+<hr />
+<h2 id="10-wasm-and-the-browser-shell"><a class="toclink" href="#10-wasm-and-the-browser-shell">10. WASM and the browser shell</a></h2>
+<h3 id="101-the-4-gb-browser-memory-ceiling"><a class="toclink" href="#101-the-4-gb-browser-memory-ceiling">10.1 The 4 GB browser memory ceiling</a></h3>
+<p>WebAssembly currently caps process memory at 4 GB (32-bit address space, even on 64-bit hosts). The browser shell budget defaults are correspondingly tighter:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Default native cap</th>
+<th>Default WASM cap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Layer 2 (ACIS bodies)</td>
+<td>50% of available</td>
+<td><strong>Layer 2 not active in browser</strong> — ACIS not in WASM (Phase 1–2)</td>
+</tr>
+<tr>
+<td>Layer 3 (tessellation)</td>
+<td>30% / 1.5 GB</td>
+<td>25% / 800 MB</td>
+</tr>
+<tr>
+<td>Layer 4 (indexes)</td>
+<td>10%</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>Layer 5 (undo log)</td>
+<td>10% / 200 MB</td>
+<td>10% / 100 MB</td>
+</tr>
+</tbody>
+</table>
+<h3 id="102-allocator-implications"><a class="toclink" href="#102-allocator-implications">10.2 Allocator implications</a></h3>
+<p>We do not use mimalloc or jemalloc in WASM — Emscripten&rsquo;s bundled allocator is what we ship. The memory broker accounts in the same way; only the underlying <code>malloc</code> differs.</p>
+<h3 id="103-tessellation-differences-webgpu-vs-native"><a class="toclink" href="#103-tessellation-differences-webgpu-vs-native">10.3 Tessellation differences (WebGPU vs native)</a></h3>
+<p>WebGPU has stricter buffer size limits than native APIs (typically 256 MB per buffer, vs 4 GB on Vulkan). Large meshes are chunked. The chunking is handled in <code>render</code>&rsquo;s WebGPU backend; the rest of the engine is unaware.</p>
+<h3 id="104-acis-in-the-browser-translator-path-only"><a class="toclink" href="#104-acis-in-the-browser-translator-path-only">10.4 ACIS in the browser — translator path only</a></h3>
+<p>No public production WASM build of ACIS exists as of writing. For the 3-year plan:</p>
+<ul>
+<li><strong>Phase 1–2 browser shell:</strong> ODA&rsquo;s read-only translators present geometry to the browser as static meshes. No browser-side ACIS editing. The browser is a viewer + 2D editor + markup tool.</li>
+<li><strong>Phase 3 (open question):</strong> if customer demand for browser-side 3D editing materializes, the path is either (a) bespoke ACIS WASM engineering with Spatial, or (b) server-side ACIS with the browser shipping ops to a kernel server. Decision deferred to Phase-3 planning with customer data.</li>
+</ul>
+<hr />
+<h2 id="11-mobile-implications-phase-3"><a class="toclink" href="#11-mobile-implications-phase-3">11. Mobile implications (Phase 3)</a></h2>
+<h3 id="111-ios-app-memory-limits"><a class="toclink" href="#111-ios-app-memory-limits">11.1 iOS app memory limits</a></h3>
+<p>iOS imposes per-app memory limits that vary by device generation: typically 1.5–4 GB available before the OS kills the app. Memory pressure signals (<code>didReceiveMemoryWarning</code>) fire well before the kill threshold; the engine treats these as immediate eviction triggers.</p>
+<h3 id="112-android-vulkan-considerations"><a class="toclink" href="#112-android-vulkan-considerations">11.2 Android Vulkan considerations</a></h3>
+<p>Android memory limits are looser but Vulkan driver overhead varies wildly by vendor. The render backend keeps GPU memory tracked separately from CPU RSS in the budget formula.</p>
+<h3 id="113-when-to-refuse-to-open"><a class="toclink" href="#113-when-to-refuse-to-open">11.3 When to refuse to open</a></h3>
+<p>On mobile, drawings that would exceed 80% of available budget after eviction trigger a refuse-to-open with a clear explanation:</p>
+<blockquote>
+<p><em>&ldquo;This drawing is too large to open on this device (requires X GB; this device has Y GB available to apps). Open on desktop, or use the Lightweight View mode.&rdquo;</em></p>
+</blockquote>
+<p>Lightweight View mode is a read-only tessellation-only mode that skips Layer 2 entirely.</p>
+<hr />
+<h2 id="12-failure-modes-and-recovery"><a class="toclink" href="#12-failure-modes-and-recovery">12. Failure modes and recovery</a></h2>
+<table>
+<thead>
+<tr>
+<th>Failure mode</th>
+<th>Detection</th>
+<th>Recovery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OOM during long ACIS operation</td>
+<td>Memory broker returns null on allocation</td>
+<td>Transaction aborts cleanly; pre-edit snapshot remains; user sees the loud-failure modal (§7.5)</td>
+</tr>
+<tr>
+<td>Tessellation cache thrash (LRU churn under tight budget)</td>
+<td>Frame time P99 exceeds 33 ms for &gt;5 consecutive frames</td>
+<td>Render downshifts to a lower default detail level; user notified once per session</td>
+</tr>
+<tr>
+<td>Worker thread crash</td>
+<td>Worker watchdog (heartbeat-based)</td>
+<td>Crashed worker restarted; in-flight transaction rolled back; user notified with crash report option</td>
+</tr>
+<tr>
+<td>Plugin-induced memory pressure</td>
+<td>Broker accounting attributes growth to a plugin</td>
+<td>Plugin sandbox kills the plugin; engine intact; user sees plugin-killed notification</td>
+</tr>
+<tr>
+<td>Corrupted op-stream record</td>
+<td>Consumer-side schema validation</td>
+<td>Replication and audit consumers checkpoint roll back; local undo continues; corruption logged for post-mortem</td>
+</tr>
+<tr>
+<td>ACIS internal error (kernel-side exception)</td>
+<td>KAL exception handler</td>
+<td>Transaction aborts; KAL state cleaned via <code>lose()</code> discipline; user sees operation-failed message; bug filed with CTC</td>
+</tr>
+<tr>
+<td>Document larger than budget on open</td>
+<td>Pre-open size estimate</td>
+<td>Loud-failure modal before any work is done; no partial open state to clean up</td>
+</tr>
+<tr>
+<td>Snapshot horizon exceeded</td>
+<td>Snapshot age tracker</td>
+<td>Forced release; consumer re-acquires; query restarts from new snapshot</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="13-telemetry-and-observability"><a class="toclink" href="#13-telemetry-and-observability">13. Telemetry and observability</a></h2>
+<h3 id="131-what-we-log"><a class="toclink" href="#131-what-we-log">13.1 What we log</a></h3>
+<p>Counters and histograms shipped to telemetry (per-session, aggregated):</p>
+<ul>
+<li>Open time per drawing size bucket</li>
+<li>Frame time P50 / P95 / P99 per session</li>
+<li>Peak RSS per session</li>
+<li>Eviction event count per layer per session</li>
+<li>Transaction count, commit success rate, abort rate</li>
+<li>Snapshot count, snapshot lifetime distribution</li>
+<li>Loud-failure modal count + which option the user chose</li>
+<li>Worker crashes (rare; high-signal)</li>
+<li>ACIS operation latency P99 by operation type</li>
+</ul>
+<h3 id="132-what-we-never-log-pii"><a class="toclink" href="#132-what-we-never-log-pii">13.2 What we never log (PII)</a></h3>
+<ul>
+<li>Drawing content</li>
+<li>Entity coordinates</li>
+<li>File names or paths</li>
+<li>Customer identifiers in raw form (hashed only)</li>
+<li>Plugin code or plugin-supplied data</li>
+</ul>
+<p>Telemetry is opt-in by default for new installs, with a clear settings toggle. Enterprise customers may disable entirely.</p>
+<h3 id="133-the-performance-health-customer-visible-badge"><a class="toclink" href="#133-the-performance-health-customer-visible-badge">13.3 The &ldquo;performance health&rdquo; customer-visible badge</a></h3>
+<p>A small status indicator in the bottom-right corner shows real-time engine health:</p>
+<ul>
+<li><strong>Green</strong> — frame time on budget, memory comfortable</li>
+<li><strong>Yellow</strong> — sustained pressure (frame P99 &gt; 16 ms, or memory &gt; 80% of budget)</li>
+<li><strong>Red</strong> — pressure with active eviction; suggests user action</li>
+</ul>
+<p>Clicking the badge opens a diagnostic panel with the current state of all five layers, budget usage, and eviction recent history. This is what support tickets reference instead of <em>&ldquo;the app is slow.&rdquo;</em></p>
+<hr />
+<h2 id="14-testing-strategy"><a class="toclink" href="#14-testing-strategy">14. Testing strategy</a></h2>
+<h3 id="141-the-dwg-corpus"><a class="toclink" href="#141-the-dwg-corpus">14.1 The DWG corpus</a></h3>
+<p>Fifty curated DWGs across five size / complexity buckets:</p>
+<table>
+<thead>
+<tr>
+<th>Bucket</th>
+<th>Size on disk</th>
+<th>Entity count</th>
+<th>3D solid count</th>
+<th>Count in corpus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Small</td>
+<td>1–10 MB</td>
+<td>1K–10K</td>
+<td>0–10</td>
+<td>10</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>10–50 MB</td>
+<td>10K–50K</td>
+<td>10–100</td>
+<td>15</td>
+</tr>
+<tr>
+<td>Large</td>
+<td>50–150 MB</td>
+<td>50K–200K</td>
+<td>100–500</td>
+<td>15</td>
+</tr>
+<tr>
+<td>Huge</td>
+<td>150–500 MB</td>
+<td>200K–1M</td>
+<td>500–2000</td>
+<td>5</td>
+</tr>
+<tr>
+<td>Pathological</td>
+<td>varies</td>
+<td>varies</td>
+<td>varies</td>
+<td>5 (deliberately hard)</td>
+</tr>
+</tbody>
+</table>
+<p>The corpus lives in a separate licensed repository (size + licensing prevents inlining). CI pulls a curated subset for PR runs; nightly runs cover all 50.</p>
+<h3 id="142-synthetic-loops"><a class="toclink" href="#142-synthetic-loops">14.2 Synthetic loops</a></h3>
+<p>For each corpus drawing:</p>
+<ul>
+<li><strong>Open-loop</strong> — open, hold for 5s, close. Measures open time, peak RSS during open, RSS after close.</li>
+<li><strong>Interact-loop</strong> — open, run a scripted pan-zoom-rotate-hover sequence for 60s. Measures frame time histogram, peak RSS, GPU memory usage.</li>
+<li><strong>Edit-loop</strong> — open, run a scripted move-rotate-fillet sequence (50 operations), save, close. Measures transaction throughput, undo log growth, save time.</li>
+<li><strong>Pressure-loop</strong> — open with budget set to 80% of the drawing&rsquo;s natural working set. Verifies eviction cascade triggers cleanly and the loud-failure modal appears at the right point.</li>
+</ul>
+<h3 id="143-long-session-soak"><a class="toclink" href="#143-long-session-soak">14.3 Long-session soak</a></h3>
+<p>Nightly job: open the largest non-pathological drawing, perform 10,000 randomized edits with periodic saves, close. RSS at end must be within 5% of post-load baseline. Any growth beyond 5% is a leak and the job fails.</p>
+<h3 id="144-sanitizers-in-ci"><a class="toclink" href="#144-sanitizers-in-ci">14.4 Sanitizers in CI</a></h3>
+<p>Debug-build CI runs with AddressSanitizer + LeakSanitizer enabled. Zero leaks tolerated. ThreadSanitizer enabled on a subset of tests (the MVCC machinery, the transaction queue) — too expensive for full coverage.</p>
+<hr />
+<h2 id="15-ci-gates-exact-specifications"><a class="toclink" href="#15-ci-gates-exact-specifications">15. CI gates — exact specifications</a></h2>
+<h3 id="151-open-time-gate"><a class="toclink" href="#151-open-time-gate">15.1 Open-time gate</a></h3>
+<p>For each corpus drawing, open time must be ≤ the documented baseline × 1.10 (10% regression budget). New PR fails if median across 5 runs exceeds threshold.</p>
+<h3 id="152-frame-time-gate"><a class="toclink" href="#152-frame-time-gate">15.2 Frame-time gate</a></h3>
+<p>For each interact-loop, P99 frame time must be ≤ 16 ms steady state, ≤ 33 ms during background regen bursts. Regression beyond these = fail.</p>
+<h3 id="153-memory-ceiling-gate"><a class="toclink" href="#153-memory-ceiling-gate">15.3 Memory ceiling gate</a></h3>
+<p>Per drawing class, hard RSS ceiling:</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Steady-state RSS ceiling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Small</td>
+<td>500 MB</td>
+</tr>
+<tr>
+<td>Medium</td>
+<td>1.5 GB</td>
+</tr>
+<tr>
+<td>Large</td>
+<td>4 GB</td>
+</tr>
+<tr>
+<td>Huge</td>
+<td>8 GB</td>
+</tr>
+<tr>
+<td>Pathological</td>
+<td>drawing-specific</td>
+</tr>
+</tbody>
+</table>
+<p>PR exceeding any ceiling = fail.</p>
+<h3 id="154-allocation-count-gate"><a class="toclink" href="#154-allocation-count-gate">15.4 Allocation count gate</a></h3>
+<p>Open-edit-save loop allocation count tracked per build. A 2× increase from baseline (single PR) is suspicious — flagged for review. A 5× increase is a hard fail. This catches accidental allocator-bypass (someone forgot to use the entity pool).</p>
+<h3 id="155-leak-gate"><a class="toclink" href="#155-leak-gate">15.5 Leak gate</a></h3>
+<p>AddressSanitizer + LeakSanitizer on every debug CI run. Any leak = fail. No suppression list except for documented third-party leaks (with reference to upstream bug).</p>
+<h3 id="156-soak-gate"><a class="toclink" href="#156-soak-gate">15.6 Soak gate</a></h3>
+<p>Nightly. Final RSS within 5% of post-load baseline = pass. PR-level approximation: a 1000-edit shortened version of the soak that completes in ~5 minutes, with a looser 10% threshold.</p>
+<h3 id="157-failure-handling-what-counts-as-a-flake"><a class="toclink" href="#157-failure-handling-what-counts-as-a-flake">15.7 Failure handling — what counts as a flake</a></h3>
+<p>CI gates can flake. Policy:</p>
+<ul>
+<li><strong>Open-time / frame-time</strong> — flake threshold is 1 failure in 3 retries; if 2 of 3 fail, that&rsquo;s a real regression</li>
+<li><strong>Memory ceiling / leak / allocation count</strong> — zero tolerance; any failure is real</li>
+<li><strong>Soak</strong> — single-fail allowed if reproducible only at large scale; re-run on a dedicated bare-metal runner for verification</li>
+</ul>
+<hr />
+<h2 id="16-tools"><a class="toclink" href="#16-tools">16. Tools</a></h2>
+<h3 id="161-tracy-always-on"><a class="toclink" href="#161-tracy-always-on">16.1 Tracy (always-on)</a></h3>
+<p><a href="https://github.com/wolfpld/tracy">Tracy</a> is the primary profiler. Every developer build links Tracy; running the engine attaches Tracy automatically on localhost. Frame time, allocation rate, GPU timing, and zone-based CPU profiling are visible in real time.</p>
+<h3 id="162-intel-vtune-deep-dives"><a class="toclink" href="#162-intel-vtune-deep-dives">16.2 Intel VTune (deep dives)</a></h3>
+<p>For CPU-heavy investigations (kernel operation profiling, allocator hot paths). Used by the perf team during dedicated investigations, not in every build.</p>
+<h3 id="163-heaptrack-and-massif"><a class="toclink" href="#163-heaptrack-and-massif">16.3 Heaptrack and Massif</a></h3>
+<p>Linux-only deep memory analysis. Used when the soak gate fails and we need to find the leak.</p>
+<h3 id="164-visual-studio-diagnostics-wpa"><a class="toclink" href="#164-visual-studio-diagnostics-wpa">16.4 Visual Studio Diagnostics + WPA</a></h3>
+<p>Windows-specific. Visual Studio Diagnostics for CPU + memory in development; Windows Performance Analyzer for system-level traces when investigating customer-reported issues.</p>
+<h3 id="165-addresssanitizer-leaksanitizer"><a class="toclink" href="#165-addresssanitizer-leaksanitizer">16.5 AddressSanitizer + LeakSanitizer</a></h3>
+<p>CI-enabled on every debug build. Local builds can enable via a CMake flag. ThreadSanitizer enabled on the MVCC test subset.</p>
+<h3 id="166-mimalloc-jemalloc-as-system-malloc"><a class="toclink" href="#166-mimalloc-jemalloc-as-system-malloc">16.6 mimalloc / jemalloc as system <code>malloc</code></a></h3>
+<p><code>mimalloc</code> is the default native allocator (drop-in <code>malloc</code> replacement). 10–30% wins on allocation-heavy CAD workloads with near-zero integration cost. <code>jemalloc</code> is the backup if mimalloc surfaces issues. Neither is used in WASM (Emscripten heap only).</p>
+<hr />
+<h2 id="17-expertise-sourcing"><a class="toclink" href="#17-expertise-sourcing">17. Expertise sourcing</a></h2>
+<h3 id="171-spatial-ctc"><a class="toclink" href="#171-spatial-ctc">17.1 Spatial CTC</a></h3>
+<p>The ACIS OEM contract bundles Corporate Technical Consulting hours (typically 20–40 hours per year). These are engineering-level consultations, not sales support. <strong>First conversation in Phase 1: get the ACIS team to review the KAL design before we commit to it.</strong> Worth a half-day of their time and saves quarters of trial-and-error.</p>
+<h3 id="172-external-performance-engineers"><a class="toclink" href="#172-external-performance-engineers">17.2 External performance engineers</a></h3>
+<p>Toptal, Round Table Group, Guidepoint, GLG all have networks of ex-AutoCAD, ex-Revit, ex-SolidWorks, ex-Fusion performance engineers available for hourly consultations ($300–$800/hr). <strong>Budget 40–80 hours in Phase 1 specifically for memory architecture review.</strong> One day of an ex-AutoCAD perf engineer is worth a month of internal trial-and-error.</p>
+<h3 id="173-peer-back-channels"><a class="toclink" href="#173-peer-back-channels">17.3 Peer back-channels</a></h3>
+<p>Other ACIS OEMs (Bentley, Hexagon, ANSYS SpaceClaim, BobCAD) face the same challenges. Architects at these companies are often willing to talk informally at conferences (DevCon, Spatial Summit) about KAL design and memory architecture. Not a substitute for paid consultation, but valuable for sanity-checking decisions.</p>
+<hr />
+<h2 id="18-anti-patterns-what-we-will-not-allow"><a class="toclink" href="#18-anti-patterns-what-we-will-not-allow">18. Anti-patterns — what we will not allow</a></h2>
+<h3 id="181-snapshot-based-undo"><a class="toclink" href="#181-snapshot-based-undo">18.1 Snapshot-based undo</a></h3>
+<p>Storing a full document snapshot per undo entry is the simplest implementation and the wrong choice. Memory growth is catastrophic over long sessions. Delta-based undo (§5.6) is the rule.</p>
+<h3 id="182-eager-attribute-loading"><a class="toclink" href="#182-eager-attribute-loading">18.2 Eager attribute loading</a></h3>
+<p>Loading all entity attributes when an entity is read into memory wastes work and memory. Attributes load on first access. Property panel queries one entity&rsquo;s attributes at a time, not all of them.</p>
+<h3 id="183-linear-scan-hit-testing"><a class="toclink" href="#183-linear-scan-hit-testing">18.3 Linear-scan hit-testing</a></h3>
+<p>Iterating over all entities for hit-test is <code>O(N)</code> and unusable at scale. The spatial index is mandatory. PRs that introduce a scan over entities for picking, snap, or selection are rejected.</p>
+<h3 id="184-synchronous-file-io-on-the-ui-thread"><a class="toclink" href="#184-synchronous-file-io-on-the-ui-thread">18.4 Synchronous file I/O on the UI thread</a></h3>
+<p>Open, save, plot, autosave — all on workers. The UI thread does not block on disk. Ever.</p>
+<h3 id="185-allocator-of-the-week-thrash"><a class="toclink" href="#185-allocator-of-the-week-thrash">18.5 Allocator-of-the-week thrash</a></h3>
+<p>We pick one allocator (mimalloc) and stay with it. We don&rsquo;t introduce per-module allocator overrides. The exception is targeted object pools for hot small-object allocation (entity handles, transient command state); those are bounded, documented, and reviewed.</p>
+<h3 id="186-plugin-direct-db-access"><a class="toclink" href="#186-plugin-direct-db-access">18.6 Plugin direct-<code>db</code> access</a></h3>
+<p>Plugins go through <code>cmd</code>. There is no plugin API that returns a writable handle to a <code>db</code> entity. This is the line that, once crossed, makes every commitment above optional — so we don&rsquo;t cross it.</p>
+<h3 id="187-gc-based-memory-management-in-the-engine-hot-path"><a class="toclink" href="#187-gc-based-memory-management-in-the-engine-hot-path">18.7 GC-based memory management in the engine hot path</a></h3>
+<p>RAII + opaque handles. GC introduces unpredictable pauses; pauses kill responsiveness. The Rust crates (<code>net</code>, <code>agent</code>) use Rust&rsquo;s ownership model, not GC; the C++ core uses RAII.</p>
+<h3 id="188-hidden-caches"><a class="toclink" href="#188-hidden-caches">18.8 Hidden caches</a></h3>
+<p>Every cache declares itself to the memory broker. There are no per-function <code>static</code> caches, no thread-local growable maps, no <em>&ldquo;oh and also we cache this little thing&rdquo;</em>. If it&rsquo;s a cache, it&rsquo;s a registered, bounded, evictable cache.</p>
+<hr />
+<h2 id="19-migration-from-intellicad-patterns"><a class="toclink" href="#19-migration-from-intellicad-patterns">19. Migration from IntelliCAD patterns</a></h2>
+<h3 id="191-what-we-inherit-nothing"><a class="toclink" href="#191-what-we-inherit-nothing">19.1 What we inherit (nothing)</a></h3>
+<p>The new engine is a clean break. We do not port IntelliCAD code. We do not port IntelliCAD patterns. We do not port IntelliCAD memory assumptions.</p>
+<h3 id="192-patterns-we-deliberately-dont-copy"><a class="toclink" href="#192-patterns-we-deliberately-dont-copy">19.2 Patterns we deliberately don&rsquo;t copy</a></h3>
+<ul>
+<li><strong>Single global state object accessible from anywhere</strong> — replaced by <code>db</code> as a module with a defined public API</li>
+<li><strong>Synchronous main-loop command dispatch</strong> — replaced by <code>cmd</code> with worker dispatch for anything long-running</li>
+<li><strong>Eager full-document load</strong> — replaced by lazy materialization (§5.4)</li>
+<li><strong>Per-feature renderer tuning</strong> — replaced by a single render abstraction with backend-specific implementations</li>
+<li><strong>Plugin direct database access</strong> — replaced by <code>cmd</code>-mediated access only</li>
+</ul>
+<h3 id="193-what-to-teach-engineers-coming-from-intellicad"><a class="toclink" href="#193-what-to-teach-engineers-coming-from-intellicad">19.3 What to teach engineers coming from IntelliCAD</a></h3>
+<p>Engineers joining from an IntelliCAD background should be onboarded with explicit teaching that:</p>
+<ol>
+<li>There is no global &ldquo;current drawing&rdquo; object — you ask <code>cmd</code> for a snapshot</li>
+<li>You do not modify entities directly — you submit a transaction</li>
+<li>You do not iterate over all entities — you query the spatial index</li>
+<li>You do not load a kernel body unless you&rsquo;re about to operate on it</li>
+<li>You do not allocate freely — your allocation may trigger eviction, and that&rsquo;s the design</li>
+<li>You do not block the UI thread for anything, ever</li>
+</ol>
+<p>The first month for any new engineer includes a code-review pass on this document and a paired implementation of a small command end-to-end (parse args → snapshot → query → transaction → commit → op-stream emit) to internalize the pattern.</p>
+<hr />
+<h2 id="20-phase-by-phase-rollout"><a class="toclink" href="#20-phase-by-phase-rollout">20. Phase-by-phase rollout</a></h2>
+<h3 id="201-phase-1-months-012-foundations"><a class="toclink" href="#201-phase-1-months-012-foundations">20.1 Phase 1 (months 0–12) — foundations</a></h3>
+<ul>
+<li>The five-layer model is in place from commit 1</li>
+<li>All eight commitments enforced from commit 1</li>
+<li>CI gates 1–6 (open-time, frame-time, memory ceiling, allocation count, leak, soak) active by month 3</li>
+<li>Tracy + sanitizers wired in from commit 1</li>
+<li>KAL surface complete; ACIS integration complete</li>
+<li>The Phase-1 Windows beta to willing customers ships with the loud-failure UX in place</li>
+</ul>
+<h3 id="202-phase-2-months-1224-co-edit-ai-integration"><a class="toclink" href="#202-phase-2-months-1224-co-edit-ai-integration">20.2 Phase 2 (months 12–24) — co-edit + AI integration</a></h3>
+<ul>
+<li>The op-stream gains its replication and agent-context consumers</li>
+<li>Long-running snapshot patterns validated for the agent&rsquo;s multi-step plans</li>
+<li>WASM browser shell shipped with the tighter mobile-class budgets</li>
+<li>Lightweight View mode shipped for browser + mobile</li>
+<li>Performance health badge shipped to users</li>
+</ul>
+<h3 id="203-phase-3-months-2436-mobile-scale-out"><a class="toclink" href="#203-phase-3-months-2436-mobile-scale-out">20.3 Phase 3 (months 24–36) — mobile + scale-out</a></h3>
+<ul>
+<li>iOS + Android shells with mobile-class budgets</li>
+<li>Refuse-to-open UX validated on mobile-class devices</li>
+<li>Telemetry maturity — customer-reported issues triaged from the performance health badge in 80%+ of cases</li>
+<li>Out-of-core threshold re-evaluation: if customer drawings routinely exceed budget, scope the Phase-4 out-of-core work</li>
+</ul>
+<hr />
+<h2 id="21-open-questions"><a class="toclink" href="#21-open-questions">21. Open questions</a></h2>
+<p>These are decisions deferred to specific points in the plan, not gaps in the architecture:</p>
+<ol>
+<li>
+<p><strong>Out-of-core / streaming database trigger.</strong> What customer signal (P95 drawing size, frequency of loud-failure modals) tells us we need to take on out-of-core for Phase 4? Decision point: end of Phase 2, based on telemetry.</p>
+</li>
+<li>
+<p><strong>Browser ACIS WASM viability.</strong> Is full kernel editing in the browser worth the bespoke engineering with Spatial? Decision point: mid-Phase 3, based on browser-shell usage data and customer requests.</p>
+</li>
+<li>
+<p><strong>Agent context window vs op-stream truncation.</strong> Long agent sessions can exceed the agent&rsquo;s context window; do we summarize op-stream chunks, or rely on the agent to checkpoint? Decision point: Phase-2 agent GA planning.</p>
+</li>
+<li>
+<p><strong>Snapshot horizon tuning.</strong> Default 30s for long-running snapshots — is that too aggressive for the agent&rsquo;s multi-step plans? Tunable; data-driven decision in Phase 2.</p>
+</li>
+<li>
+<p><strong>Memory broker accuracy on Linux cgroups v2.</strong> Pressure signals on Linux are less reliable than other platforms — do we need a custom RSS-polling fallback? Decision point: Phase-2 Linux shell QA.</p>
+</li>
+</ol>
+<hr />
+<h2 id="22-glossary"><a class="toclink" href="#22-glossary">22. Glossary</a></h2>
+<ul>
+<li><strong>AABB</strong> — Axis-Aligned Bounding Box. Used for entity-level spatial indexing.</li>
+<li><strong>ACIS</strong> — The 3D B-rep kernel from Spatial (Dassault). Our chosen kernel; see <code>docs/rearchitecture-plan.md</code> §11.2.</li>
+<li><strong>ASM</strong> — Autodesk Shape Manager. A fork of ACIS Autodesk took private around 2001. AutoCAD&rsquo;s 3D solids use ASM internally; DWG persists them as ACIS-compatible SAT blobs.</li>
+<li><strong>BVH</strong> — Bounding Volume Hierarchy. Used for view-level spatial indexing.</li>
+<li><strong>CRDT</strong> — Conflict-free Replicated Data Type. The co-edit architecture uses CRDTs for annotations only (Layer 5 metadata plane), not for geometry. See <code>docs/rearchitecture-plan.md</code> §2.7.</li>
+<li><strong>DELA</strong> — Distribution License Agreement. Spatial&rsquo;s contract terms beyond pricing.</li>
+<li><strong>DWG</strong> — Drawing format. The canonical on-disk representation.</li>
+<li><strong>KAL</strong> — Kernel Abstraction Layer. The <code>geom</code> module&rsquo;s encapsulation of ACIS.</li>
+<li><strong>LRU</strong> — Least Recently Used. Default eviction policy for the tessellation cache.</li>
+<li><strong>MVCC</strong> — Multi-Version Concurrency Control. The pattern that lets readers not block writers. PostgreSQL uses this.</li>
+<li><strong>op-stream</strong> — The typed stream of committed transactions emitted by <code>db</code>. Universal substrate for undo, replication, agent, render invalidation, audit.</li>
+<li><strong>R-tree</strong> — Spatial index data structure. Used for the entity index in <code>db</code>.</li>
+<li><strong>RAII</strong> — Resource Acquisition Is Initialization. C++ pattern for lifetime-bound resource management. We use RAII heavily for kernel body refs, snapshots, transactions.</li>
+<li><strong>SAT</strong> — Standard ACIS Text. The on-disk text serialization of an ACIS body. DWG stores 3D solids as SAT blobs.</li>
+<li><strong>Snapshot</strong> — An immutable view of <code>db</code> state as of a point in time. Acquired in <code>O(1)</code>; held by every read-side consumer.</li>
+<li><strong>Working set</strong> — The portion of process memory actively in use. What we budget against.</li>
+</ul>
+<hr />
+<h2 id="23-references"><a class="toclink" href="#23-references">23. References</a></h2>
+<h3 id="oda-sdks"><a class="toclink" href="#oda-sdks">ODA SDKs</a></h3>
+<ul>
+<li><a href="https://docs.opendesign.com/td/">ODA Drawings SDK</a> — entity model, transaction API, spatial filter</li>
+<li><a href="https://docs.opendesign.com/tv/">ODA Visualize</a> — render abstraction, GPU buffer management</li>
+<li><a href="https://www.opendesign.com/products/web">ODA inWEB</a> — WASM compilation path for browser shell</li>
+</ul>
+<h3 id="acis"><a class="toclink" href="#acis">ACIS</a></h3>
+<ul>
+<li><a href="https://www.spatial.com/solutions/3d-modeling/3d-acis-modeler">Spatial ACIS</a> — base kernel</li>
+<li><a href="https://www.spatial.com/products/3d-acis-modeling">ACIS components</a> — module list (Local Operations, Healing, Defeaturing, Polyhedral, AGM, HLR, Lop, ASM)</li>
+<li>Spatial CTC consultation (bundled with OEM contract; first session in Phase 1 reviews the KAL design)</li>
+</ul>
+<h3 id="mvcc-and-database-concurrency"><a class="toclink" href="#mvcc-and-database-concurrency">MVCC and database concurrency</a></h3>
+<ul>
+<li><a href="https://www.postgresql.org/docs/current/mvcc.html">PostgreSQL MVCC documentation</a> — the canonical implementation</li>
+<li><a href="https://www.sqlite.org/wal.html">SQLite WAL mode</a> — a simpler MVCC variant; useful conceptual reference</li>
+</ul>
+<h3 id="tooling"><a class="toclink" href="#tooling">Tooling</a></h3>
+<ul>
+<li><a href="https://github.com/wolfpld/tracy">Tracy profiler</a></li>
+<li><a href="https://www.microsoft.com/en-us/research/uploads/prod/2019/06/mimalloc-tr-v1.pdf">mimalloc paper</a></li>
+<li><a href="https://github.com/KDE/heaptrack">Heaptrack</a></li>
+<li><a href="https://clang.llvm.org/docs/AddressSanitizer.html">AddressSanitizer</a></li>
+</ul>
+<h3 id="companion-documents"><a class="toclink" href="#companion-documents">Companion documents</a></h3>
+<ul>
+<li><code>docs/rearchitecture-plan.md</code> §16 — executive summary of this document</li>
+<li><code>docs/rearchitecture-plan.md</code> §3 — module decomposition (which this document elaborates on for memory)</li>
+<li><code>docs/rearchitecture-plan.md</code> §12 — collaboration architecture (Layer 5 op-stream consumer)</li>
+<li><code>docs/rearchitecture-plan.md</code> §14 — AI agent strategy (Layer 5 op-stream consumer)</li>
+<li><code>docs/architecture-overview.md</code> — current-state pain points that this document&rsquo;s commitments address</li>
+</ul>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="rearchitecture-plan.html">plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry outlook</a> ·
+        <a href="memory-architecture.html">memory architecture</a> ·
+        <a href="exec-presentation.html">exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

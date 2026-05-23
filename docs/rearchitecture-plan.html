@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ActCAD Re-Architecture Plan — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#1-goal">1. Goal</a></li>
+<li><a href="#2-key-architectural-decisions">2. Key architectural decisions</a></li>
+<li><a href="#3-module-decomposition-c-core">3. Module decomposition (C++ core)</a></li>
+<li><a href="#4-stack-at-a-glance">4. Stack at a glance</a></li>
+<li><a href="#5-phasing-native-windows-first-web-in-parallel">5. Phasing — native-Windows-first, web in parallel</a><ul>
+<li><a href="#phase-1-foundation-months-012">Phase 1 — Foundation (months 0–12)</a></li>
+<li><a href="#phase-2-production-v1-months-1224">Phase 2 — Production v1 (months 12–24)</a></li>
+<li><a href="#phase-3-parity-or-better-months-2436">Phase 3 — Parity-or-better (months 24–36)</a></li>
+</ul>
+</li>
+<li><a href="#6-what-we-deliberately-dont-do">6. What we deliberately don&rsquo;t do</a></li>
+<li><a href="#7-risks-and-mitigations">7. Risks and mitigations</a></li>
+<li><a href="#8-migration-story-for-existing-customers">8. Migration story for existing customers</a></li>
+<li><a href="#9-feasibility-spike-46-weeks-before-committing-to-the-3-year-plan">9. Feasibility spike — 4–6 weeks BEFORE committing to the 3-year plan</a></li>
+<li><a href="#10-open-decisions-for-legal-commercial-review">10. Open decisions for legal / commercial review</a></li>
+<li><a href="#11-industry-adoption-who-else-picked-these-and-why">11. Industry adoption — who else picked these and why</a><ul>
+<li><a href="#111-oda-sdks-drawings-visualize-ifc-bim-mcad-inweb-direct-membership">11.1 ODA SDKs (Drawings, Visualize, IFC, BIM, MCAD, inWEB) — direct membership</a></li>
+<li><a href="#112-acis-spatial-dassault-3d-kernel">11.2 ACIS (Spatial / Dassault) — 3D kernel</a></li>
+<li><a href="#113-oda-mcad-sdk-translator-not-kernel">11.3 ODA MCAD SDK — translator, not kernel</a></li>
+<li><a href="#114-qt-6-desktop-shell">11.4 Qt 6 — desktop shell</a></li>
+<li><a href="#115-c-vs-rust-for-the-engine-core">11.5 C++ vs Rust for the engine core</a></li>
+<li><a href="#116-webgpu-webassembly-browser-cad">11.6 WebGPU + WebAssembly — browser CAD</a></li>
+<li><a href="#117-oda-inweb-drawings-inweb-visualize-inweb">11.7 ODA inWEB (Drawings inWEB, Visualize inWEB)</a></li>
+<li><a href="#118-cmake-emscripten-c-wasm-toolchain">11.8 CMake + Emscripten — C++ → WASM toolchain</a></li>
+<li><a href="#119-summary-verdict-matrix">11.9 Summary verdict matrix</a></li>
+</ul>
+</li>
+<li><a href="#12-collaboration-architecture-in-detail">12. Collaboration architecture in detail</a><ul>
+<li><a href="#121-what-the-leaders-actually-shipped">12.1 What the leaders actually shipped</a></li>
+<li><a href="#122-why-generic-crdts-lose-on-dwg">12.2 Why generic CRDTs lose on DWG</a></li>
+<li><a href="#123-actcads-two-tier-model-detailed">12.3 ActCAD&rsquo;s two-tier model — detailed</a></li>
+<li><a href="#124-what-we-copy-what-we-avoid">12.4 What we copy, what we avoid</a></li>
+<li><a href="#125-phasing-for-collaboration">12.5 Phasing for collaboration</a></li>
+</ul>
+</li>
+<li><a href="#13-extensions-and-marketplace-strategy">13. Extensions and marketplace strategy</a><ul>
+<li><a href="#131-what-the-leaders-actually-shipped">13.1 What the leaders actually shipped</a></li>
+<li><a href="#132-architecture-patterns">13.2 Architecture patterns</a></li>
+<li><a href="#133-actcads-extension-model">13.3 ActCAD&rsquo;s extension model</a></li>
+<li><a href="#134-marketplace-policy">13.4 Marketplace policy</a></li>
+<li><a href="#135-what-to-avoid-concrete-anti-patterns">13.5 What to avoid (concrete anti-patterns)</a></li>
+</ul>
+</li>
+<li><a href="#14-ai-and-agent-strategy-in-detail">14. AI and agent strategy in detail</a><ul>
+<li><a href="#141-what-the-leaders-actually-shipped">14.1 What the leaders actually shipped</a></li>
+<li><a href="#142-the-two-architectural-patterns">14.2 The two architectural patterns</a></li>
+<li><a href="#143-where-the-current-generation-goes-wrong">14.3 Where the current generation goes wrong</a></li>
+<li><a href="#144-actcads-three-step-strategy">14.4 ActCAD&rsquo;s three-step strategy</a></li>
+<li><a href="#145-agent-tool-design-rules">14.5 Agent tool design rules</a></li>
+<li><a href="#146-what-we-avoid">14.6 What we avoid</a></li>
+</ul>
+</li>
+<li><a href="#15-cost-of-usage-third-party-stack-shells-tools">15. Cost of usage — third-party stack, shells, tools</a><ul>
+<li><a href="#151-unified-pricing-reference">15.1 Unified pricing reference</a></li>
+<li><a href="#1511-acis-royalty-model-per-deployment-vs-per-seat">15.1.1 ACIS royalty model — per-deployment vs per-seat</a></li>
+<li><a href="#152-modeled-annual-budget-envelopes">15.2 Modeled annual budget envelopes</a></li>
+<li><a href="#153-whats-modeled-vs-whats-opaque">15.3 What&rsquo;s modeled vs what&rsquo;s opaque</a></li>
+<li><a href="#154-commercial-commitments-and-cost-driven-decisions">15.4 Commercial commitments and cost-driven decisions</a></li>
+</ul>
+</li>
+<li><a href="#16-memory-architecture-designing-for-headroom-from-day-1">16. Memory architecture — designing for headroom from day 1</a><ul>
+<li><a href="#161-the-five-layers-of-memory-in-a-live-cad-session">16.1 The five layers of memory in a live CAD session</a></li>
+<li><a href="#162-eight-architectural-commitments-that-keep-responsiveness-flat-as-drawings-grow">16.2 Eight architectural commitments that keep responsiveness flat as drawings grow</a></li>
+<li><a href="#163-where-bottlenecks-actually-appear-in-shipping-cad-products-and-the-architectural-answer-to-each">16.3 Where bottlenecks actually appear in shipping CAD products, and the architectural answer to each</a></li>
+<li><a href="#164-what-to-measure-and-how-to-keep-it-from-regressing">16.4 What to measure, and how to keep it from regressing</a></li>
+<li><a href="#165-tools-and-people-to-bring-in">16.5 Tools and people to bring in</a></li>
+<li><a href="#166-what-we-deliberately-dont-do">16.6 What we deliberately don&rsquo;t do</a></li>
+<li><a href="#167-bottom-line-in-one-paragraph">16.7 Bottom line in one paragraph</a></li>
+</ul>
+</li>
+<li><a href="#17-next-steps">17. Next steps</a></li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">rearchitecture-plan.md</p>
+    </div>
+    <h1 id="actcad-re-architecture-plan"><a class="toclink" href="#actcad-re-architecture-plan">ActCAD Re-Architecture Plan</a></h1>
+<blockquote>
+<p><strong>Status: Proposal, gated on the feasibility spike in §9.</strong> Read alongside <code>docs/architecture-overview.md</code> (current stack and why it has to be replaced) and <code>docs/industry-outlook.md</code> (where the segment is going).</p>
+</blockquote>
+<h2 id="1-goal"><a class="toclink" href="#1-goal">1. Goal</a></h2>
+<p>Replace the IntelliCAD engine with a first-party engine built directly on <strong>ODA SDKs and the ACIS 3D kernel (Spatial / Dassault)</strong>, over a 3-year horizon. By end of year 3, ActCAD on the new stack must equal or beat today&rsquo;s IntelliCAD-based ActCAD on every dimension that matters to customers (performance, platform reach, AI assistance, BIM, extensibility), while existing ActCAD continues to ship through Phase 2 to protect revenue.</p>
+<p>The architecture must be <strong>future-proof on three axes that the current stack is not</strong>: cross-device (desktop + web + mobile), AI-native (first-party MCP/agent surface inside the engine), and ours to refactor (no consortium gating).</p>
+<h2 id="2-key-architectural-decisions"><a class="toclink" href="#2-key-architectural-decisions">2. Key architectural decisions</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Decision</th>
+<th>Choice</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.1</td>
+<td>Foundation libraries</td>
+<td>ODA direct (Drawings, Visualize, IFC, BIM SDKs, MCAD, Civil, Scan-to-BIM, inWEB family). Drop ITC / IntelliCAD entirely.</td>
+<td>One vendor relationship covering DWG + BIM + IFC + renderer + web. Royalty-free under ODA membership. Eliminates the consortium cadence problem.</td>
+</tr>
+<tr>
+<td>2.2</td>
+<td>3D kernel</td>
+<td><strong>ACIS (Spatial / Dassault) primary</strong>, full commercial OEM contract. All kernel access goes through the KAL so the engine never depends on ACIS-specific types in public headers. <strong>ODA MCAD is not the kernel — it&rsquo;s a translator</strong> for reading and writing SolidWorks / Inventor / CATIA files (see §11). Gated on §9 spike item 1 (ACIS round-trip fidelity vs AutoCAD on customer DWGs) and spike item 1b (ACIS commercial scoping under NDA).</td>
+<td><strong>AutoCAD&rsquo;s 3D solids are stored as ASM (Autodesk Shape Manager), which is a fork of ACIS that Autodesk took private around 2001.</strong> A DWG with 3D solids contains ACIS/ASM SAT (Standard ACIS Text) blobs as <code>AcDb3dSolid</code> entities. For lossless round-trip of AutoCAD-origin 3D solids — the central value prop for AutoCAD migrators — ACIS is the natural kernel: same lineage, same topology model, same tolerance semantics. Translating ACIS → any-other-kernel → ACIS introduces drift on edges, fillets, and booleans that customers will see and reject. ActCAD already uses ACIS today through the IntelliCAD stack; this decision preserves geometric continuity for the existing customer base while putting the contract directly in our name.</td>
+</tr>
+<tr>
+<td>2.3</td>
+<td>Shell strategy</td>
+<td>Shared C++ core compiled to native + WASM. <strong>Qt 6 native shells</strong> (Win / macOS / Linux) <strong>on the commercial license</strong> (not LGPL — see §15.4). <strong>TypeScript + React + WebGPU</strong> browser shell. Mobile deferred to Phase 3.</td>
+<td>Web-only Tauri / Electron is rejected for the drawing window — CAD pros need native menus, drag-drop with the OS, accessibility APIs, and printer integration. Qt is what Autodesk Maya and most pro DCC apps use. Tauri stays as the right tool for a thin launcher / license app, not the editor. Qt commercial is required for static linking, modifications kept private, and iOS code-signing — all of which apply to a closed-source commercial product.</td>
+</tr>
+<tr>
+<td>2.4</td>
+<td>Engine language</td>
+<td><strong>C++20</strong> primary (interops directly with ODA&rsquo;s C++ SDKs — no FFI tax on inner-loop database calls). <strong>Rust</strong> selectively for <code>net</code>, <code>script</code> (host), <code>agent</code> (MCP), and new geometry algorithms where memory safety compounds. <strong>No Rust in <code>db</code> or <code>render</code> hot paths.</strong></td>
+<td>A CAD inner loop touches millions of entities per regen; the FFI tax of a Rust-primary core against a C++ SDK would be unacceptable. Rust earns its place where the boundary is narrow and the safety win compounds.</td>
+</tr>
+<tr>
+<td>2.5</td>
+<td>Extension APIs</td>
+<td><strong>AutoLISP-compatible runtime</strong> (migration story for the customer ecosystem). <strong>Modern</strong>: Python (embedded), TypeScript (in-app + browser), .NET 8+ (cross-platform via NativeAOT). <strong>Dropped</strong>: SDS, ADS, DIESEL, VBA, COM. <strong>.NET surface is new — not ObjectARX-compatible</strong> (set this expectation early).</td>
+<td>LISP is the AutoCAD-ecosystem migration moat. The rest are legacy maintenance contracts with shrinking usage. The new .NET surface is opinionated and modern; pretending it&rsquo;s ObjectARX is a trap.</td>
+</tr>
+<tr>
+<td>2.6</td>
+<td>AI / agent surface</td>
+<td><strong>MCP server inside the engine, wrapping the <code>cmd</code> module only</strong> (never the <code>db</code> directly). Two MCP endpoints mirroring Autodesk Fusion 2026: a <strong>local MCP</strong> (requires ActCAD running, executes commands inside the host transaction) and a <strong>remote MCP data server</strong> (cloud, no host required, read-only DWG metadata + sheet / layer queries). <strong>Public commitment: every MCP tool call resolves to exactly one transaction in the host undo stack.</strong> No competitor (Autodesk Revit 2027, Fusion 2026, BricsCAD, ARES A3) has publicly documented this — it&rsquo;s a defensible differentiator.</td>
+<td>The hard part of an agent surface for CAD is the <em>transactional command boundary</em>, not exposing the database. Revit 2027 MCP is Tech Preview without documented undo semantics; reviewers have already complained about half-finished features. Owning the transaction story publicly is both the right engineering and the right marketing.</td>
+</tr>
+<tr>
+<td>2.7</td>
+<td>Cloud / co-edit</td>
+<td><strong>Two-tier server-authoritative model</strong>. Tier 1 (geometry): serialized op-log over the engine&rsquo;s mutation stream, server-validated for referential integrity (door-to-wall, dim-to-entity), optimistic UI. Tier 2 (annotations, comments, markups, layer properties, sheet titles): Figma-style last-writer-wins per property with fractional indexing for ordering. Presence + selection locks at the UI layer. <strong>Not a generic CRDT.</strong></td>
+<td>The industry has converged here. Onshape uses serialized feature-level operations with branch-and-merge (USPTO 10,691,844). Figma explicitly rejected both OT and pure CRDT for LWW-per-property because each field updates independently and &ldquo;merge text by character&rdquo; isn&rsquo;t a real need. Yjs / Automerge OOM at the millions-of-entity scale of a real MEP DWG; recent academic work (geometry-aware CRDTs, MDPI 2025) confirms generic CRDTs lose intent on spatial documents. ARES Kudo ships closer to soft-lock + sync today — we can do better by going server-authoritative op-log on geometry from day 1.</td>
+</tr>
+<tr>
+<td>2.8</td>
+<td>License seam</td>
+<td>The boundary between local-perpetual code and cloud-subscription code is a <strong>build-time module boundary</strong>, not a runtime feature flag.</td>
+<td>Perpetual remains the moat; cloud / AI is an additive subscription. The architecture has to make this monetization model physically clean rather than glued on later.</td>
+</tr>
+<tr>
+<td>2.9</td>
+<td>Build system</td>
+<td>CMake for C++ (industry standard, plays well with ODA&rsquo;s build pipeline). Emscripten for the WASM target. Cargo for the Rust crates, linked through a stable C ABI.</td>
+<td>No exotic build tooling. The team will be onboarding from a C++ / IntelliCAD background.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-module-decomposition-c-core"><a class="toclink" href="#3-module-decomposition-c-core">3. Module decomposition (C++ core)</a></h2>
+<p>Ten modules with strict contracts. The only module that mutates state is <code>db</code>; the only module the agent talks to is <code>cmd</code>.</p>
+<ol>
+<li><strong><code>db</code></strong> — drawing database. Canonical entity model, transactional mutation API, undo log, handle table, layer / block tables. Emits a typed op-stream on every commit. <strong>Only mutator.</strong></li>
+<li><strong><code>geom</code></strong> — geometry primitives and the Kernel Abstraction Layer (KAL) over ACIS. Pure functions, no state. <strong>No ACIS <code>ENTITY</code> type appears in any header outside this module</strong> — opaque handles only. The KAL is what keeps a kernel swap technically possible (6–12 weeks of focused work) if business conditions ever require it; it is not a hedge against ACIS being the right call today.</li>
+<li><strong><code>render</code></strong> — view + render-abstraction over ODA Visualize and a future native backend. Read-only consumer of <code>db</code>; subscribes to the op-stream for invalidation.</li>
+<li><strong><code>cmd</code></strong> — command bus. Every user action, LISP call, .NET call, MCP call flows through here. Owns parsing, prompts, validation, transaction begin / commit, undo grouping. <strong>The single seam the AI agent talks to.</strong></li>
+<li><strong><code>script</code></strong> — scripting host. Embeds CPython (native) / Pyodide (WASM), the LISP interpreter, and the JS bridge. All three reach <code>cmd</code>, never <code>db</code> directly.</li>
+<li><strong><code>plugin</code></strong> — plugin host. ABI versioning, capability negotiation, sandbox policy (stricter for WASM). API parity across native / WASM, <strong>not</strong> binary parity.</li>
+<li><strong><code>net</code></strong> — sync, document service client, auth, telemetry. Rust crate, exposed via stable C ABI.</li>
+<li><strong><code>agent</code></strong> — MCP server, tool catalog, permission scoping, dry-run / rate limiting. Wraps <code>cmd</code>. Rust crate.</li>
+<li><strong><code>platform</code></strong> — file I/O, fonts, clipboard, printer, GPU surface acquisition. <strong>The only module with <code>#ifdef PLATFORM</code>.</strong></li>
+<li><strong><code>ui-bridge</code></strong> — thin C ABI / FlatBuffers boundary the Qt shell and the React / WASM shell both consume. <strong>No UI code here.</strong></li>
+</ol>
+<p>Communication: synchronous in-process calls within native; FlatBuffers over <code>postMessage</code> for WASM ↔ JS; the <code>db</code> op-stream is the universal invalidation / sync substrate (also fed to the co-edit network layer and the agent for context updates).</p>
+<h2 id="4-stack-at-a-glance"><a class="toclink" href="#4-stack-at-a-glance">4. Stack at a glance</a></h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Choice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DWG / DXF + database</td>
+<td>ODA Drawings SDK</td>
+</tr>
+<tr>
+<td>Rendering</td>
+<td>ODA Visualize. Native backends: <strong>DirectX 11 (Windows default), DirectX 12, Vulkan (cross-platform), Metal (macOS / iOS)</strong>. Web: Visualize inWEB → WebGPU (WebGL2 fallback). All driven through our <code>render</code> module&rsquo;s abstraction layer so backends are swappable.</td>
+</tr>
+<tr>
+<td>3D Kernel</td>
+<td><strong>ACIS (Spatial / Dassault)</strong> primary, KAL-abstracted. Commercial OEM contract — initial fee + per-seat / per-deployment royalty + annual maintenance + component-module fees (see §15).</td>
+</tr>
+<tr>
+<td>MCAD format I/O</td>
+<td>ODA MCAD SDK (SolidWorks / Inventor / CATIA / NX / Creo translators) — read-only initially</td>
+</tr>
+<tr>
+<td>BIM / IFC</td>
+<td>ODA IFC SDK + BimRv / BimNw extensions</td>
+</tr>
+<tr>
+<td>Engine language</td>
+<td>C++20, selective Rust</td>
+</tr>
+<tr>
+<td>Build</td>
+<td>CMake + Emscripten + Cargo</td>
+</tr>
+<tr>
+<td>Desktop shell</td>
+<td>Qt 6 (commercial-vs-LGPL TBD per §10)</td>
+</tr>
+<tr>
+<td>Browser shell</td>
+<td>TypeScript + React + WebGPU (WebGL2 fallback)</td>
+</tr>
+<tr>
+<td>Mobile shell</td>
+<td>Native (Swift / Kotlin) over the C++ core via FFI — Phase 3</td>
+</tr>
+<tr>
+<td>Scripting</td>
+<td>Python (CPython / Pyodide), TypeScript, .NET 8+ NativeAOT, AutoLISP shim</td>
+</tr>
+<tr>
+<td>Agent surface</td>
+<td>MCP server in <code>agent</code>, wrapping <code>cmd</code></td>
+</tr>
+<tr>
+<td>Cloud co-edit</td>
+<td>Two-tier: server-authoritative op-log (geometry) + LWW per property (annotations / metadata)</td>
+</tr>
+<tr>
+<td>Document service / auth / billing</td>
+<td>TBD per §10 — leaning Clerk + Stripe + self-hosted document service</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-phasing-native-windows-first-web-in-parallel"><a class="toclink" href="#5-phasing-native-windows-first-web-in-parallel">5. Phasing — native-Windows-first, web in parallel</a></h2>
+<blockquote>
+<p><strong>Important inversion from the obvious plan</strong>: the obvious move is web-first because the industry is going there. For ActCAD&rsquo;s installed base specifically — Windows-desktop SMBs in India / SEA who pay perpetual and run on hardware where browser WebGPU is unreliable — a web-only beta would produce no useful signal. The Phase-1 daily-driver target is native Windows; web ships in parallel as viewer / markup first, then full editor.</p>
+</blockquote>
+<h3 id="phase-1-foundation-months-012"><a class="toclink" href="#phase-1-foundation-months-012">Phase 1 — Foundation (months 0–12)</a></h3>
+<ul>
+<li>Engine skeleton on ODA Drawings + Visualize, with the module decomposition in §3.</li>
+<li>DWG open / edit / save with full ODA fidelity. Round-trip corpus exists and gates every PR.</li>
+<li>2D drafting commands: line, polyline, circle, arc, hatch, dim, layer, block, OSnap.</li>
+<li>Native Windows Qt shell shipped to a willing-customer cohort by month 12.</li>
+<li>Parallel <strong>viewer + markup</strong> browser shell on the same engine, shipped at month 12.</li>
+<li>LISP runtime spike against a measured customer-script corpus; coverage target = top 80th percentile of customer scripts running.</li>
+<li>MCP server in <code>agent</code> exposing ~30 commands; AI assistant skeleton with dry-run + undo + permission scoping.</li>
+<li>IntelliCAD-based ActCAD continues to ship in parallel.</li>
+</ul>
+<h3 id="phase-2-production-v1-months-1224"><a class="toclink" href="#phase-2-production-v1-months-1224">Phase 2 — Production v1 (months 12–24)</a></h3>
+<ul>
+<li>macOS and Linux Qt shells at parity with Windows.</li>
+<li>Browser shell promoted from viewer to full editor.</li>
+<li>LISP shim coverage extended to 95th percentile of measured corpus; migration tool ships for the long tail.</li>
+<li>Light 3D (basic solids, view, navigation) via ACIS through the KAL.</li>
+<li>Cloud document service with real-time co-edit on 2D drawings (op-log path, not CRDT).</li>
+<li>Plugin host stabilizes; Architecture vertical reshipped as the first plugin.</li>
+<li>AI assistant moves to GA: prompt-driven drafting, AI-generated blocks, command recommendations.</li>
+<li>New product GA at end of month 24. IntelliCAD ActCAD continues to ship in parallel.</li>
+</ul>
+<h3 id="phase-3-parity-or-better-months-2436"><a class="toclink" href="#phase-3-parity-or-better-months-2436">Phase 3 — Parity-or-better (months 24–36)</a></h3>
+<ul>
+<li>Full 3D + BIM-lite (IFC import / export, parametric architectural objects).</li>
+<li>MEP and Electrical verticals reshipped as plugins; digital-twin / IoT extension hooks.</li>
+<li>Mobile (iOS / Android) shells over the same C++ core.</li>
+<li>End-to-end rendering pipeline tuning — now ours to own.</li>
+<li>IntelliCAD ActCAD enters sunset on a published timeline.</li>
+</ul>
+<h2 id="6-what-we-deliberately-dont-do"><a class="toclink" href="#6-what-we-deliberately-dont-do">6. What we deliberately don&rsquo;t do</a></h2>
+<ul>
+<li>Don&rsquo;t ship web-first to the existing installed base.</li>
+<li>Don&rsquo;t promise <em>binary</em> plugin parity across native and WASM — only API parity.</li>
+<li>Don&rsquo;t use a generic CRDT for DWG co-edit.</li>
+<li>Don&rsquo;t bundle SDS / ADS / DIESEL / VBA / COM.</li>
+<li>Don&rsquo;t try to be ObjectARX-compatible on the .NET surface.</li>
+<li>Don&rsquo;t let Rust into <code>db</code> or <code>render</code> hot paths.</li>
+<li>Don&rsquo;t sign the ACIS contract before §9 spike item 1 confirms round-trip fidelity on customer DWGs and spike item 1b returns a written term sheet from Spatial.</li>
+<li>Don&rsquo;t treat ODA MCAD as a B-rep modeling kernel — it&rsquo;s a translator for MCAD file formats only.</li>
+<li>Don&rsquo;t ship chat-in-canvas as the primary AI UX (Hypar pivoted away from text-to-BIM for this reason — see §14).</li>
+<li>Don&rsquo;t chase Bernini-style generative-CAD demos until editable, parametric round-tripping is proven.</li>
+<li>Don&rsquo;t use Yjs / Automerge for the geometry plane — confine generic CRDTs to non-spatial metadata only.</li>
+<li><strong>Don&rsquo;t let ACIS types leak past the KAL.</strong> Every public header outside <code>geom</code> uses opaque handles. The KAL is what makes the engine survive kernel-vendor risk; bypassing it for &ldquo;just this one feature&rdquo; erodes the only insurance we have.</li>
+<li><strong>Don&rsquo;t ship to customers without royalty-reporting infrastructure in place.</strong> The ACIS DELA requires accurate seat / deployment counts; building this after GA is a contractual exposure we don&rsquo;t take.</li>
+</ul>
+<h2 id="7-risks-and-mitigations"><a class="toclink" href="#7-risks-and-mitigations">7. Risks and mitigations</a></h2>
+<table>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ACIS round-trip fidelity vs AutoCAD</strong> — customer DWGs must open in new ActCAD, edit, save, and re-open in AutoCAD with no visible drift</td>
+<td>§9 spike item 1 tests this on 50 real customer DWGs before signing the contract; KAL preserves a kernel-swap escape hatch if a regression is discovered post-GA</td>
+</tr>
+<tr>
+<td><strong>ACIS commercial exposure</strong> — opaque pricing, royalty per seat, change-of-control risk (Dassault owns SolidWorks, a competitor)</td>
+<td>§9 spike item 1b returns a written term sheet under NDA; commercial / legal review of the DELA + change-of-control + business-continuation clauses; source escrow option negotiated; module list scoped before signing so component fees don&rsquo;t surprise</td>
+</tr>
+<tr>
+<td><strong>ACIS WASM viability</strong> — no public production WASM build of ACIS; if browser shell needs kernel-grade editing, this is a custom engineering conversation</td>
+<td>§9 spike item 2 evaluates the inWEB + read-only-ACIS-translator path for the browser shell; full ACIS in WASM stays a Phase-2/3 question if customer demand requires it</td>
+</tr>
+<tr>
+<td><strong>inWEB ≠ same binary as native</strong> — likely two builds with shim parity, not one bundle</td>
+<td>§9 spike item 2 measures the actual delta; messaging adjusted accordingly</td>
+</tr>
+<tr>
+<td><strong>LISP compatibility is multi-person-year</strong>, not a 12-month spike</td>
+<td>Define &ldquo;compatibility&rdquo; as a measured percentile of a real customer-script corpus before kickoff; ship migration tool for the tail</td>
+</tr>
+<tr>
+<td><strong>MCP without a transactional boundary</strong> corrupts drawings</td>
+<td><code>agent</code> wraps <code>cmd</code> only; never <code>db</code>. Permission scoping, dry-run, rate limit from commit 1</td>
+</tr>
+<tr>
+<td><strong>Cadence trap re-emerges with ODA</strong></td>
+<td>Renderer escape valve: <code>render</code> is an abstraction over Visualize, so a native Vulkan backend can be slotted in if Visualize stalls</td>
+</tr>
+<tr>
+<td><strong>Qt licensing surprises</strong></td>
+<td>Commercial license locked (§15.4); §9 spike item 6 negotiates the multi-year quote, not the licensing model</td>
+</tr>
+<tr>
+<td><strong>Two parallel product lines for 24 months</strong> is an org risk, not a tech risk</td>
+<td>Support / engineering / marketing org plan written separately; clear customer messaging from day 1</td>
+</tr>
+<tr>
+<td><strong><code>ui-bridge</code> ABI churn</strong> breaks plugins and shells</td>
+<td>Version the ABI from commit 1; never break, only extend</td>
+</tr>
+<tr>
+<td><strong>DWG handle stability</strong> across save / load (customer xdata uses handles)</td>
+<td>Lock handle semantics before the save format is frozen in Phase 1</td>
+</tr>
+<tr>
+<td><strong>CRDT-vs-op-log</strong> is decided on marketing, not on a DWG prototype</td>
+<td>§9 spike item 7 prototypes 2-user co-edit on a real drawing before locking the design</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-migration-story-for-existing-customers"><a class="toclink" href="#8-migration-story-for-existing-customers">8. Migration story for existing customers</a></h2>
+<ul>
+<li>IntelliCAD-based ActCAD continues to ship through Phase 2; sunset date is announced when new product reaches GA.</li>
+<li>LISP migration tool ships in Phase 2 with coverage of the measured customer-script corpus.</li>
+<li>Strategic customer .NET / IRX scripts are migrated by a <strong>paid migration service</strong> delivered by the same team that built the new APIs.</li>
+<li>File formats: full DWG round-trip parity from Phase 1, validated against a corpus that includes real customer drawings.</li>
+<li>Pricing: existing perpetual licenses get an upgrade path to the new product&rsquo;s perpetual tier; AI / cloud features are the new subscription line.</li>
+</ul>
+<h2 id="9-feasibility-spike-46-weeks-before-committing-to-the-3-year-plan"><a class="toclink" href="#9-feasibility-spike-46-weeks-before-committing-to-the-3-year-plan">9. Feasibility spike — 4–6 weeks BEFORE committing to the 3-year plan</a></h2>
+<p>Seven validations, in priority order. <strong>If items 1, 2, 3, or 5 fail, the plan changes before kickoff, not at the Phase-2 boundary.</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>What</th>
+<th>Pass criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>ACIS round-trip fidelity test vs AutoCAD.</strong> Take 50 customer DWGs containing ACIS / ASM B-rep solids. Open through ACIS, edit (move / boolean / fillet), save, re-open in AutoCAD. Measure geometric drift on volume / surface area / bounding box, boolean robustness, fillet survival, attribute preservation.</td>
+<td>No visible drift, &lt;0.001 unit tolerance on volume / area, identical entity handle set, booleans pass on ≥98% of customer solids. <strong>If this passes, ACIS is locked for the 3-year plan and the contract is signed.</strong> If it fails, the assumption that direct-ACIS gives lossless AutoCAD fidelity is wrong and we re-open the kernel decision.</td>
+</tr>
+<tr>
+<td>1b</td>
+<td><strong>ACIS commercial scoping under NDA.</strong> Procurement + legal track running parallel to spike item 1. Get written term sheet from Spatial naming: module list (Local Ops, Healing, Defeaturing, Polyhedral, etc.); <strong>royalty model — per-deployment is the ask, per-seat is the documented fallback only</strong> (see §15.1.1 for the comparison math, ~10× cost variance, and full negotiating sequence); WASM / Linux / macOS SKU availability; source-escrow option; DELA full text; change-of-control + business-continuation clauses; support-hour bundle.</td>
+<td>Signed term sheet in hand before Phase-1 kickoff. Module list scoped to ActCAD&rsquo;s actual use case (no surprise component fees later). <strong>Per-deployment royalty locked as the primary ask per §15.1.1</strong>; per-seat accepted only if the 5-year amortized cost beats the per-deployment alternative Spatial would have offered. Volume tier breakpoints + annual minimum floor + carve-outs (trials / education / internal QA) all in writing.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Render the same 50 DWGs through native Visualize (Vulkan) <em>and</em> through Visualize inWEB (WebGPU); compare frame time on a 250k-entity drawing</td>
+<td>inWEB ≤ 3× slower than native</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Spike the <code>ui-bridge</code> C ABI / FlatBuffers seam: drive 10 commands from both a Qt shell and a React + WASM shell against a single <code>cmd</code> implementation</td>
+<td>Seam is one source of truth; no shell-specific branching in <code>cmd</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Run a real customer LISP script (largest one a top-5 customer uses) through a minimal LISP interpreter on top of <code>cmd</code></td>
+<td>Script runs and produces visually identical output to current ActCAD</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Stand up an MCP server exposing <code>cmd</code> to Claude / GPT; have it execute &ldquo;draw a 3-bed apartment plan from this brief&rdquo;</td>
+<td>Command surface is agent-shaped, not human-shaped; no drawing corruption</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Negotiate Qt 6 commercial multi-year quote at Jytra&rsquo;s actual revenue tier (Small Business almost certainly not eligible). Target 15–35% below first quote per Vendr-reported norm.</td>
+<td>Signed quote in hand for App Dev Enterprise + mobile / WASM add-ons covering Phase-1 + Phase-2 headcount, with a price-protection clause for Phase-3 growth.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Reproduce 2-user co-edit on a 2D drawing with a stub op-log over WebSocket (not CRDT)</td>
+<td>Op-stream design supports replication; conflict semantics on a real DWG operation are sane</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10-open-decisions-for-legal-commercial-review"><a class="toclink" href="#10-open-decisions-for-legal-commercial-review">10. Open decisions for legal / commercial review</a></h2>
+<blockquote>
+<p>ActCAD is a closed-source commercial product. Where a license has a free open-source path <em>and</em> a commercial / paid path, commit to the path that is unambiguously safe for closed-source distribution and standard commercial practice (static linking, code-signed binaries, modifications kept private). The locked / open status of each item below reflects that posture.</p>
+</blockquote>
+<ul>
+<li><strong>Qt 6 — LOCKED to commercial.</strong> Static linking, code-signed iOS / macOS distribution, and keeping our Qt modifications private are all required; LGPL v3 does not support those. The remaining open work is <em>quote negotiation</em>, not the licensing model — see §9 spike item 6 and §15.4.</li>
+<li><strong>ACIS — LOCKED as the 3D kernel choice, commercial terms OPEN.</strong> Spatial / Dassault commercial OEM contract. Decision rationale is locked (AutoCAD ASM ⊃ ACIS lineage → lossless DWG fidelity); commercial <em>terms</em> (initial fee, royalty model, module list, DELA specifics, change-of-control protection, source escrow) are open pending §9 spike item 1b. <strong>Do not sign before the spike returns a term sheet.</strong></li>
+<li><strong>ODA — LOCKED to Sustaining from day 1</strong>, Founding considered in Phase 3 for source / Git access. Limited Commercial&rsquo;s 100-seat cap is a footgun at our scale; Sustaining provides Web/SaaS (inWEB) redistribution rights without per-seat royalty.</li>
+<li><strong>Visual Studio — LOCKED to Enterprise</strong> for C++ inner-loop devs (advanced profiling, IntelliTrace). Professional for the rest.</li>
+<li><strong>Document service / auth / billing stack</strong> — recommended Clerk + Stripe + self-hosted document service. <strong>Open</strong> pending data-residency review for EU / India customers.</li>
+<li><strong>Customer-facing .NET API scope</strong> — explicitly <em>not</em> ObjectARX-compatible. <strong>Open</strong> pending announcement / migration messaging review.</li>
+<li><strong>IntelliCAD-ActCAD sunset date</strong> — <strong>open</strong>, driven by Phase 2 GA quality, not a date picked up front.</li>
+<li><strong>Alternative kernels — not chosen.</strong> Other commercial / open-source B-rep kernels exist but don&rsquo;t share the ACIS / ASM heritage that gives us lossless fidelity on AutoCAD-origin DWG 3D solids — translating AutoCAD-origin SAT blobs through any non-ACIS kernel introduces drift on edges, fillets, and tolerances that our migration-focused customers will see and reject. The KAL keeps a kernel swap technically possible at ~6–12 weeks of focused work if business conditions ever require it; it is not a hedge against ACIS being the right call today.</li>
+</ul>
+<h2 id="11-industry-adoption-who-else-picked-these-and-why"><a class="toclink" href="#11-industry-adoption-who-else-picked-these-and-why">11. Industry adoption — who else picked these and why</a></h2>
+<p>For each component of the planned stack: notable adopters, why they picked it, known pain points in shipped products, and the resulting verdict for ActCAD.</p>
+<h3 id="111-oda-sdks-drawings-visualize-ifc-bim-mcad-inweb-direct-membership"><a class="toclink" href="#111-oda-sdks-drawings-visualize-ifc-bim-mcad-inweb-direct-membership">11.1 ODA SDKs (Drawings, Visualize, IFC, BIM, MCAD, inWEB) — direct membership</a></h3>
+<ul>
+<li><strong>Adopters.</strong> Bricsys / BricsCAD (founding ODA member, the deepest user — Drawings + Visualize + BIM + IFC SDK), GstarCAD, ZWCAD, NanoCAD (all direct on ODA Drawings). Graphisoft ARCHICAD and Vectorworks use ODA Drawings as their DWG import / export layer. Bentley MicroStation, Trimble, Dassault hold memberships for format interop. ARES Graebert wrote their own DWG library and uses ODA selectively. <strong>IntelliCAD itself swapped its in-house DWG core for ODA technology under the hood years ago</strong>, so all IntelliCAD-derived products (ActCAD, progeCAD, CMS IntelliCAD) inherit ODA indirectly today.</li>
+<li><strong>Why.</strong> Format coverage no one else ships under a single C++ API (DWG back to R12, DGN, IFC 2x3/4/4.3, Revit, Navisworks); aggressive Autodesk-version tracking; one membership covers everything; Visualize lets members drop expensive third-party graphics middleware (HOOPS, etc.).</li>
+<li><strong>Known pain.</strong> Annual membership fee is non-trivial (Sustaining tier required for MCAD). API surface is wide but uneven — Revit <em>read</em> is mature, Revit <em>write</em> is partial. Threading model is heavy C++. Riding ODA&rsquo;s release cadence whether your QA is ready or not. Visualize scene graph is its own world — interop with engine-side picking / snapping is your problem.</li>
+<li><strong>Cost (vendor-published).</strong> Limited Commercial $3K first yr / $2.25K renewal (100-seat cap). <strong>Pro / Sustaining $7.5K first yr / $4.5K renewal</strong> — unlimited commercial seats + Web/SaaS (inWEB) redistribution rights, <strong>no per-seat royalty</strong>. Enterprise / Founding $37.5K first yr / $18K renewal — adds full source + Git access + board nomination. Extensions priced separately (BimRv / BimNw / MCAD / Civil typically $5K–$10K/yr each on top of the membership). See §15 for the rollup. (<a href="https://www.opendesign.com/pricing">ODA pricing</a>)</li>
+<li><strong>Verdict.</strong> <strong>Good fit, go direct.</strong> ActCAD already pays ODA transitively; cutting to direct membership removes ITC as middleman and matches BricsCAD / GstarCAD / ZWCAD / NanoCAD.</li>
+<li>Sources: <a href="https://www.opendesign.com/oda-membership">ODA Members</a>, <a href="https://www.opendesign.com/member-showcase/bricsys">Bricsys ODA showcase</a>, <a href="https://gfxspeak.com/featured/autocad-workalike-market/">IntelliCAD on ODA</a>.</li>
+</ul>
+<h3 id="112-acis-spatial-dassault-3d-kernel"><a class="toclink" href="#112-acis-spatial-dassault-3d-kernel">11.2 ACIS (Spatial / Dassault) — 3D kernel</a></h3>
+<ul>
+<li><strong>Adopters.</strong> Used by AutoCAD (via its ASM fork — see lineage note below), SpaceClaim (now ANSYS Discovery), Bentley MicroStation (uses both ACIS and Parasolid in different products), Hexagon products, BobCAD-CAM, IronCAD, CADopia, and <strong>ActCAD itself today (via the IntelliCAD + ACIS stack)</strong>. ACIS has been continuously productized since 1989 and is the second-most-deployed commercial B-rep kernel after Parasolid.</li>
+<li><strong>The AutoCAD lineage that matters.</strong> AutoCAD shipped with ACIS for 3D solids starting with R13 (1994). Around 2001, Autodesk forked the ACIS source they had licensed and created <strong>ASM (Autodesk Shape Manager)</strong>, which is what AutoCAD, Inventor, Revit, and Fusion use today. The DWG format still stores 3D solids in the <strong>ACIS SAT (Standard ACIS Text) blob format</strong> as <code>AcDb3dSolid</code> entities — that&rsquo;s the on-disk representation. Reading a DWG with 3D solids gives you ACIS SAT. <strong>Editing those solids with ACIS itself is the highest-fidelity path possible</strong> outside of using ASM directly (which Autodesk does not license externally). Translating SAT into any non-ACIS kernel and back introduces drift on edges, fillets, tolerances, and history — drift that AutoCAD users see and reject.</li>
+<li><strong>Why this is the right choice for ActCAD.</strong> Three reasons, in priority order: (1) <strong>AutoCAD-fidelity migration story</strong> — our customers are AutoCAD-DWG-native and that&rsquo;s our value prop; (2) <strong>continuity</strong> — ActCAD has been running on ACIS via IntelliCAD for years, so customer files, plugins, and workflows already assume ACIS semantics; (3) <strong>maturity</strong> — ACIS booleans, fillets, healing, and defeaturing are production-proven on the exact AEC + light-MCAD workloads ActCAD serves.</li>
+<li><strong>Known pain.</strong> Largely single-threaded inside one body — concurrency happens across bodies, not within one operation. Module sprawl: base ACIS doesn&rsquo;t include robust booleans (Local Operations), import-healing (Healing), defeaturing (Defeaturing), or polyhedral / mesh (Polyhedral) — each is a separately-priced component. <strong>No public production WASM build</strong> — browser shell needs a separate path (ODA&rsquo;s read-only translator + viewer in Phase 1, full ACIS-in-WASM is a custom engineering conversation if needed in Phase 2/3). Memory model uses derivation from <code>ENTITY</code> with explicit <code>lose()</code> semantics; KAL must encapsulate this so it doesn&rsquo;t leak into the rest of the engine.</li>
+<li><strong>Cost.</strong> Commercial OEM — opaque, procurement-gated. Industry-estimate shape: <strong>six-figure initial license + 15–20% annual maintenance + per-seat or per-deployment royalty + per-module component fees + DELA distribution restrictions</strong>. See §15.1 for the full structure and §9 spike item 1b for the procurement workstream that returns real numbers. <strong>All ACIS line items in §15.2 envelopes are procurement placeholders pending the spike&rsquo;s term sheet.</strong></li>
+<li><strong>Verdict.</strong> <strong>Locked as the 3D kernel choice, contract terms gated on §9 spike items 1 and 1b.</strong> The technical reasoning (AutoCAD ASM lineage → lossless DWG fidelity) is decision-forcing; only the commercial terms remain to be closed.</li>
+<li>Sources: <a href="https://www.spatial.com/solutions/3d-modeling/3d-acis-modeler">Spatial ACIS</a>, <a href="https://en.wikipedia.org/wiki/Autodesk_Shape_Manager">ASM history</a>, <a href="https://help.autodesk.com/view/OARX/2024/ENU/?guid=GUID-1B5BBE0E-44CA-4F2A-B8C3-3D2C7E8C0F8F">AcDb3dSolid / ACIS in DWG</a>, <a href="https://www.spatial.com/products/3d-acis-modeling">ACIS components list</a>.</li>
+</ul>
+<h3 id="113-oda-mcad-sdk-translator-not-kernel"><a class="toclink" href="#113-oda-mcad-sdk-translator-not-kernel">11.3 ODA MCAD SDK — translator, not kernel</a></h3>
+<ul>
+<li><strong>Adopters.</strong> <strong>Effectively none in production yet.</strong> SolidWorks read opened June 2025; Inventor read followed; CATIA / NX / Creo / JT / Parasolid / Solid Edge are on the 2026–2027 roadmap. No shipped end-user CAD product is on it as a primary kernel.</li>
+<li><strong>Why members are interested.</strong> Flat per-company pricing (no per-developer / per-seat), bundled into ODA membership extension — orders of magnitude cheaper than Parasolid (six-figures/yr + royalties) or ACIS. The only credible CATIA / SOLIDWORKS <em>write</em> path not controlled by Dassault.</li>
+<li><strong>Comparison.</strong> ACIS (our chosen kernel, §11.2) is the production B-rep modeler; ODA MCAD is positioned as <strong>translation / interop</strong> — read SolidWorks / Inventor / CATIA, feed the resulting geometry into ACIS, edit there. The two complement each other and we use both.</li>
+<li><strong>Cost.</strong> Bundled into ODA membership (Sustaining + extension, ~$5K–$10K/yr on top of the membership base). No per-seat royalty. <strong>Parasolid for comparison: OEM only, fully opaque pricing, industry estimate six-figure upfront + per-seat royalty + annual maintenance</strong> (Engineering.com / PROLIM analysts characterize CAD-component spend at 15–17% of ISV revenue once kernel + interop + visualization are stacked).</li>
+<li><strong>Verdict.</strong> <strong>Mismatch as a modeling kernel.</strong> Use it as a <strong>SolidWorks / Inventor / CATIA importer</strong> in Phase 2-3 once it&rsquo;s mature. Do not stake the 3D pipeline on it.</li>
+<li>Sources: <a href="https://www.opendesign.com/products/mcad-sdk">ODA MCAD product</a>, <a href="https://www.opendesign.com/blog/2025/december/mcad-sdk-solidworks-files">MCAD SDK for SolidWorks</a>.</li>
+</ul>
+<h3 id="114-qt-6-desktop-shell"><a class="toclink" href="#114-qt-6-desktop-shell">11.4 Qt 6 — desktop shell</a></h3>
+<ul>
+<li><strong>Adopters in CAD / DCC.</strong> Autodesk Maya (Qt since 2011), MotionBuilder, Mudbox, parts of 3ds Max; The Foundry Nuke / Mari / Katana; SideFX Houdini; Foundry Modo; CATIA V6 / 3DEXPERIENCE; Allplan / Nemetschek; FreeCAD (Qt 5 → 6 in progress); QCAD; OpenSCAD. <strong>Counter-example.</strong> Blender (custom OpenGL UI).</li>
+<li><strong>Why.</strong> Cross-platform from a single codebase; mature OpenGL / Vulkan integration via QOpenGLWidget / QRhi; native theming; Qt Quick / QML for modern panels; signal-slot maps cleanly onto large C++ codebases.</li>
+<li><strong>Known pain.</strong> <strong>Commercial cost.</strong> Qt for Application Development Professional / Enterprise is ~$4,000–$6,000 per developer per year for desktop; Small Business tier (rev-gated, caps at ~$250K) is €530/year/dev. Add ~30–60% for mobile / embedded / Qt-for-WebAssembly. LGPL requires dynamic linking — static-link needs the paid license. Qt 5 → 6 migration is painful at scale (FreeCAD&rsquo;s Qt 6 work has been 2+ years and still partial).</li>
+<li><strong>Cost (vendor-published, locked to commercial — see §10).</strong> Standard Application Development Enterprise: <strong>~$3,948–$4,660/yr/dev</strong>, mobile / WebAssembly add-ons +30–60%. Small Business (€530/yr Pro, USD 618/yr Enterprise) <strong>almost certainly not eligible at Jytra&rsquo;s revenue</strong>; model standard pricing. LGPL is rejected: a closed-source commercial product can&rsquo;t static-link Qt under LGPL v3, can&rsquo;t ship a code-signed iOS app cleanly under it, and can&rsquo;t keep Qt modifications private. Vendr reports buyers commonly negotiate <strong>15–35% below first quote</strong> on multi-year contracts; §9 spike item 6 owns that conversation. (<a href="https://www.qt.io/pricing">Qt pricing</a>, <a href="https://www.vendr.com/marketplace/qt">Vendr</a>)</li>
+<li><strong>Verdict.</strong> <strong>Good fit, with a decision-forcing legal call.</strong> Industry-standard for this product category. The LGPL-vs-commercial call gets made in §9 spike item 6.</li>
+<li>Sources: <a href="https://help.autodesk.com/cloudhelp/2020/ENU/Maya-SDK-MERGED/developer/Working-with-Qt/Using-Qt-in-Plug-ins.html">Maya Qt SDK</a>, <a href="https://www.qt.io/pricing">Qt pricing</a>, <a href="https://www.qt.io/development/qt-for-small-business">Qt Small Business</a>, <a href="https://github.com/FreeCAD/FreeCAD/issues/6992">FreeCAD Qt 6 #6992</a>.</li>
+</ul>
+<h3 id="115-c-vs-rust-for-the-engine-core"><a class="toclink" href="#115-c-vs-rust-for-the-engine-core">11.5 C++ vs Rust for the engine core</a></h3>
+<ul>
+<li><strong>Adopters (Rust).</strong> <strong>Fornjot</strong> (Hanno Braun) — experimental B-rep kernel, explicitly &ldquo;reliability over features,&rdquo; no shipped product on it. <strong>Truck</strong> (RICOS-JP) — Rust B-rep kernel, compiles to WASM; used by <strong>CADmium</strong> (Matt Ferraro). <strong>Zoo.dev / KittyCAD</strong> — the most serious commercial Rust CAD play; Rust geometry engine on the server (Vulkan / Nvidia), React frontend, app shipping. <strong>Figma</strong> — C++ canvas, Rust used for multiplayer sync server and hot-path tooling. Pattern: Rust at the edges, not the kernel.</li>
+<li><strong>Why.</strong> Memory safety without GC, fearless concurrency, excellent WASM toolchain, cargo, no header / macro hell. For a from-scratch solver, type-checkable correctness.</li>
+<li><strong>Known pain.</strong> Hiring depth in CAD geometry is in C++ not Rust. No mature commercial B-rep kernel ships a Rust binding (ACIS, Parasolid, and ODA SDKs are all C++ first). C++ FFI to ACIS / ODA is non-trivial — you pay it on every API boundary, which is why a Rust-primary core would be a tax on every inner-loop call.</li>
+<li><strong>Cost.</strong> C++ and Rust toolchains are $0. <strong>Primary IDE is VS Code (or Cursor) + clangd + CMake Tools + Qt extension pack + AI agent (Claude Code / Cursor / Copilot)</strong> — that&rsquo;s where the AI-augmented dev workflow lives in 2026. <strong>Visual Studio Enterprise reserved for 2-3 designated Windows-perf devs</strong> (IntelliTrace, Concurrency Visualizer, advanced profiler) at $5,999 first / $2,569 renewal. JetBrains CLion (~€979/yr) available to taste as an alternative. AI dev tooling budgeted at <strong>~$50/dev/mo blended</strong> (Cursor Business $40/mo, Copilot Business $19/mo, Claude Code usage on top).</li>
+<li><strong>Verdict.</strong> <strong>Mismatch for the kernel; selective fit at the edges.</strong> Confirms §2.4 — Rust earns its place in <code>net</code>, <code>script</code> host, <code>agent</code> (MCP), and new geometry algorithms. C++20 stays primary.</li>
+<li>Sources: <a href="https://www.fornjot.app/">Fornjot</a>, <a href="https://github.com/ricosjp/truck">Truck</a>, <a href="https://mattferraro.dev/posts/cadmium">CADmium</a>, <a href="https://github.com/KittyCAD/modeling-app">Zoo modeling-app</a>, <a href="https://www.figma.com/blog/webassembly-cut-figmas-load-time-by-3x/">Figma WASM</a>.</li>
+</ul>
+<h3 id="116-webgpu-webassembly-browser-cad"><a class="toclink" href="#116-webgpu-webassembly-browser-cad">11.6 WebGPU + WebAssembly — browser CAD</a></h3>
+<ul>
+<li><strong>Adopters.</strong> <strong>AutoCAD Web</strong> — Autodesk transpiled a major part of AutoCAD&rsquo;s ~15M-line C++ via Emscripten to WASM; same engine as desktop. <strong>Figma</strong> — C++ → WASM via Emscripten, shipped WebGPU rendering in 2024. <strong>Adobe Photoshop Web</strong> — same pattern. <strong>ODA Drawings inWEB / Visualize inWEB</strong> — entire ODA C++ stack compiled to WASM. <strong>CADmium</strong> — Rust → WASM, three.js / WebGL today. <strong>Tinkercad</strong> — WebGL, JS-heavy. <strong>Onshape</strong> — NOT a WASM story: Parasolid runs native on AWS, browser only renders triangles via WebGL.</li>
+<li><strong>WebGPU baseline as of May 2026.</strong> Chrome (since 113, 2023), Edge, Safari 26 (Sept 2025 — macOS Tahoe, iOS 26, visionOS), Firefox 141+ on Windows (July 2025), Firefox 145 on Apple Silicon. Firefox on Linux / Android still in progress. Babylon.js shows ~10× rendering speedup vs WebGL; WebGPU is the only path to in-browser compute shaders.</li>
+<li><strong>Known pain.</strong> SharedArrayBuffer needs COOP / COEP headers — breaks embedding in customer intranets and some SaaS hosts. wasm32 caps at 4GB — large DWG / Revit forces wasm64 (narrower support). Filesystem assumptions need virtualizing via MEMFS / IDBFS. Binary size: stripped CAD WASM is tens of MB (need streaming compilation, dlopen-emulation code-splitting, <code>-Oz</code>). Debugging is dramatically worse than native.</li>
+<li><strong>Cost.</strong> WebGPU / WebAssembly / WebGL2 are royalty-free W3C / Khronos browser APIs. <strong>$0.</strong> No conformance fee.</li>
+<li><strong>Verdict.</strong> <strong>Good fit for a Visualize-only browser companion now; the full-editor browser story is a multi-year program</strong> matching AutoCAD Web&rsquo;s trajectory, not a Phase-1 launch deliverable.</li>
+<li>Sources: <a href="https://www.infoq.com/presentations/autocad-webassembly/">AutoCAD WebAssembly InfoQ</a>, <a href="https://www.webgpu.com/news/webgpu-hits-critical-mass-all-major-browsers/">WebGPU baseline 2026</a>, <a href="https://www.figma.com/blog/figma-rendering-powered-by-webgpu/">Figma WebGPU</a>, <a href="https://www.onshape.com/en/blog/how-does-onshape-really-work">Onshape architecture</a>.</li>
+</ul>
+<h3 id="117-oda-inweb-drawings-inweb-visualize-inweb"><a class="toclink" href="#117-oda-inweb-drawings-inweb-visualize-inweb">11.7 ODA inWEB (Drawings inWEB, Visualize inWEB)</a></h3>
+<ul>
+<li><strong>Adopters.</strong> Drawings inWEB SDK opened to ODA members October 2024 — <strong>no major shipping CAD product is publicly known to be on it for primary editing yet.</strong> Members are building CDE / viewer apps. Visualize inWEB (<code>@inweb/viewer-visualize</code> on npm) is further along; several ODA members use it as a HOOPS / 3D-PDF viewer replacement. ODA&rsquo;s own <em>ODA Viewer</em> and the <strong>VisualizeJS</strong> demo viewer are the reference implementations.</li>
+<li><strong>Why.</strong> Drawings inWEB is a <strong>WASM transpilation of the C++ Drawings SDK</strong> — file-format coverage is at parity with desktop Drawings SDK by construction.</li>
+<li><strong>Known pain.</strong> Performance on large DWG (&gt;200MB, dense annotation) lags desktop on initial-load and pan / zoom; browser-tab memory ceilings bite earlier than native. What&rsquo;s NOT at parity: full constraint engine, full LISP / .NET, plot / publish round-trip, certain custom-object proxies.</li>
+<li><strong>Cost.</strong> Web/SaaS redistribution rights for inWEB begin at <strong>ODA Sustaining ($7.5K first yr / $4.5K renewal)</strong> — no per-deployment / per-seat royalty on top. Structurally cheaper than the Autodesk RealDWG path for a web product.</li>
+<li><strong>Verdict.</strong> <strong>Good fit for viewer / markup web companion in Phase 1; risky as the sole platform for full editing today.</strong> Aligns with our native-Windows-first phasing in §5.</li>
+<li>Sources: <a href="https://www.opendesign.com/products/inweb">inWEB landing</a>, <a href="https://www.opendesign.com/blog/2024/october/drawings-inweb-sdk-oda">Drawings inWEB SDK release</a>, <a href="https://www.npmjs.com/package/@inweb/viewer-visualize">@inweb/viewer-visualize npm</a>.</li>
+</ul>
+<h3 id="118-cmake-emscripten-c-wasm-toolchain"><a class="toclink" href="#118-cmake-emscripten-c-wasm-toolchain">11.8 CMake + Emscripten — C++ → WASM toolchain</a></h3>
+<ul>
+<li><strong>Successful CAD-scale codebases on this exact toolchain.</strong> AutoCAD Web (15M-line C++ → WASM via Emscripten — the headline case). Figma (3× initial load improvement when they moved off asm.js). Adobe Photoshop Web. ODA Drawings inWEB / Visualize inWEB. VTK / Kitware (ships documented Emscripten build with <code>VTK_WEBASSEMBLY_64_BIT</code> for &gt;4GB models). CAD Exchanger Web.</li>
+<li><strong>Recurring failure modes.</strong> Threading + SharedArrayBuffer requires COOP / COEP headers (breaks embeds, ads); 4GB pointer cap on wasm32 forces wasm64 for large models; filesystem virtualization (MEMFS / IDBFS) for every <code>fopen</code>; third-party C++ deps (Boost, ICU, OpenSSL) need patching for the Emscripten toolchain; binary size in the tens of MB needs streaming compilation + code-splitting; long compile / link cycles on kernel-sized code (hours for full rebuilds with LTO); GL / GLES → WebGL2 / WebGPU shader translation; debugging vastly worse than native.</li>
+<li><strong>Cost.</strong> CMake (BSD-3), Emscripten (MIT / NCSA), Cargo (MIT / Apache-2.0), Vcpkg (MIT), Conan (MIT) — <strong>all $0</strong>. Kitware sells optional CMake support starting ~$2,500 pre-paid blocks; nice-to-have, not required.</li>
+<li><strong>Verdict.</strong> <strong>Good fit and well-trodden.</strong> Every relevant precedent uses this toolchain; the failure modes are published and the playbook is public.</li>
+<li>Sources: <a href="https://www.infoq.com/presentations/autocad-webassembly/">AutoCAD WebAssembly InfoQ</a>, <a href="https://www.figma.com/blog/webassembly-cut-figmas-load-time-by-3x/">Figma WebAssembly</a>, <a href="https://emscripten.org/docs/porting/pthreads.html">Emscripten pthreads</a>, <a href="https://docs.vtk.org/en/latest/advanced/build_wasm_emscripten.html">VTK Emscripten</a>.</li>
+</ul>
+<h3 id="119-summary-verdict-matrix"><a class="toclink" href="#119-summary-verdict-matrix">11.9 Summary verdict matrix</a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>11.1 ODA SDKs (direct membership)</td>
+<td><strong>Good fit</strong> — matches BricsCAD / GstarCAD / ZWCAD / NanoCAD; removes ITC middleman</td>
+</tr>
+<tr>
+<td>11.2 ACIS B-rep kernel</td>
+<td><strong>Locked</strong> — AutoCAD ASM lineage = lossless DWG fidelity; commercial terms gated on §9 spike item 1b</td>
+</tr>
+<tr>
+<td>11.3 ODA MCAD SDK</td>
+<td><strong>Not a kernel</strong> — use as SolidWorks / Inventor / CATIA <em>importer</em> in Phase 2-3</td>
+</tr>
+<tr>
+<td>11.4 Qt 6 desktop shell</td>
+<td><strong>Good fit</strong> — industry-standard; budget LGPL constraints or ~$5K/dev/yr commercial</td>
+</tr>
+<tr>
+<td>11.5 Rust selectively, not for kernel</td>
+<td><strong>Confirmed</strong> — Rust at the edges (<code>net</code>, <code>script</code>, <code>agent</code>); C++20 stays primary</td>
+</tr>
+<tr>
+<td>11.6 WebGPU + WASM browser</td>
+<td><strong>Viewer now; full editor multi-year</strong> — AutoCAD Web&rsquo;s trajectory, not a launch deliverable</td>
+</tr>
+<tr>
+<td>11.7 ODA inWEB</td>
+<td><strong>Good fit for viewer; risky as sole platform</strong> for full editing today</td>
+</tr>
+<tr>
+<td>11.8 CMake + Emscripten</td>
+<td><strong>Good fit</strong> — the exact playbook AutoCAD Web / Figma / ODA inWEB followed</td>
+</tr>
+</tbody>
+</table>
+<h2 id="12-collaboration-architecture-in-detail"><a class="toclink" href="#12-collaboration-architecture-in-detail">12. Collaboration architecture in detail</a></h2>
+<h3 id="121-what-the-leaders-actually-shipped"><a class="toclink" href="#121-what-the-leaders-actually-shipped">12.1 What the leaders actually shipped</a></h3>
+<ul>
+<li><strong>Onshape (PTC)</strong> — only mainstream parametric CAD with simultaneous multi-user editing of the same part. Built on an immutable, append-only operation history: every user action becomes a sequential change in the workspace, cloud is the single source of truth, no files. Branch-and-merge modeled on git (USPTO 10,691,844; also 10,002,150 and 10,503,721). Merge is feature-by-feature replay with conflict detection at the feature graph level. Works because parametric CAD has a semantic operation language (the feature tree).</li>
+<li><strong>ARES Kudo (Graebert)</strong> — full DWG editor in browser + Automation server (&ldquo;ARES Commander running remotely&rdquo;). Public collaboration is View-Only Links, Comments, Markups, Version Compare — <em>not</em> concurrent co-editing in the Figma sense. &ldquo;Multiple users in parallel by alternating editing and viewing sessions&rdquo; with session handover. Closer to soft-locked session sharing with cloud sync on save. ARES 2027 (April 2026) adds the A3 AI agent.</li>
+<li><strong>AutoCAD Web</strong> — fundamentally single-user, backed by Autodesk Docs. AutoCAD 2025.1 adds &ldquo;Can Edit&rdquo; share links + Activity Insights for audit + DWG comparison. Autodesk does <em>not</em> advertise concurrent geometry co-edit; they advertise serialized collaboration with rich audit and diff.</li>
+<li><strong>Vectorworks Cloud Services</strong> — Cloud Document Reviewer (browser comment / measure / markup on shared sheet layers, returns to desktop). Concurrent geometry editing is via on-premises Project Sharing — file-based, not cloud-native.</li>
+<li><strong>Bricsys 24/7</strong> — a CDE (document management + streaming viewer + workflow), not a co-editor.</li>
+<li><strong>Snaptrude</strong> — AEC analog of Onshape, browser-based, real-time simultaneous editing without checkout. AI generation of LOD 300 models in 7–10 minutes (October 2025).</li>
+<li><strong>Figma</strong> (canonical reference) — explicitly rejected both OT and pure CRDT. <strong>Server-authoritative last-writer-wins per property.</strong> Each document a tree-of-objects (HTML-DOM-like). Per-document server process over WebSockets. <strong>Each field updates independently — concurrent edits to the same property produce A or B, never a merged value.</strong> Fractional indexing (base-95 strings — average between siblings to insert) for ordering. Cycle-rejection for tree-reparent. Orphaned objects hidden client-side until reconciliation.</li>
+</ul>
+<h3 id="122-why-generic-crdts-lose-on-dwg"><a class="toclink" href="#122-why-generic-crdts-lose-on-dwg">12.2 Why generic CRDTs lose on DWG</a></h3>
+<ul>
+<li>DWG geometry is not a flat list — it&rsquo;s a spatially indexed graph with cross-references (block definitions, xrefs, layers, dimstyles, viewports).</li>
+<li>Tombstone GC blows up with millions of entities (Yjs scales to ~100k ops cleanly, OOMs at the millions-of-entity scale typical for an MEP riser DWG; Automerge OOMs on large transaction replay).</li>
+<li>Intent-preserving merge for &ldquo;move this wall&rdquo; requires understanding spatial constraints that generic CRDTs don&rsquo;t model.</li>
+<li>Recent academic work (&ldquo;Geometry-Aware CRDTs&rdquo;, MDPI 2025) introduces geometric vector clocks + minimum bounding rectangles to capture spatial dependencies — still academic, not production.</li>
+<li><strong>The industry has converged on server-authoritative with domain-specific ordering, not generic CRDT.</strong></li>
+</ul>
+<h3 id="123-actcads-two-tier-model-detailed"><a class="toclink" href="#123-actcads-two-tier-model-detailed">12.3 ActCAD&rsquo;s two-tier model — detailed</a></h3>
+<p><strong>Tier 1 (geometry edits): serialized op-log over the engine&rsquo;s mutation stream.</strong></p>
+<ul>
+<li>Every command (LINE, MOVE, ERASE, HATCH-modify, BLOCK-insert) is already an undoable transaction in the host today — that&rsquo;s the existing AcDb transaction. We promote that transaction to a network operation.</li>
+<li>Server linearizes all geometry ops. Optimistic UI on the client, server can reject ops that violate referential integrity (door-to-wall, dim-to-entity, hatch-boundary-to-geometry).</li>
+<li>The <code>db</code> op-stream defined in §3 is exactly the wire format — same stream serves invalidation, undo, replication, agent context, and audit.</li>
+<li>Presence + selection locks at the UI layer prevent dual edits before they become conflicts.</li>
+<li>Branch / version semantics (Onshape-style) deferred to Phase 3 — SMB drafters won&rsquo;t think in git branches; presence + soft-lock is the right Phase-2 UX.</li>
+</ul>
+<p><strong>Tier 2 (annotations, comments, markups, layer properties, sheet titles, etc.): Figma-style LWW per property.</strong></p>
+<ul>
+<li>Each field updates independently; concurrent edits to the same field resolve to A-or-B, never a merge.</li>
+<li>Fractional indexing for any z-order / draw-order semantics.</li>
+<li>Cycle-rejection for reparenting tree ops (sheet → layout → viewport).</li>
+<li>This is also the right place for Yjs / Automerge if we ever want one — bounded scope, text-and-JSON shaped data, no spatial constraints.</li>
+</ul>
+<h3 id="124-what-we-copy-what-we-avoid"><a class="toclink" href="#124-what-we-copy-what-we-avoid">12.4 What we copy, what we avoid</a></h3>
+<ul>
+<li><strong>Copy</strong> from Onshape: serialized op-log with cloud as single source of truth; explicit version model (snapshot-and-restore) even if we don&rsquo;t expose branch / merge initially.</li>
+<li><strong>Copy</strong> from Figma: LWW per property; fractional indexing; cycle-rejection for tree ops; orphan-and-reconcile for clients out of sync.</li>
+<li><strong>Avoid</strong> Onshape&rsquo;s &ldquo;every user is a software engineer&rdquo; branch model — SMB AEC users want soft-lock + presence + LWW on properties, not git workflows.</li>
+<li><strong>Avoid</strong> ARES Kudo&rsquo;s soft-lock-only ceiling — go server-authoritative op-log on geometry from day 1 to leapfrog them.</li>
+<li><strong>Avoid</strong> generic Yjs / Automerge for geometry — confine to non-spatial metadata where it&rsquo;s bounded.</li>
+</ul>
+<h3 id="125-phasing-for-collaboration"><a class="toclink" href="#125-phasing-for-collaboration">12.5 Phasing for collaboration</a></h3>
+<ul>
+<li><strong>Phase 1</strong> — the <code>db</code> op-stream is the wire format from the first commit. No co-edit yet; the browser shell is viewer + markup; markups go through Tier 2 (LWW).</li>
+<li><strong>Phase 2</strong> — Tier 1 turns on for 2D drawings with the cloud document service. Real-time co-edit ships with presence + soft-lock + LWW annotations.</li>
+<li><strong>Phase 3</strong> — Tier 1 extends to 3D / BIM; explicit branch / snapshot exposed in the UI for what-if workflows.</li>
+</ul>
+<p>Sources: <a href="https://www.figma.com/blog/how-figmas-multiplayer-technology-works/">Figma multiplayer</a>, <a href="https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10691844">USPTO 10691844 (Onshape branch / merge)</a>, <a href="https://architosh.com/2026/04/graebert-releases-ares-2027-ai-push-and-forma-integration/">ARES 2027</a>, <a href="https://www.autodesk.com/blogs/autocad/enhance-collaboration-and-save-time-with-autocad-2025-1/">AutoCAD 2025.1 collaboration</a>, <a href="https://www.vectorworks.net/en-US/newsroom/leveraging-vectorworks-cloud-services">Vectorworks Cloud</a>, <a href="https://www.bricsys.com/247">Bricsys 24/7</a>, <a href="https://www.mdpi.com/2220-9964/14/12/468">Geometry-aware CRDTs (MDPI 2025)</a>, <a href="https://josephg.com/blog/crdts-go-brrr/">CRDTs go brrr (Joseph Gentle)</a>.</p>
+<h2 id="13-extensions-and-marketplace-strategy"><a class="toclink" href="#13-extensions-and-marketplace-strategy">13. Extensions and marketplace strategy</a></h2>
+<h3 id="131-what-the-leaders-actually-shipped"><a class="toclink" href="#131-what-the-leaders-actually-shipped">13.1 What the leaders actually shipped</a></h3>
+<ul>
+<li><strong>Autodesk App Store + Autodesk Platform Services (APS, formerly Forge).</strong> App Store accepts desktop add-ons (ObjectARX / .NET / LISP) <em>and</em> web apps using APS REST APIs. Initial review 24 hours, in-depth 2–3 days. Required artifacts: title, type, OS list, APS Client ID, screenshots, video, privacy policy URL (embedded in description AND inside the app itself). Monetization is publisher-controlled. <strong>&ldquo;Security review&rdquo; is functional QA, not sandboxing-and-capabilities</strong> — native plugins run with full process privileges.</li>
+<li><strong>Onshape App Store / Extensions.</strong> The cleanest web-extension model in the industry because designed cloud-native from day one. <strong>Two extension types only</strong>: (1) UI extensions = an HTTPS page rendered in an iframe inside Onshape, (2) Action extensions = REST calls to the developer&rsquo;s server from Onshape&rsquo;s UI (context menu / toolbar). OAuth2 — Onshape is the client, the app is the server. Parameterized URLs inject documentId / workspaceId / userId / companyId. 180-second timeout on GET / POST actions. <strong>No third-party code ever runs inside Onshape&rsquo;s process.</strong></li>
+<li><strong>BricsCAD Application Store + BRX.</strong> BRX is BricsCAD Runtime eXtension — C / C++ and .NET API 100% source-compatible with AutoCAD ObjectARX. The value prop is &ldquo;single code stream that runs on both BricsCAD and AutoCAD.&rdquo; SDK free, dev enrollment free. No web analog because BricsCAD has no web product to speak of.</li>
+<li><strong>SketchUp Extension Warehouse.</strong> Ruby. Every extension shares the same Ruby VM. Sandboxing is by convention, enforced by RuboCop-SketchUp linting (no global variables, no monkey-patching, no <code>$LOAD_PATH</code> mutation, one root module per extension). Manual review + automated lint at submission. Encryption (.rbe) supports paid extensions.</li>
+<li><strong>Vectorworks Marketplace.</strong> Binary trust model (partner vs unknown) with no code signing or sandboxing (per Vectorworks 2026 docs). Unknown-developer plugins disabled by default with a session warning. Security theater — users click &ldquo;enable anyway&rdquo; universally.</li>
+<li><strong>SolidWorks Solution Partner Program.</strong> <strong>No app store at all.</strong> Mandatory 10% revenue share + sales disclosure to Dassault — publicly criticized by partners as imposing requirements without providing a storefront.</li>
+<li><strong>AutoCAD Web &ldquo;extensions.&rdquo;</strong> <strong>LISP files only.</strong> .lsp source uploaded to cloud profile. No .fas / .vlx compiled, no ARX, no .NET. ActiveX, 3D mesh / surface / solid creation, and most 3D-object modification are not available. Feature gap, not an architecture.</li>
+</ul>
+<h3 id="132-architecture-patterns"><a class="toclink" href="#132-architecture-patterns">13.2 Architecture patterns</a></h3>
+<p>Two opposing models in production:</p>
+<ol>
+<li><strong>In-process native plugins</strong> (ObjectARX, BRX, Vectorworks SDK, SketchUp Ruby). Full power, no sandbox, distribution via store-as-shopfront. Security via developer reputation and manual review. Plugin-version-parity across host versions is the developer&rsquo;s problem.</li>
+<li><strong>Out-of-process cloud apps</strong> (Onshape, APS). iframe UI + OAuth REST. Sandboxed by the browser. Capability-scoped by OAuth scopes. No code runs inside the host process.</li>
+</ol>
+<p><strong>Plugin parity across native and web does not exist in any shipped product.</strong> AutoCAD Web is LISP-only with zero ARX / .NET. Onshape has no native at all. BricsCAD has BRX (native) and nothing web. The Onshape model gives you real security review + capability scoping, but it can only express what the REST API exposes — you cannot extend the geometry kernel from inside.</p>
+<h3 id="133-actcads-extension-model"><a class="toclink" href="#133-actcads-extension-model">13.3 ActCAD&rsquo;s extension model</a></h3>
+<p><strong>Native desktop — keep BRX / ObjectARX compatibility.</strong> SMB AEC switching from AutoCAD is ActCAD&rsquo;s value prop; native plugins are table stakes. Provide:</p>
+<ul>
+<li><strong>BRX-compatible API surface</strong> — match BricsCAD&rsquo;s &ldquo;single code stream that runs on AutoCAD&rdquo; pledge.</li>
+<li><strong>AutoLISP compatibility shim</strong> — covered in §2.5 and §5.</li>
+<li><strong>Authenticode-style code signing</strong> + &ldquo;verified publisher&rdquo; badge in the store (Vectorworks-style binary trust is rejected).</li>
+<li><strong>Automated pre-publication scanning</strong> (call-graph, suspicious API use, network egress detection) before manual review.</li>
+</ul>
+<p><strong>Web — adopt the Onshape model.</strong> Two extension types only:</p>
+<ul>
+<li><strong>UI extension</strong> = an HTTPS page in an iframe inside the ActCAD web shell.</li>
+<li><strong>Action extension</strong> = REST call to a developer-hosted server, OAuth2 scoped.</li>
+</ul>
+<p>Define a stable extension manifest declaring capability scopes (read-drawing, write-drawing, network-egress, file-system, user-presence, plot, agent-tool-publish) — start with maybe six scopes, expand only when needed.</p>
+<p><strong>Plugin parity = shared RPC surface, not shared binaries.</strong> The <code>cmd</code> module in §3 defines an internal command / query API. Native plugins call it in-process (BRX / .NET). Web extensions call the same API via OAuth REST. Same scopes, same semantics, same audit trail. This is the only credible path to &ldquo;write once, run on web and desktop&rdquo; — and even then, only for plugins that don&rsquo;t need raw geometry-kernel access.</p>
+<h3 id="134-marketplace-policy"><a class="toclink" href="#134-marketplace-policy">13.4 Marketplace policy</a></h3>
+<ul>
+<li>Revenue share: tiered, not flat. Free for the first $5K/year of an extension&rsquo;s revenue, then 15% (Apple-equivalent for small business) to align with developer norms. Avoid the SolidWorks anti-pattern.</li>
+<li>Signing: required for both native and web.</li>
+<li>Categories: utilities, blocks / symbols, vertical packs (Architecture / MEP / Electrical / GIS), AI tools, integrations. AI-tool category needs a separate review track (see §14).</li>
+<li>Distribution: in-app store + web portal. Both list the same extensions.</li>
+<li>Agent-tool publishing: any extension that exposes MCP tools to the ActCAD agent runtime declares it in the manifest and goes through the AI-tool review track.</li>
+</ul>
+<h3 id="135-what-to-avoid-concrete-anti-patterns"><a class="toclink" href="#135-what-to-avoid-concrete-anti-patterns">13.5 What to avoid (concrete anti-patterns)</a></h3>
+<ul>
+<li>SolidWorks-style mandatory revenue share with no storefront.</li>
+<li>SketchUp&rsquo;s shared-VM-by-convention sandboxing — fine for SketchUp&rsquo;s installed base, dangerous for our new runtimes.</li>
+<li>Vectorworks-style binary trust — explicit capability scoping from day one, even if the initial buckets are coarse.</li>
+<li>Promising &ldquo;write once, run everywhere&rdquo; plugin parity — promise <em>API parity</em>, not <em>binary parity</em>.</li>
+</ul>
+<p>Sources: <a href="https://damassets.autodesk.net/content/dam/autodesk/www/pdfs/app-store-getting-started-guide.pdf">Autodesk App Store Getting Started</a>, <a href="https://onshape-public.github.io/docs/app-dev/extensions/">Onshape Extensions</a>, <a href="https://onshape-public.github.io/docs/app-store/">Onshape App Store</a>, <a href="https://developer.bricsys.com/bricscad/help/en_US/CurVer/DevRef/source/BRX.htm">BRX API</a>, <a href="https://ruby.sketchup.com/file.extension_requirements.html">SketchUp Extension Requirements</a>, <a href="https://github.com/SketchUp/rubocop-sketchup">RuboCop-SketchUp</a>, <a href="https://app-help.vectorworks.net/2026/eng/VW2026_Guide/Start/Third-party_plug-in_security.htm">Vectorworks plug-in security</a>, <a href="https://www.fabbaloo.com/news/solidworks-partners-criticize-mandatory-revenue-share-and-sales-disclosure-requirements">SolidWorks revenue share</a>, <a href="https://help.autodesk.com/view/ACADWEB/ENU/?guid=AutoCAD_Web_Help_File_Management_Lisp_html">AutoCAD Web LISP</a>, <a href="https://www.figma.com/blog/how-we-built-the-figma-plugin-system/">Figma plugin system</a>.</p>
+<h2 id="14-ai-and-agent-strategy-in-detail"><a class="toclink" href="#14-ai-and-agent-strategy-in-detail">14. AI and agent strategy in detail</a></h2>
+<h3 id="141-what-the-leaders-actually-shipped"><a class="toclink" href="#141-what-the-leaders-actually-shipped">14.1 What the leaders actually shipped</a></h3>
+<ul>
+<li><strong>Autodesk</strong> — &ldquo;Autodesk AI&rdquo; brand across products + public MCP servers as the agent substrate. Shipped:</li>
+<li><strong>AutoCAD Smart Blocks</strong> — Search-and-Convert (BCONVERT) finds geometry matching an existing block; 2026 adds text-to-block-attribute recognition. Detect-and-Convert (Tech Preview) scans the whole drawing and suggests block candidates.</li>
+<li><strong>Markup Assist / Markup Import</strong> — PDF / image markups → AI recognizes text commands (MOVE, COPY, DELETE) → proposes DWG edits.</li>
+<li><strong>Activity Insights</strong> — audit log + diff (not generative).</li>
+<li><strong>Project Bernini → &ldquo;Neural CAD&rdquo;</strong> — Bernini was the research model (10M shapes, ~3B params, text / sketch / image → 3D); now rebranded &ldquo;Neural CAD&rdquo; with the claim of editable CAD geometry in Forma / Fusion. No shipped product proves the editability claim yet.</li>
+<li><strong>Forma (was Spacemaker)</strong> — Site Automation: generative site design exploration with multi-objective evaluation.</li>
+<li><strong>Autodesk Assistant + MCP</strong> — <strong>Revit 2027 ships a public MCP server (Tech Preview)</strong> exposing six tool groups (model queries, sheet management, room management, schedules, exports, element ops): read everything, write a constrained set. <strong>Fusion 2026 ships two MCP servers</strong>: local Autodesk Fusion MCP (requires Fusion running, modeling + command execution) and remote Autodesk Fusion Data MCP (cloud, no Fusion required, data query). Both compatible with Claude Desktop / Cursor / VS Code / any MCP HTTP client.</li>
+<li><strong>BricsCAD AI</strong> — AI Predict (ML-based ribbon command suggestion), AI Assistant (V26.2.03), Blockify (repetition detection for file-size reduction), Drawing Health (geometry cleanup), BIMIFY (AI classification of free-form 3D → IFC elements), auto-parametrize. <strong>No public MCP server yet.</strong></li>
+<li><strong>Graebert ARES 2027</strong> — A3 AI agent (built on OpenAI APIs) that selects / creates / modifies DWG entities; voice input in Kudo Professional; AI block generation; AI MText assistant. Deepest &ldquo;agent in the inner loop&rdquo; surface shipped on a DWG editor in 2026.</li>
+<li><strong>Adobe Firefly in Illustrator</strong> — Generative Recolor (text-prompt palette generation across selected vector art) and Text-to-Vector Graphic (.svg output, then editable). Adjacent pattern: <strong>AI outputs are first-class editable vector primitives, not raster overlays.</strong> Trained on licensed Adobe Stock + public domain.</li>
+<li><strong>AI-native AEC startups.</strong> Snaptrude — RFP → LOD 300 model in 7–10 min (adjacencies / zoning / codes / climate). Hypar — pivoted from text-to-BIM (Python / C# → IFC) to &ldquo;suggestions&rdquo; (Hypar 2.0, Jan 2025) focused on space planning, automatic editable masses / grids / columns / furniture from spatial programs. They publicly admitted text-to-BIM via chat alone was the wrong abstraction. Magicplan — mobile AR floor-plan capture.</li>
+</ul>
+<h3 id="142-the-two-architectural-patterns"><a class="toclink" href="#142-the-two-architectural-patterns">14.2 The two architectural patterns</a></h3>
+<ol>
+<li><strong>AI as a tool</strong> — inline, scoped, deterministic. Smart Blocks, Markup Assist, BIMIFY, AI Predict, Firefly Recolor. User invokes a specific AI-assisted command. AI suggests, user accepts. Undo is normal command undo. No persistent agent, no chat surface inside the canvas. <strong>This is what&rsquo;s actually shipping and working.</strong></li>
+<li><strong>AI in the inner loop</strong> — agent + chat panel + MCP. Autodesk Assistant in Revit 2027, ARES A3, Fusion MCP. Chat panel converts NL → host command sequence. MCP is the architectural commitment — any LLM client can drive the host. Host exposes a curated tool surface. <strong>Tech Preview status everywhere; no shipping CAD MCP server has documented transaction / undo semantics publicly.</strong></li>
+</ol>
+<p>The closest validated pattern for &ldquo;transactional, undoable, permission-scoped command surface&rdquo; is actually <strong>Figma plugins</strong>: every plugin op is a Figma undo transaction; plugins must explicitly support undo; plugins run in QuickJS (compiled to WASM) inside an iframe sandbox; permissions declared in the manifest (currentuser, activeusers, fileusers, payments, teamlibrary). Not an MCP, but the cleanest shipped example of the contract.</p>
+<h3 id="143-where-the-current-generation-goes-wrong"><a class="toclink" href="#143-where-the-current-generation-goes-wrong">14.3 Where the current generation goes wrong</a></h3>
+<ul>
+<li><strong>Bernini-style generative CAD produces non-editable geometry.</strong> That&rsquo;s why Hypar pivoted — chat-to-BIM gives a model that looks right but isn&rsquo;t tied to a parametric history a human can edit later. Autodesk&rsquo;s &ldquo;Neural CAD&rdquo; claim is unproven in product.</li>
+<li><strong>MCP without transactional semantics produces unfixable agent mistakes.</strong> If an agent bulk-edits 5,000 wall parameters and corrupts the schedule, undo has to undo all 5,000 as one transaction.</li>
+<li><strong>Chat-as-primary-UI loses spatial context.</strong> Hypar&rsquo;s lesson: &ldquo;it&rsquo;s very hard to design anything real through a chat prompt.&rdquo; Spatial editing wants spatial UX.</li>
+<li><strong>Activity Insights is not AI.</strong> Autodesk lumps audit logging into the AI brand — don&rsquo;t confuse marketing taxonomy with shipped intelligence.</li>
+</ul>
+<h3 id="144-actcads-three-step-strategy"><a class="toclink" href="#144-actcads-three-step-strategy">14.4 ActCAD&rsquo;s three-step strategy</a></h3>
+<p><strong>Step 1 — Ship &ldquo;AI as a tool&rdquo; first (Phase 1).</strong> Three commands that win adoption fast and have clear scope:</p>
+<ul>
+<li><strong>Markup Assist analog</strong> — PDF redline → DWG edit proposals.</li>
+<li><strong>Smart Blocks analog</strong> — block detection across drawings (BCONVERT-equivalent).</li>
+<li><strong>Drawing Health</strong> — layer / standards cleanup, lineweight normalization, duplicate-entity removal.</li>
+</ul>
+<p>Each command produces deterministic, undoable suggestions. No chat. No MCP yet. This is the floor every shipping competitor is already at; we have to match it before we can talk about anything more ambitious.</p>
+<p><strong>Step 2 — Ship the MCP server as the integration surface, not the primary user UI (Phase 1–2).</strong> Mirror Fusion 2026&rsquo;s split:</p>
+<ul>
+<li><strong>Local MCP server</strong> — requires ActCAD running, executes commands inside the host transaction, full read + write.</li>
+<li><strong>Remote MCP data server</strong> — cloud, no host required, read-only DWG metadata / sheet / layer / block queries.</li>
+</ul>
+<p>Tool groups along Revit 2027 lines: entity queries, layer / style management, block ops, sheet / layout management, plot / export, drawing health. Compatible with Claude Desktop / Cursor / VS Code / any MCP HTTP client.</p>
+<p><strong>The single most important architectural commitment: every MCP tool call is exactly one transaction in the host&rsquo;s existing undo stack.</strong> No public CAD MCP has documented this. Making it explicit — in the docs, in marketing, in the developer portal — is the differentiator that compounds. Permission scoping at the tool level (read-only / write / plot / file-system-egress) is declared in the MCP server&rsquo;s tool descriptions.</p>
+<p><strong>Step 3 — Conditional generative-CAD (Phase 3).</strong> Only ship &ldquo;from prompt to drawing&rdquo; features when editable round-tripping through the parametric / feature system is proven. Until then, stay on AI-suggestions-as-editable-primitives (Firefly pattern: vectors out, editable). This is the lesson Hypar learned the expensive way; we should learn it for free.</p>
+<h3 id="145-agent-tool-design-rules"><a class="toclink" href="#145-agent-tool-design-rules">14.5 Agent tool design rules</a></h3>
+<ul>
+<li>Every tool maps to one <code>cmd</code> invocation in the host.</li>
+<li>Every tool call = one undo group.</li>
+<li>Every tool declares its scope (read / write / file-egress / network-egress) and its blast radius (single-entity / drawing-wide / cross-drawing).</li>
+<li>Dry-run is supported for every write tool — agent can preview without commit.</li>
+<li>Rate-limited per session and per scope.</li>
+<li>Audit log retained server-side for every tool call (input, output, transaction id, scopes used) — this is also the training data for the next iteration.</li>
+<li>Tool catalog is versioned; clients negotiate capabilities on connect.</li>
+</ul>
+<h3 id="146-what-we-avoid"><a class="toclink" href="#146-what-we-avoid">14.6 What we avoid</a></h3>
+<ul>
+<li>The Bernini hype path — don&rsquo;t promise generative CAD geometry until editable parametric round-tripping is proven.</li>
+<li>Chat-in-canvas as the primary AI UX (Hypar pivoted for this reason).</li>
+<li>Over-indexing on a single LLM vendor — MCP exists exactly to keep that open.</li>
+<li>Shipping an MCP server without the single-undo-transaction commitment.</li>
+<li>Confusing audit / diff features with &ldquo;AI&rdquo; in customer-facing positioning.</li>
+</ul>
+<p>Sources: <a href="https://www.autodesk.com/support/technical/article/caas/sfdcarticles/sfdcarticles/What-are-the-AutoCAD-AI-driven-features.html">AutoCAD AI features</a>, <a href="https://www.autodesk.com/blogs/autocad/autocad-2026/">AutoCAD 2026</a>, <a href="https://www.research.autodesk.com/projects/project-bernini/">Project Bernini</a>, <a href="https://www.autodesk.com/solutions/autodesk-ai/autodesk-mcp-servers">Autodesk MCP Servers</a>, <a href="https://www.engineering.com/autodesk-announces-fusion-mcp-servers-and-more-ai-updates/">Fusion MCP announcement</a>, <a href="https://help.autodesk.com/cloudhelp/2027/ENU/Revit-WhatsNew/files/GUID-68D8FE6D-C5B0-4503-AE27-02C715BAC25B.htm">Revit 2027 MCP Tech Preview</a>, <a href="https://archbim.cloud/en/blog/revit-2027-ai-assistant-mcp-new-features">Revit 2027 MCP analysis</a>, <a href="https://architosh.com/2026/04/graebert-releases-ares-2027-ai-push-and-forma-integration/">ARES 2027 A3</a>, <a href="https://www.bricsys.com/bricscad/features/ai-driven-tools">BricsCAD AI</a>, <a href="https://blog.adobe.com/en/publish/2023/04/20/introducing-vector-recoloring-with-adobe-firefly">Adobe Firefly Vector Recolor</a>, <a href="https://www.snaptrude.com/">Snaptrude AI</a>, <a href="https://aecmag.com/features/hypar-2-0/">Hypar 2.0</a>, <a href="https://aecmag.com/ai/hypar-text-to-bim-and-beyond/">Hypar text-to-BIM lesson</a>, <a href="https://snyk.io/articles/9-mcp-servers-for-computer-aided-drafting-cad-with-ai/">Snyk MCP CAD list</a>, <a href="https://developers.figma.com/docs/plugins/how-plugins-run/">Figma plugin docs</a>.</p>
+<h2 id="15-cost-of-usage-third-party-stack-shells-tools"><a class="toclink" href="#15-cost-of-usage-third-party-stack-shells-tools">15. Cost of usage — third-party stack, shells, tools</a></h2>
+<p>Per-component cost data appears inline in each §11 subsection. This section rolls those up into a single reference table and three modeled annual budget envelopes at typical Phase-1 / Phase-2 / Phase-3 team sizes.</p>
+<p><strong>All dollar figures are vendor-published or reported secondary-source estimates as of late 2025 / early 2026. Treat any opaque-OEM number as a directional placeholder — they need a live procurement conversation, not a guess.</strong></p>
+<h3 id="151-unified-pricing-reference"><a class="toclink" href="#151-unified-pricing-reference">15.1 Unified pricing reference</a></h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>License model</th>
+<th>Public price</th>
+<th>Per-seat / royalty</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ODA — Limited Commercial</strong></td>
+<td>Annual membership</td>
+<td>$3K first yr / $2.25K renewal</td>
+<td>None — but <strong>100-seat cap</strong></td>
+<td><a href="https://www.opendesign.com/pricing">opendesign.com/pricing</a></td>
+</tr>
+<tr>
+<td><strong>ODA — Pro / Sustaining</strong></td>
+<td>Annual membership</td>
+<td><strong>$7.5K first / $4.5K renewal</strong></td>
+<td><strong>None</strong> — unlimited + Web/SaaS rights</td>
+<td><a href="https://www.opendesign.com/pricing">opendesign.com/pricing</a></td>
+</tr>
+<tr>
+<td><strong>ODA — Enterprise / Founding</strong></td>
+<td>Annual membership</td>
+<td>$37.5K first / $18K renewal</td>
+<td>None — adds source code + Git</td>
+<td><a href="https://www.opendesign.com/pricing">opendesign.com/pricing</a></td>
+</tr>
+<tr>
+<td><strong>ODA extensions</strong> (BimRv / BimNw / MCAD / Civil / Scan-to-BIM)</td>
+<td>Add-on, Sustaining+</td>
+<td>$5K–$10K/yr each (reported)</td>
+<td>None</td>
+<td><a href="https://www.opendesign.com/faq/membership">ODA FAQ</a></td>
+</tr>
+<tr>
+<td><strong>Spatial / Dassault ACIS — Initial OEM license</strong></td>
+<td>One-time OEM fee</td>
+<td><strong>Opaque — industry estimate $150K–$300K, procurement-gated</strong></td>
+<td>One-time, gates access to headers + libs</td>
+<td><a href="https://www.spatial.com/solutions/3d-modeling/3d-acis-modeler">Spatial ACIS</a></td>
+</tr>
+<tr>
+<td><strong>ACIS — Annual maintenance</strong></td>
+<td>% of license fee</td>
+<td><strong>15–20% of initial fee</strong> (~$30K–$60K/yr typical)</td>
+<td>Required for updates, hotfixes, CTC access</td>
+<td><a href="https://www.spatial.com/support">Spatial support</a></td>
+</tr>
+<tr>
+<td><strong>ACIS — Per-deployment royalty</strong> <em>(primary ask)</em> / <strong>per-seat</strong> <em>(fallback only)</em></td>
+<td>Volume-tiered</td>
+<td><strong>Opaque, tiered</strong></td>
+<td><strong>Per-deployment is the locked negotiating ask</strong> — ~10× cheaper than per-seat over 3 years at ActCAD scale. Full comparison math, gotchas, and negotiating sequence in <strong>§15.1.1</strong>.</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>ACIS — Component modules</strong> (Local Ops, Healing, Defeaturing, Polyhedral, AGM, HLR, Lop)</td>
+<td>Each priced separately on top of base</td>
+<td><strong>Opaque, per-module</strong></td>
+<td>A &ldquo;complete&rdquo; ACIS for our scope typically needs 3–5 modules; scope module list before signing</td>
+<td><a href="https://www.spatial.com/products/3d-acis-modeling">ACIS components</a></td>
+</tr>
+<tr>
+<td><strong>ACIS — CTC support hours</strong></td>
+<td>Bundled + overage</td>
+<td>~20–40 hr bundled; $300–$500/hr beyond (estimate)</td>
+<td>Engineering-level support from Spatial&rsquo;s Corporate Technical Consulting</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>ACIS — Source escrow</strong> <em>(optional, recommended)</em></td>
+<td>Annual</td>
+<td>~$5K–$15K/yr typical</td>
+<td>Business-continuation insurance if Spatial discontinues</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Siemens Parasolid</strong> <em>(not chosen)</em></td>
+<td>OEM</td>
+<td>Opaque</td>
+<td>n/a</td>
+<td><a href="https://plm.sw.siemens.com/en-US/plm-components/parasolid/">Parasolid</a></td>
+</tr>
+<tr>
+<td><strong>Qt for Small Business — App Dev</strong></td>
+<td>Sub, per-dev</td>
+<td><strong>€530/yr Pro, USD 618/yr Ent</strong></td>
+<td>n/a — but <strong>≤€1M revenue cap, max 3 licenses</strong></td>
+<td><a href="https://www.qt.io/development/qt-for-small-business">Qt SBE</a></td>
+</tr>
+<tr>
+<td><strong>Qt — Application Development (standard)</strong></td>
+<td>Sub, per-dev</td>
+<td>~$3,624/yr Pro, $3,948–$4,660/yr Ent</td>
+<td>n/a</td>
+<td><a href="https://www.qt.io/pricing">Qt pricing</a></td>
+</tr>
+<tr>
+<td><strong>Qt — Device Creation / Mobile / WASM add-ons</strong></td>
+<td>Sub, per-dev</td>
+<td>+30–60% over App Dev</td>
+<td>n/a</td>
+<td><a href="https://www.qt.io/pricing">Qt pricing</a></td>
+</tr>
+<tr>
+<td><strong>Qt LGPL</strong></td>
+<td>LGPL v3</td>
+<td>$0</td>
+<td>n/a — <strong>but no static linking, no signed iOS</strong></td>
+<td><a href="https://www.qt.io/development/open-source-lgpl-obligations">Qt LGPL</a></td>
+</tr>
+<tr>
+<td><strong>CMake / Emscripten / Cargo / Vcpkg / Conan</strong></td>
+<td>OSS</td>
+<td>$0</td>
+<td>None</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Kitware CMake support (optional)</strong></td>
+<td>Pre-paid</td>
+<td>$2,500 / 12 mo</td>
+<td>None</td>
+<td><a href="https://www.kitware.com/commercial/support/">Kitware support</a></td>
+</tr>
+<tr>
+<td><strong>WebGPU / WebAssembly / WebGL2</strong></td>
+<td>W3C / Khronos open</td>
+<td>$0</td>
+<td>None</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Tauri</strong> (if used for launcher app)</td>
+<td>MIT / Apache-2.0</td>
+<td>$0</td>
+<td>None</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>Electron</strong> (rejected for editor)</td>
+<td>MIT</td>
+<td>$0</td>
+<td>None</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>.NET 8 / NativeAOT</strong></td>
+<td>MIT</td>
+<td>$0</td>
+<td>None</td>
+<td><a href="https://dotnet.microsoft.com/en-us/platform/free">.NET free</a></td>
+</tr>
+<tr>
+<td><strong>MCP protocol + SDKs</strong></td>
+<td>MIT, donated to Linux Foundation</td>
+<td>$0</td>
+<td>None</td>
+<td><a href="https://www.anthropic.com/news/model-context-protocol">MCP</a></td>
+</tr>
+<tr>
+<td><strong>AutoLISP runtime</strong></td>
+<td><strong>No commercial library exists</strong> — build in-house</td>
+<td>$0 (ECL embedded LGPL viable starting point)</td>
+<td>None</td>
+<td><a href="https://en.wikipedia.org/wiki/AutoLISP">AutoLISP history</a></td>
+</tr>
+<tr>
+<td><strong>Clerk Auth</strong></td>
+<td>Per-MAU, vendor-published</td>
+<td>Free ≤10K MAU; $25/mo base + $0.02/MAU</td>
+<td>n/a</td>
+<td><a href="https://clerk.com/pricing">Clerk pricing</a></td>
+</tr>
+<tr>
+<td><strong>Auth0</strong></td>
+<td>Per-MAU</td>
+<td>$150/mo for 500 MAU; escalates fast — enterprise $30K+/yr</td>
+<td>n/a</td>
+<td><a href="https://auth0.com/pricing">Auth0 pricing</a></td>
+</tr>
+<tr>
+<td><strong>Stripe Payments</strong></td>
+<td>% of volume</td>
+<td><strong>2.9% + $0.30</strong> domestic card</td>
+<td>n/a</td>
+<td><a href="https://stripe.com/pricing">Stripe pricing</a></td>
+</tr>
+<tr>
+<td><strong>Stripe Billing</strong></td>
+<td>% of volume</td>
+<td>0.7% of billing volume</td>
+<td>n/a</td>
+<td><a href="https://stripe.com/billing/pricing">Stripe Billing</a></td>
+</tr>
+<tr>
+<td><strong>AWS GPU — g4dn.xlarge (T4)</strong></td>
+<td>On-demand</td>
+<td><strong>$0.526/hr</strong> ($4,608/yr 24×7)</td>
+<td>n/a</td>
+<td><a href="https://handbook.vantage.sh/aws/reference/aws-gpu-instances/">AWS GPU</a></td>
+</tr>
+<tr>
+<td><strong>AWS GPU — g5.xlarge (A10G)</strong></td>
+<td>On-demand</td>
+<td><strong>$0.916/hr</strong> ($8,024/yr 24×7)</td>
+<td>n/a</td>
+<td><a href="https://aws.amazon.com/ec2/instance-types/g5/">AWS G5</a></td>
+</tr>
+<tr>
+<td><strong>JetBrains All Products Pack</strong></td>
+<td>Sub, per-dev</td>
+<td><strong>€979/yr (~$1,050)</strong></td>
+<td>n/a — yr-2 ~20% off, yr-3 ~40% off</td>
+<td><a href="https://www.jetbrains.com/store/">JetBrains</a></td>
+</tr>
+<tr>
+<td><strong>Visual Studio Enterprise</strong> <em>(2-3 perf devs only)</em></td>
+<td>Sub, per-dev</td>
+<td>$5,999 first / $2,569 renewal</td>
+<td>n/a — reserved for Windows deep-profiling work</td>
+<td><a href="https://visualstudio.microsoft.com/vs/pricing/">VS pricing</a></td>
+</tr>
+<tr>
+<td><strong>VS Code + clangd + Qt extensions</strong> <em>(primary IDE)</em></td>
+<td>OSS</td>
+<td><strong>$0</strong></td>
+<td>n/a</td>
+<td><a href="https://code.visualstudio.com/">VS Code</a></td>
+</tr>
+<tr>
+<td><strong>AI dev tooling</strong> (Claude Code / Cursor / Copilot blended)</td>
+<td>Per-dev sub</td>
+<td><strong>~$50/dev/mo</strong> ($600/yr); Cursor Business $40, Copilot Business $19, Claude Code usage on top</td>
+<td>n/a</td>
+<td><a href="https://cursor.com/pricing">Cursor pricing</a>, <a href="https://github.com/features/copilot">Copilot Business</a></td>
+</tr>
+<tr>
+<td><strong>GitHub Enterprise Cloud</strong></td>
+<td>Sub, per-dev</td>
+<td>$21/dev/mo ($252/yr)</td>
+<td>n/a — 50-100 seat min on annual</td>
+<td><a href="https://github.com/pricing">GitHub pricing</a></td>
+</tr>
+<tr>
+<td><strong>GitHub Advanced Security</strong></td>
+<td>Sub, per-dev</td>
+<td>+$19/dev/mo ($228/yr)</td>
+<td>n/a</td>
+<td><a href="https://github.com/pricing">GitHub pricing</a></td>
+</tr>
+<tr>
+<td><strong>GitHub Actions (standard)</strong></td>
+<td>Per-minute</td>
+<td><strong>$0.006/min</strong> (2-core Linux, effective Jan 2026); 50K min/mo bundled in Enterprise Cloud</td>
+<td>n/a</td>
+<td><a href="https://docs.github.com/en/billing/reference/actions-runner-pricing">Actions pricing</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="1511-acis-royalty-model-per-deployment-vs-per-seat"><a class="toclink" href="#1511-acis-royalty-model-per-deployment-vs-per-seat">15.1.1 ACIS royalty model — per-deployment vs per-seat</a></h3>
+<p>The single largest variance in the ACIS commercial envelope is the <strong>royalty model</strong> (line item 3 in §15.1&rsquo;s cost-structure table). The two models can differ by ~10× over a 3-year window for an SMB-volume / low-price product like ActCAD. This subsection is the negotiating reference for Spike 1b.</p>
+<p><strong>The two structures, plainly:</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Per-seat royalty</th>
+<th>Per-deployment royalty</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What triggers payment</td>
+<td>Each active licensed user, recurring (annual)</td>
+<td>Each unique install, typically one-time</td>
+</tr>
+<tr>
+<td>Scales with</td>
+<td>Total customer base × time</td>
+<td>New installs per year</td>
+</tr>
+<tr>
+<td>Risk shape</td>
+<td>Linear forever; punishes long-lived perpetual customers</td>
+<td>Front-loaded; amortizes over seat lifetime</td>
+</tr>
+<tr>
+<td>Friendly to</td>
+<td>Low-volume / high-price MCAD products (Plasticity, Shapr3D, KeyShot)</td>
+<td>High-volume / low-price SMB CAD products (ActCAD, BricsCAD-class)</td>
+</tr>
+<tr>
+<td>Reporting overhead</td>
+<td>Per-customer active seat counts each quarter</td>
+<td>Install events with unique deployment IDs</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Illustrative math at ActCAD scale.</strong> Hypothetical $50 royalty unit, 30,000 installed seats today, 3,000 new installs / year, 5-year average seat lifetime. Numbers are illustrative — actual rates come from Spatial&rsquo;s term sheet — but the relative shape holds:</p>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Per-seat ($50/seat/yr)</th>
+<th>Per-deployment ($50/install, one-time)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Y1</td>
+<td>30,000 × $50 = <strong>$1.50M</strong></td>
+<td>3,000 × $50 = <strong>$150K</strong></td>
+</tr>
+<tr>
+<td>Y2</td>
+<td>33,000 × $50 = <strong>$1.65M</strong></td>
+<td>3,000 × $50 = <strong>$150K</strong></td>
+</tr>
+<tr>
+<td>Y3</td>
+<td>36,000 × $50 = <strong>$1.80M</strong></td>
+<td>3,000 × $50 = <strong>$150K</strong></td>
+</tr>
+<tr>
+<td><strong>3-yr total</strong></td>
+<td><strong>$4.95M</strong></td>
+<td><strong>$450K</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>~10× difference.</strong> This is why the Phase 2 / 3 royalty placeholders in §15.2 assume per-deployment. If Spike 1b returns a per-seat-only offer at comparable headline rates, the Phase 3 envelope grows by roughly $1M+.</p>
+<p><strong>When per-seat actually wins</strong> (none of these describe ActCAD, but document them so the comparison is honest):
+1. <strong>High-price low-volume MCAD products.</strong> Plasticity / Shapr3D / KeyShot — selling $500–$5K perpetuals at 5K–50K seats. A $50/seat royalty is 1–10% of revenue and reporting is simpler.
+2. <strong>Pure subscription with high churn.</strong> 40%+ annual churn — per-seat self-terminates with the lapsed seat; per-deployment is sunk cost regardless.
+3. <strong>Single-customer enterprise / site license.</strong> One customer, hundreds of seats — Spatial usually offers a flat site fee that beats both row-level models.</p>
+<p><strong>Contract gotchas that change the actual cost</strong> (must be in writing before signing):
+- <strong>Per-deployment &ldquo;unique&rdquo; definition.</strong> Does reinstall on the same machine count? Hardware change? VM migration? OS reinstall? Vague language turns &ldquo;one-time&rdquo; into &ldquo;recurring.&rdquo; Push for <em>machine-fingerprint or install-ID-based</em> with reinstalls on same machine excluded.
+- <strong>Per-seat &ldquo;seat&rdquo; definition.</strong> Lapsed-subscription seats still counted for the quarter? Concurrent vs named users? Trial / evaluation seats counted? 30-day grace period for inactive seats?
+- <strong>Volume tier breakpoints.</strong> A $50/seat headline might drop to $20 above 50K seats. Per-deployment might have no tiers, or steep tiers. <strong>Tier shape matters more than the headline rate.</strong>
+- <strong>Minimum annual royalty floor.</strong> Most OEM contracts carry a minimum regardless of volume — sets the actual cost at low volumes. Push for $25K–$50K floor rather than $100K+.
+- <strong>Subscription vs perpetual treatment.</strong> Some contracts charge differently for subscription vs perpetual customers. Ask explicitly.
+- <strong>Audit + true-up cadence.</strong> Quarterly reporting + annual true-up is standard; some contracts allow annual reporting which reduces our internal overhead (line item 9 in §15.1).
+- <strong>Education / trial / internal-QA carve-outs.</strong> Excluded from royalty count? Get it written.</p>
+<p><strong>The negotiating ask sequence for Spike 1b</strong> (ordered by priority):
+1. <strong>Per-deployment royalty, one-time</strong>, with a precise unique-deployment definition (machine-fingerprint based, same-machine reinstalls excluded).
+2. <strong>Volume-tiered</strong>, with breakpoints at 5K / 25K / 100K cumulative deployments and a meaningful tier decay (e.g., $50 → $30 → $15 → $5).
+3. <strong>Carve-outs</strong>: trials, education, internal QA, evaluation copies all excluded from royalty count.
+4. <strong>Annual minimum floor</strong> as low as possible — target $25K–$50K rather than $100K+.
+5. <strong>Per-seat as a fallback only</strong> if per-deployment isn&rsquo;t on offer — and only with a steep volume curve (e.g., $50 → $5 above 50K seats) where 5-year amortized cost beats their per-deployment alternative.</p>
+<p><strong>The decision rule.</strong> Accept per-seat only if Spatial refuses per-deployment AND the 5-year amortized per-seat cost (using realistic seat-count + churn projections) is lower than the per-deployment alternative they would have offered. That comparison — both quotes side by side — is the negotiating leverage. <strong>The plan locks in per-deployment as the default ask, with per-seat documented as an explicit fallback decision, not an accident.</strong></p>
+<h3 id="152-modeled-annual-budget-envelopes"><a class="toclink" href="#152-modeled-annual-budget-envelopes">15.2 Modeled annual budget envelopes</a></h3>
+<p>Three scenarios sized to the engineering org in §5&rsquo;s phasing. <strong>These are modeled rollups, not committed numbers.</strong> Assumptions: ODA Sustaining from year 1 (Web/SaaS rights for inWEB), Qt commercial App Dev Enterprise standard tier (Small Business eligibility unlikely at Jytra&rsquo;s scale), <strong>ACIS as the 3D kernel under a Spatial OEM contract</strong> with the cost structure in §15.1 (initial fee + maintenance + royalty + module fees), <strong>VS Code primary + Visual Studio Enterprise for 2-3 designated Windows-perf devs only</strong>, AI dev tooling at ~$50/dev/mo blended.</p>
+<blockquote>
+<p><strong>ACIS line items are procurement placeholders</strong> pending §9 spike item 1b&rsquo;s term sheet. Industry-estimate values are used as directional anchors only — the actual numbers come from the NDA conversation with Spatial. See §15.3 for modeled-vs-opaque split.</p>
+</blockquote>
+<h4 id="phase-1-8-engineers-months-012"><a class="toclink" href="#phase-1-8-engineers-months-012">Phase 1 — 8 engineers (months 0–12)</a></h4>
+<table>
+<thead>
+<tr>
+<th>Line item</th>
+<th>Year 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ODA Sustaining (incl. inWEB rights)</td>
+<td>$7,500</td>
+</tr>
+<tr>
+<td>ODA Revit add-on (BimRv Standard)</td>
+<td>$5,000</td>
+</tr>
+<tr>
+<td>Qt commercial — App Dev Enterprise (8 devs × $4,000)</td>
+<td>$32,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — initial OEM license</strong> <em>(placeholder — opaque, §9 spike 1b)</em></td>
+<td>$200,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — annual maintenance</strong> <em>(placeholder — 17.5% of license)</em></td>
+<td>$35,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — component modules</strong> <em>(placeholder — Local Ops + Healing + Defeaturing)</em></td>
+<td>$50,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — royalty</strong> <em>(Phase 1 is internal beta — minimal seats, placeholder)</em></td>
+<td>$5,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — source escrow</strong> <em>(recommended)</em></td>
+<td>$10,000</td>
+</tr>
+<tr>
+<td><strong>Visual Studio Enterprise (2 perf devs × $5,999)</strong></td>
+<td>$11,998</td>
+</tr>
+<tr>
+<td>VS Code + clangd + Qt extensions (rest of team)</td>
+<td>$0</td>
+</tr>
+<tr>
+<td><strong>AI dev tooling (8 devs × ~$50/mo)</strong></td>
+<td>$4,800</td>
+</tr>
+<tr>
+<td>JetBrains All Products Pack (4 devs to taste × $1,050)</td>
+<td>$4,200</td>
+</tr>
+<tr>
+<td>GitHub Enterprise Cloud (8 × $252)</td>
+<td>$2,016</td>
+</tr>
+<tr>
+<td>GitHub Advanced Security (8 × $228)</td>
+<td>$1,824</td>
+</tr>
+<tr>
+<td>GitHub Actions large runners + cache</td>
+<td>$5,000</td>
+</tr>
+<tr>
+<td>AWS dev infra (compute + storage + 1× g4dn dev box)</td>
+<td>$8,000</td>
+</tr>
+<tr>
+<td>Auth / billing (nominal — Clerk free tier, Stripe test mode)</td>
+<td>$1,000</td>
+</tr>
+<tr>
+<td><strong>Phase 1 yr 1 stack + tools + cloud total</strong></td>
+<td><strong>~$383,300</strong> (incl. ~$300K ACIS one-time + recurring)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="phase-2-20-engineers-months-1224-ga-at-month-24"><a class="toclink" href="#phase-2-20-engineers-months-1224-ga-at-month-24">Phase 2 — 20 engineers (months 12–24, GA at month 24)</a></h4>
+<table>
+<thead>
+<tr>
+<th>Line item</th>
+<th>Year 2 (renewal-mode where applicable)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ODA Sustaining renewal</td>
+<td>$4,500</td>
+</tr>
+<tr>
+<td>ODA extensions (BimRv + MCAD + Civil)</td>
+<td>$15,000</td>
+</tr>
+<tr>
+<td>Qt commercial — App Dev Enterprise (20 × $4,000)</td>
+<td>$80,000</td>
+</tr>
+<tr>
+<td>Qt mobile / WASM add-ons (+40% on 5 web/mobile devs × $4,000)</td>
+<td>$8,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — annual maintenance</strong> <em>(recurring)</em></td>
+<td>$35,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — component modules renewal</strong></td>
+<td>$50,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — royalty</strong> <em>(GA at month 24 — placeholder, assume 2,000 deployments × $50)</em></td>
+<td>$100,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — source escrow</strong></td>
+<td>$10,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — CTC support hours overage</strong> <em>(placeholder)</em></td>
+<td>$15,000</td>
+</tr>
+<tr>
+<td><strong>Visual Studio Enterprise (3 perf devs × $2,569 renewal)</strong></td>
+<td>$7,707</td>
+</tr>
+<tr>
+<td><strong>AI dev tooling (20 devs × ~$50/mo)</strong></td>
+<td>$12,000</td>
+</tr>
+<tr>
+<td>JetBrains All Products Pack (10 devs to taste × $840 yr-2 disc.)</td>
+<td>$8,400</td>
+</tr>
+<tr>
+<td>GitHub Enterprise Cloud (20 × $252)</td>
+<td>$5,040</td>
+</tr>
+<tr>
+<td>GitHub Advanced Security (20 × $228)</td>
+<td>$4,560</td>
+</tr>
+<tr>
+<td>GitHub Actions + build infra</td>
+<td>$15,000</td>
+</tr>
+<tr>
+<td>AWS production cloud (compute + 4× g5 streaming + storage + egress)</td>
+<td>$60,000</td>
+</tr>
+<tr>
+<td>Auth (Clerk B2B, ~25K MAU)</td>
+<td>$12,000</td>
+</tr>
+<tr>
+<td>Stripe Billing (assume $200K ARR × 0.7%)</td>
+<td>$1,400</td>
+</tr>
+<tr>
+<td>Stripe Payments (assume $200K × 2.9%)</td>
+<td>$5,800</td>
+</tr>
+<tr>
+<td><strong>Phase 2 stack + tools + cloud total</strong></td>
+<td><strong>~$449,400</strong> (incl. ~$210K ACIS recurring + royalty at GA)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="phase-3-30-engineers-months-2436"><a class="toclink" href="#phase-3-30-engineers-months-2436">Phase 3 — 30 engineers (months 24–36)</a></h4>
+<table>
+<thead>
+<tr>
+<th>Line item</th>
+<th>Year 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ODA — upgrade to Founding (source access)</td>
+<td>$37,500 first / $18K renewal</td>
+</tr>
+<tr>
+<td>ODA extensions (full extension set)</td>
+<td>$30,000</td>
+</tr>
+<tr>
+<td>Qt commercial (30 × $4,000)</td>
+<td>$120,000</td>
+</tr>
+<tr>
+<td>Qt mobile / iOS / Android / WASM add-ons (10 devs × $4,000 × 50%)</td>
+<td>$20,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — annual maintenance</strong></td>
+<td>$35,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — component modules renewal</strong> <em>(may add Polyhedral + AGM for full 3D + BIM)</em></td>
+<td>$75,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — royalty</strong> <em>(at scale — placeholder, 10,000 deployments × $50)</em></td>
+<td>$500,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — source escrow</strong></td>
+<td>$10,000</td>
+</tr>
+<tr>
+<td><strong>ACIS — CTC support + WASM custom engineering</strong> <em>(if mobile / web needs full ACIS)</em></td>
+<td>$40,000</td>
+</tr>
+<tr>
+<td><strong>Visual Studio Enterprise (3 perf devs renewal)</strong></td>
+<td>$7,707</td>
+</tr>
+<tr>
+<td><strong>AI dev tooling (30 devs × ~$50/mo)</strong></td>
+<td>$18,000</td>
+</tr>
+<tr>
+<td>JetBrains All Products Pack (12 devs to taste × $630 yr-3 disc.)</td>
+<td>$7,560</td>
+</tr>
+<tr>
+<td>GitHub Enterprise Cloud (30 × $252)</td>
+<td>$7,560</td>
+</tr>
+<tr>
+<td>GitHub Advanced Security (30 × $228)</td>
+<td>$6,840</td>
+</tr>
+<tr>
+<td>GitHub Actions + build infra</td>
+<td>$30,000</td>
+</tr>
+<tr>
+<td>AWS production (compute + 12× g5 streaming + CDN + egress at scale)</td>
+<td>$200,000</td>
+</tr>
+<tr>
+<td>Auth (Clerk B2B, ~100K MAU)</td>
+<td>$30,000</td>
+</tr>
+<tr>
+<td>Stripe Billing + Payments (assume $2M ARR)</td>
+<td>$73,000</td>
+</tr>
+<tr>
+<td><strong>Phase 3 stack + tools + cloud total</strong></td>
+<td><strong>~$1,255,700</strong> (incl. ~$660K ACIS recurring + royalty at scale; royalty scales with deployments)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="153-whats-modeled-vs-whats-opaque"><a class="toclink" href="#153-whats-modeled-vs-whats-opaque">15.3 What&rsquo;s modeled vs what&rsquo;s opaque</a></h3>
+<ul>
+<li><strong>Modeled (vendor-published):</strong> ODA, Qt, all OSS tooling, AWS GPU, Clerk, Stripe, JetBrains, Visual Studio, GitHub.</li>
+<li><strong>Opaque (needs procurement conversation — placeholders pending §9 spike item 1b):</strong> ACIS initial license + maintenance + per-module fees + royalty model + DELA, Auth0 enterprise, Microsoft Unified Support. <strong>All ACIS numbers in the rollup are industry-estimate placeholders, not vendor quotes.</strong></li>
+<li><strong>Variable with revenue / users:</strong> Stripe (% of volume), Clerk (per-MAU), AWS (per-instance-hr × utilization).</li>
+</ul>
+<h3 id="154-commercial-commitments-and-cost-driven-decisions"><a class="toclink" href="#154-commercial-commitments-and-cost-driven-decisions">15.4 Commercial commitments and cost-driven decisions</a></h3>
+<p>ActCAD is a closed-source commercial product. The license tier on every component is chosen accordingly — paid where standard commercial practice (static linking, code-signing, private modifications, unlimited seats) requires it, free where the OSS license cleanly permits it for closed-source use.</p>
+<ol>
+<li><strong>ODA Sustaining from day 1 — LOCKED.</strong> $7.5K first / $4.5K/yr renewal for unlimited commercial seats + inWEB Web/SaaS redistribution rights with <strong>no per-seat royalty</strong> is the single best-value line item in the entire stack. Limited Commercial&rsquo;s 100-seat cap is a footgun at our scale; Founding (~$37.5K) considered in Phase 3 for source + Git access + business-continuation rights.</li>
+<li><strong>Qt 6 commercial — LOCKED.</strong> Standard Application Development Enterprise per developer. LGPL is <em>not</em> viable for ActCAD: static linking is forbidden under LGPL v3, code-signed iOS distribution can&rsquo;t satisfy the user-relinking clause, and we need to keep our Qt modifications private. Small Business tier is almost certainly not available at Jytra&rsquo;s revenue. §9 spike item 6 negotiates the multi-year quote; target 15–35% below first quote per Vendr-reported norm.</li>
+<li><strong>ACIS commercial OEM contract — LOCKED as the kernel choice; commercial terms OPEN pending Spike 1b.</strong> Rationale: AutoCAD&rsquo;s 3D solids are stored as ASM (ACIS fork) SAT blobs in DWG; only ACIS round-trips them without drift. ActCAD already uses ACIS today through IntelliCAD; this decision puts the contract directly in our name and removes the IntelliCAD middleman. Cost shape is initial OEM license + 15–20% annual maintenance + royalty + per-module fees + DELA — see §15.1. <strong>Royalty model — per-deployment is the LOCKED negotiating ask</strong> (per-seat documented as fallback only; ~10× cost variance over 3 years at ActCAD scale — see §15.1.1 for the comparison math and full negotiating sequence). <strong>All §15.2 ACIS line items are industry-estimate placeholders pending the term sheet from Spatial.</strong> Once that lands, Phase-1 budget firms up to a real number.</li>
+<li><strong>VS Code (or Cursor) primary, Visual Studio Enterprise reserved — LOCKED.</strong> Primary IDE is <strong>VS Code + clangd + CMake Tools + Qt extension pack + AI agent (Claude Code / Cursor / Copilot)</strong> for the entire C++ team — that&rsquo;s where the AI-augmented dev workflow lives in 2026. Visual Studio Enterprise (~$6K first / $2.6K renewal) is <strong>reserved for 2-3 designated Windows-perf devs</strong> for IntelliTrace, Concurrency Visualizer, and advanced profiler work into ODA / Qt call stacks. JetBrains CLion available to taste as an alternative. Saves ~$12K Phase 1, ~$18K Phase 2, ~$30K Phase 3 versus the original plan of buying VS Enterprise for the whole C++ team.</li>
+<li><strong>AI-augmented team math.</strong> Qt&rsquo;s commercial license is per-human-developer; AI agents are tools, not licensees. AI doesn&rsquo;t reduce the per-seat <em>rate</em>, it reduces the per-seat <em>count</em> — a 12-dev AI-augmented Phase-2 team can ship what 20 devs shipped pre-AI, so Qt&rsquo;s line drops from $80K to ~$48K via headcount, not via license loophole. Same logic applies to ODA seats (unlimited under Sustaining — no effect), GitHub / Visual Studio / JetBrains (per-human, scale with headcount). Budget for AI dev tooling itself at <strong>~$50/dev/mo blended</strong> (Cursor Business $40, Copilot Business $19, Claude Code on top).</li>
+<li><strong>All build / runtime tooling stays free.</strong> CMake, Emscripten, Cargo, Vcpkg, Conan, WebGPU / WebAssembly, .NET 8 / NativeAOT, MCP, Tauri (launcher app only) are all permissive OSS — no commercial concern for our use.</li>
+<li><strong>AutoLISP must be built in-house.</strong> No commercial runtime exists to license; every IntelliCAD-class vendor rolls its own. Phase-1 LISP team is a real headcount commitment, not a vendor decision.</li>
+<li><strong>Total stack + tools + cloud envelope</strong> — roughly <strong>~$383K Phase 1, ~$449K Phase 2, ~$1.26M Phase 3</strong> (Phase-3 royalty scales with deployment volume). The ACIS line is the single largest cost driver and the single largest source of variance — locking the term sheet in Spike 1b is what converts these from placeholders to commitments. Salary still dwarfs the stack cost at every phase, but the kernel-commercial conversation is a real one that procurement / legal own from Spike 1b onward.</li>
+</ol>
+<h2 id="16-memory-architecture-designing-for-headroom-from-day-1"><a class="toclink" href="#16-memory-architecture-designing-for-headroom-from-day-1">16. Memory architecture — designing for headroom from day 1</a></h2>
+<blockquote>
+<p><strong>Executive summary.</strong> Full engineering reference is in <strong><code>docs/memory-architecture.md</code></strong> (~900 lines: concurrency model, KAL contract, eviction protocol, failure modes, CI gates, anti-patterns, IntelliCAD-migration teaching, phase-by-phase rollout, glossary, references). Read this section for the strategic picture; read the companion document before writing code that touches <code>db</code>, <code>geom</code>, <code>render</code>, or any cache.</p>
+</blockquote>
+<p>The CAD operating model is simple to state and hard to make fast: <strong>open the drawing once, hold it entirely in memory, do all reads and writes against that in-memory state, write back to disk on save.</strong> This is what AutoCAD has done since 1982 and what every serious DWG editor still does today. The model itself is correct and not up for debate. What turns it into a bottleneck is that &ldquo;in memory&rdquo; is doing more work than people think — a 250MB DWG can expand to several GB of working set once you add the kernel&rsquo;s body graph, the tessellation cache, spatial indexes, the undo log, and the renderer&rsquo;s GPU buffers. If the architecture doesn&rsquo;t budget that memory and police access patterns from commit 1, you ship a product whose user reviews say <em>&ldquo;moderately large drawings frequently get stuck&rdquo;</em> — the exact reputation the current ActCAD inherited from IntelliCAD and the exact reputation this re-architecture exists to escape.</p>
+<p>This section is the architectural commitment for how we avoid that. It is written in plain language by design: every engineer joining the team should be able to read it once and know what the rules are.</p>
+<h3 id="161-the-five-layers-of-memory-in-a-live-cad-session"><a class="toclink" href="#161-the-five-layers-of-memory-in-a-live-cad-session">16.1 The five layers of memory in a live CAD session</a></h3>
+<p>People talk about &ldquo;the drawing in memory&rdquo; as if it were one thing. It&rsquo;s really five layers, each with its own size, owner, and eviction policy. Get this picture in your head and the rest of this section follows.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>What lives here</th>
+<th>Typical size (250MB DWG with 3D solids)</th>
+<th>Owner module</th>
+<th>Evictable under pressure?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. DWG database</strong></td>
+<td>Entities, handles, layers, blocks, xrefs, dimstyles, attributes — the user&rsquo;s actual work</td>
+<td>400–800 MB</td>
+<td><code>db</code></td>
+<td><strong>Never</strong> — single source of truth</td>
+</tr>
+<tr>
+<td><strong>2. ACIS kernel bodies</strong></td>
+<td>The <code>ENTITY</code> graph for every 3D solid the user has touched</td>
+<td>200 MB – 2 GB</td>
+<td><code>geom</code> via KAL</td>
+<td><strong>Partial</strong> — lazy-loaded on first touch; attributes lazy beyond that</td>
+</tr>
+<tr>
+<td><strong>3. Tessellation cache</strong></td>
+<td>Triangles + GPU buffers for everything currently being drawn</td>
+<td>500 MB – 4 GB</td>
+<td><code>render</code></td>
+<td><strong>Yes</strong> — LRU evict; regenerate on demand</td>
+</tr>
+<tr>
+<td><strong>4. Spatial indexes</strong></td>
+<td>R-tree / BVH for hit-test, snap, frustum-cull, selection-window</td>
+<td>50–200 MB</td>
+<td><code>db</code> + <code>render</code></td>
+<td><strong>Rebuildable</strong> — recompute from <code>db</code></td>
+</tr>
+<tr>
+<td><strong>5. Undo / op-log</strong></td>
+<td>Delta records for reversal + co-edit replication + agent context + audit</td>
+<td>100–500 MB over a long session</td>
+<td><code>db</code></td>
+<td><strong>Truncatable</strong> — drop oldest beyond threshold</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The one rule:</strong> Layer 1 (<code>db</code>) is sacred and never evicted. Everything above it is a cache or a derived view, and the budget says how much memory we&rsquo;ll spend on each. When pressure hits, the eviction order is fixed: tessellation (3) first → spatial indexes (4) → lazy-loaded ACIS attributes (2). Layer 1 stays put. The user&rsquo;s work is never at risk from a memory-management decision.</p>
+<h3 id="162-eight-architectural-commitments-that-keep-responsiveness-flat-as-drawings-grow"><a class="toclink" href="#162-eight-architectural-commitments-that-keep-responsiveness-flat-as-drawings-grow">16.2 Eight architectural commitments that keep responsiveness flat as drawings grow</a></h3>
+<p>These are the design rules, in priority order. Each prevents a specific class of bottleneck that other CAD products live with.</p>
+<h4 id="1-the-db-is-the-only-owner-of-drawing-state-everything-else-is-a-cache"><a class="toclink" href="#1-the-db-is-the-only-owner-of-drawing-state-everything-else-is-a-cache">1. The <code>db</code> is the only owner of drawing state. Everything else is a cache.</a></h4>
+<p>If <code>render</code> needs triangles, <code>render</code> owns the triangle cache and <code>db</code> doesn&rsquo;t know about it. If snap needs an acceleration structure, snap rebuilds it from <code>db</code> and discards it. This is what makes Layer 1 / Layer 3–5 separation real instead of theoretical. The reason it matters in practice: when something is wrong in memory, you always know who to ask, and you can blow away every cache without losing the user&rsquo;s work. Single-source-of-truth is not a slogan; it&rsquo;s a recovery strategy.</p>
+<h4 id="2-one-write-path-many-read-paths-never-blocked-by-each-other"><a class="toclink" href="#2-one-write-path-many-read-paths-never-blocked-by-each-other">2. One write path, many read paths, never blocked by each other.</a></h4>
+<p><code>db</code> mutations are serialized through one transaction queue on a worker thread. Reads — render, hover, snap, selection, agent query, property panel — go against the committed state via a <strong>copy-on-write snapshot</strong>. <strong>No reader ever waits on a writer.</strong> This is the single most important commitment in this section. It&rsquo;s what makes the UI stay at 60fps while a long ACIS boolean is running, what makes the AI agent able to query state during an edit without deadlocking, what makes co-edit possible without lock storms. Database people call this MVCC (multi-version concurrency control). It&rsquo;s the same pattern PostgreSQL uses. A CAD database is a database, and the rules that make databases fast apply here.</p>
+<h4 id="3-spatial-index-on-load-not-on-demand"><a class="toclink" href="#3-spatial-index-on-load-not-on-demand">3. Spatial index on load, not on demand.</a></h4>
+<p>The moment a drawing finishes loading, the R-tree / BVH is built. Every &ldquo;what&rsquo;s at point X&rdquo; query — pick, hover, OSnap, frustum cull, selection window, agent &ldquo;find all entities in this room&rdquo; — goes through the index. <strong>Linear scan over entities is not a public API.</strong> This is the single decision that separates snappy from unusable on a 250k-entity drawing. ODA&rsquo;s spatial filter can be wrapped here; we don&rsquo;t reinvent it. If we ever profile a hot path and find a linear scan, that&rsquo;s a bug fix, not an optimization.</p>
+<h4 id="4-lazy-materialization-of-acis-bodies"><a class="toclink" href="#4-lazy-materialization-of-acis-bodies">4. Lazy materialization of ACIS bodies.</a></h4>
+<p>ACIS bodies stay as opaque SAT blobs in <code>db</code> until the first geometric operation on that body. A drawing with 500 3D solids the user never queries shouldn&rsquo;t materialize 500 solids on open. ACIS supports this natively — we plumb it through the KAL. <strong>Open time should be bounded by parse + index, not by kernel materialization.</strong> When a user opens a 250MB DWG with 500 solids and clicks one of them, they wait for <em>one</em> solid to materialize, not 500.</p>
+<h4 id="5-tessellation-lives-on-the-gpu-and-is-evictable"><a class="toclink" href="#5-tessellation-lives-on-the-gpu-and-is-evictable">5. Tessellation lives on the GPU and is evictable.</a></h4>
+<p>Once a body is tessellated, the triangles go to GPU memory and stay there for the render loop. Under CPU memory pressure, the LRU tessellation is evicted; on next view it&rsquo;s regenerated from the cached B-rep. The tessellation cache has a <strong>hard cap</strong> (default: 30% of process working set) so it can never starve <code>db</code>. This is what <code>render</code> exists to do, and it&rsquo;s why <code>render</code> is a separate module from <code>geom</code> — different concerns, different eviction policies, different owners.</p>
+<h4 id="6-undo-is-a-delta-log-not-a-state-snapshot"><a class="toclink" href="#6-undo-is-a-delta-log-not-a-state-snapshot">6. Undo is a delta log, not a state snapshot.</a></h4>
+<p>Every undoable operation stores its inverse, not a copy of the world. Reversing <code>move(handle, dx, dy)</code> is <code>move(handle, -dx, -dy)</code> — bytes, not megabytes. Full-state snapshots are what blow heap in long sessions; deltas are what let AutoCAD survive an 8-hour edit session without the user noticing memory growth. This delta log is <strong>the same op-stream</strong> that drives sync, replication, agent context, and audit. One stream, five consumers (§3, §12). Building it any other way means writing the same plumbing five times.</p>
+<h4 id="7-the-memory-budget-is-declared-enforced-and-visible"><a class="toclink" href="#7-the-memory-budget-is-declared-enforced-and-visible">7. The memory budget is declared, enforced, and visible.</a></h4>
+<p>The engine boots with a declared memory budget — e.g., <em>&ldquo;2× the loaded DWG size, capped at process working set minus 1 GB headroom for the OS.&rdquo;</em> Each cache layer has a sub-budget. When a sub-budget is exceeded, the layer evicts according to its policy. When the total is exceeded after eviction, the engine <strong>fails loudly to the user</strong> — <em>&ldquo;this drawing exceeds your memory budget; please close other drawings or raise the limit in Preferences&rdquo;</em> — instead of silently swapping to disk. <strong>Silent swap is the worst possible failure mode</strong>: the user thinks the app is frozen, force-quits, and loses work. Loud failure is recoverable; silent swap is a support ticket and a churn risk.</p>
+<h4 id="8-long-operations-run-on-workers-the-ui-thread-does-input-render-only"><a class="toclink" href="#8-long-operations-run-on-workers-the-ui-thread-does-input-render-only">8. Long operations run on workers; the UI thread does input + render only.</a></h4>
+<p>Open, save, regen, plot, index build, ACIS boolean, fillet, hatch boundary — all on worker threads with progress + cancel. Main-thread budget per frame is <strong>8 ms</strong> (target 16 ms for 60fps with headroom). Frame budget asserts in debug builds: any UI-thread work over 8 ms triggers a debug break, caught at write time by the engineer, not by a customer support ticket. This is how you guarantee responsiveness — by making &ldquo;slow on the UI thread&rdquo; a build-breaking error from commit 1.</p>
+<h3 id="163-where-bottlenecks-actually-appear-in-shipping-cad-products-and-the-architectural-answer-to-each"><a class="toclink" href="#163-where-bottlenecks-actually-appear-in-shipping-cad-products-and-the-architectural-answer-to-each">16.3 Where bottlenecks actually appear in shipping CAD products, and the architectural answer to each</a></h3>
+<p>Plain-language version of what <em>&ldquo;moderately large drawings get stuck&rdquo;</em> usually means in practice, and how the rules above address each symptom.</p>
+<table>
+<thead>
+<tr>
+<th>Symptom the user sees</th>
+<th>What&rsquo;s really happening</th>
+<th>Architectural answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&ldquo;Opens slowly on big files&rdquo;</td>
+<td>Eager ACIS materialization; spatial index built lazily on first pick</td>
+<td>Rule 4 (lazy ACIS) + Rule 3 (index on load) — open time bounded by parse + index, not kernel work</td>
+</tr>
+<tr>
+<td>&ldquo;Stutters when I pan / zoom&rdquo;</td>
+<td>UI thread doing render + invalidation + new tessellation in one frame</td>
+<td>Rule 5 (GPU-resident, evictable tess) + Rule 8 (8 ms UI budget)</td>
+</tr>
+<tr>
+<td>&ldquo;Hover lags on dense drawings&rdquo;</td>
+<td>Linear scan for hit-test</td>
+<td>Rule 3 — spatial index is mandatory, scan-over-entities is forbidden</td>
+</tr>
+<tr>
+<td>&ldquo;Hangs for a few seconds when I save&rdquo;</td>
+<td>Save serializes the whole DWG on the UI thread</td>
+<td>Rule 8 — save is a worker task with progress bar</td>
+</tr>
+<tr>
+<td>&ldquo;Editing a big solid freezes the app&rdquo;</td>
+<td>ACIS boolean on the UI thread, no copy-on-write snapshot</td>
+<td>Rule 2 (MVCC reads) + Rule 8 (worker) — view keeps rendering against the pre-edit snapshot while the worker computes</td>
+</tr>
+<tr>
+<td>&ldquo;Crashes after a long session&rdquo;</td>
+<td>Undo log grew unbounded; or tessellation cache grew unbounded</td>
+<td>Rule 6 (delta log + truncation) + Rule 5 (cache cap) + Rule 7 (budget enforcement)</td>
+</tr>
+<tr>
+<td>&ldquo;Force-quit because it &lsquo;froze&rsquo; (but it was paging)&rdquo;</td>
+<td>Silent swap to disk under memory pressure</td>
+<td>Rule 7 — fail loudly, never silently swap</td>
+</tr>
+<tr>
+<td>&ldquo;Property panel takes a second to update&rdquo;</td>
+<td>Eager load of all entity attributes on selection</td>
+<td>Rule 4 (lazy attributes) — narrow query, on-demand</td>
+</tr>
+<tr>
+<td>&ldquo;Plugins make the app slow&rdquo;</td>
+<td>Plugin code running on the UI thread with full <code>db</code> access</td>
+<td><code>cmd</code> is the only seam; plugins go through it; long-running tool calls forced to worker (§13, §14.5)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="164-what-to-measure-and-how-to-keep-it-from-regressing"><a class="toclink" href="#164-what-to-measure-and-how-to-keep-it-from-regressing">16.4 What to measure, and how to keep it from regressing</a></h3>
+<p>Plain rule: <strong>the architecture above doesn&rsquo;t survive contact with the codebase unless CI measures it on every PR.</strong> Specific gates we add at Phase-1 start:</p>
+<ol>
+<li><strong>Open-time budget.</strong> Corpus of 50 DWGs (small / medium / large / huge / pathological). PR fails if median open time regresses &gt; 10%. Each drawing has a documented expected time.</li>
+<li><strong>Frame-time P99 budget.</strong> Synthetic <em>&ldquo;pan-zoom-rotate-hover&rdquo;</em> loop over each corpus drawing. P99 frame time logged per PR; regression past 16 ms = fail.</li>
+<li><strong>Memory ceiling per drawing class.</strong> Peak RSS during the synthetic loop. Hard ceiling per class; PR exceeding it fails.</li>
+<li><strong>Allocation count regression.</strong> Total <code>malloc</code> count in the open-edit-save loop. A sudden 2× spike usually means a new code path forgot to use the entity pool.</li>
+<li><strong>Leak gate.</strong> AddressSanitizer + LeakSanitizer enabled on all debug-build CI runs. Zero leaks tolerated.</li>
+<li><strong>Long-session soak.</strong> Overnight CI job: open big drawing, perform 10,000 edits with undo, save, close. RSS at the end must be within 5% of RSS at the start.</li>
+<li><strong>Tracy profiler integration.</strong> Every engineer&rsquo;s local build wires up Tracy. Frame time, allocation rate, GPU timing visible at all times. Performance work is done with measurement, not intuition.</li>
+</ol>
+<h3 id="165-tools-and-people-to-bring-in"><a class="toclink" href="#165-tools-and-people-to-bring-in">16.5 Tools and people to bring in</a></h3>
+<ul>
+<li><strong>Profilers:</strong> Tracy (primary, every build), Intel VTune (deep CPU work), Heaptrack + Valgrind Massif (Linux memory), Visual Studio Diagnostics + WPA (Windows), AddressSanitizer + LeakSanitizer (CI gates).</li>
+<li><strong>Allocators:</strong> mimalloc or jemalloc as a drop-in replacement for system <code>malloc</code> — 10–30% wins on allocation-heavy CAD workloads, near-zero integration cost.</li>
+<li><strong>Custom pools:</strong> small-object pool for entity handles; arena allocator for transient command state (frees in one shot on transaction commit or abort).</li>
+<li><strong>Spatial indexes:</strong> ODA&rsquo;s spatial filter for the database tier; embree BVH for the render tier if we want a ground-up alternative; both well-known, both proven.</li>
+<li><strong>Expertise sources:</strong> Spatial CTC consultants (official ACIS memory-model guidance, bundled with the OEM contract); ex-AutoCAD / ex-Revit / ex-SolidWorks performance engineers via Toptal, Round Table Group, Guidepoint, GLG (~$300–$800/hr); back-channel with peer architects at Bentley / Hexagon / ANSYS SpaceClaim (other ACIS OEMs). <strong>One day of an ex-AutoCAD perf engineer is worth a month of internal trial-and-error.</strong> Budget for 40–80 expert-hours in Phase 1 specifically for the memory architecture.</li>
+</ul>
+<h3 id="166-what-we-deliberately-dont-do"><a class="toclink" href="#166-what-we-deliberately-dont-do">16.6 What we deliberately don&rsquo;t do</a></h3>
+<ul>
+<li><strong>No silent swap reliance.</strong> If a drawing doesn&rsquo;t fit in budget, fail loudly. Pretending it works by paging is the worst possible customer experience.</li>
+<li><strong>No GC-based memory management for the kernel.</strong> RAII + opaque handles. GC introduces unpredictable pauses; pauses kill responsiveness; responsiveness is the product.</li>
+<li><strong>No shared mutable state across threads without MVCC.</strong> Every cross-thread read goes against a snapshot, never against live writable state. Locks on read paths are an outage waiting to happen at customer scale.</li>
+<li><strong>No &ldquo;we&rsquo;ll profile later.&rdquo;</strong> Profiling is wired in from commit 1 (Tracy + sanitizers + CI gates). Bolting performance work on after GA is what produces the <em>&ldquo;moderately large drawings get stuck&rdquo;</em> reputation we&rsquo;re escaping.</li>
+<li><strong>No premature out-of-core / streaming database.</strong> AutoCAD has it. Revit has it. Both are huge engineering investments — multi-person-year. We commit to <strong>in-RAM-only</strong> for the 3-year plan, with the budget + eviction rules that make in-RAM viable for ActCAD&rsquo;s drawing-size distribution. Out-of-core is a Phase-4+ option if the customer base ever needs it; until then, the budget enforcement in Rule 7 is the right answer to <em>&ldquo;my drawing doesn&rsquo;t fit.&rdquo;</em></li>
+<li><strong>No giving plugins direct access to <code>db</code>.</strong> Plugins go through <code>cmd</code> (§3, §13). Direct-access plugins are how every previous CAD product lost the ability to enforce these rules — once you let third-party code touch the database without a transaction boundary, every memory rule above becomes optional.</li>
+</ul>
+<h3 id="167-bottom-line-in-one-paragraph"><a class="toclink" href="#167-bottom-line-in-one-paragraph">16.7 Bottom line in one paragraph</a></h3>
+<p>Hold the drawing in memory; that&rsquo;s correct and unchanged from how every serious CAD product works. <strong>Treat memory as a budgeted resource with a declared cap, separate the one writable layer (<code>db</code>) from the four cacheable layers above it, use MVCC so reads never block writes, build the spatial index at load time, materialize ACIS bodies lazily, evict tessellation under pressure, store undo as deltas not snapshots, put every operation over 8 ms on a worker thread, and fail loudly rather than silently swap.</strong> Wire profilers and CI gates in from commit 1 so the architecture is measured, not hoped for. Do this and a 250MB DWG with 3D solids stays responsive on a $500 laptop — the architecture is what makes it possible, not the hardware. Skip this and you ship the same <em>&ldquo;gets stuck on big drawings&rdquo;</em> reputation we&rsquo;re escaping, just with our name on it.</p>
+<h2 id="17-next-steps"><a class="toclink" href="#17-next-steps">17. Next steps</a></h2>
+<ol>
+<li>Review and approve this plan, or push back on specific decisions in §2, §12, §13, §14, or §15.</li>
+<li>Run the feasibility spike (§9) — 4–6 weeks, small senior team, dedicated.</li>
+<li>Convert each locked decision in §2 into an ADR under <code>docs/decisions/</code>.</li>
+<li>Stand up the engineering org for Phase 1 (engine team, shell team, agent team, LISP-shim team, infra team).</li>
+<li>Lock the Phase 1 milestone definitions and the willing-customer cohort for the month-12 native Windows beta.</li>
+<li>Open commercial conversations (commitments locked per §10 and §15.4 — these are execution, not decisions): <strong>ODA Sustaining membership signup; Qt Commercial Application Development Enterprise multi-year quote (target 15–35% below first quote, with mobile / WASM add-ons and Phase-3 price protection); 2-3 Visual Studio Enterprise seats for designated Windows-perf devs; AI dev tooling subscriptions (Cursor Business / Copilot Business / Claude Code) for the whole team; Clerk + Stripe accounts.</strong></li>
+<li><strong>Open the ACIS commercial conversation with Spatial under NDA (Spike 1b workstream)</strong> — request a term sheet covering: module list scoped to ActCAD use case (Local Ops + Healing + Defeaturing as floor; Polyhedral + AGM if Phase-3 BIM needs them); <strong>royalty model — per-deployment is the primary ask, per-seat the documented fallback only</strong> (see §15.1.1: ~10× cost variance at SMB scale, full negotiating sequence with tier breakpoints, minimum floor, and carve-outs); WASM / Linux / macOS SKU availability; source-escrow option; full DELA text; change-of-control + business-continuation clauses; CTC support-hour bundle. Legal review of the DELA before signing.</li>
+</ol>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="rearchitecture-plan.html">plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry outlook</a> ·
+        <a href="memory-architecture.html">memory architecture</a> ·
+        <a href="exec-presentation.html">exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

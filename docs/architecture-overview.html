@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ActCAD — Architecture, Pros/Cons, and Re-Architecture Implications — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#context">Context</a></li>
+<li><a href="#1-what-actcad-actually-is">1. What ActCAD Actually Is</a><ul>
+<li><a href="#11-layered-stack-bottom-top">1.1 Layered Stack (bottom → top)</a></li>
+<li><a href="#12-how-a-drawing-flows-through-the-stack">1.2 How a Drawing Flows Through the Stack</a></li>
+</ul>
+</li>
+<li><a href="#2-pros-of-the-current-architecture">2. Pros of the Current Architecture</a></li>
+<li><a href="#3-cons-architectural-debt">3. Cons / Architectural Debt</a><ul>
+<li><a href="#31-strategic-the-expensive-ones">3.1 Strategic (the expensive ones)</a></li>
+<li><a href="#32-technical">3.2 Technical</a></li>
+</ul>
+</li>
+<li><a href="#4-implications-for-a-re-architecture">4. Implications for a Re-Architecture</a><ul>
+<li><a href="#40-why-the-engine-decision-is-forced-three-lived-pains">4.0 Why the engine decision is forced — three lived pains</a></li>
+<li><a href="#41-the-four-big-decisions">4.1 The four big decisions</a></li>
+<li><a href="#42-risks-to-manage">4.2 Risks to manage</a></li>
+<li><a href="#43-what-to-ask-of-the-internal-material-when-it-arrives">4.3 What to ask of the internal material (when it arrives)</a></li>
+</ul>
+</li>
+<li><a href="#5-verification">5. Verification</a></li>
+<li><a href="#sources">Sources</a></li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">architecture-overview.md</p>
+    </div>
+    <h1 id="actcad-architecture-proscons-and-re-architecture-implications"><a class="toclink" href="#actcad-architecture-proscons-and-re-architecture-implications">ActCAD — Architecture, Pros/Cons, and Re-Architecture Implications</a></h1>
+<h2 id="context"><a class="toclink" href="#context">Context</a></h2>
+<p>This repo is named <code>Actcad-Re-Architecture-</code> but currently contains only <code>.claude/</code> plugin configuration — no ActCAD source. Before any redesign work begins, we need a shared picture of:</p>
+<ol>
+<li>What ActCAD actually <em>is</em> under the branding (the stack it&rsquo;s built on).</li>
+<li>Where the strengths and weaknesses live in that stack.</li>
+<li>Which architectural decisions the re-architecture must own.</li>
+</ol>
+<p>This document is a research deliverable based on <strong>public sources only</strong>. The user will share internal ActCAD material (source, internal design docs, API usage telemetry, etc.) later; this write-up should be revisited and grounded against that material when it arrives.</p>
+<hr />
+<h2 id="1-what-actcad-actually-is"><a class="toclink" href="#1-what-actcad-actually-is">1. What ActCAD Actually Is</a></h2>
+<p>ActCAD is a commercial DWG-compatible CAD product by <strong>Jytra Technology Solutions Pvt. Ltd.</strong> (East Godavari, India). It is <strong>not</strong> an independent CAD engine — it is an OEM build on top of the <strong>IntelliCAD</strong> engine, with Jytra applying customizations to the ITC source tree.</p>
+<p>That single fact dictates almost everything about the architecture.</p>
+<h3 id="11-layered-stack-bottom-top"><a class="toclink" href="#11-layered-stack-bottom-top">1.1 Layered Stack (bottom → top)</a></h3>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Component</th>
+<th>Owner</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L0 Foundation</td>
+<td><strong>ODA Drawings SDK</strong> (formerly Teigha)</td>
+<td>Open Design Alliance</td>
+<td>DWG/DXF read/write, drawing database, geometric primitives, rendering primitives</td>
+</tr>
+<tr>
+<td>L0 Foundation</td>
+<td><strong>ACIS 3D Kernel</strong></td>
+<td>Spatial (Dassault)</td>
+<td>Boundary-representation solid modeling for 3D</td>
+</tr>
+<tr>
+<td>L0 Foundation</td>
+<td><strong>Wintopo / pstoedit</strong></td>
+<td>3rd-party</td>
+<td>Raster-to-vector, PostScript-to-vector helpers</td>
+</tr>
+<tr>
+<td>L1 Engine</td>
+<td><strong>IntelliCAD source</strong> (currently v14.1 in ActCAD 2027)</td>
+<td>ITC consortium</td>
+<td>CAD shell on top of ODA: command system, entity model, UI shell, plotting, selection, snap, OSnap, LISP runtime, etc. ITC describes the IntelliCAD source as essentially &ldquo;a set of examples of how to use the Teigha/IRX interface&rdquo;</td>
+</tr>
+<tr>
+<td>L2 Product</td>
+<td><strong>ActCAD modifications</strong> to ITC source</td>
+<td>Jytra</td>
+<td>Branding, UI tweaks, vertical-app surfaces (Architecture / Mechanical / Electrical / BIM / GIS), licensing, install/update</td>
+</tr>
+<tr>
+<td>L3 Extension API</td>
+<td>LISP, DCL, DIESEL, SDS/ADS (C), IRX (C++), DRX, COM, VBA, .NET, plus CUI/MNU customization</td>
+<td>ITC + ActCAD</td>
+<td>Customer-written extensions</td>
+</tr>
+</tbody>
+</table>
+<p>Jytra is a paying ITC member, so they receive full IntelliCAD source — that&rsquo;s how they can &ldquo;make changes to match its requirements, which is not possible with any other OEM CAD engine.&rdquo;</p>
+<h3 id="12-how-a-drawing-flows-through-the-stack"><a class="toclink" href="#12-how-a-drawing-flows-through-the-stack">1.2 How a Drawing Flows Through the Stack</a></h3>
+<ol>
+<li><strong>Open</strong>: ODA Drawings parses the DWG and materializes objects into the in-memory drawing database.</li>
+<li><strong>Display</strong>: IntelliCAD&rsquo;s view/render layer walks the database and pushes draw primitives through ODA&rsquo;s GS (graphics system) to GDI/OpenGL/DirectX.</li>
+<li><strong>Edit</strong>: Commands (built-in C++ via IRX, or user-written LISP/.NET) mutate the database; the GS invalidates and redraws.</li>
+<li><strong>3D ops</strong>: Solid modeling commands hand off to ACIS; results are stored back as ACIS B-rep blobs inside the DWG.</li>
+<li><strong>Save</strong>: Database serialized back to DWG via ODA, preserving R2.5 → current compatibility.</li>
+</ol>
+<hr />
+<h2 id="2-pros-of-the-current-architecture"><a class="toclink" href="#2-pros-of-the-current-architecture">2. Pros of the Current Architecture</a></h2>
+<ul>
+<li><strong>Cheap to build, cheap to sell.</strong> Buying into IntelliCAD source + ODA + ACIS replaces ~25 years of engine R&amp;D. Retail starts around $199 perpetual.</li>
+<li><strong>DWG fidelity by construction.</strong> ODA is the de facto non-Autodesk DWG implementation; format compatibility is essentially a solved problem.</li>
+<li><strong>Source-level access to the engine.</strong> Unlike OEMs of closed engines, Jytra can patch the engine itself for ActCAD-specific behavior.</li>
+<li><strong>Mature ACIS-backed 3D.</strong> Solid modeling, booleans, fillet/chamfer, etc. are industrial-grade and well-tested.</li>
+<li><strong>Broad extensibility surface.</strong> LISP/DCL ports of legacy AutoCAD customizations work largely unchanged — a meaningful moat for migrating AutoCAD shops.</li>
+<li><strong>Multi-core / 64-bit native</strong> per ITC&rsquo;s published platform notes.</li>
+<li><strong>Ecosystem leverage.</strong> 25+ OEMs share the IntelliCAD platform — bug fixes and ODA upgrades flow downstream automatically.</li>
+</ul>
+<hr />
+<h2 id="3-cons-architectural-debt"><a class="toclink" href="#3-cons-architectural-debt">3. Cons / Architectural Debt</a></h2>
+<h3 id="31-strategic-the-expensive-ones"><a class="toclink" href="#31-strategic-the-expensive-ones">3.1 Strategic (the expensive ones)</a></h3>
+<ul>
+<li><strong>Cadence is not yours.</strong> Engine major versions (IntelliCAD 14 → 14.1 → 15…) ship on ITC&rsquo;s timeline. Big architectural improvements ActCAD wants either wait for ITC, get carried as a vendor patch (merge pain on every uptake), or get built awkwardly above the engine.</li>
+<li><strong>Licensing stack is heavy and partly proprietary.</strong> ACIS royalties + ODA membership + ITC fees compound per seat. Any move to undercut Autodesk on price is constrained by these floors.</li>
+<li><strong>OEM differentiation ceiling.</strong> Most ITC OEMs ship a very similar product because they share the core; meaningful differentiation requires either deep engine forks (merge cost) or new layers above (where ActCAD&rsquo;s vertical apps sit today).</li>
+</ul>
+<h3 id="32-technical"><a class="toclink" href="#32-technical">3.2 Technical</a></h3>
+<ul>
+<li><strong>1990s C++ monolith DNA.</strong> IntelliCAD descends from Visio/Softdesk&rsquo;s 1996-era &ldquo;Phoenix&rdquo; AutoCAD clone. The object model, command dispatch, and UI shell carry that lineage. Memory model and threading are bolted on rather than designed in.</li>
+<li><strong>API surface is huge and overlapping.</strong> LISP + DCL + DIESEL + SDS (legacy C) + IRX (C++) + DRX + COM + VBA + .NET. Every API is a permanent maintenance contract with customers. SDS was already deprecated once (during the IntelliCAD 7 ODA transition) and still hasn&rsquo;t fully gone away.</li>
+<li><strong>Platform locked to Windows in practice.</strong> ODA and ACIS are cross-platform, but the IntelliCAD shell, the .NET/COM/VBA APIs, MFC-style UI, and Jytra&rsquo;s product layer are Windows-centric. macOS/Linux/web are not first-class.</li>
+<li><strong>Performance ceiling on large drawings.</strong> Public reviews repeatedly cite &ldquo;moderately large drawings frequently get stuck&rdquo; — symptomatic of the synchronous main-thread command/render loop typical of the IntelliCAD shell, combined with no enforced memory budget, eager kernel materialization, and linear-scan hit-testing. The re-architecture addresses this with a memory architecture committed up-front rather than retrofitted — strategic picture in <code>docs/rearchitecture-plan.md</code> §16; full engineering reference in <strong><code>docs/memory-architecture.md</code></strong> (five-layer model, eight commitments, MVCC concurrency, KAL contract, eviction protocol, failure modes, CI gates, anti-patterns, IntelliCAD-migration teaching).</li>
+<li><strong>Vertical apps are loosely integrated.</strong> Architecture / Mechanical / Electrical / BIM are layered as plug-in style modules, not deeply unified — meaning data flows between them are limited.</li>
+<li><strong>UI paradigm anchored to AutoCAD ~2010.</strong> Ribbon + command line + modal dialogs. Touch, collaboration, and cloud are retrofits.</li>
+</ul>
+<hr />
+<h2 id="4-implications-for-a-re-architecture"><a class="toclink" href="#4-implications-for-a-re-architecture">4. Implications for a Re-Architecture</a></h2>
+<p>The point of writing this document before touching code is to surface the <em>decisions</em> the re-architecture must own. Each of these is a fork in the road:</p>
+<h3 id="40-why-the-engine-decision-is-forced-three-lived-pains"><a class="toclink" href="#40-why-the-engine-decision-is-forced-three-lived-pains">4.0 Why the engine decision is forced — three lived pains</a></h3>
+<p>The §3 cons are the abstract case for change. What follows is the <em>concrete</em> case, drawn from real operating experience running ActCAD on top of IntelliCAD. These three pains are not separate issues — they are three faces of one root cause: <strong>the platform layer isn&rsquo;t ours, so the things that need to be deeply rebuilt can&rsquo;t be.</strong></p>
+<h4 id="401-rendering-needs-per-machine-tuning-and-still-isnt-fast-enough"><a class="toclink" href="#401-rendering-needs-per-machine-tuning-and-still-isnt-fast-enough">4.0.1 Rendering needs per-machine tuning and still isn&rsquo;t fast enough</a></h4>
+<ul>
+<li>ActCAD&rsquo;s viewport renders through ODA&rsquo;s Graphics System (GS), historically OpenGL-based. ODA has been migrating toward Vulkan and ships a DirectX backend, but each step is on ODA&rsquo;s schedule, then ITC&rsquo;s schedule, then ours.</li>
+<li>Customers regularly need OpenGL driver tweaks, GPU-specific switches, and per-system tuning just to get usable performance. Even when tuned, performance ceiling is below what modern competitors deliver.</li>
+<li>Compare: AutoCAD 2027 shipped its own &ldquo;Graphics System Framework&rdquo; (GSF) — Autodesk owns the rendering pipeline end-to-end and tunes it as a single product. We cannot match that as a downstream consumer of someone else&rsquo;s renderer.</li>
+</ul>
+<p><strong>What this rules out</strong>: cosmetic fixes. The renderer can only be made truly fast if we own it.</p>
+<h4 id="402-non-windows-platforms-are-not-within-reach"><a class="toclink" href="#402-non-windows-platforms-are-not-within-reach">4.0.2 Non-Windows platforms are not within reach</a></h4>
+<ul>
+<li>ODA Drawings and ACIS are cross-platform at the library level. The IntelliCAD shell technically has macOS and Linux ports through ITC, but the customer-facing surface (UI shell, installer, .NET/COM/VBA APIs, LISP/IRX ABI) is Windows-shaped.</li>
+<li>Graebert (ARES) is the one ITC OEM that committed to Linux + macOS + web parity, and they invested at a level most consortium members will not.</li>
+<li>The market has moved: customers expect at minimum macOS support, and increasingly Linux and web. We cannot deliver any of those credibly on the current stack within a reasonable horizon.</li>
+</ul>
+<p><strong>What this rules out</strong>: &ldquo;we&rsquo;ll port the existing app.&rdquo; The shell is too Windows-shaped to port; it has to be rebuilt with portability in the bones.</p>
+<h4 id="403-ai-inside-the-codebase-is-structurally-blocked"><a class="toclink" href="#403-ai-inside-the-codebase-is-structurally-blocked">4.0.3 AI inside the codebase is structurally blocked</a></h4>
+<p>This is the deepest of the three, with two layers:</p>
+<ol>
+<li>
+<p><strong>Access.</strong> ITC consortium license terms restrict sharing IntelliCAD source with third-party services (including AI assistants) and with outside contractors. For any non-employee engagement — code review, external development partner, AI-assisted refactor through a cloud LLM — the foundational engine is dark. We can put our patches and our product layer in front of an AI, but not the layer where the real work would be.</p>
+</li>
+<li>
+<p><strong>Leverage.</strong> Even setting access aside, we cannot land changes upstream on our own clock. Every AI-assisted refactor on the engine becomes a permanent vendor patch that we carry forever and re-merge on every ITC version uptake. The economics of AI-assisted engineering invert when you can&rsquo;t merge what the AI writes.</p>
+</li>
+</ol>
+<p><strong>What this rules out</strong>: meaningfully accelerating engine-level work with modern tooling. AI assistance only pays off at the layers we own outright.</p>
+<h4 id="404-consequence-for-41"><a class="toclink" href="#404-consequence-for-41">4.0.4 Consequence for §4.1</a></h4>
+<p>The §3 cons could, in theory, be argued for or against. The §4.0 pains have all been <em>tried</em> and found to not be solvable inside the current arrangement. Together they collapse the §4.1 engine decision:</p>
+<ul>
+<li><strong>Keep IntelliCAD</strong> is not viable as a strategic 5-year posture. It is viable only as a near-term ship vehicle while the replacement is built.</li>
+<li><strong>Replace, build on ODA directly</strong> is the choice the operating reality is pushing us toward — own the engine, own the renderer, own the platform abstraction, own the codebase that AI can operate on.</li>
+<li><strong>Replace with non-ODA stack</strong> stays a non-starter (DWG fidelity loss).</li>
+</ul>
+<p>The decision below in §4.1 should be read as: <em>replace; sequencing and migration are what&rsquo;s open, not the direction.</em></p>
+<h3 id="41-the-four-big-decisions"><a class="toclink" href="#41-the-four-big-decisions">4.1 The four big decisions</a></h3>
+<ol>
+<li>
+<p><strong>Engine: keep or replace IntelliCAD?</strong>
+   - <em>Keep</em>: lowest risk, preserves DWG fidelity, preserves the LISP/IRX ecosystem, but inherits the monolith and the ITC cadence.
+   - <em>Replace (build above ODA directly)</em>: ODA Drawings + ODA Visualize + own command/UI layer. Drops the monolith, but you&rsquo;re rewriting ~25 years of CAD shell. Realistic only with a multi-year horizon.
+   - <em>Replace (non-ODA engine)</em>: would forfeit DWG compatibility — likely non-starter for ActCAD&rsquo;s audience.</p>
+</li>
+<li>
+<p><strong>3D kernel: stay on ACIS, direct OEM contract.</strong>
+   - <strong>Decided: ACIS (Spatial / Dassault), direct OEM contract.</strong> AutoCAD&rsquo;s 3D solids are stored as ASM (Autodesk Shape Manager) — a fork of ACIS that Autodesk took private around 2001 — and DWGs persist them as ACIS / ASM SAT blobs. For lossless round-trip of AutoCAD-origin 3D solids — the central value prop for AutoCAD migrators — ACIS is the only kernel that doesn&rsquo;t introduce translation drift.
+   - ActCAD already uses ACIS today (via IntelliCAD); the re-architecture takes the contract direct, drops the IntelliCAD middleman, and keeps customer file fidelity unchanged.
+   - All kernel access goes through a <strong>Kernel Abstraction Layer (KAL)</strong> so the engine never depends on ACIS-specific types in public headers; a kernel swap stays technically possible (~6–12 weeks of focused work) if business conditions ever require it.
+   - Alternative kernels were considered and rejected on the same basis: anything that isn&rsquo;t ACIS introduces translation drift on AutoCAD-origin SAT blobs. See <code>docs/rearchitecture-plan.md</code> §11.2.
+   - Commercial terms (initial OEM fee + maintenance + royalty + component module fees + DELA) are negotiated in Spike 1b under NDA — see <code>docs/rearchitecture-plan.md</code> §15.1 for the cost structure, and §15.1.1 for the <strong>per-deployment royalty model decision</strong> (locked as the negotiating ask; ~10× cheaper than per-seat at ActCAD&rsquo;s SMB scale).</p>
+</li>
+<li>
+<p><strong>API surface: which legacies survive?</strong>
+   - LISP almost certainly must survive — that&rsquo;s the migration story from AutoCAD.
+   - SDS/ADS, DIESEL, VBA, COM are candidates for sunset.
+   - A modern story (Python? TypeScript-in-browser? .NET 8+ cross-platform?) is the place to invest.</p>
+</li>
+<li>
+<p><strong>Platform: Windows-only vs cross-platform / web.</strong>
+   - Web is where BIM / collaboration competition is moving (Autodesk Forma, Onshape, etc.).
+   - Going web-native is a near-total rewrite of the UI shell — but the engine layers (ODA, ACIS) already have headless / server modes.</p>
+</li>
+</ol>
+<h3 id="42-risks-to-manage"><a class="toclink" href="#42-risks-to-manage">4.2 Risks to manage</a></h3>
+<ul>
+<li><strong>DWG round-trip fidelity</strong> — anything that touches the database layer must be measured against the existing DWG test corpus.</li>
+<li><strong>Customer extension breakage</strong> — quantify which APIs are <em>actually</em> used in the wild before sunsetting any of them. (This is one of the first things to ask for from internal material: telemetry or estimate of LISP / IRX / .NET extension distribution among paying customers.)</li>
+<li><strong>Engine upgrade merge cost</strong> if staying on ITC source — every ActCAD-side patch is a permanent rebase burden.</li>
+<li><strong>3D kernel migration</strong> is irreversible in practice once shipped to customers — which is why we are <em>staying</em> on ACIS rather than migrating. The KAL preserves the technical option to swap, but the business intent is continuity.</li>
+<li><strong>ACIS commercial exposure</strong> — opaque OEM pricing, royalty per seat or per deployment, change-of-control risk (Dassault owns SolidWorks, a competitor). Mitigated by source escrow + DELA review + business-continuation clauses in the OEM contract; see <code>docs/rearchitecture-plan.md</code> §7 and §10.</li>
+</ul>
+<h3 id="43-what-to-ask-of-the-internal-material-when-it-arrives"><a class="toclink" href="#43-what-to-ask-of-the-internal-material-when-it-arrives">4.3 What to ask of the internal material (when it arrives)</a></h3>
+<p>To turn this from a public-info overview into a grounded re-architecture brief, the next pass needs:</p>
+<ul>
+<li>Where ActCAD diverges from stock ITC source (file list / patch volume).</li>
+<li>The build system and module boundaries inside the ActCAD codebase.</li>
+<li>The vertical-app architecture (are they DLL plug-ins? statically linked? sharing a common data model?).</li>
+<li>API-usage telemetry or customer-survey data on LISP / IRX / .NET / SDS.</li>
+<li>Performance hotspots already known internally (large-drawing slowdowns from §3.2 — is the bottleneck the regen, the GS, the DB, or the UI?).</li>
+<li>Licensing exposure: per-seat cost breakdown across ODA, ACIS, ITC.</li>
+<li>Roadmap commitments already made to customers (BIM, cloud, mobile).</li>
+</ul>
+<hr />
+<h2 id="5-verification"><a class="toclink" href="#5-verification">5. Verification</a></h2>
+<p>This deliverable is research, not code, so there is nothing to run. The check is editorial:</p>
+<ul>
+<li>§1 (stack) matches what internal docs say about ActCAD&rsquo;s actual layering.</li>
+<li>§3 (cons) is reconciled against internal performance / support data — public reviews are directional but not authoritative.</li>
+<li>§4 decisions are the ones the engineering leadership actually has open. If a decision in §4 is already made internally, this doc should be updated to reflect it rather than re-litigate.</li>
+</ul>
+<p>Once internal material lands, re-open this file and either confirm each section or annotate where reality differs.</p>
+<hr />
+<h2 id="sources"><a class="toclink" href="#sources">Sources</a></h2>
+<ul>
+<li><a href="https://www.intellicad.org/actcad-case-study">ActCAD case study — IntelliCAD.org</a></li>
+<li><a href="https://www.intellicad.org/articles-and-press-releases/actcad-releases-actcad-2026-based-on-intellicad-14">ActCAD 2026 released on IntelliCAD 14</a></li>
+<li><a href="https://www.intellicad.org/articles-and-press-releases/actcad-2027-released-built-on-intellicad-14.1">ActCAD 2027 released on IntelliCAD 14.1</a></li>
+<li><a href="https://en.wikipedia.org/wiki/IntelliCAD">IntelliCAD — Wikipedia</a></li>
+<li><a href="https://www.intellicad.org/cad-development-platform-framework">IntelliCAD CAD Development Platform Framework</a></li>
+<li><a href="https://www.intellicad.org/articles-and-press-releases/bid/204731/Programming-with-IntelliCAD">Programming with IntelliCAD</a></li>
+<li><a href="https://actcad.com/">ActCAD product site</a></li>
+<li><a href="https://www.jytra.com/">Jytra Technology Solutions</a></li>
+<li><a href="https://www.spotsaas.com/compare/bricscad-vs-actcad-vs-autocad">BricsCAD vs ActCAD vs AutoCAD comparison — SpotSaaS</a></li>
+<li><a href="https://sourceforge.net/software/product/ACTCAD-Professional/">ActCAD reviews — SourceForge</a></li>
+</ul>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="rearchitecture-plan.html">plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry outlook</a> ·
+        <a href="memory-architecture.html">memory architecture</a> ·
+        <a href="exec-presentation.html">exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
