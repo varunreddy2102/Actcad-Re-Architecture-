@@ -723,7 +723,7 @@
     <span style="color: var(--border);">·</span>
     <span><strong style="color: var(--primary);">25</strong> people at peak</span>
     <span style="color: var(--border);">·</span>
-    <span><strong style="color: var(--accent);">$1.38M</strong> envelope</span>
+    <span><strong style="color: var(--accent);">~$2.69M</strong> envelope</span>
   </div>
   <div class="meta">
     Based on <code>architecture-overview.md</code>, <code>industry-outlook.md</code>, and
@@ -745,7 +745,7 @@
   <div class="card-grid cols-2" style="gap: 14px;">
     <div class="card primary fragment fade-in" data-fragment-index="1">
       <h4>What we propose</h4>
-      <p>A <strong>3-year, phased re-architecture</strong> of ActCAD that replaces the IntelliCAD engine with a first-party engine on <strong>ODA SDKs + Open CASCADE</strong>.</p>
+      <p>A <strong>3-year, phased re-architecture</strong> of ActCAD that replaces the IntelliCAD engine with a first-party engine on <strong>ODA SDKs + ACIS (Spatial / Dassault)</strong>. AutoCAD's ASM is an ACIS fork — only ACIS round-trips customer 3D solids without drift.</p>
     </div>
     <div class="card primary fragment fade-in" data-fragment-index="2">
       <h4>Revenue protection</h4>
@@ -761,14 +761,17 @@
     </div>
   </div>
   <div class="hero-stat" style="margin-top: 14px;">
-    <span class="number">~$1.38M</span>
-    <span class="label">3-year total · <strong style="color:white;">~$780K</strong> stack + tools + cloud · <strong style="color:white;">~$600K</strong> loaded India salary (top-of-band) · <strong style="color:white;">~₹13.3 Cr</strong>. Lean 7 / 16 / 25-person team (2 senior + mid / junior + QA from P1 day 1) with aggressive AI augmentation across the build.</span>
+    <span class="number">~$2.69M</span>
+    <span class="label">3-year total · <strong style="color:white;">~$2.09M</strong> stack + tools + cloud (incl. ACIS OEM contract) · <strong style="color:white;">~$600K</strong> loaded India salary (top-of-band) · <strong style="color:white;">~₹25.9 Cr</strong>. Lean 7 / 16 / 25-person team. <em style="color:var(--accent-light);">ACIS line items are industry-estimate placeholders pending the §9 Spike 1b term sheet from Spatial.</em></span>
   </div>
 
   <aside class="notes">
     The single most important framing: we are asking for a 4-6 week spike approval today, not
-    the 3-year program. The spike returns measured data on the 7 highest-risk assumptions;
-    only then does management commit to the full ~$1.38M envelope ($780K stack + $600K loaded India salary, ramp-adjusted, on a 7 / 16 / 25-person lean AI-augmented team — 2 senior + mid/junior + QA from P1 day 1, with stack now including security + signing + IFC validation lines).
+    the 3-year program. The spike returns measured data on the 7 highest-risk assumptions
+    (including ACIS commercial scoping under NDA — Spike 1b); only then does management commit
+    to the full ~$2.69M envelope (~$2.09M stack incl. ACIS OEM contract + ~$600K loaded India
+    salary, ramp-adjusted). ACIS dominates the stack line; real Phase-1 budget firms up once
+    the contract conversation with Spatial is closed.
   </aside>
 </section>
 
@@ -962,7 +965,7 @@
   <p class="small" style="margin: 0 0 0.4em;">Replace IntelliCAD with a first-party engine on four foundations:</p>
   <div class="bet-foundations">
     <div class="bet-foundation"><span class="bet-pill">ODA SDKs · direct</span><span class="bet-desc">The same foundation Bricsys, GstarCAD, ZWCAD, NanoCAD build on</span></div>
-    <div class="bet-foundation"><span class="bet-pill">Open CASCADE (OCCT)</span><span class="bet-desc">AEC / drafting / light 3D / IFC — free under LGPL</span></div>
+    <div class="bet-foundation"><span class="bet-pill">ACIS (Spatial / Dassault)</span><span class="bet-desc">Same kernel ActCAD uses today via IntelliCAD — AutoCAD ASM is an ACIS fork, lossless DWG round-trip</span></div>
     <div class="bet-foundation"><span class="bet-pill">C++ · Qt 6 native · WASM browser</span><span class="bet-desc">Maya / Houdini / AutoCAD-Web pattern</span></div>
     <div class="bet-foundation"><span class="bet-pill">AI-native from day one</span><span class="bet-desc">MCP server in the engine · transactional undo</span></div>
   </div>
@@ -1016,8 +1019,8 @@
     <div class="stack-layer geom">
       <div class="stack-layer-head"><span class="stack-num">04</span><span class="stack-name">3D &amp; modelling</span><span class="stack-sub">Where 3D geometry lives</span></div>
       <div class="stack-layer-body">
-        <div class="stack-pick"><strong>OCCT</strong> <em class="ven-tag">Open Cascade · LGPL, free</em><span>The only open-source full-scale B-rep kernel. Locked for the 3-year plan.</span></div>
-        <div class="stack-pick"><strong>Parasolid</strong> <em class="ven-tag">Siemens · paid</em><span>Year-4+ escape valve only — not budgeted, KAL preserves the swap.</span></div>
+        <div class="stack-pick"><strong>ACIS</strong> <em class="ven-tag">Spatial / Dassault · commercial OEM</em><span>AutoCAD ASM is an ACIS fork — the only kernel that round-trips AutoCAD-origin 3D solids without drift. ActCAD already uses ACIS via IntelliCAD; this puts the contract direct.</span></div>
+        <div class="stack-pick"><strong>Parasolid / OCCT</strong> <em class="ven-tag">not chosen</em><span>Neither shares ACIS / ASM lineage; both lose fidelity on customer AutoCAD-origin solids. KAL preserves the technical swap option.</span></div>
       </div>
     </div>
 
@@ -1034,7 +1037,7 @@
       <div class="stack-layer-body">
         <div class="stack-pick"><strong>ODA Drawings SDK</strong> <em class="ven-tag">Open Design Alliance · direct membership</em><span>DWG / DXF read &amp; write — the same library Bricsys, GstarCAD, ZWCAD, NanoCAD ship on</span></div>
         <div class="stack-pick"><strong>ODA IFC + BimRv / BimNw</strong> <em class="ven-tag">Open Design Alliance</em><span>BIM &amp; Revit / Navisworks file support</span></div>
-        <div class="stack-pick"><strong>ODA MCAD translator</strong> <em class="ven-tag">Open Design Alliance</em><span>SolidWorks / Inventor / CATIA / NX / Creo <em>read</em> — feeds geometry into OCCT (file translator, not a kernel)</span></div>
+        <div class="stack-pick"><strong>ODA MCAD translator</strong> <em class="ven-tag">Open Design Alliance</em><span>SolidWorks / Inventor / CATIA / NX / Creo <em>read</em> — feeds geometry into ACIS (file translator, not a kernel)</span></div>
       </div>
     </div>
 
@@ -1042,7 +1045,7 @@
 
   <aside class="notes">
     Every component is either industry-standard (Qt, CMake, Emscripten, C++), commercially
-    proven for our exact category (ODA, OCCT, Visualize), or a deliberate forward bet (MCP,
+    proven for our exact category (ODA, ACIS, Visualize), or a deliberate forward bet (MCP,
     WebGPU). Nothing here is experimental.
   </aside>
 </section>
@@ -1091,7 +1094,7 @@
       <span class="arch-layer-label">▲ Engine services — read-only from the database</span>
       <div class="arch-mods cols-3">
         <div class="arch-mod"><div class="arch-mod-name">Rendering</div><div class="arch-mod-sub">uses each device's native graphics</div></div>
-        <div class="arch-mod"><div class="arch-mod-name">3D geometry</div><div class="arch-mod-sub">Open Cascade (open-source)</div></div>
+        <div class="arch-mod"><div class="arch-mod-name">3D geometry</div><div class="arch-mod-sub">ACIS (Spatial commercial OEM)</div></div>
         <div class="arch-mod"><div class="arch-mod-name">Cloud sync</div><div class="arch-mod-sub">real-time co-edit · sign-in</div></div>
       </div>
     </div>
@@ -1145,7 +1148,7 @@
   <div class="phase-deliverables">
     <div class="phase-deliv p1-tint">
       <h4>Phase 1 · Foundation</h4>
-      <p class="body">Engine on ODA + OCCT · DWG open / edit / save round-trip · 2D drafting commands · Windows daily-driver <strong>beta</strong> · browser <strong>viewer</strong> + markup · AI commands inside the editor.</p>
+      <p class="body">Engine on ODA + ACIS · DWG open / edit / save round-trip · 2D drafting commands · Windows daily-driver <strong>beta</strong> · browser <strong>viewer</strong> + markup · AI commands inside the editor.</p>
       <p class="phase-promise"><strong>The new product is real, on the same DWG files.</strong></p>
     </div>
     <div class="phase-deliv p2-tint">
@@ -1215,8 +1218,8 @@
   <div class="insight-list risk-list">
     <div class="insight-row">
       <div class="ins-num">01</div>
-      <div class="risk-side"><strong class="risk-warn">Will customer 3D drawings open cleanly in the new engine?</strong> Old DWGs carry <em>ACIS B-rep</em> 3D blobs that may not translate perfectly into Open Cascade.</div>
-      <div class="mit-side">Spike item 1 measures this on <strong>50 real customer drawings before we commit</strong>. If Open Cascade fails, the Kernel-Abstraction Layer keeps the Parasolid swap open.</div>
+      <div class="risk-side"><strong class="risk-warn">ACIS commercial exposure — opaque OEM pricing, royalty, DELA, change-of-control.</strong> Dassault owns SolidWorks (a direct competitor up-market); the legal and budget shape only firms up once a term sheet is in hand. Secondary concern: WASM SKU availability for the browser editor.</div>
+      <div class="mit-side"><strong>Spike item 1b</strong> runs procurement under NDA — scoped module list, per-deployment royalty, WASM/Linux/macOS SKUs, source escrow, DELA legal review <strong>before signing</strong>. Spike item 1 measures ACIS round-trip vs AutoCAD on <strong>50 real customer drawings</strong>; the Kernel-Abstraction Layer preserves a kernel-swap escape hatch if terms turn unworkable.</div>
       <div class="risk-status measured">Measured</div>
     </div>
     <div class="insight-row">
@@ -1264,10 +1267,18 @@
     <div class="insight-row critical">
       <div class="ins-num">01</div>
       <div>
-        <span class="spike-q">Will customer 3D drawings open cleanly in the new engine?</span>
-        <span class="spike-proof"><strong>50 real customer files round-trip</strong> · &lt;0.001 unit drift · booleans ≥95% on Open Cascade</span>
+        <span class="spike-q">Does ACIS round-trip AutoCAD-origin 3D solids on real customer DWGs?</span>
+        <span class="spike-proof"><strong>50 real customer files</strong> open → edit → save → re-open in AutoCAD · &lt;0.001 unit drift · booleans pass on ≥98% · identical handle set</span>
       </div>
-      <div class="spike-outcome">Locks 3D kernel</div>
+      <div class="spike-outcome">Locks ACIS contract</div>
+    </div>
+    <div class="insight-row critical">
+      <div class="ins-num">1b</div>
+      <div>
+        <span class="spike-q">What does the ACIS commercial contract actually look like?</span>
+        <span class="spike-proof"><strong>Written term sheet</strong> under NDA with Spatial · scoped module list · per-deployment royalty model · WASM / Linux / macOS SKUs · source escrow · DELA · change-of-control — <strong>before signing</strong></span>
+      </div>
+      <div class="spike-outcome">Locks ACIS terms</div>
     </div>
     <div class="insight-row critical">
       <div class="ins-num">02</div>
@@ -1321,11 +1332,13 @@
   <p class="tiny centered" style="margin-top: 8px; color: var(--text-2); line-height: 1.4;">The spike is <em>the</em> decision-forcing moment. Full 3-year program Go/No-Go follows the spike, not this briefing. Red-bordered rows are the structural deal-breakers (kernel, browser perf, shared engine, AI surface).</p>
 
   <aside class="notes">
-    The four red-bordered items are the structural ones. If OCCT can't read customer ACIS,
-    we need a different kernel strategy. If inWEB is 10x slower than native, the web story
-    changes. If the ui-bridge ABI doesn't work in practice, the whole "one core, two shells"
-    architecture changes. If the MCP agent can't draft a simple plan, the AI surface needs
-    redesign. Better to learn these in 6 weeks than 6 months in.
+    The red-bordered items are the structural ones. If ACIS round-trip fails on the 50-DWG
+    corpus, the KAL keeps a kernel-swap escape open and we revisit before signing. If the ACIS
+    term sheet (1b) comes back with unworkable royalty or no WASM SKU, the budget shape and
+    browser-3D plan change at the spike, not at the Phase-2 boundary. If inWEB is 10× slower
+    than native, the web story changes. If the ui-bridge ABI doesn't work in practice, the
+    whole "one core, two shells" architecture changes. If the MCP agent can't draft a simple
+    plan, the AI surface needs redesign. Better to learn these in 6 weeks than 6 months in.
   </aside>
 </section>
 

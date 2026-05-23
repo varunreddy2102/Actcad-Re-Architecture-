@@ -23,17 +23,17 @@ style: |
 
 **Jytra Technology Solutions** · Confidential
 
-*Based on `docs/architecture-overview.md`, `docs/industry-outlook.md`, and `docs/rearchitecture-plan.md` (563 lines, 16 sections).*
+*Based on `docs/architecture-overview.md`, `docs/industry-outlook.md`, and `docs/rearchitecture-plan.md` (17 sections, including new §16 Memory architecture).*
 
 ---
 
 ## The ask in one slide
 
-We propose a **3-year, phased re-architecture of ActCAD** that replaces the IntelliCAD engine with a **first-party engine built directly on ODA SDKs and Open CASCADE**.
+We propose a **3-year, phased re-architecture of ActCAD** that replaces the IntelliCAD engine with a **first-party engine built directly on ODA SDKs and the ACIS 3D kernel (Spatial / Dassault)**.
 
 - **Existing ActCAD continues to ship through Phase 2 — revenue is protected.**
 - By end of year 3, the new product **equals or beats** today's ActCAD on every dimension that matters: performance, platform reach (web + native + mobile), AI assistance, BIM, extensibility.
-- **Modeled stack + tooling + cloud budget:** ~$83K Phase 1 → ~$239K Phase 2 → ~$596K Phase 3 (salary excluded). No six-figure opaque OEM commitments.
+- **Modeled stack + tooling + cloud budget:** ~$383K Phase 1 → ~$449K Phase 2 → ~$1.26M Phase 3 (salary excluded). **Dominant line item is the ACIS OEM contract** (initial fee + maintenance + per-deployment royalty + module fees); industry-estimate placeholders pending the §9 Spike 1b term sheet from Spatial.
 - **Today's decision is narrow:** approve a **4–6 week feasibility spike**. After the spike, management gets a structured Go / No-Go on the full plan with measured data.
 
 ---
@@ -80,7 +80,7 @@ The peer set is moving on three dimensions at once. We are not on any of them ye
 Replace IntelliCAD with a first-party engine on:
 
 - **ODA SDKs direct** — the same foundation Bricsys, GstarCAD, ZWCAD, NanoCAD build on
-- **Open CASCADE (OCCT)** — for AEC / drafting / light 3D / IFC
+- **ACIS (Spatial / Dassault)** — same kernel ActCAD uses today (via IntelliCAD), now under a direct OEM contract. AutoCAD's ASM is an ACIS fork — only ACIS round-trips AutoCAD-origin 3D solids without drift.
 - **C++ core + Qt 6 native + WebAssembly browser** — Maya / Houdini / AutoCAD-Web pattern
 - **AI-native from the foundation** — MCP server inside the engine, transactional undo, day one
 
@@ -99,7 +99,7 @@ Four differentiators we commit to publicly:
 |---|---|
 | DWG / DXF + database | ODA Drawings SDK (direct membership) |
 | Rendering | ODA Visualize — **DirectX 11 (Win default), DirectX 12, Vulkan, Metal**; web: Visualize inWEB → WebGPU |
-| 3D kernel | **OCCT** (LGPL, free) — locked for the 3-year plan |
+| 3D kernel | **ACIS** (Spatial / Dassault) — commercial OEM contract; AutoCAD ASM lineage = lossless DWG fidelity |
 | MCAD format I/O | ODA MCAD translator (SolidWorks / Inventor / CATIA read) |
 | BIM / IFC | ODA IFC + BimRv / BimNw |
 | Engine language | **C++20 primary**, Rust selectively for net / agent / scripting |
@@ -116,7 +116,7 @@ Four differentiators we commit to publicly:
 | Module | Role |
 |---|---|
 | **`db`** | Drawing database. **Only mutator.** Emits typed op-stream on every commit. |
-| **`geom`** | Geometry + Kernel Abstraction Layer over OCCT. Pure functions, no state. |
+| **`geom`** | Geometry + Kernel Abstraction Layer over ACIS. Pure functions, no state. No ACIS types in public headers. |
 | **`render`** | View / render-abstraction over Visualize. Swappable backends. |
 | **`cmd`** | Command bus. **The single seam the AI agent talks to.** |
 | **`script`** | Hosts Python, LISP, JS bridge. All reach `cmd`, never `db`. |
@@ -130,12 +130,30 @@ Four differentiators we commit to publicly:
 
 ---
 
+## Memory architecture — designing for headroom from day 1
+
+CAD model: **open the drawing once, hold it entirely in memory, edit there, write back on save.** Correct and unchanged. Bottleneck risk lives in *how* we manage that memory. Five layers, one rule, eight commitments — full detail in `docs/rearchitecture-plan.md` §16.
+
+| Layer | What | Evictable? |
+|---|---|---|
+| **1. `db`** — DWG database | Entities, handles, layers, blocks | **Never** — single source of truth |
+| **2. ACIS bodies** — kernel graph | `ENTITY` graph per touched solid | **Lazy** — load on first touch |
+| **3. Tessellation** — GPU triangles | Render-ready buffers | **Yes** — LRU evict |
+| **4. Spatial indexes** | R-tree / BVH for hit-test / snap | **Rebuildable** |
+| **5. Undo / op-log** | Delta records (also feeds sync + agent + audit) | **Truncatable** |
+
+**Eight commitments that keep responsiveness flat:** single-mutator `db` + MVCC reads (no reader ever waits) + spatial index built at load time (no linear scans) + lazy ACIS materialization + GPU-resident evictable tessellation + delta-not-snapshot undo + declared memory budget that **fails loudly never silently swaps** + 8 ms UI-thread budget enforced by debug-build asserts.
+
+> **Why this matters strategically:** the *"moderately large drawings get stuck"* reputation is the single biggest competitive vulnerability we inherit from IntelliCAD. The memory architecture is the place to fix it for good — at commit 1, with profilers and CI gates wired in from the start, not retrofitted after GA.
+
+---
+
 ## Three phases, three years
 
 | Phase | Months | Headline deliverables |
 |---|---|---|
 | **Phase 1: Foundation** | 0–12 | Engine skeleton on ODA. Full DWG fidelity. 2D drafting commands. **Native Windows beta** to willing-customer cohort. Browser viewer + markup in parallel. LISP runtime spike. **AI-as-tool features shipped** (Markup Assist, Smart Blocks, Drawing Health). MCP server skeleton. |
-| **Phase 2: Production v1** | 12–24 | Mac / Linux Qt shells at parity. Browser becomes full editor. Light 3D via OCCT. **Cloud co-edit on 2D**. LISP coverage to 95th percentile + migration tool. AI assistant **GA**. **New product GA at month 24.** |
+| **Phase 2: Production v1** | 12–24 | Mac / Linux Qt shells at parity. Browser becomes full editor. Light 3D via ACIS through the KAL. **Cloud co-edit on 2D**. LISP coverage to 95th percentile + migration tool. AI assistant **GA**. **New product GA at month 24.** |
 | **Phase 3: Parity-or-better** | 24–36 | Full 3D + BIM-lite (IFC). MEP / Electrical verticals reshipped as plugins. Mobile (iOS / Android) shells. End-to-end perf tuning. **IntelliCAD ActCAD sunset.** |
 
 IntelliCAD-based ActCAD continues to ship in parallel through Phase 2 → revenue protected.
@@ -162,7 +180,8 @@ The fix: **native Windows daily-driver first**, browser ships as viewer + markup
 
 | Risk | Mitigation |
 |---|---|
-| **ACIS B-rep fidelity** in customer DWGs through OCCT | §16 spike item 1 is decision-forcing; KAL keeps the swap option open |
+| **ACIS round-trip fidelity vs AutoCAD** on customer DWGs | §9 spike item 1 tests 50 real customer DWGs before contract signing; KAL preserves a kernel-swap escape hatch if needed |
+| **ACIS commercial exposure** — opaque OEM pricing + royalty + DELA + change-of-control (Dassault owns SolidWorks) | §9 spike item 1b runs procurement under NDA: scoped module list, per-deployment royalty, source escrow, DELA legal review before signing |
 | **LISP compatibility is multi-person-year** | Define coverage as % of measured customer-script corpus (80% P1 → 95% P2); migration tool for the tail |
 | **MCP without transactional undo corrupts drawings** | `agent` wraps `cmd` only; **every tool call = one host undo transaction** committed publicly |
 | **Two parallel product lines for 24 months** | Org plan for support + marketing context-switching; clear customer messaging from day 1 |
@@ -178,7 +197,8 @@ Full risk register (10 items, each with named mitigation) in `docs/rearchitectur
 
 | # | What | Pass criterion |
 |---|---|---|
-| 1 | OCCT fidelity on customer ACIS B-rep parts | <0.001 unit drift, booleans pass on ≥95% — **locks 3D kernel** |
+| 1 | **ACIS round-trip vs AutoCAD** on 50 customer DWGs (open → edit → save → re-open in AutoCAD) | <0.001 unit drift, booleans pass on ≥98%, identical handle set — **locks the ACIS contract** |
+| 1b | **ACIS commercial scoping under NDA** with Spatial | Written term sheet: module list, royalty model, WASM/Linux/macOS SKUs, source escrow, DELA, change-of-control — **before signing** |
 | 2 | inWEB perf vs native Visualize (Vulkan / DirectX) | inWEB ≤ 3× slower than native |
 | 3 | `ui-bridge` C ABI driving Qt + WASM from one `cmd` | One source of truth; no shell-specific branching |
 | 4 | Real customer LISP script on a minimal interpreter | Visually identical output to current ActCAD |
@@ -194,15 +214,13 @@ Full risk register (10 items, each with named mitigation) in `docs/rearchitectur
 
 | Phase | Engineers | Stack + tools + cloud |
 |---|---|---|
-| **Phase 1** (months 0–12) | 8 | **~$83,300** |
-| **Phase 2** (months 12–24) | 20 | **~$239,400** |
-| **Phase 3** (months 24–36) | 30 | **~$595,700** |
+| **Phase 1** (months 0–12) | 8 | **~$383K** (incl. ~$300K ACIS initial + recurring) |
+| **Phase 2** (months 12–24) | 20 | **~$449K** (incl. ~$210K ACIS recurring + royalty at GA) |
+| **Phase 3** (months 24–36) | 30 | **~$1.26M** (incl. ~$660K ACIS recurring + royalty at scale) |
 
-**What's in scope:** ODA Sustaining ($7.5K → $4.5K renewal, unlimited seats + Web/SaaS), Qt Commercial Enterprise (~$4K/dev/yr), OCCT (free under LGPL), VS Code primary + 2-3 VS Enterprise seats for perf devs, AI dev tooling (~$50/dev/mo), AWS infra (compute + GPU streaming), Clerk + Stripe.
+**What's in scope:** ODA Sustaining ($7.5K → $4.5K renewal, unlimited seats + Web/SaaS), Qt Commercial Enterprise (~$4K/dev/yr), **ACIS commercial OEM** (initial fee + 15–20% maintenance + per-seat or per-deployment royalty + component module fees + DELA), VS Code primary + 2-3 VS Enterprise seats for perf devs, AI dev tooling (~$50/dev/mo), AWS infra (compute + GPU streaming), Clerk + Stripe.
 
-**Not in scope** (deferred / hypothetical): Parasolid (~$200–500K/yr if it ever became necessary; not in 3-year plan), Open Cascade SAS support, ACIS commercial.
-
-> **No six-figure-plus opaque-OEM item carried in any phase.** Every line item is bounded by a published price.
+> **ACIS line items are industry-estimate placeholders** pending the §9 Spike 1b term sheet from Spatial. Real Phase-1 budget firms up once the contract conversation is closed. Royalty in Phase 2 / 3 scales with deployment volume — per-deployment vs per-seat negotiation has 10× cost implications at SMB scale.
 
 ---
 
@@ -212,10 +230,10 @@ Full risk register (10 items, each with named mitigation) in `docs/rearchitectur
 |---|---|---|
 | **ODA** | Sustaining from day 1 | Unlimited commercial seats + inWEB Web/SaaS rights, **no per-seat royalty**. Best-value line item in the entire stack. |
 | **Qt 6** | **Commercial App Dev Enterprise** | LGPL forbids static linking, can't satisfy iOS code-signing, can't keep modifications private — all required for closed-source product. |
-| **OCCT** | **LGPL 2.1 + linking exception (free)** | Exception **explicitly permits closed-source commercial linking, including static.** No commercial contract needed. |
+| **ACIS** | **Commercial OEM contract** (Spatial / Dassault) — terms gated on §9 Spike 1b | AutoCAD ASM is an ACIS fork → only ACIS round-trips customer 3D solids without drift. ActCAD already uses ACIS via IntelliCAD; this puts the contract direct. |
 | **Visual Studio Enterprise** | 2-3 perf devs only | IntelliTrace + Concurrency Visualizer + advanced profiler earns its price on Windows deep-debug. Rest of team on VS Code. |
 | **CMake / Emscripten / Cargo / .NET / MCP / Tauri** | OSS (free) | Permissive licenses; no commercial concern. |
-| **Parasolid / ACIS** | **Deferred — year-4+ hypothetical only** | Not budgeted. KAL keeps the swap option without paying for it. |
+| **Alternative kernels** | **Not chosen** | Anything that isn't ACIS introduces translation drift on AutoCAD-origin SAT blobs. KAL preserves the technical option to swap. |
 
 ---
 
@@ -267,7 +285,8 @@ Marketplace policy: **15% revenue share over a $5K/year free tier** (Apple-equiv
 - **No SDS / DIESEL / VBA / COM / ADS** — legacy maintenance contracts with shrinking usage
 - **No ObjectARX-compatible .NET surface** — opinionated and modern, set expectation early
 - **No Rust in `db` or `render` hot paths** — C++20 stays primary; Rust at the edges
-- **No Parasolid in the 3-year budget** — year-4+ hypothetical only
+- **No alternative kernel** — anything that isn't ACIS introduces drift on AutoCAD-origin SAT blobs; KAL preserves the technical swap option without paying for it
+- **No silent swap to disk** — fail loudly on out-of-budget drawings; never the AutoCAD-on-old-hardware "looks frozen, force-quit, lose work" failure mode
 - **No chat-in-canvas as primary AI UX** — Hypar's lesson
 - **No two products forever** — IntelliCAD ActCAD enters sunset in Phase 3
 
@@ -294,11 +313,13 @@ Each "don't" closes a door that competitors keep open and pay for.
 1. The **4–6 week feasibility spike** — small senior team, dedicated.
 2. **ODA Sustaining membership signup** ($7,500) — required for the spike itself.
 3. **AI dev tooling subscriptions** (Cursor Business + Copilot Business + Claude Code) for the spike team — ~$400 for 6 weeks.
-4. **Reaffirm strategic intent:** this is a 3-year program with revenue-protected migration, not a 12-month deliverable.
+4. **Open the ACIS NDA conversation with Spatial** — Spike 1b workstream; no signing today, just procurement scoping (module list, royalty model, DELA, source escrow).
+5. **Reaffirm strategic intent:** this is a 3-year program with revenue-protected migration, not a 12-month deliverable.
 
 **Defer until after the spike:**
 
 - Full 3-year program Go / No-Go (decided on spike data, not on this briefing).
+- ACIS contract signing (gated on Spike 1 fidelity + Spike 1b term sheet + legal DELA review).
 - Qt Commercial multi-year quote negotiation.
 - Engineering org standup for Phase 1.
 - Phase 1 willing-customer cohort selection.

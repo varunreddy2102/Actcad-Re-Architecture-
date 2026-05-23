@@ -66,7 +66,7 @@ Jytra is a paying ITC member, so they receive full IntelliCAD source — that's 
 - **1990s C++ monolith DNA.** IntelliCAD descends from Visio/Softdesk's 1996-era "Phoenix" AutoCAD clone. The object model, command dispatch, and UI shell carry that lineage. Memory model and threading are bolted on rather than designed in.
 - **API surface is huge and overlapping.** LISP + DCL + DIESEL + SDS (legacy C) + IRX (C++) + DRX + COM + VBA + .NET. Every API is a permanent maintenance contract with customers. SDS was already deprecated once (during the IntelliCAD 7 ODA transition) and still hasn't fully gone away.
 - **Platform locked to Windows in practice.** ODA and ACIS are cross-platform, but the IntelliCAD shell, the .NET/COM/VBA APIs, MFC-style UI, and Jytra's product layer are Windows-centric. macOS/Linux/web are not first-class.
-- **Performance ceiling on large drawings.** Public reviews repeatedly cite "moderately large drawings frequently get stuck" — symptomatic of the synchronous main-thread command/render loop typical of the IntelliCAD shell.
+- **Performance ceiling on large drawings.** Public reviews repeatedly cite "moderately large drawings frequently get stuck" — symptomatic of the synchronous main-thread command/render loop typical of the IntelliCAD shell, combined with no enforced memory budget, eager kernel materialization, and linear-scan hit-testing. The re-architecture addresses this with a memory architecture committed up-front rather than retrofitted — see `docs/rearchitecture-plan.md` §16.
 - **Vertical apps are loosely integrated.** Architecture / Mechanical / Electrical / BIM are layered as plug-in style modules, not deeply unified — meaning data flows between them are limited.
 - **UI paradigm anchored to AutoCAD ~2010.** Ribbon + command line + modal dialogs. Touch, collaboration, and cloud are retrofits.
 
@@ -123,9 +123,12 @@ The decision below in §4.1 should be read as: *replace; sequencing and migratio
    - *Replace (build above ODA directly)*: ODA Drawings + ODA Visualize + own command/UI layer. Drops the monolith, but you're rewriting ~25 years of CAD shell. Realistic only with a multi-year horizon.
    - *Replace (non-ODA engine)*: would forfeit DWG compatibility — likely non-starter for ActCAD's audience.
 
-2. **3D kernel: ACIS vs Open CASCADE vs ODA's own.**
-   - ACIS is what you have, what customers' files reference, and what other CAD products interop with. Switching kernels means migrating stored B-rep data and accepting feature gaps.
-   - Open CASCADE removes royalties but has known stability/feature differences for production workflows.
+2. **3D kernel: stay on ACIS, direct OEM contract.**
+   - **Decided: ACIS (Spatial / Dassault), direct OEM contract.** AutoCAD's 3D solids are stored as ASM (Autodesk Shape Manager) — a fork of ACIS that Autodesk took private around 2001 — and DWGs persist them as ACIS / ASM SAT blobs. For lossless round-trip of AutoCAD-origin 3D solids — the central value prop for AutoCAD migrators — ACIS is the only kernel that doesn't introduce translation drift.
+   - ActCAD already uses ACIS today (via IntelliCAD); the re-architecture takes the contract direct, drops the IntelliCAD middleman, and keeps customer file fidelity unchanged.
+   - All kernel access goes through a **Kernel Abstraction Layer (KAL)** so the engine never depends on ACIS-specific types in public headers; a kernel swap stays technically possible (~6–12 weeks of focused work) if business conditions ever require it.
+   - Alternative kernels were considered and rejected on the same basis: anything that isn't ACIS introduces translation drift on AutoCAD-origin SAT blobs. See `docs/rearchitecture-plan.md` §11.2.
+   - Commercial terms (initial OEM fee + maintenance + per-seat or per-deployment royalty + component module fees + DELA) are negotiated in Spike 1b under NDA — see `docs/rearchitecture-plan.md` §15.1 for the cost structure.
 
 3. **API surface: which legacies survive?**
    - LISP almost certainly must survive — that's the migration story from AutoCAD.
@@ -141,7 +144,8 @@ The decision below in §4.1 should be read as: *replace; sequencing and migratio
 - **DWG round-trip fidelity** — anything that touches the database layer must be measured against the existing DWG test corpus.
 - **Customer extension breakage** — quantify which APIs are *actually* used in the wild before sunsetting any of them. (This is one of the first things to ask for from internal material: telemetry or estimate of LISP / IRX / .NET extension distribution among paying customers.)
 - **Engine upgrade merge cost** if staying on ITC source — every ActCAD-side patch is a permanent rebase burden.
-- **3D kernel migration** is irreversible in practice once shipped to customers.
+- **3D kernel migration** is irreversible in practice once shipped to customers — which is why we are *staying* on ACIS rather than migrating. The KAL preserves the technical option to swap, but the business intent is continuity.
+- **ACIS commercial exposure** — opaque OEM pricing, royalty per seat or per deployment, change-of-control risk (Dassault owns SolidWorks, a competitor). Mitigated by source escrow + DELA review + business-continuation clauses in the OEM contract; see `docs/rearchitecture-plan.md` §7 and §10.
 
 ### 4.3 What to ask of the internal material (when it arrives)
 
