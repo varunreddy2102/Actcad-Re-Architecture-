@@ -729,7 +729,109 @@ Plain rule: **the architecture above doesn't survive contact with the codebase u
 
 Hold the drawing in memory; that's correct and unchanged from how every serious CAD product works. **Treat memory as a budgeted resource with a declared cap, separate the one writable layer (`db`) from the four cacheable layers above it, use MVCC so reads never block writes, build the spatial index at load time, materialize ACIS bodies lazily, evict tessellation under pressure, store undo as deltas not snapshots, put every operation over 8 ms on a worker thread, and fail loudly rather than silently swap.** Wire profilers and CI gates in from commit 1 so the architecture is measured, not hoped for. Do this and a 250MB DWG with 3D solids stays responsive on a $500 laptop — the architecture is what makes it possible, not the hardware. Skip this and you ship the same *"gets stuck on big drawings"* reputation we're escaping, just with our name on it.
 
-## 17. Next steps
+## 17. Render frame time — gaps and design decisions
+
+> **Context.** §16 covers the memory architecture that keeps the working set bounded. This section covers the render-specific architecture decisions that determine whether the `render` module actually hits the P99 ≤ 16 ms frame-time CI gate (§16.4) once drawings grow to 100K+ entities. Read alongside `docs/memory-architecture.md` §9.1 (render integration).
+
+### 17.1 What the current plan already has right
+
+| Mechanism | Why it helps frame time |
+|---|---|
+| MVCC snapshots | Render thread never waits on a write — no stall from an ACIS boolean mid-frame |
+| GPU-resident tessellation | Triangles live on the GPU; no re-upload every frame |
+| LRU hard cap on tessellation cache | Cache cannot grow until it starves the rest of the pipeline |
+| BVH frustum cull | Only submits draw calls for what's on screen |
+| Worker-thread tessellation regeneration | Missing tessellation regenerates on a worker; render submits a placeholder, frame doesn't stall |
+| Op-stream invalidation | Only the changed entity's tessellation is dirtied, not the whole scene |
+| 8 ms UI-thread debug assert + CI P99 gate | Regressions caught at write time, not at GA |
+
+These are the correct foundations. The gaps below are not contradictions of the plan — they are decisions the plan leaves open that must be closed before the `render` module header is written, because they change the shape of the tessellation cache key and the draw-call submission loop.
+
+### 17.2 Gap 1 — Block instancing (highest impact)
+
+**The problem.** A typical AEC or mechanical DWG has the same block (door, bolt, tree, fixture) inserted thousands of times. The tessellation cache as currently described is keyed on `(BodyHandle, detail_level)` and submits one draw call per visible entity. A drawing with 8,000 door inserts would submit up to 8,000 draw calls for identical geometry. The GPU is not the bottleneck — **CPU draw-call submission overhead is**. At scale, this alone can push frame time past 16 ms.
+
+**The fix.** Geometry instancing: tessellate the block *definition* once, upload one vertex buffer, and draw it N times with an instance buffer of N transforms — one draw call regardless of insert count. DirectX 11/12 and Vulkan both expose this as `DrawInstanced` / `vkCmdDrawIndexedIndirect`. ODA Visualize has instancing in its scene graph; using it correctly makes this free for Phase 1. A custom backend must design for it explicitly.
+
+**What must be decided before writing the module.** The tessellation cache key and invalidation logic are different for instanced geometry:
+
+- Invalidation on **block definition change** → re-tessellate the definition, update the shared vertex buffer
+- Invalidation on **insert transform change** → update the instance buffer only, no re-tessellation
+- Invalidation on **one insert's attributes** (colour override, layer visibility) → partial instance buffer update
+
+If the cache is designed flat `(entity_handle → mesh)` today, adding instancing later requires a significant refactor. Design it as `(definition_handle → mesh, [insert_handle → transform])` from commit 1.
+
+### 17.3 Gap 2 — LOD tier calculation (named but not designed)
+
+**The problem.** The tessellation cache key includes `detail_level` but the plan never defines how `detail_level` is computed. Without it:
+
+- An arc occupying 3 screen pixels gets tessellated at the same segment count as one filling the viewport
+- A circle at full zoom-out with 1,000 segments wastes GPU vertex throughput on geometry that contributes nothing to the pixel
+- On a full zoom-out of a 100K-entity drawing, every entity submits fully tessellated geometry regardless of screen contribution
+
+**The fix.** Compute the **pixel-projected size of the entity's AABB** from the camera transform during the BVH cull pass (which already has this information). Map projected size to a discrete detail tier:
+
+| Projected AABB diagonal | Tier | Policy |
+|---|---|---|
+| < 2 px | `NONE` | Skip draw call entirely |
+| 2–10 px | `DOT` | Single point or bounding box |
+| 10–50 px | `LOW` | 6-segment arcs, simplified polylines |
+| 50–200 px | `MED` | 24-segment arcs, normal polylines |
+| > 200 px | `HIGH` | Full tessellation |
+
+The BVH cull pass already computes projected bounds to decide visibility — the LOD tier comes out of that pass at zero extra cost. This is the change that keeps draw-call count sub-linear as the user zooms out.
+
+### 17.4 Gap 3 — Text rendering (completely unaddressed)
+
+**The problem.** Technical drawings carry enormous quantities of text: dimensions, annotations, leaders, attribute blocks, mtext. In a dense AEC drawing, text rendering is routinely 20–40% of total frame time if done naively. Re-rasterizing glyphs per frame on the CPU is catastrophically slow.
+
+**The correct approach.**
+
+- **SDF (Signed Distance Field) font atlas** on the GPU — one texture per font face, renders sharply at any size without per-frame CPU rasterization
+- GPU-resident glyph atlas keyed on `(font_face, codepoint)`; atlas is built once on first use, updated only on new codepoints
+- Text strings batched into a single draw call per font atlas per frame
+
+ODA Visualize handles text internally; for Phase 1 using Visualize as the backend this is their problem. **The `render` module abstraction must define a text-rendering seam** (`render_text(string, transform, style)`) so that the Visualize backend delegates to Visualize and a custom native backend can implement SDF independently without changing the rest of the engine.
+
+### 17.5 Gap 4 — GPU buffer upload strategy (not specified)
+
+**The problem.** When the render worker finishes tessellating an entity on a background thread, the mesh needs to reach the GPU. How this crossing happens determines whether frames stall:
+
+| Strategy | Behaviour | Verdict |
+|---|---|---|
+| Synchronous `Map/Unmap` on the render thread | Simple; causes a GPU pipeline bubble if the frame is mid-draw | Wrong |
+| Upload heap + drain at frame start (DX12 / Vulkan) | Worker writes to a CPU-visible upload heap; frame loop drains at the start of the next frame before any draw calls | **Correct for DX12 / Vulkan** |
+| DMA transfer queue (Vulkan) | Upload happens on a dedicated GPU transfer queue in parallel with rendering; zero frame time cost | **Best on Vulkan** |
+| `UpdateSubresource` (DX11) | DX11's synchronous path; acceptable on DX11 since there is no explicit transfer queue | Acceptable for DX11 only |
+
+The `render` module abstraction needs a `submit_tessellation(entity, mesh)` path whose backends implement the correct upload strategy for their API. This is a backend-specific concern but the seam must be in the abstraction from commit 1.
+
+### 17.6 Gap 5 — Dirty region / incremental redraw (deferred, document the deferral)
+
+**The problem.** The plan says the op-stream tells `render` which spatial regions need redraw, but does not say whether the engine redraws the full frame every frame or only redraws dirty tiles. Full-frame redraws at 60fps on a 4K display are roughly 2 GB/s of framebuffer write — modern GPUs handle this, but for the edit interaction loop (move one wall → only two dirty rectangles need to change) full redraws are wasted work.
+
+**Decision: full-frame redraws for Phase 1; dirty tiles deferred to Phase 2.** This is the correct trade-off — dirty-tile invalidation is a meaningful engineering investment and is premature before the basic render pipeline is working and measured. ODA Visualize has tile-based invalidation built in; use it when Visualize is the backend.
+
+**What must not be closed off.** The `render` module abstraction must not permanently hardcode full-frame semantics. The op-stream's spatial region invalidation (already in the plan) is the correct substrate for dirty-tile updates — preserve it so Phase 2 can layer dirty-tile redraws onto the same invalidation signal without changing the module interface.
+
+### 17.7 Design decisions before writing the `render` module header
+
+| Decision | When required | Impact if deferred |
+|---|---|---|
+| **Instanced tessellation cache** — `(definition_handle → mesh, [insert → transform])` structure, separate invalidation paths for definition vs instance transform | Before writing the `render` module header | Flat cache requires significant refactor to add instancing later |
+| **LOD tier calculation** — pixel-projected AABB size maps to `{NONE, DOT, LOW, MED, HIGH}` tiers, computed in the BVH cull pass | Before writing the `render` module header | Adding LOD later changes the cache key and the frustum-cull loop |
+| **`submit_tessellation()` upload-heap path** — backend-specific seam in the render abstraction | Before writing the `render` module header | Synchronous upload is sticky once code depends on it |
+| **Text rendering seam** — `render_text(string, transform, style)` in the backend interface | Phase 1 design | Hard to add cleanly to the backend abstraction after backends are written |
+| **Full-frame redraws confirmed for Phase 1** — dirty tile deferral explicitly documented | Phase 1 design | Not a code risk; a communication risk if engineers assume dirty tiles from day 1 |
+
+### 17.8 What we deliberately don't do
+
+- Don't design LOD tiers before measuring projected-AABB distribution on the real customer DWG corpus — the tier breakpoints above are starting points, not locked values.
+- Don't implement GPU-driven culling (compute-shader cull pass) for Phase 1 — the CPU BVH is correct and sufficient; GPU-driven culling is a Phase-3 optimisation if the corpus grows to millions of entities.
+- Don't add deferred / tiled rendering — this is 3D game engine complexity that is not warranted for ActCAD's 2D-primary use case in the 3-year plan.
+- Don't build the SDF text atlas in Phase 1 if ODA Visualize is handling text rendering — build the seam, not the implementation; implement SDF only if / when a custom backend is needed.
+
+## 18. Next steps
 
 1. Review and approve this plan, or push back on specific decisions in §2, §12, §13, §14, or §15.
 2. Run the feasibility spike (§9) — 4–6 weeks, small senior team, dedicated.
