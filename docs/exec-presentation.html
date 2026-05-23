@@ -1020,7 +1020,7 @@
       <div class="stack-layer-head"><span class="stack-num">04</span><span class="stack-name">3D &amp; modelling</span><span class="stack-sub">Where 3D geometry lives</span></div>
       <div class="stack-layer-body">
         <div class="stack-pick"><strong>ACIS</strong> <em class="ven-tag">Spatial / Dassault · commercial OEM</em><span>AutoCAD ASM is an ACIS fork — the only kernel that round-trips AutoCAD-origin 3D solids without drift. ActCAD already uses ACIS via IntelliCAD; this puts the contract direct.</span></div>
-        <div class="stack-pick"><strong>Parasolid / OCCT</strong> <em class="ven-tag">not chosen</em><span>Neither shares ACIS / ASM lineage; both lose fidelity on customer AutoCAD-origin solids. KAL preserves the technical swap option.</span></div>
+        <div class="stack-pick"><strong>Alternative kernels</strong> <em class="ven-tag">not chosen</em><span>Anything that isn't ACIS introduces translation drift on AutoCAD-origin SAT blobs. KAL preserves the technical swap option without paying for it.</span></div>
       </div>
     </div>
 
@@ -1116,6 +1116,59 @@
     op-stream is the single source of truth for replication, undo, and agent context;
     (2) only cmd is the agent seam, which is what makes "every MCP tool call = one undo
     transaction" enforceable as a property of the architecture, not as a discipline.
+  </aside>
+</section>
+
+<!-- ============================================================== -->
+<!-- 8b. MEMORY ARCHITECTURE -->
+<!-- ============================================================== -->
+<section>
+  <h2 style="margin-bottom: 0.3em;">Memory architecture — designing for headroom from day 1</h2>
+  <p class="small" style="margin: 0 0 0.5em;">CAD model: <strong>open the drawing once, hold it entirely in memory, edit there, write back on save.</strong> Correct and unchanged. Bottleneck risk lives in <em>how</em> we manage that memory. Five layers, one rule, eight commitments — full detail in <code>docs/rearchitecture-plan.md</code> §16.</p>
+
+  <div style="display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 18px;">
+    <div>
+      <h4 style="margin: 0 0 0.3em;">Five memory layers</h4>
+      <table style="font-size: 0.62em;">
+        <thead><tr><th>Layer</th><th>What it holds</th><th>Evictable?</th></tr></thead>
+        <tbody>
+          <tr><td><strong>1. <code>db</code></strong> — DWG database</td><td>Entities, handles, layers, blocks</td><td><strong>Never</strong> — single source of truth</td></tr>
+          <tr><td><strong>2. ACIS bodies</strong> — kernel graph</td><td><code>ENTITY</code> graph per touched solid</td><td><strong>Lazy</strong> — load on first touch</td></tr>
+          <tr><td><strong>3. Tessellation</strong> — GPU triangles</td><td>Render-ready buffers</td><td><strong>Yes</strong> — LRU evict</td></tr>
+          <tr><td><strong>4. Spatial indexes</strong></td><td>R-tree / BVH for hit-test / snap</td><td><strong>Rebuildable</strong></td></tr>
+          <tr><td><strong>5. Undo / op-log</strong></td><td>Delta records (also feeds sync + agent + audit)</td><td><strong>Truncatable</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <h4 style="margin: 0 0 0.3em;">Eight commitments that keep responsiveness flat</h4>
+      <ul style="font-size: 0.66em; line-height: 1.45; margin: 0; padding-left: 1.1em;">
+        <li>Single-mutator <code>db</code> + <strong>MVCC reads</strong> — no reader ever waits on a writer</li>
+        <li>Spatial index built <strong>at load time</strong> — no linear scans, ever</li>
+        <li><strong>Lazy ACIS materialization</strong> — kernel graphs paid for only when a solid is touched</li>
+        <li><strong>GPU-resident evictable tessellation</strong> — LRU evict under memory pressure, regenerate on demand</li>
+        <li><strong>Delta-not-snapshot undo</strong> — same op-stream feeds sync + agent + audit</li>
+        <li><strong>Declared memory budget per drawing</strong> — sized to the target machine class</li>
+        <li><strong>Fail loudly, never silently swap to disk</strong> — out-of-budget drawings get a clear error, not a frozen UI</li>
+        <li><strong>8 ms UI-thread budget</strong> — enforced by debug-build asserts in CI, not by code review discipline</li>
+      </ul>
+    </div>
+  </div>
+
+  <blockquote class="mt-2" style="margin: 0.6em 0 0;">
+    <strong>Why this matters strategically:</strong> the <em>"moderately large drawings get stuck"</em> reputation is the single biggest competitive vulnerability we inherit from IntelliCAD. The memory architecture is the place to fix it <strong>for good — at commit 1</strong>, with profilers and CI gates wired in from the start, not retrofitted after GA.
+  </blockquote>
+
+  <aside class="notes">
+    The CAD industry consensus is open-once-edit-in-memory-write-on-save — we don't try to be
+    clever and stream entities. What we do change is the discipline around the in-memory
+    structure: single mutator + MVCC readers, lazy ACIS materialization (kernel graphs cost
+    memory only when touched), evictable GPU tessellation, declared memory budgets, and an
+    8 ms UI-thread budget enforced by CI asserts. Out-of-budget drawings get a clear error;
+    no silent swap-to-disk failure mode of the kind that makes AutoCAD-on-old-hardware look
+    frozen and force-quit-lose-work. The "stuck on moderately large drawings" perception is
+    the single biggest reputational wound we carry forward from IntelliCAD — fixing it at
+    commit 1 is the only honest way to close it.
   </aside>
 </section>
 
@@ -1349,7 +1402,7 @@
   <div class="chapter-num">Chapter 03</div>
   <h1>The numbers</h1>
   <hr class="chapter-rule">
-  <p class="chapter-sub">~$1.38M over three years. Stack, salary, and contingencies — every line bounded by a published price.</p>
+  <p class="chapter-sub">~$2.69M over three years. Stack (dominated by the ACIS OEM contract), salary, and contingencies — every line bounded by a published price or a Spike 1b term-sheet placeholder.</p>
 </section>
 
 <!-- ============================================================== -->
@@ -1364,17 +1417,19 @@
     </div>
     <div>
       <h4>3-year envelope</h4>
-      <div class="cost-line"><span class="item">Stack + tools + cloud (slide 14)</span><span class="val">~$780K</span></div>
+      <div class="cost-line"><span class="item">Stack + tools + cloud incl. ACIS OEM (slide 14)</span><span class="val">~$2,092K</span></div>
       <div class="cost-line"><span class="item">Loaded India salary (slide 15)</span><span class="val">~$600K</span></div>
-      <div class="cost-line total"><span>3-year total project envelope</span><span class="val">~$1,380K · ₹13.3 Cr</span></div>
+      <div class="cost-line total"><span>3-year total project envelope</span><span class="val">~$2,692K · ₹25.9 Cr</span></div>
       <h4 style="margin-top: 1em;">By phase (stack + salary, ramp-adjusted)</h4>
-      <div class="cost-line"><span class="item"><strong>P1 · Foundation</strong> — Win beta + browser viewer<br><span class="tiny">ramp 4→7 ppl</span></span><span class="val">$75K + $96K = <strong>$171K</strong></span></div>
-      <div class="cost-line"><span class="item"><strong>P2 · Production v1</strong> — full editor, GA at mo 24<br><span class="tiny">ramp 7→16 ppl</span></span><span class="val">$216K + $201K = <strong>$417K</strong></span></div>
-      <div class="cost-line"><span class="item"><strong>P3 · Parity-or-better</strong> — 3D, BIM, mobile<br><span class="tiny">ramp 16→25 ppl</span></span><span class="val">$489K + $301K = <strong>$790K</strong></span></div>
-      <h4 style="margin-top: 1em;">Not in scope (deferred)</h4>
-      <div class="cost-line"><span class="item">Parasolid (year-4+ option only)</span><span class="val">$0</span></div>
-      <div class="cost-line"><span class="item">Open Cascade SAS commercial support</span><span class="val">$0</span></div>
-      <div class="cost-line"><span class="item">ACIS commercial OEM</span><span class="val">$0</span></div>
+      <div class="cost-line"><span class="item"><strong>P1 · Foundation</strong> — Win beta + browser viewer<br><span class="tiny">ramp 4→7 ppl · incl. ~$300K ACIS initial + recurring</span></span><span class="val">$383K + $96K = <strong>$479K</strong></span></div>
+      <div class="cost-line"><span class="item"><strong>P2 · Production v1</strong> — full editor, GA at mo 24<br><span class="tiny">ramp 7→16 ppl · incl. ~$210K ACIS recurring + royalty at GA</span></span><span class="val">$449K + $201K = <strong>$650K</strong></span></div>
+      <div class="cost-line"><span class="item"><strong>P3 · Parity-or-better</strong> — 3D, BIM, mobile<br><span class="tiny">ramp 16→25 ppl · incl. ~$660K ACIS recurring + royalty at scale</span></span><span class="val">$1,260K + $301K = <strong>$1,561K</strong></span></div>
+      <h4 style="margin-top: 1em;">ACIS line items (industry-estimate placeholders, pending Spike 1b)</h4>
+      <div class="cost-line"><span class="item">Initial license fee (one-time, P1)</span><span class="val">~$200K</span></div>
+      <div class="cost-line"><span class="item">Annual maintenance (~15–20% of initial)</span><span class="val">~$35K/yr</span></div>
+      <div class="cost-line"><span class="item">Per-deployment royalty (scales with volume)</span><span class="val">P2 / P3</span></div>
+      <div class="cost-line"><span class="item">Component module fees (Healing, Deformable, etc.)</span><span class="val">~$50K</span></div>
+      <div class="cost-line"><span class="item">Source escrow (DELA term)</span><span class="val">~$5K/yr</span></div>
     </div>
   </div>
   <p class="tiny centered" style="margin: 6px 0 0; line-height: 1.35;"><strong>Every line is bounded by a published price.</strong> Stack is membership + per-seat tooling + metered cloud — no hidden variable contracts. Next two slides drill into stack and salary respectively.</p>
@@ -1392,8 +1447,8 @@
 <!-- 14. STACK DRILL-DOWN — third-party / tools / cloud -->
 <!-- ============================================================== -->
 <section>
-  <h2 style="margin-bottom: 0.25em;">Stack + tools + cloud — ~$780K over 3 years</h2>
-  <p class="tiny" style="margin-bottom: 0.4em; line-height: 1.35;">High-level cost buckets per phase, sized to the lean 7 / 16 / 25-person plan (6 / 15 / 23 devs + 1 / 1 / 2 QA). Per-seat lines (Qt, AI bundles, JetBrains, GitHub) scale with headcount; ODA / VS Enterprise / cloud + auth scale independently. QA gets AI bundles + JetBrains but not Qt Commercial.</p>
+  <h2 style="margin-bottom: 0.25em;">Stack + tools + cloud — ~$2.09M over 3 years (ACIS-dominated)</h2>
+  <p class="tiny" style="margin-bottom: 0.4em; line-height: 1.35;">High-level cost buckets per phase, sized to the lean 7 / 16 / 25-person plan (6 / 15 / 23 devs + 1 / 1 / 2 QA). Per-seat lines (Qt, AI bundles, JetBrains, GitHub) scale with headcount; ODA / VS Enterprise / cloud + auth scale independently. <strong>ACIS dominates at ~57%</strong> — industry-estimate placeholders pending the Spike 1b term sheet from Spatial.</p>
   <table style="font-size: 0.62em;">
     <thead>
       <tr><th>Bucket</th><th>What's in it</th><th>P1 (7 ppl)</th><th>P2 (16 ppl)</th><th>P3 (25 ppl)</th><th>3-yr total</th></tr>
@@ -1405,23 +1460,25 @@
       <tr><td><strong>Cloud + infra</strong></td><td>AWS compute + g5 GPU streaming + CDN + egress</td><td>$8.0K</td><td>$50.0K</td><td>$160.0K</td><td><strong>$218.0K · 28%</strong></td></tr>
       <tr><td><strong>Auth + billing</strong></td><td>Clerk B2B (per-MAU) + Stripe (% of ARR)</td><td>$1.0K</td><td>$14.0K</td><td>$77.0K</td><td><strong>$92.0K · 12%</strong></td></tr>
       <tr style="background: #fff8eb;"><td><strong>Security + signing + extra translators</strong> <em style="font-size:0.85em; color: var(--accent);">— new (validation gap close)</em></td><td>EV code-signing cert (annual) + MCP/agent third-party pen-test (P2) + ODA IFC validator suite + GIS / specialised translators</td><td>$3.0K</td><td>$25.0K</td><td>$15.0K</td><td><strong>$43.0K · 5%</strong></td></tr>
-      <tr><td><strong>3D kernel</strong></td><td>OCCT under LGPL 2.1 + linking exception</td><td colspan="3" style="text-align:center;">$0 — free, closed-source-safe</td><td><strong>$0</strong></td></tr>
-      <tr style="background: var(--bg-cream); border-top: 2px solid var(--primary);"><td colspan="2"><strong>Phase total</strong></td><td><strong>$75.2K</strong></td><td><strong>$216.0K</strong></td><td><strong>$489.0K</strong></td><td><strong>~$780.2K</strong></td></tr>
+      <tr style="background: #fff8eb;"><td><strong>3D kernel — ACIS</strong> <em style="font-size:0.85em; color: var(--accent);">— industry-estimate placeholders pending Spike 1b</em></td><td>Spatial / Dassault commercial OEM — initial license + 15–20% maintenance + per-deployment royalty + module fees (Healing, Deformable, Lop, etc.) + DELA / source escrow</td><td>~$307.5K <em style="font-size:0.85em;">(initial $200K + maint $35K + modules $50K + escrow $5K + recurring)</em></td><td>~$232.5K <em style="font-size:0.85em;">(maint + modules + escrow + royalty at GA)</em></td><td>~$660.0K <em style="font-size:0.85em;">(maint + escrow + royalty at scale)</em></td><td><strong>~$1,200K · 57%</strong></td></tr>
+      <tr style="background: var(--bg-cream); border-top: 2px solid var(--primary);"><td colspan="2"><strong>Phase total</strong></td><td><strong>~$383K</strong></td><td><strong>~$449K</strong></td><td><strong>~$1,260K</strong></td><td><strong>~$2,092K</strong></td></tr>
     </tbody>
   </table>
   <div class="card-grid cols-3 compact-cards" style="margin-top: 0.5em; gap: 10px;">
-    <div class="card primary"><h4>Observation 1</h4><p class="body"><strong>Cloud + Qt = 56% of 3-yr stack spend.</strong> Both scale with growth (MAU / devs). Multi-year negotiation room — §9 spike item 6 negotiates Qt.</p></div>
-    <div class="card primary"><h4>Observation 2</h4><p class="body"><strong>AI tooling = $25K over 3 years (3.2% of stack)</strong> — the cheapest line that matters. Buys 25 people shipping what ~40 devs would have pre-AI.</p></div>
-    <div class="card primary"><h4>Observation 3</h4><p class="body"><strong>Every line bounded by a published price.</strong> Membership + per-seat + metered cloud — no hidden variable contracts. Security / IFC / GIS in a discrete $43K (5%) line.</p></div>
+    <div class="card primary"><h4>Observation 1</h4><p class="body"><strong>ACIS is ~57% of 3-yr stack spend.</strong> The single line worth negotiating hardest. §9 Spike 1b runs procurement under NDA — module list, royalty model, source escrow, DELA — before signing.</p></div>
+    <div class="card primary"><h4>Observation 2</h4><p class="body"><strong>AI tooling = $25K over 3 years (~1% of stack)</strong> — the cheapest line that matters. Buys 25 people shipping what ~40 devs would have pre-AI.</p></div>
+    <div class="card primary"><h4>Observation 3</h4><p class="body"><strong>Every non-ACIS line is bounded by a published price.</strong> ACIS line items are industry-estimate placeholders that firm up once Spatial returns the term sheet. Royalty model (per-deployment vs per-seat) has ~10× cost implications at SMB scale.</p></div>
   </div>
 
   <aside class="notes">
-    Numbers reflect the post-validation rebudget: lean 7 / 16 / 25 team with 2 seniors and
-    full-year P1 QA. Per-seat lines bumped modestly for the 2nd senior in P2 / P3 (Qt $194K,
-    dev tools $134K over 3 years). Security + signing + IFC validator + GIS translators
-    added as a discrete $43K line — closing the validation gap flagged in the spike review.
-    Foundation libs are membership-based, not per-seat, so they're unchanged. Phase 3 is still
-    cloud-dominated (~33% of P3 stack) — that's a customer-load fact, not a team-size fact.
+    Numbers reflect the post-validation rebudget plus the ACIS pivot: lean 7 / 16 / 25 team
+    with 2 seniors and full-year P1 QA. ACIS is now the dominant stack line (~57% of 3-yr
+    spend) and the line item with the most negotiation leverage — Spike 1b runs procurement
+    under NDA to firm up the placeholder estimates. Per-deployment vs per-seat royalty has
+    ~10× cost implications at SMB scale. Per-seat lines bumped modestly for the 2nd senior
+    in P2 / P3. Foundation libs are membership-based, not per-seat. Phase 3 is now
+    ACIS- and cloud-dominated together (~65% of P3 stack) — both customer-load facts, not
+    team-size facts.
   </aside>
 </section>
 
@@ -1458,7 +1515,7 @@
       <table style="font-size: 0.6em;">
         <thead><tr><th>Sub-team</th><th>P1 (7)</th><th>P2 (16)</th><th>P3 (25)</th></tr></thead>
         <tbody>
-          <tr><td>Engine core (C++ · DWG · OCCT KAL) <em style="font-size:0.85em;">— houses senior #1 (P1) and senior #2 (P2)</em></td><td style="text-align:center;"><strong>2</strong></td><td style="text-align:center;"><strong>5</strong></td><td style="text-align:center;"><strong>6</strong></td></tr>
+          <tr><td>Engine core (C++ · DWG · ACIS KAL) <em style="font-size:0.85em;">— houses senior #1 (P1) and senior #2 (P2)</em></td><td style="text-align:center;"><strong>2</strong></td><td style="text-align:center;"><strong>5</strong></td><td style="text-align:center;"><strong>6</strong></td></tr>
           <tr><td>Shell (Qt desktop + ui-bridge ABI)</td><td style="text-align:center;"><strong>1</strong></td><td style="text-align:center;"><strong>2</strong></td><td style="text-align:center;"><strong>2</strong></td></tr>
           <tr><td>Browser shell (WASM + WebGPU)</td><td style="text-align:center;">—</td><td style="text-align:center;"><strong>2</strong></td><td style="text-align:center;"><strong>2</strong></td></tr>
           <tr><td>Cloud team (two-tier co-edit + scale)</td><td style="text-align:center;">—</td><td style="text-align:center;"><strong>2</strong></td><td style="text-align:center;"><strong>3</strong></td></tr>
@@ -1472,7 +1529,7 @@
           <tr style="border-top: 2px solid var(--primary); background: var(--bg-cream);"><td><strong>Total team · AI bundles</strong></td><td style="text-align:center;"><strong>7</strong></td><td style="text-align:center;"><strong>16</strong></td><td style="text-align:center;"><strong>25</strong></td></tr>
         </tbody>
       </table>
-      <p class="tiny" style="margin: 4px 0 0; line-height: 1.3; font-size: 0.58em;"><strong>Why this works leaner:</strong> 2 senior tech-leads in Engine core (#1 anchors DWG / OCCT KAL P1; #2 added P2). AI handles ABI plumbing, test scaffolding, CI, LISP corpus, vertical boilerplate. <strong>QA from day 1:</strong> golden DWG regression corpus, cross-platform visual diff, perf regression, LISP top-50, beta triage.</p>
+      <p class="tiny" style="margin: 4px 0 0; line-height: 1.3; font-size: 0.58em;"><strong>Why this works leaner:</strong> 2 senior tech-leads in Engine core (#1 anchors DWG / ACIS KAL P1; #2 added P2). AI handles ABI plumbing, test scaffolding, CI, LISP corpus, vertical boilerplate. <strong>QA from day 1:</strong> golden DWG regression corpus, cross-platform visual diff, perf regression, LISP top-50, beta triage.</p>
     </div>
   </div>
 
@@ -1506,19 +1563,21 @@
     <tbody>
       <tr><td><strong>ODA</strong></td><td>Sustaining from day 1 — unlimited commercial seats + inWEB Web/SaaS, no per-seat royalty</td><td><strong>P1:</strong> DWG fidelity + Visualize render · <strong>P2:</strong> inWEB browser editor · <strong>P3:</strong> BIM / IFC, MCAD translators</td><td><span class="badge locked">Locked</span></td></tr>
       <tr><td><strong>Qt 6</strong></td><td>Commercial App Dev Enterprise — LGPL would forbid static linking, iOS code-signing, private modifications</td><td><strong>P1:</strong> Windows daily-driver shell · <strong>P2:</strong> Mac + Linux shells at parity · <strong>P3:</strong> iOS / Android viewer code-signing</td><td><span class="badge locked">Locked</span></td></tr>
-      <tr><td><strong>OCCT (3D kernel)</strong></td><td>LGPL 2.1 + linking exception — explicitly permits closed-source commercial linking, including static. <strong>The only viable open-source B-rep kernel</strong> for our scope.</td><td><strong>P2:</strong> light 3D in editor · <strong>P3:</strong> full 3D + BIM-lite (IFC import/export, parametric architectural objects)</td><td><span class="badge free">Free</span></td></tr>
+      <tr><td><strong>ACIS (3D kernel)</strong></td><td>Spatial / Dassault commercial OEM contract — AutoCAD's ASM is an ACIS fork, so ACIS is the only kernel that round-trips AutoCAD-origin 3D solids without drift. ActCAD already uses ACIS via IntelliCAD; this puts the contract direct.</td><td><strong>P1:</strong> kernel skeleton + KAL · <strong>P2:</strong> light 3D in editor · <strong>P3:</strong> full 3D + BIM-lite (IFC import/export, parametric architectural objects)</td><td><span class="badge locked">Locked — terms gated on Spike 1b</span></td></tr>
       <tr><td><strong>Visual Studio Ent.</strong></td><td>2–3 perf devs only (IntelliTrace, Concurrency Visualizer); VS Code primary for the rest</td><td><strong>P1–P3:</strong> render / boolean perf tuning across phases</td><td><span class="badge locked">Locked</span></td></tr>
       <tr><td><strong>CMake / Emscripten / Cargo</strong></td><td>Permissive OSS; no commercial concern</td><td><strong>P1–P3:</strong> build pipeline · Emscripten gates the browser WASM target</td><td><span class="badge free">Free</span></td></tr>
       <tr><td><strong>.NET / MCP / WebGPU</strong></td><td>MIT / W3C / Khronos — free open standards</td><td><strong>P1:</strong> AI assistant (MCP) · <strong>P2:</strong> .NET extension surface · <strong>P2–P3:</strong> WebGPU browser render</td><td><span class="badge free">Free</span></td></tr>
-      <tr><td><strong>Parasolid / ACIS</strong></td><td>Year-4+ hypothetical only — not budgeted; KAL preserves the swap option</td><td>Optional escape valve <strong>only if</strong> OCCT underperforms in P3 mechanical work</td><td><span class="badge deferred">Deferred</span></td></tr>
+      <tr><td><strong>Alternative kernels</strong></td><td>Not chosen — anything that isn't ACIS introduces translation drift on AutoCAD-origin SAT blobs. KAL preserves the technical swap option only as an escape valve if ACIS terms become unworkable post-spike.</td><td>Hypothetical escape valve only</td><td><span class="badge deferred">Not chosen</span></td></tr>
     </tbody>
   </table>
-  <p class="small mt-2"><strong>The best-value line item in the entire stack:</strong> ODA Sustaining at ~$4.5K/yr renewal gets unlimited commercial seats + inWEB web redistribution with no per-seat royalty.</p>
+  <p class="small mt-2"><strong>The best-value line item in the entire stack:</strong> ODA Sustaining at ~$4.5K/yr renewal gets unlimited commercial seats + inWEB web redistribution with no per-seat royalty. <strong>The line that needs the hardest negotiation:</strong> ACIS — Spike 1b runs procurement under NDA to firm up the placeholder estimates before any signature.</p>
 
   <aside class="notes">
     Every component has been deliberately chosen for closed-source commercial safety. The
-    OCCT linking exception is the critical legal fact — it's why we get a free, mature B-rep
-    kernel without commercial contract obligations. Verify with legal before kickoff.
+    critical legal step is <strong>ACIS DELA review</strong> — the OEM contract carries a
+    Developer Enabling License Agreement plus source escrow + change-of-control language that
+    matters because Dassault owns SolidWorks (a direct competitor up-market). Spike 1b puts
+    the term sheet in writing, legal reviews it, and only then does Phase 1 kick off.
   </aside>
 </section>
 
@@ -1673,7 +1732,7 @@
     <li><strong>No SDS / DIESEL / VBA / COM / ADS.</strong> Legacy AutoLISP-era extension APIs with shrinking usage. Maintenance cost outweighs customer value.</li>
     <li><strong>No ObjectARX-compatible .NET surface.</strong> Our .NET extension API is opinionated and modern, not bug-compatible with AutoCAD's. We say this up front so partners can plan.</li>
     <li><strong>No experimental memory-safe languages in the engine hot path.</strong> C++20 stays the primary engine language. Rust is used only at the edges (sync, AI agent, scripting host).</li>
-    <li><strong>No Parasolid in the 3-year budget.</strong> The premium 3D kernel ($200K+) stays a year-4+ option, only if Open Cascade underperforms on mechanical work.</li>
+    <li><strong>No alternative kernel.</strong> Anything that isn't ACIS introduces translation drift on AutoCAD-origin SAT blobs. The KAL preserves the swap option as an architectural escape valve, but ACIS is the only kernel we ship.</li>
     <li><strong>No "describe your design to a chatbot and we'll generate it."</strong> <em>Hypar's lesson:</em> a 2024–25 BIM-via-chat startup that pivoted in 2025 — text-to-building was the wrong abstraction; they rebuilt around "suggestions in the editor" instead. We start there.</li>
     <li><strong>No two products forever.</strong> Existing IntelliCAD-based ActCAD ships through Phase 2 to protect revenue, then enters published sunset in Phase 3.</li>
   </ul>
@@ -1725,7 +1784,7 @@
   <div class="chapter-num">Chapter 04</div>
   <h1>The decision</h1>
   <hr class="chapter-rule">
-  <p class="chapter-sub">$8K and 6 weeks today. The full $1.38M commitment only after the spike returns measured data.</p>
+  <p class="chapter-sub">$8K and 6 weeks today. The full $2.69M commitment only after the spike returns measured data — including the ACIS term sheet from Spatial.</p>
 </section>
 
 <!-- ============================================================== -->
@@ -1740,6 +1799,7 @@
         <li>The <strong>4–6 week feasibility spike</strong> — small senior team, dedicated</li>
         <li><strong>ODA Sustaining membership signup</strong> ($7,500) — required for the spike</li>
         <li><strong>AI dev tooling subscriptions</strong> (Cursor + Copilot + Claude Code) for the spike team — ~$400 for 6 weeks</li>
+        <li><strong>Open the ACIS NDA conversation with Spatial</strong> — Spike 1b workstream · no signing today, just procurement scoping (module list, royalty model, DELA, source escrow)</li>
         <li><strong>Reaffirm strategic intent</strong> — this is a 3-year program with revenue-protected migration, not a 12-month deliverable</li>
       </ol>
     </div>
@@ -1747,18 +1807,20 @@
       <h3>○ Defer until after the spike</h3>
       <ol>
         <li>Full 3-year program Go / No-Go (decided on spike data, not on this briefing)</li>
+        <li><strong>ACIS contract signing</strong> (gated on Spike 1 fidelity + Spike 1b term sheet + legal DELA review)</li>
         <li>Qt Commercial multi-year quote negotiation</li>
         <li>Engineering org standup for Phase 1</li>
         <li>Phase 1 willing-customer cohort selection</li>
       </ol>
     </div>
   </div>
-  <p class="centered mt-2" style="font-size: 0.85em; color: var(--text-2);"><strong>Total cost of today's decision:</strong> ~$8,000 + 4–6 weeks of senior engineer time. <strong>Information return:</strong> a measured Go / No-Go on a ~$1.38M envelope (lean 7 / 16 / 25-person plan with 2 seniors + QA from day 1, stack + ramp-adjusted India salary, 3 years).</p>
+  <p class="centered mt-2" style="font-size: 0.85em; color: var(--text-2);"><strong>Total cost of today's decision:</strong> ~$8,000 + 4–6 weeks of senior engineer time (Spike 1b runs procurement in parallel — no signing). <strong>Information return:</strong> a measured Go / No-Go on a ~$2.69M envelope (lean 7 / 16 / 25-person plan with 2 seniors + QA from day 1, stack incl. ACIS OEM contract + ramp-adjusted India salary, 3 years).</p>
 
   <aside class="notes">
     Frame the decision-cost-vs-information-return explicitly. We're not asking management to
-    commit to $1.38M today — we're asking them to spend $8K and 6 weeks to find out whether
-    $1.38M is the right envelope.
+    commit to $2.69M today — we're asking them to spend $8K and 6 weeks to find out whether
+    $2.69M is the right envelope, including whether the ACIS term sheet from Spatial lands
+    inside the placeholder estimate.
   </aside>
 </section>
 
@@ -1944,8 +2006,8 @@ Reveal.initialize({
             stack: 'total'
           },
           {
-            label: 'Stack + tools + cloud',
-            data: [75, 216, 489],
+            label: 'Stack + tools + cloud (incl. ACIS OEM)',
+            data: [383, 449, 1260],
             backgroundColor: 'rgba(30, 58, 92, 0.9)',
             borderColor: 'rgba(16, 37, 66, 1)',
             borderWidth: 2,
