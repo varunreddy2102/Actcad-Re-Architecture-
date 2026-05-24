@@ -2,7 +2,7 @@
 
 ## 0. Status
 
-Working shortlist for the white-label platform's master brand (`docs/platform-strategy.md` §10.2). Constraint: name must end in **CAD**. Target voice: **Indian roots, modern SaaS feel, patriotic resonance in the Atmanirbhar Bharat / Modi-era register, engineering-credible to international partners (ODA, Spatial, Qt).**
+Working shortlist for the white-label platform's master brand (`docs/platform-strategy.md` §10.2). Constraint: name must end in **CAD**. Target voice: **Indian roots, modern SaaS feel, patriotic resonance in the Atmanirbhar Bharat / Modi-era register, engineering-credible to international partners (ODA, Spatial, Qt), and — explicitly — "from India, for the world."** The brand must read to a German AEC reseller, a Brazilian MEP ISV, and a Vietnamese drafter as confidently Indian *and* confidently global. Tata, Mahindra, Infosys, Jio, ISRO, HAL Tejas, HAL Dhruv — the brand should feel like the next entry in that lineage, not a parochial regional CAD.
 
 **Nothing is committed yet.** This document records the candidates and the rationale. Trademark and domain clearance happen before any external use.
 
@@ -16,7 +16,8 @@ Working shortlist for the white-label platform's master brand (`docs/platform-st
 | **Modern SaaS feel** | Sounds like a 2026 software platform, not a 1990s shareware product. Two syllables before "CAD" preferred; three at most |
 | **Patriotic resonance** | Carries an Atmanirbhar / Modi-era / Bharat-confident association — ideally tied to a known modern symbol (HAL Tejas LCA, ISRO missions, Bharat Nirmaan, Setu Bharatam) |
 | **Engineering credibility** | A Spatial / ODA / Qt commercial counterparty must read it as a serious engineering brand, not a consumer app |
-| **International pronounceability** | Members may be in India, SEA, EU, NA, LATAM. The name must survive being spoken in English by people who don't know Sanskrit |
+| **International pronounceability** | Members may be in India, SEA, EU, NA, LATAM. The name must survive being spoken in English by people who don't know Sanskrit. Consonant clusters like "Dh-", "V-sh-w-" cost points here |
+| **Global positioning fit** | Brand must support the "from India, for the world" thesis. Either via *literal meaning* (Vishwa = world, Jagat = universe) or via *export-proof association* (HAL Tejas LCA is now sold to Malaysia / in talks with Argentina; HAL Dhruv operated by 10+ countries; ISRO Chandrayaan / Aditya missions watched globally). Inward-only references (Bharat Nirmaan, Amrit Kaal) are weaker on this axis |
 | **TM / domain clearance potential** | Distinct enough from existing CAD vendors and Indian SaaS brands to clear trademark in target jurisdictions and acquire a usable `.com` / `.cad` / `.io` |
 | **Sub-brand room** | Master brand should support a family: `[X] Engine`, `[X] Forge` (marketplace), `[X] Cloud` (SaaS surface), `[X] SDK` |
 
@@ -26,7 +27,7 @@ Working shortlist for the white-label platform's master brand (`docs/platform-st
 
 The four names that land **all seven criteria** at full strength.
 
-### 2.1 **TejasCAD**
+### 2.1 **TejasCAD** *(top pick; HAL Tejas LCA — exported)*
 
 **Sanskrit:** तेजस् — *brilliance, fire, radiant sharpness*
 
@@ -35,7 +36,8 @@ The four names that land **all seven criteria** at full strength.
 **Why it works for this platform:**
 
 - The Tejas LCA story is exactly the story we're telling: *India-engineered alternative to Autodesk, Bricsys, etc., built on Indian terms with Indian IP ownership.*
-- Two syllables before "CAD" → clean rhythm: **Te-jas-CAD**.
+- **"From India, for the world" is already proven** in the Tejas LCA story itself: HAL signed an export deal with Malaysia in 2023 (18 aircraft), is in advanced talks with Argentina and Egypt, and is on offer in the Philippines / UAE / Nigeria pipelines. The brand inherits a *living* export narrative, not just an Atmanirbhar slogan.
+- Two syllables before "CAD" → clean rhythm: **Te-jas-CAD**. Two short consonant-vowel beats; survives every accent.
 - Sharp, fast, masculine-coded but not heavy. Reads as fast / precise — the right associations for a CAD platform.
 - International CXOs at Spatial / ODA / Qt will read the reference correctly; it does the patriotic positioning for us in a single word.
 
@@ -131,6 +133,96 @@ The four names that land **all seven criteria** at full strength.
 
 ---
 
+### 2.5 **VishwaCAD** *(literal "world"; Vishwa Guru framing)*
+
+**Sanskrit:** विश्व — *world, universe, the whole of creation*
+
+**"From India, for the world" anchor:** The Modi-era **Vishwa Guru** ("teacher to the world") framing — India positioning itself as a guide to the world in technology, vaccines (Vaccine Maitri), space, digital infrastructure (UPI export to UAE / Singapore / France / Sri Lanka), and now defense exports. The word *Vishwa* literally **is** the global-positioning thesis; no translation needed for an Indian reader, and the international meaning ("world") carries through any language.
+
+**Why it works for this platform:**
+
+- The brand articulates the positioning *in the name itself.* When the white-label pitch deck says "India for the world," the brand reinforces the sentence rather than fighting it.
+- Two syllables → **Vish-wa-CAD**. The rhythm is good even though one consonant cluster is harder than Tejas.
+- Universally legible meaning. A Brazilian or German member knows what "Vishwa" means after a one-line founder pitch and never forgets.
+- Avoids the defense / military register some of Tejas / Vikram carry — fits AEC, MEP, civil, industrial verticals equally.
+
+**Sub-brand family:**
+
+- **VishwaCAD** — master brand
+- **Vishwa Engine** — runtime
+- **Vishwa Forge** — marketplace
+- **Vishwa Cloud** — SaaS surface
+
+**Watch-outs:**
+
+- **Pronounceability:** the "Vish-wa" cluster (especially the *shw*) is the hardest in this shortlist for native Romance / Germanic speakers. Mitigation: most will land on "VISH-wa" within one correction and stay there. Not a deal-breaker but a real cost.
+- **TM:** "Vishwa" appears in many Indian company names (Vishwakarma is a god of crafts; Vishwa Bharati is the Tagore university). The compound **VishwaCAD** should be clearable since no CAD product uses it.
+- **Risk of grandiosity:** "world" is a big claim. Reads confidently if the product backs it up; reads hollow if the product is small. Acceptable risk given the actual ambition.
+
+**Recommendation rank: #2 (after TejasCAD).**
+
+---
+
+### 2.6 **DhruvaCAD** *(pole star; HAL Dhruv — exported)*
+
+**Sanskrit:** ध्रुव — *the pole star; the fixed, unmoving reference point; "constant"*
+
+**"From India, for the world" anchor:** **HAL Dhruv** advanced light helicopter — designed by HAL, operated by Ecuador, Mauritius, Maldives, Nepal, Suriname, Peru. Another concrete export-proven Indian engineering platform. The pole-star metaphor is also globally readable: navigators across all civilizations have used the pole star — the symbol pre-translates.
+
+**Why it works for this platform:**
+
+- **The pole-star metaphor is perfect for a white-label platform.** Members align to the platform the way ships align to Dhruva. The marketing writes itself: "the fixed point your CAD product builds around."
+- Two syllables → **Dhru-va-CAD**.
+- Mythological depth: the boy Dhruva in Hindu lore earned his fixed place through unwavering focus — a stability / constancy story that fits an infrastructure platform brand.
+- Like Tejas, HAL Dhruv's export track record gives the brand a real "India-engineered, world-flown" backbone.
+
+**Sub-brand family:**
+
+- **DhruvaCAD** — master brand
+- **Dhruva Engine** — runtime
+- **Dhruva Forge** — marketplace
+- **Dhruva Cloud** — SaaS surface
+
+**Watch-outs:**
+
+- **Pronounceability:** the leading "Dh-" aspirated dental is the hardest consonant for non-Indic speakers in this shortlist (worse than Vishwa's *shw*). Westerners will collapse it to "DROO-va" or "DOO-va." Tolerable, but it costs points.
+- **TM:** "Dhruv" / "Dhruva" is used as a male personal name in India and appears in some company names; **DhruvaCAD** compound clears.
+- **Spelling:** "Dhruva" vs "Dhruv" — recommend **Dhruva** (matches the Sanskrit and gives the brand the extra syllable for rhythm).
+
+**Recommendation rank: #3.**
+
+---
+
+### 2.7 **AmritCAD** *(Amrit Kaal Modi narrative)*
+
+**Sanskrit:** अमृत — *nectar of immortality, the elixir; that which does not perish*
+
+**"From India, for the world" anchor:** **Amrit Kaal** — the 25-year framing Modi introduced in 2022 marking the run-up to India's centenary in 2047 as a developed nation (Viksit Bharat). The single most prominent Modi-era political narrative; every government communication leans on it. *Amrit Mahotsav* (75 years of independence) just concluded. "Amrit Bharat" station modernization scheme is active.
+
+**Why it works for this platform:**
+
+- **Strongest direct Modi-era resonance** of any name in the shortlist. If "catching the Bharat / Modi wave" is the brief, *Amrit* is the most surgical hit on it.
+- Two syllables → **Am-rit-CAD**. Easy rhythm, simple consonants.
+- "Elixir" / "that which doesn't perish" reads as durable, foundational, long-lived — right associations for an infrastructure platform.
+- Avoids any defense / military / religious-deity weight.
+
+**Sub-brand family:**
+
+- **AmritCAD** — master brand
+- **Amrit Engine** — runtime
+- **Amrit Forge** — marketplace
+- **Amrit Cloud** — SaaS surface
+
+**Watch-outs:**
+
+- **"From India, for the world" axis is softer:** Amrit Kaal is an *internal* Indian political narrative — it travels less well than Tejas (which has the exported jet) or Vishwa (which literally means "world"). To an international member, "Amrit" reads as "Indian elixir" but doesn't articulate the global thesis. Mitigated by the meaning ("immortal / enduring"), which is universal.
+- **Political tying:** Strongest Modi-era specificity is also a risk if political winds shift. Less risk for a B2B brand than for a consumer brand, but worth noting.
+- **TM:** "Amrit" is a common Sikh / Hindu male personal name and appears in food brands (Amrit Banaspati, etc.); **AmritCAD** compound clears.
+
+**Recommendation rank: #5 (best Modi-era anchor but weaker on global axis).**
+
+---
+
 ## 3. Tier 2 — strong engineering signal, softer patriotism
 
 Names that lead with engineering credibility; the patriotism is via reclaiming classical Indian engineering vocabulary rather than tying to a current symbol.
@@ -178,9 +270,25 @@ Tier 3 is recorded for completeness but not recommended unless the brand voice e
 
 ---
 
-## 6. Recommendation in one sentence
+## 6. Recommendation under the "from India, for the world" brief
 
-**TejasCAD** is the strongest fit on every criterion; **NirmaanCAD** is the strongest fit specifically for the AEC vertical positioning; **GaganCAD** is the strongest forward-looking (sky / future / Gaganyaan) framing. **My recommendation is TejasCAD with the `Tejas Engine` / `Tejas Forge` / `Tejas Cloud` / `Tejas SDK` sub-brand family** — it carries the Atmanirbhar Bharat story in a single word, reads internationally, supports a clean sub-brand structure, and clears TM as a compound even though the bare "Tejas" mark is contested.
+| Strongest at | Pick |
+|---|---|
+| **All criteria, single best balance** | **TejasCAD** — exported jet proves the "India-for-the-world" claim; short, sharp, internationally pronounceable; the Atmanirbhar Bharat reference does the patriotic work in one word |
+| **Literal articulation of the global thesis** | **VishwaCAD** — "Vishwa" means world; the brand *is* the positioning. Costs one consonant cluster in pronounceability |
+| **Platform / foundation metaphor** | **DhruvaCAD** — pole star + HAL Dhruv export story; "the fixed point your CAD product builds around" is a marketing line that writes itself |
+| **AEC vertical positioning** | **NirmaanCAD** — the tool of *nirmaan*; perfect for AEC but reads as "for India" more than "for the world" |
+| **Strongest direct Modi-era hook** | **AmritCAD** — Amrit Kaal narrative is the most surgical hit on the Bharat / Modi wave brief, but the global axis is softer |
+
+**My recommendation: TejasCAD.** Under the "from India, for the world" brief specifically, three things tip it over the alternatives:
+
+1. **The export proof is real, recent, and ongoing.** Tejas LCA → Malaysia (signed), Argentina / Egypt / Philippines / UAE / Nigeria (in pipeline). The brand inherits a *demonstrated* India-to-world engineering story, not a slogan.
+2. **It is the only Tier-1 candidate that is short, sharp, and free of consonant clusters that cost points abroad.** A German AEC reseller can say "TejasCAD" on the first try. They cannot say "Vishwa" or "Dhruva" on the first try.
+3. **The sub-brand family — Tejas Engine / Tejas Forge / Tejas Cloud / Tejas SDK — is the cleanest of any candidate.** Every sub-brand is two short words that pronounce themselves.
+
+**If the room rejects TejasCAD for TM contention or for being too closely tied to defense / Atmanirbhar specifically, the fallback is VishwaCAD** — because no other name in the shortlist articulates "from India, for the world" more directly than the one whose root literally means *world*.
+
+> Recommendation summary: **TejasCAD** primary, **VishwaCAD** strong fallback, **DhruvaCAD** if the platform / pole-star metaphor lands harder in a particular pitch context.
 
 ---
 
