@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>White-Label Platform Strategy — Owning the Product, Membership + Rev-Share with Brand Partners — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#0-status">0. Status</a></li>
+<li><a href="#1-the-pivot-in-one-paragraph">1. The pivot in one paragraph</a></li>
+<li><a href="#2-what-changes-vs-the-existing-plan-what-doesnt">2. What changes vs the existing plan, what doesn&rsquo;t</a></li>
+<li><a href="#3-white-label-seams-what-tenancy-actually-requires">3. White-label seams — what tenancy actually requires</a><ul>
+<li><a href="#31-tenant-profile-what-each-member-configures">3.1 Tenant profile — what each member configures</a></li>
+<li><a href="#32-what-the-engine-never-sees">3.2 What the engine never sees</a></li>
+<li><a href="#33-what-gets-harder-honestly">3.3 What gets harder, honestly</a></li>
+</ul>
+</li>
+<li><a href="#4-member-economics-membership-royalty-pass-through-rev-share">4. Member economics — membership + royalty pass-through + rev-share</a><ul>
+<li><a href="#41-component-a-annual-membership">4.1 Component A — Annual membership</a></li>
+<li><a href="#42-component-b-per-deployment-royalty-pass-through">4.2 Component B — Per-deployment royalty pass-through</a></li>
+<li><a href="#43-component-c-marketplace-rev-share">4.3 Component C — Marketplace rev-share</a></li>
+<li><a href="#44-what-the-platforms-pl-looks-like-at-illustrative-steady-state">4.4 What the platform&rsquo;s P&amp;L looks like at illustrative steady-state</a></li>
+</ul>
+</li>
+<li><a href="#5-acis-as-a-platform-level-oem-contract">5. ACIS as a platform-level OEM contract</a><ul>
+<li><a href="#51-the-asks-that-change">5.1 The asks that change</a></li>
+<li><a href="#52-why-spatial-should-say-yes-the-pitch">5.2 Why Spatial should say yes (the pitch)</a></li>
+<li><a href="#53-why-spatial-might-say-no-and-what-we-do-then">5.3 Why Spatial might say no (and what we do then)</a></li>
+</ul>
+</li>
+<li><a href="#6-plugin-marketplace-as-a-first-class-product-line">6. Plugin marketplace as a first-class product line</a><ul>
+<li><a href="#61-what-changes">6.1 What changes</a></li>
+<li><a href="#62-what-this-means-for-the-13-marketplace-policy-in-the-existing-plan">6.2 What this means for the §13 marketplace policy in the existing plan</a></li>
+<li><a href="#63-vertical-opportunity">6.3 Vertical opportunity</a></li>
+</ul>
+</li>
+<li><a href="#7-brand-and-legal-structure">7. Brand and legal structure</a><ul>
+<li><a href="#71-entity">7.1 Entity</a></li>
+<li><a href="#72-trademark-and-naming">7.2 Trademark and naming</a></li>
+<li><a href="#73-ip-and-licensing-posture">7.3 IP and licensing posture</a></li>
+<li><a href="#74-conflict-resolution-between-members">7.4 Conflict resolution between members</a></li>
+</ul>
+</li>
+<li><a href="#8-the-chicken-and-egg-problem">8. The chicken-and-egg problem</a><ul>
+<li><a href="#81-the-trap-stated-plainly">8.1 The trap, stated plainly</a></li>
+<li><a href="#82-the-anchor-tenant-first-sequence-that-breaks-it">8.2 The anchor-tenant-first sequence that breaks it</a></li>
+<li><a href="#83-what-would-make-us-not-pursue-it">8.3 What would make us not pursue it</a></li>
+<li><a href="#84-what-would-make-us-pursue-it-harder">8.4 What would make us pursue it harder</a></li>
+</ul>
+</li>
+<li><a href="#9-phasing-when-does-white-label-show-up-in-the-roadmap">9. Phasing — when does white-label show up in the roadmap?</a></li>
+<li><a href="#10-open-questions">10. Open questions</a></li>
+<li><a href="#11-reading-guide">11. Reading guide</a></li>
+<li><a href="#12-one-paragraph-summary-for-the-room">12. One-paragraph summary for the room</a></li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">platform-strategy.md</p>
+    </div>
+    <h1 id="white-label-platform-strategy-owning-the-product-membership-rev-share-with-brand-partners"><a class="toclink" href="#white-label-platform-strategy-owning-the-product-membership-rev-share-with-brand-partners">White-Label Platform Strategy — Owning the Product, Membership + Rev-Share with Brand Partners</a></h1>
+<h2 id="0-status"><a class="toclink" href="#0-status">0. Status</a></h2>
+<p><strong>Concept stage. No partner signed beyond the anchor tenant.</strong> This document proposes a strategic superset of the ActCAD re-architecture: instead of building a single-branded successor to ActCAD, build the same engine, tooling, and APIs as a <strong>white-label CAD platform</strong> that ActCAD ships under (as the anchor tenant) and that other CAD or vertical-tool vendors can license under their own brand for a membership fee plus a per-deployment royalty / revenue share.</p>
+<p>Companion to — <strong>not a replacement for</strong> — <code>docs/rearchitecture-plan.md</code>. The engine, module decomposition, kernel choice (ACIS), feasibility spike, and three-phase delivery in that document all stand unchanged. What this document adds is the commercial and operational wrapper that turns the engine into a multi-tenant product, plus the architectural seams the wrapper needs.</p>
+<p><strong>Decision rule for this document.</strong> The pivot is worth doing only if §8 (the chicken-and-egg problem) can be closed with a credible partner pipeline by the end of Phase 1. If it cannot, fold the white-label optionality back into Phase 3 and ship ActCAD-branded first.</p>
+<hr />
+<h2 id="1-the-pivot-in-one-paragraph"><a class="toclink" href="#1-the-pivot-in-one-paragraph">1. The pivot in one paragraph</a></h2>
+<p>Today&rsquo;s plan builds a first-party engine on ODA Drawings, the ACIS kernel, Qt 6 desktop, and a WASM browser shell, shipped as the next-generation ActCAD product. The same engine — same 10 modules, same Kernel Abstraction Layer, same <code>ui-bridge</code> C ABI, same command bus, same MCP server, same plugin host — can be made <strong>tenant-aware</strong> and licensed to other CAD-adjacent vendors who want a modern DWG-native foundation without building one. <strong>Jytra (or a new subsidiary brand) owns the platform IP, the license servers, the signing keys, the plugin marketplace, and the ACIS OEM contract.</strong> ActCAD becomes the anchor tenant: a brand-licensee of the platform that pays a member fee plus a royalty pass-through on its own seats. Other members — regional CAD vendors stuck on IntelliCAD, vertical AEC / MEP / structural / electrical tool vendors, BIM-lite startups — sign the same agreement and ship their own branded shell on the same engine.</p>
+<hr />
+<h2 id="2-what-changes-vs-the-existing-plan-what-doesnt"><a class="toclink" href="#2-what-changes-vs-the-existing-plan-what-doesnt">2. What changes vs the existing plan, what doesn&rsquo;t</a></h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Existing plan</th>
+<th>Under white-label</th>
+<th>Delta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Engine, modules, KAL, kernel</strong></td>
+<td>ODA + ACIS, 10-module C++ core, MCP server</td>
+<td>Identical</td>
+<td>None</td>
+</tr>
+<tr>
+<td><strong>Feasibility spike (§9)</strong></td>
+<td>7 pass/fail items including ACIS round-trip + Spike 1b commercial scoping</td>
+<td>Identical, <strong>but Spike 1b widens</strong> to ask Spatial for a platform-level OEM contract covering multiple brand-licensees at one royalty schedule</td>
+<td>Wider negotiation, same engineering risk</td>
+</tr>
+<tr>
+<td><strong>Shell</strong></td>
+<td>One ActCAD-branded shell, Qt + WASM</td>
+<td>Generic platform shell with a <strong>tenant profile</strong> layer: theming, icons, splash, command-line prefix, doc strings, registry keys, installer brand, update channel, telemetry tenant</td>
+<td>New: tenant-profile layer, ~3–6 engineer-months over baseline</td>
+</tr>
+<tr>
+<td><strong>License server</strong></td>
+<td>Per-product license keys</td>
+<td><strong>Per-tenant license keys with platform-owned key authority.</strong> Member tenants get their own license-server endpoint URL but share root validation</td>
+<td>New: multi-tenant licensing service</td>
+</tr>
+<tr>
+<td><strong>Code signing</strong></td>
+<td>One Authenticode cert (ActCAD)</td>
+<td><strong>Platform signs the engine binaries; tenants countersign their shell assets.</strong> Verified-publisher chain trusts the platform root</td>
+<td>New: dual-sign workflow</td>
+</tr>
+<tr>
+<td><strong>Plugin marketplace</strong></td>
+<td>15% rev share over a $5K free tier, ActCAD-only catalog</td>
+<td><strong>Platform-level catalog.</strong> Plugins target the engine API; tenant shells choose which plugins are surfaced. Plugins built once, sold across all member brands.</td>
+<td>Bigger: marketplace as a product line, not a side feature</td>
+</tr>
+<tr>
+<td><strong>Pricing model</strong></td>
+<td>ActCAD perpetual + AI/cloud subscription</td>
+<td>ActCAD pricing unchanged. Members set their own end-user pricing. Platform takes membership fee + per-deployment royalty + marketplace cut.</td>
+<td>New: B2B pricing for members</td>
+</tr>
+<tr>
+<td><strong>Brand and legal</strong></td>
+<td>Jytra builds, ActCAD sells</td>
+<td>Jytra (or new subsidiary) owns the platform IP. ActCAD and other members sign membership + IP-license + rev-share agreements.</td>
+<td>New: legal entity / contracts work</td>
+</tr>
+<tr>
+<td><strong>Engineering org</strong></td>
+<td>One product team</td>
+<td>One <strong>platform team</strong>, plus a small ActCAD-tenant team that integrates and ships the anchor brand</td>
+<td>Org change, not a headcount change</td>
+</tr>
+<tr>
+<td><strong>Phasing</strong></td>
+<td>P1 native Windows beta → P2 GA → P3 sunset old ActCAD</td>
+<td>Identical for the engine. <strong>White-label opens to outside members at the start of P3</strong> when the product is GA and ACIS terms are proven.</td>
+<td>New: a §9 partner-validation gate at end of P2</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>The architecture is already 80% there.</strong> The 10-module core, the <code>ui-bridge</code> C ABI, the API-parity plugin surface across native and web, the MCP server, the op-stream — these are exactly the seams a white-label platform exposes. The pivot is mostly a commercial layer plus a tenant-profile shell layer; it is not a rewrite.</p>
+</blockquote>
+<hr />
+<h2 id="3-white-label-seams-what-tenancy-actually-requires"><a class="toclink" href="#3-white-label-seams-what-tenancy-actually-requires">3. White-label seams — what tenancy actually requires</a></h2>
+<p>Most of the new work lives <strong>outside</strong> the engine, in a new shell-layer abstraction and a new license / billing service. The engine itself remains tenant-agnostic.</p>
+<h3 id="31-tenant-profile-what-each-member-configures"><a class="toclink" href="#31-tenant-profile-what-each-member-configures">3.1 Tenant profile — what each member configures</a></h3>
+<table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>What the tenant configures</th>
+<th>Where it lives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Brand identity</strong></td>
+<td>Product name, icons (app, file, doc), splash, about-box copy, EULA text, support URLs</td>
+<td>Tenant profile JSON, baked at installer build</td>
+</tr>
+<tr>
+<td><strong>Command-line prefix</strong></td>
+<td>LISP / script command namespace (e.g. <code>ACAD-</code> vs <code>BCAD-</code>), AutoCAD-compat command aliases on/off</td>
+<td>Tenant profile, read by <code>cmd</code> module at startup</td>
+</tr>
+<tr>
+<td><strong>File-format identity</strong></td>
+<td>Custom DXF app-id, registered file extension, &ldquo;open with&rdquo; handler name</td>
+<td>Installer + tenant profile</td>
+</tr>
+<tr>
+<td><strong>Update channel</strong></td>
+<td>Per-tenant update server URL, signed channel manifest</td>
+<td>Platform-owned update service, per-tenant endpoints</td>
+</tr>
+<tr>
+<td><strong>Telemetry tenant</strong></td>
+<td>Tenant ID stamped on every telemetry event; tenant-scoped dashboard</td>
+<td>Platform telemetry pipeline (Snowplow / similar)</td>
+</tr>
+<tr>
+<td><strong>Feature flags</strong></td>
+<td>Which plugins, kernels, AI tools are surfaced; which verticals are visible (MEP / Electrical / Civil / BIM-lite)</td>
+<td>Tenant profile + entitlements service</td>
+</tr>
+<tr>
+<td><strong>License endpoint</strong></td>
+<td>Per-tenant license-server URL; tenants choose perpetual / subscription / hybrid; platform validates with root key</td>
+<td>Multi-tenant license service</td>
+</tr>
+<tr>
+<td><strong>Help and docs</strong></td>
+<td>Per-tenant help URL; in-app help can be tenant-branded</td>
+<td>Tenant profile, web-hosted</td>
+</tr>
+<tr>
+<td><strong>AI agent identity</strong></td>
+<td>Per-tenant assistant name, system prompt prefix, model routing</td>
+<td><code>agent</code> module reads tenant profile</td>
+</tr>
+<tr>
+<td><strong>Pricing display</strong></td>
+<td>Tenants set their own end-user pricing; platform never displays Jytra branding to end users</td>
+<td>Tenant shell</td>
+</tr>
+</tbody>
+</table>
+<p>A tenant profile is a single JSON document plus an asset bundle (icons, EULA, splash). The platform&rsquo;s installer builder takes a tenant profile and produces a signed, branded MSI / DMG / DEB / WASM bundle in CI. <strong>Adding a new tenant should be a build configuration, not a code change.</strong></p>
+<h3 id="32-what-the-engine-never-sees"><a class="toclink" href="#32-what-the-engine-never-sees">3.2 What the engine never sees</a></h3>
+<p>To keep the engine clean and the per-tenant work cheap, the engine modules (<code>db</code>, <code>geom</code>, <code>render</code>, <code>cmd</code>, <code>script</code>, <code>plugin</code>, <code>net</code>, <code>agent</code>, <code>platform</code>, <code>ui-bridge</code>) <strong>must not know which tenant they are running under.</strong> Tenant identity is read once at startup by the shell, fed into the command-line prefix table, the update service, the license check, and the telemetry context, then forgotten. If a future engineer ever writes <code>if (tenant == "actcad")</code> inside an engine module, that is a bug.</p>
+<p>This is the same discipline that keeps the engine portable across Qt + WASM: tenants are just another axis of the same configuration story.</p>
+<h3 id="33-what-gets-harder-honestly"><a class="toclink" href="#33-what-gets-harder-honestly">3.3 What gets harder, honestly</a></h3>
+<ul>
+<li><strong>QA matrix.</strong> Today QA runs against one shell. Under white-label, QA runs against the engine plus N tenant profiles. The good news: tenant profiles are data, so smoke tests can iterate them in CI. The bad news: tenant-specific bug reports will look different (&ldquo;crash in <code>XYZCAD</code>&rdquo; vs &ldquo;crash in the engine&rdquo;), and triage will need a tenant-de-identification step that maps tenant reports back to engine repro cases.</li>
+<li><strong>Support boundary.</strong> Members handle their own L1 / L2. The platform handles L3 (engine bugs, kernel bugs, plugin SDK). The contract has to spell this out so platform support doesn&rsquo;t get pulled into tenant-specific drafting questions.</li>
+<li><strong>Plugin compatibility.</strong> Plugins are API-versioned against the engine. Tenants ship the engine version they qualified against; the marketplace shows which plugins work with which engine version. Same problem AutoCAD has solved many times; we copy that solution rather than invent.</li>
+<li><strong>Crash reports and PII.</strong> Crash dumps from one tenant must never leak entity content or filenames to another tenant or to the platform without consent. Platform crash-report pipeline needs per-tenant key encryption at submission.</li>
+</ul>
+<hr />
+<h2 id="4-member-economics-membership-royalty-pass-through-rev-share"><a class="toclink" href="#4-member-economics-membership-royalty-pass-through-rev-share">4. Member economics — membership + royalty pass-through + rev-share</a></h2>
+<p>The price stack a member pays the platform has three components. Each is illustrative; real numbers come out of the partner-pipeline conversations in §8.</p>
+<h3 id="41-component-a-annual-membership"><a class="toclink" href="#41-component-a-annual-membership">4.1 Component A — Annual membership</a></h3>
+<p>A flat per-year fee that buys:</p>
+<ul>
+<li>Engine binaries and updates</li>
+<li>ODA + ACIS pass-through licensing under the platform&rsquo;s master contract</li>
+<li>Tenant-profile build pipeline and installer signing</li>
+<li>L3 engineering support, SLA defined</li>
+<li>Plugin SDK and marketplace listing rights</li>
+<li>Per-tenant license-server and update endpoints</li>
+</ul>
+<p>This is the line that funds platform engineering steady-state. Order of magnitude — and this is illustrative until partner conversations close — <strong>$100K–$500K per member per year</strong>, tiered by tenant scale (small vertical-tool vendor vs regional CAD vendor with 50K+ seats). ActCAD-the-anchor would internally amortize this as a transfer cost.</p>
+<h3 id="42-component-b-per-deployment-royalty-pass-through"><a class="toclink" href="#42-component-b-per-deployment-royalty-pass-through">4.2 Component B — Per-deployment royalty pass-through</a></h3>
+<p>ACIS is per-deployment under the §15.1.1 negotiating ask in the existing plan. Under white-label, the platform&rsquo;s master ACIS contract counts deployments across all member tenants. The platform passes that cost through to each member proportional to their tenant-stamped deployments. Members see a single line item; the platform absorbs the negotiation complexity.</p>
+<p>ODA Sustaining is already unlimited seats; no per-deployment math there. Qt Commercial is per-developer-seat, paid by the platform once, not passed through.</p>
+<h3 id="43-component-c-marketplace-rev-share"><a class="toclink" href="#43-component-c-marketplace-rev-share">4.3 Component C — Marketplace rev-share</a></h3>
+<p>Marketplace plugins are sold through the platform&rsquo;s storefront, in the platform&rsquo;s branded UI within each tenant shell (with tenant skinning for the chrome). Default split:</p>
+<ul>
+<li><strong>70% to developer</strong></li>
+<li><strong>15% to platform</strong> (storefront, billing, hosting, certification, fraud)</li>
+<li><strong>15% to the tenant</strong> in whose shell the plugin was sold</li>
+</ul>
+<p>That last 15% is the line that gives tenants a real reason to surface marketplace plugins to their users. The existing plan&rsquo;s 15% / $5K-free-tier policy for marketplace plugins stands; under white-label, the 15% becomes 15%-platform + 15%-tenant, with the developer keeping 70%.</p>
+<h3 id="44-what-the-platforms-pl-looks-like-at-illustrative-steady-state"><a class="toclink" href="#44-what-the-platforms-pl-looks-like-at-illustrative-steady-state">4.4 What the platform&rsquo;s P&amp;L looks like at illustrative steady-state</a></h3>
+<p>Numbers are illustrative — partner pipeline closes them. The point is the shape, not the magnitude.</p>
+<table>
+<thead>
+<tr>
+<th>Line</th>
+<th>At 1 anchor (ActCAD only)</th>
+<th>At 3 members</th>
+<th>At 8 members</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Memberships</td>
+<td>$200K</td>
+<td>$700K</td>
+<td>$2.0M</td>
+</tr>
+<tr>
+<td>Royalty pass-through (margin only)</td>
+<td>~$20K</td>
+<td>~$80K</td>
+<td>~$250K</td>
+</tr>
+<tr>
+<td>Marketplace share (15% of $X plugin GMV)</td>
+<td>low</td>
+<td>medium</td>
+<td>meaningful</td>
+</tr>
+<tr>
+<td><strong>Platform gross contribution</strong></td>
+<td><strong>~$220K</strong></td>
+<td><strong>~$800K</strong></td>
+<td><strong>~$2.3M+</strong></td>
+</tr>
+<tr>
+<td>Platform team headcount needed</td>
+<td>12–15</td>
+<td>18–22</td>
+<td>25–30</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>The platform business is <strong>only viable at 3+ members.</strong> With one anchor it is a cost center wearing a fancy abstraction; with eight it is a real software business. Sizing is in §8.</p>
+</blockquote>
+<hr />
+<h2 id="5-acis-as-a-platform-level-oem-contract"><a class="toclink" href="#5-acis-as-a-platform-level-oem-contract">5. ACIS as a platform-level OEM contract</a></h2>
+<p>This is the single largest commercial dependency of the pivot. It widens, rather than replaces, the §9 Spike 1b conversation in the existing plan.</p>
+<h3 id="51-the-asks-that-change"><a class="toclink" href="#51-the-asks-that-change">5.1 The asks that change</a></h3>
+<table>
+<thead>
+<tr>
+<th>§15.1.1 ask (existing plan, single-product)</th>
+<th>§5 ask (this document, platform)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Per-deployment royalty, one-time, machine-fingerprint based, same-machine reinstalls excluded</td>
+<td><strong>Same model</strong>, but deployments aggregated across all member tenants under one master agreement</td>
+</tr>
+<tr>
+<td>Volume tiers at 5K / 25K / 100K cumulative deployments with steep decay</td>
+<td>Volume tiers at platform level: <strong>aggregated deployments across all members count toward the next tier</strong> — this is the key concession</td>
+</tr>
+<tr>
+<td>Annual minimum floor target $25K–$50K</td>
+<td>Annual minimum floor at the platform level, <strong>not per member</strong> — protects sub-scale members</td>
+</tr>
+<tr>
+<td>Carve-outs: trials, education, internal QA excluded</td>
+<td>Same carve-outs, plus: <strong>sub-licensing rights to member tenants under the platform&rsquo;s master agreement</strong> (DELA addendum required)</td>
+</tr>
+<tr>
+<td>Source escrow, change-of-control protection</td>
+<td>Same plus: <strong>platform&rsquo;s sub-license to tenants survives change-of-control of Spatial / Dassault</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="52-why-spatial-should-say-yes-the-pitch"><a class="toclink" href="#52-why-spatial-should-say-yes-the-pitch">5.2 Why Spatial should say yes (the pitch)</a></h3>
+<ul>
+<li>ACIS volume grows faster under a platform model than under a single product. Spatial is upside-aligned, not exposed.</li>
+<li>Each member is independently underwriting deployments; platform aggregates risk and admin.</li>
+<li>One master contract, one set of audits, one DELA, one negotiation per renewal — lower transaction cost on Spatial&rsquo;s side too.</li>
+<li>Platform commits to a public &ldquo;ACIS Inside&rdquo; trust mark in member products (analogous to Intel Inside), giving Spatial brand reach into vertical CAD it would not otherwise touch.</li>
+</ul>
+<h3 id="53-why-spatial-might-say-no-and-what-we-do-then"><a class="toclink" href="#53-why-spatial-might-say-no-and-what-we-do-then">5.3 Why Spatial might say no (and what we do then)</a></h3>
+<ul>
+<li><strong>They price every member as a separate OEM.</strong> This kills the economics. Mitigation: hold the negotiation as &ldquo;platform-only&rdquo; — walk away from a per-member contract structure. The §15.1.1 fallback (per-deployment for ActCAD only) remains available; the platform pivot then defers to Phase 3.</li>
+<li><strong>They demand a minimum committed royalty that only ActCAD volume can backstop.</strong> Counter with a &ldquo;ramp&rdquo; — commit ActCAD-equivalent floor in year 1, escalating with member additions, gated on platform reaching N members by year 3.</li>
+<li><strong>They demand publicly disclosed member list / audit rights into member tenants.</strong> Counter with platform-mediated audits and aggregated reporting; members are not parties to the Spatial contract.</li>
+</ul>
+<blockquote>
+<p><strong>Operationally:</strong> the Spike 1b conversation in the existing plan happens <strong>first as a single-product ACIS contract.</strong> Only after that closes do we open the platform-level conversation as an <strong>amendment</strong>, leveraging the now-existing relationship. Trying to negotiate platform terms before establishing the bilateral terms is a worse position.</p>
+</blockquote>
+<hr />
+<h2 id="6-plugin-marketplace-as-a-first-class-product-line"><a class="toclink" href="#6-plugin-marketplace-as-a-first-class-product-line">6. Plugin marketplace as a first-class product line</a></h2>
+<p>Under the existing plan, the marketplace is a side-feature with a 15% rev share over a $5K free tier. Under white-label, the marketplace is <strong>a product line of its own</strong> — the largest source of platform revenue growth past year 3.</p>
+<h3 id="61-what-changes"><a class="toclink" href="#61-what-changes">6.1 What changes</a></h3>
+<ul>
+<li><strong>One catalog, many storefronts.</strong> A plugin developer writes once against the engine API. Each tenant shell surfaces the catalog, skinned to the tenant brand. Tenants can promote / hide specific plugins (e.g. ActCAD hides a competing MEP vertical plugin if it conflicts with ActCAD&rsquo;s own MEP offering).</li>
+<li><strong>Certification is platform-level.</strong> Plugins pass platform certification once, sell across all tenants. Tenants do not run their own certification — that would not scale.</li>
+<li><strong>Verified-publisher chain.</strong> Platform issues publisher certs; tenants trust the platform root. Same trust model AutoCAD has for ObjectARX publishers, but cross-tenant.</li>
+<li><strong>API parity remains the engineering discipline.</strong> The same internal command / query API plugins call in-process natively is what web extensions call over OAuth REST. White-label adds: the API is <strong>also</strong> the integration surface tenants use for their own first-party features, so we eat our own dogfood.</li>
+</ul>
+<h3 id="62-what-this-means-for-the-13-marketplace-policy-in-the-existing-plan"><a class="toclink" href="#62-what-this-means-for-the-13-marketplace-policy-in-the-existing-plan">6.2 What this means for the §13 marketplace policy in the existing plan</a></h3>
+<p>The 15% rev share over a $5K/year free tier from §13.4 of the rearchitecture plan stays, but with a wrinkle: under white-label, the split becomes 70% developer / 15% platform / 15% tenant (the tenant in whose shell the sale happened). The free-tier protection for small developers is unchanged.</p>
+<h3 id="63-vertical-opportunity"><a class="toclink" href="#63-vertical-opportunity">6.3 Vertical opportunity</a></h3>
+<p>The vertical-tool vendor segment (small MEP / Electrical / Structural / Survey / GIS software vendors) is the highest-leverage member archetype for the marketplace flywheel. These vendors don&rsquo;t want to build a CAD engine — they want to ship a vertical tool that runs inside one. White-label lets them ship as a tenant <strong>and</strong> publish their vertical IP as marketplace plugins. The platform gets a member fee, a per-deployment royalty, and a marketplace cut from the same partner.</p>
+<hr />
+<h2 id="7-brand-and-legal-structure"><a class="toclink" href="#7-brand-and-legal-structure">7. Brand and legal structure</a></h2>
+<h3 id="71-entity"><a class="toclink" href="#71-entity">7.1 Entity</a></h3>
+<p>Two credible options. Choose during pre-spike legal review (§9 in the existing plan picks this up alongside the ACIS / DELA work).</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>New Jytra subsidiary</strong> owns the platform IP, ACIS contract, ODA contract, Qt contract. ActCAD becomes a member-licensee of the subsidiary.</td>
+<td>Clean brand separation; member tenants are signing with a neutral platform entity, not a competitor&rsquo;s parent; cleanest path to outside investment if ever wanted</td>
+<td>Subsidiary creation cost; intercompany transfer pricing; ActCAD-the-brand inside Jytra has to formally license from a sibling</td>
+</tr>
+<tr>
+<td><strong>Jytra direct</strong> owns the platform; ActCAD is one product line; other members license from Jytra.</td>
+<td>Simpler legal structure; lower setup cost; no intercompany overhead</td>
+<td>Members are signing with the parent of a competing tenant — a real objection from any second-tier CAD vendor we approach</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Recommendation: <strong>subsidiary</strong>. The cost of standing one up is small relative to the credibility advantage when pitching the second and third member. A second-tier CAD vendor will not sign a master IP-license agreement with the parent company of ActCAD without significant friction.</p>
+</blockquote>
+<h3 id="72-trademark-and-naming"><a class="toclink" href="#72-trademark-and-naming">7.2 Trademark and naming</a></h3>
+<p>The platform needs a name distinct from ActCAD. ActCAD continues as a product brand owned by Jytra; the platform brand is owned by the platform entity. Members surface their own brand to end users; the platform brand appears only on the developer / SDK / marketplace surfaces, plus an optional &ldquo;Powered by [Platform]&rdquo; trust mark.</p>
+<h3 id="73-ip-and-licensing-posture"><a class="toclink" href="#73-ip-and-licensing-posture">7.3 IP and licensing posture</a></h3>
+<ul>
+<li><strong>Engine source code:</strong> platform entity owns. Members license under a perpetual + maintenance model. Source-escrow optional at member tier.</li>
+<li><strong>Plugin SDK:</strong> released under a permissive license (members can build plugins without infecting their proprietary code).</li>
+<li><strong>Tenant profile assets</strong> (icons, EULA text, brand colors): owned by the member tenant. Platform holds a build-time license to use them in installer signing.</li>
+<li><strong>Marketplace plugin IP:</strong> developer-owned. Platform and tenant take rev share, not IP.</li>
+<li><strong>Audit and reporting rights:</strong> platform audits members for deployment count under ACIS pass-through, no more invasive than ODA&rsquo;s existing audit rights.</li>
+</ul>
+<h3 id="74-conflict-resolution-between-members"><a class="toclink" href="#74-conflict-resolution-between-members">7.4 Conflict resolution between members</a></h3>
+<p>The platform will sign members who compete with each other (e.g. two regional CAD vendors in adjacent markets). Anti-trust-aware contract drafting required from day 1:</p>
+<ul>
+<li>No exclusivity clauses to ActCAD (or any single member) on the platform itself</li>
+<li>Plugin developers can sell to any member tenant</li>
+<li>Marketplace ranking algorithms must be neutral and auditable</li>
+<li>Roadmap input from members is documented; the platform owns final prioritization</li>
+</ul>
+<hr />
+<h2 id="8-the-chicken-and-egg-problem"><a class="toclink" href="#8-the-chicken-and-egg-problem">8. The chicken-and-egg problem</a></h2>
+<p>This is the single biggest reason the white-label pivot might not be worth doing right now. It deserves a section of its own because it is the dominant risk and the dominant gating decision.</p>
+<h3 id="81-the-trap-stated-plainly"><a class="toclink" href="#81-the-trap-stated-plainly">8.1 The trap, stated plainly</a></h3>
+<ul>
+<li><strong>Spatial wants volume commitments</strong> before granting platform-level ACIS terms. Volume commitments require members.</li>
+<li><strong>Members want to see ACIS terms</strong> before signing — the per-deployment royalty pass-through is a material part of their unit economics.</li>
+<li><strong>Members also want to see a working product</strong> before signing, and a working developer ecosystem before believing the marketplace pitch.</li>
+<li><strong>Plugin developers want to see members</strong> before investing in the SDK — one tenant&rsquo;s catalog is not a market.</li>
+<li><strong>Investors / management want to see the platform business model</strong> before approving the headcount to build it.</li>
+</ul>
+<p>Each cycle waits on the others. Without a sequencing plan that breaks one of these dependencies, the pivot stalls.</p>
+<h3 id="82-the-anchor-tenant-first-sequence-that-breaks-it"><a class="toclink" href="#82-the-anchor-tenant-first-sequence-that-breaks-it">8.2 The anchor-tenant-first sequence that breaks it</a></h3>
+<p>The only sequence that actually works is <strong>ship the engine ActCAD-first, build the tenancy seams in from day 1, open to members at GA.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>What is shipped</th>
+<th>What it unlocks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Spike (months 0–1.5)</strong></td>
+<td>Existing 7-item feasibility spike + ACIS bilateral commercial scoping (Spike 1b unchanged). <strong>No platform conversation with Spatial yet.</strong></td>
+<td>Phase 1 / no-go decision; ACIS bilateral terms locked</td>
+</tr>
+<tr>
+<td><strong>Phase 1 (months 1.5–12)</strong></td>
+<td>Engine + native Windows beta + ActCAD anchor tenant. <strong>Tenant-profile layer built in from day 1</strong>, even though only one tenant exists. Cost: ~3–6 engineer-months over baseline.</td>
+<td>Platform-ready engine; ActCAD beta in customers&rsquo; hands; demonstrable performance</td>
+</tr>
+<tr>
+<td><strong>Phase 2 (months 12–24)</strong></td>
+<td>ActCAD GA + browser editor + cloud co-edit + AI assistant GA. <strong>Soft outreach to 2–3 candidate members during P2.</strong> Conversations only — no contracts.</td>
+<td>ActCAD shipping in production; ACIS volume real; member candidates evaluated on a working product</td>
+</tr>
+<tr>
+<td><strong>Phase 2 → 3 gate (month 24)</strong></td>
+<td><strong>Partner-validation gate.</strong> Are at least 2 candidate members at LOI stage? If yes → open ACIS platform-amendment talks with Spatial, formal member onboarding starts. If no → defer white-label to Phase 3+; ActCAD continues single-product.</td>
+<td>Decision point with real data, not a bet on a deck</td>
+</tr>
+<tr>
+<td><strong>Phase 3 (months 24–36)</strong></td>
+<td>First member tenants onboarded. Marketplace opens. Sunset of IntelliCAD-based ActCAD.</td>
+<td>Platform business begins</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>What this sequence costs:</strong> about ~3–6 engineer-months of extra work during Phase 1 to build the tenant-profile layer (and the disciplines around it — &ldquo;no <code>if (tenant == ...)</code> in engine code&rdquo;) rather than letting tenant-specific bits leak into the engine. That is cheap. <strong>What it buys:</strong> optionality. If the partner pipeline materializes, the platform is one quarter of work away. If it doesn&rsquo;t, we have shipped an excellent single-product ActCAD and lost only the marginal cost of disciplined boundaries we&rsquo;d want anyway.</p>
+</blockquote>
+<h3 id="83-what-would-make-us-not-pursue-it"><a class="toclink" href="#83-what-would-make-us-not-pursue-it">8.3 What would make us not pursue it</a></h3>
+<p>Three signals, any one of which would tell us to defer the platform pivot:</p>
+<ol>
+<li><strong>No candidate member reaches LOI stage by month 24.</strong> The pipeline is the proof. If two years of soft outreach to a segment of regional CAD vendors and vertical-tool ISVs has produced zero LOIs, the segment is not there.</li>
+<li><strong>Spatial refuses platform-level ACIS terms even at month 24.</strong> With ActCAD shipping, ACIS volume real, and bilateral relationship established, if Spatial still refuses platform amendment, the per-deployment economics break for second-tier members.</li>
+<li><strong>ActCAD&rsquo;s own success swamps the optionality.</strong> If ActCAD GA gets traction faster than expected and member outreach feels like a distraction from the anchor&rsquo;s growth, the right call is to stay single-product. This is a real and respectable outcome.</li>
+</ol>
+<h3 id="84-what-would-make-us-pursue-it-harder"><a class="toclink" href="#84-what-would-make-us-pursue-it-harder">8.4 What would make us pursue it harder</a></h3>
+<p>Two signals that would change phasing — pull member onboarding into Phase 2:</p>
+<ol>
+<li><strong>Two members at signed LOI before month 18.</strong> Demand is real and faster than modeled.</li>
+<li><strong>A specific vertical-tool vendor wants to be a member and brings real plugin / vertical IP.</strong> This is the marketplace flywheel starting before GA — rare but possible.</li>
+</ol>
+<hr />
+<h2 id="9-phasing-when-does-white-label-show-up-in-the-roadmap"><a class="toclink" href="#9-phasing-when-does-white-label-show-up-in-the-roadmap">9. Phasing — when does white-label show up in the roadmap?</a></h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Engine work (unchanged from existing plan)</th>
+<th>Platform work (new in this document)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Spike (0–1.5 mo)</strong></td>
+<td>7-item feasibility spike per §9</td>
+<td>None — keep spike focused on bilateral ACIS + engine viability</td>
+</tr>
+<tr>
+<td><strong>Phase 1 (1.5–12 mo)</strong></td>
+<td>Engine on ODA, ACIS via KAL, MCP skeleton, native Windows beta, browser viewer in parallel</td>
+<td><strong>Tenant-profile layer in shell from day 1.</strong> Engineering discipline: no tenant identity in engine modules. Cost: ~3–6 engineer-months over baseline.</td>
+</tr>
+<tr>
+<td><strong>Phase 2 (12–24 mo)</strong></td>
+<td>Mac / Linux Qt at parity, browser full editor, 3D via ACIS, cloud co-edit, LISP coverage 95th percentile, AI GA, ActCAD-new GA at month 24</td>
+<td><strong>Soft outreach to candidate members</strong> (no contracts). License-service and multi-tenant signing infrastructure stood up. Plugin marketplace certification process drafted.</td>
+</tr>
+<tr>
+<td><strong>Month 24 gate</strong></td>
+<td>ActCAD-new is GA</td>
+<td><strong>Partner-validation gate.</strong> Are ≥2 members at LOI? Decide: pursue platform amendment with Spatial / open marketplace, or defer indefinitely.</td>
+</tr>
+<tr>
+<td><strong>Phase 3 (24–36 mo)</strong></td>
+<td>Full 3D + BIM-lite (IFC), MEP / Electrical verticals as plugins, mobile, IntelliCAD ActCAD sunset</td>
+<td>If gate passes: <strong>first members onboarded, marketplace opens to outside developers, ACIS platform amendment signed.</strong> Platform brand publicly launched.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>The phasing rule:</strong> the platform business never blocks ActCAD&rsquo;s GA. ActCAD shipping is the proof point that recruits members; flipping that order recruits no one.</p>
+</blockquote>
+<hr />
+<h2 id="10-open-questions"><a class="toclink" href="#10-open-questions">10. Open questions</a></h2>
+<p>Items that need management or legal decisions before the §9 partner-validation gate. None block the spike; all block the gate.</p>
+<ol>
+<li><strong>Entity:</strong> new Jytra subsidiary or Jytra-direct? (§7.1 — subsidiary recommended but not free.)</li>
+<li><strong>Platform brand name:</strong> distinct from ActCAD. Trademark availability to be cleared before any external conversation.</li>
+<li><strong>Target member archetypes:</strong> which segments do we approach? Regional CAD vendors stuck on IntelliCAD (BricsCAD, ZWCAD, GstarCAD are not these — they&rsquo;re peers; the targets are the <em>next tier down</em>: progeCAD, ARES re-sellers, regional vendors in India / SEA / LATAM / EU). Vertical-tool vendors (MEP / Electrical / Structural / Survey / GIS). BIM-lite startups. Pick 2 segments, not 5.</li>
+<li><strong>ACIS platform-amendment negotiation strategy:</strong> when to open, what to ask for, what to concede. Drafted alongside §15.1.1 in the existing plan.</li>
+<li><strong>Anti-trust posture:</strong> platform signing competing members. Counsel review needed on contract templates.</li>
+<li><strong>Marketplace rev split:</strong> 70/15/15 is illustrative. Comparable-market benchmarks: Apple 70/30, Steam 70/30, Atlassian 75/25 historically, ObjectARX no marketplace. The 15% tenant share is the line that recruits tenants to surface plugins; it has to be defended against tenants who&rsquo;d rather see 80/20.</li>
+<li><strong>Crash-report tenant isolation:</strong> privacy and contract terms for cross-tenant L3 support.</li>
+<li><strong>Member exit terms:</strong> what happens to a member tenant&rsquo;s installed base if the member exits the platform? (Source escrow + run-out perpetual license is the standard answer; document it.)</li>
+</ol>
+<hr />
+<h2 id="11-reading-guide"><a class="toclink" href="#11-reading-guide">11. Reading guide</a></h2>
+<table>
+<thead>
+<tr>
+<th>If you want</th>
+<th>Read</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The engineering plan</td>
+<td><code>docs/rearchitecture-plan.md</code> (unchanged)</td>
+</tr>
+<tr>
+<td>The exec summary</td>
+<td><code>docs/exec-presentation.md</code> (unchanged)</td>
+</tr>
+<tr>
+<td>Memory architecture detail</td>
+<td><code>docs/memory-architecture.md</code> (unchanged)</td>
+</tr>
+<tr>
+<td>Industry trends framing</td>
+<td><code>docs/industry-outlook.md</code> (unchanged)</td>
+</tr>
+<tr>
+<td><strong>The white-label business case</strong></td>
+<td>this document</td>
+</tr>
+<tr>
+<td>The ACIS commercial detail</td>
+<td><code>docs/rearchitecture-plan.md</code> §15.1.1, then §5 of this document for the platform-level amendment</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="12-one-paragraph-summary-for-the-room"><a class="toclink" href="#12-one-paragraph-summary-for-the-room">12. One-paragraph summary for the room</a></h2>
+<p>The architecture being built for ActCAD-new is also exactly the architecture a white-label CAD platform needs. Adding the tenant-profile layer, license service, and signing infrastructure during Phase 1 costs about ~3–6 engineer-months and gives us the option to open the engine to outside member brands at GA. The commercial dependency is an ACIS platform-amendment that aggregates deployments across members under one royalty schedule; Spatial is likely to grant this only after we have shipped ActCAD-new and proved bilateral volume. We should build the seams in P1, run soft member outreach in P2, and gate the platform decision at the month-24 GA: at least two members at LOI to proceed, otherwise defer to Phase 3 and ship single-product. The downside of building the seams is small; the downside of <em>not</em> building them and discovering at GA that we want the platform is large.</p>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="rearchitecture-plan.html">plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry outlook</a> ·
+        <a href="memory-architecture.html">memory architecture</a> ·
+        <a href="platform-strategy.html">platform strategy</a> ·
+        <a href="exec-presentation.html">exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
