@@ -48,6 +48,12 @@ DESCRIPTIONS = {
         "royalty + marketplace rev-share, ACIS platform-amendment, "
         "partner pipeline and the chicken-and-egg gate at month 24."
     ),
+    "brand-shortlist.md": (
+        "Working shortlist for the white-label platform's master brand: "
+        "Indian-rooted, modern-SaaS, Atmanirbhar / Modi-era resonance, "
+        "name ends in 'CAD'. Tiered candidates, sub-brand families, "
+        "TM watch-outs, names set aside."
+    ),
     "exec-presentation.html": (
         "Slide deck for the management decision briefing (reveal.js)."
     ),
@@ -313,6 +319,7 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
         <a href="industry-outlook.html">industry outlook</a> ·
         <a href="memory-architecture.html">memory architecture</a> ·
         <a href="platform-strategy.html">platform strategy</a> ·
+        <a href="brand-shortlist.html">brand shortlist</a> ·
         <a href="exec-presentation.html">exec deck</a>
       </p>
     </footer>
@@ -344,6 +351,7 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
         <li><a href="industry-outlook.html">Industry outlook</a></li>
         <li><a href="memory-architecture.html">Memory architecture</a></li>
         <li><a href="platform-strategy.html">Platform strategy</a></li>
+        <li><a href="brand-shortlist.html">Brand shortlist</a></li>
         <li><a href="exec-presentation.html">Executive deck</a></li>
       </ul>
     </nav>
@@ -411,13 +419,14 @@ def build_pages(md_files: list[Path]) -> list[tuple[Path, str]]:
 
 def build_index(pages: list[tuple[Path, str]]) -> None:
     """Write docs/index.html linking to every document."""
-    # Order: plan, overview, industry, memory, platform strategy, exec deck (hand-authored)
+    # Order: plan, overview, industry, memory, platform strategy, brand shortlist, exec deck (hand-authored)
     order = [
         "rearchitecture-plan.html",
         "architecture-overview.html",
         "industry-outlook.html",
         "memory-architecture.html",
         "platform-strategy.html",
+        "brand-shortlist.html",
         "exec-presentation.html",
     ]
     title_by_name = {p.name: t for p, t in pages}

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platform Brand Shortlist — &ldquo;[Something]CAD&rdquo; — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#0-status">0. Status</a></li>
+<li><a href="#1-selection-criteria">1. Selection criteria</a></li>
+<li><a href="#2-tier-1-strongest-fit">2. Tier 1 — strongest fit</a><ul>
+<li><a href="#21-tejascad">2.1 TejasCAD</a></li>
+<li><a href="#22-nirmaancad">2.2 NirmaanCAD</a></li>
+<li><a href="#23-gagancad">2.3 GaganCAD</a></li>
+<li><a href="#24-vikramcad">2.4 VikramCAD</a></li>
+</ul>
+</li>
+<li><a href="#3-tier-2-strong-engineering-signal-softer-patriotism">3. Tier 2 — strong engineering signal, softer patriotism</a></li>
+<li><a href="#4-tier-3-defense-themed-very-strong-patriotism-heavier-voice">4. Tier 3 — defense-themed, very strong patriotism, heavier voice</a></li>
+<li><a href="#5-names-considered-and-set-aside">5. Names considered and set aside</a></li>
+<li><a href="#6-recommendation-in-one-sentence">6. Recommendation in one sentence</a></li>
+<li><a href="#7-next-steps-when-a-direction-is-picked">7. Next steps when a direction is picked</a></li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">brand-shortlist.md</p>
+    </div>
+    <h1 id="platform-brand-shortlist-somethingcad"><a class="toclink" href="#platform-brand-shortlist-somethingcad">Platform Brand Shortlist — &ldquo;[Something]CAD&rdquo;</a></h1>
+<h2 id="0-status"><a class="toclink" href="#0-status">0. Status</a></h2>
+<p>Working shortlist for the white-label platform&rsquo;s master brand (<code>docs/platform-strategy.md</code> §10.2). Constraint: name must end in <strong>CAD</strong>. Target voice: <strong>Indian roots, modern SaaS feel, patriotic resonance in the Atmanirbhar Bharat / Modi-era register, engineering-credible to international partners (ODA, Spatial, Qt).</strong></p>
+<p><strong>Nothing is committed yet.</strong> This document records the candidates and the rationale. Trademark and domain clearance happen before any external use.</p>
+<hr />
+<h2 id="1-selection-criteria"><a class="toclink" href="#1-selection-criteria">1. Selection criteria</a></h2>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Indian roots</strong></td>
+<td>Sanskrit / Hindi origin, readable as Indian by an Indian audience without needing translation</td>
+</tr>
+<tr>
+<td><strong>Modern SaaS feel</strong></td>
+<td>Sounds like a 2026 software platform, not a 1990s shareware product. Two syllables before &ldquo;CAD&rdquo; preferred; three at most</td>
+</tr>
+<tr>
+<td><strong>Patriotic resonance</strong></td>
+<td>Carries an Atmanirbhar / Modi-era / Bharat-confident association — ideally tied to a known modern symbol (HAL Tejas LCA, ISRO missions, Bharat Nirmaan, Setu Bharatam)</td>
+</tr>
+<tr>
+<td><strong>Engineering credibility</strong></td>
+<td>A Spatial / ODA / Qt commercial counterparty must read it as a serious engineering brand, not a consumer app</td>
+</tr>
+<tr>
+<td><strong>International pronounceability</strong></td>
+<td>Members may be in India, SEA, EU, NA, LATAM. The name must survive being spoken in English by people who don&rsquo;t know Sanskrit</td>
+</tr>
+<tr>
+<td><strong>TM / domain clearance potential</strong></td>
+<td>Distinct enough from existing CAD vendors and Indian SaaS brands to clear trademark in target jurisdictions and acquire a usable <code>.com</code> / <code>.cad</code> / <code>.io</code></td>
+</tr>
+<tr>
+<td><strong>Sub-brand room</strong></td>
+<td>Master brand should support a family: <code>[X] Engine</code>, <code>[X] Forge</code> (marketplace), <code>[X] Cloud</code> (SaaS surface), <code>[X] SDK</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="2-tier-1-strongest-fit"><a class="toclink" href="#2-tier-1-strongest-fit">2. Tier 1 — strongest fit</a></h2>
+<p>The four names that land <strong>all seven criteria</strong> at full strength.</p>
+<h3 id="21-tejascad"><a class="toclink" href="#21-tejascad">2.1 <strong>TejasCAD</strong></a></h3>
+<p><strong>Sanskrit:</strong> तेजस् — <em>brilliance, fire, radiant sharpness</em></p>
+<p><strong>Patriotic anchor:</strong> HAL Tejas LCA — India&rsquo;s first indigenously designed fighter jet, <strong>the living symbol of Atmanirbhar Bharat</strong> in engineering. The name is recognized in defense, aerospace, and political contexts as shorthand for &ldquo;Indian-engineered alternative to imported tech.&rdquo;</p>
+<p><strong>Why it works for this platform:</strong></p>
+<ul>
+<li>The Tejas LCA story is exactly the story we&rsquo;re telling: <em>India-engineered alternative to Autodesk, Bricsys, etc., built on Indian terms with Indian IP ownership.</em></li>
+<li>Two syllables before &ldquo;CAD&rdquo; → clean rhythm: <strong>Te-jas-CAD</strong>.</li>
+<li>Sharp, fast, masculine-coded but not heavy. Reads as fast / precise — the right associations for a CAD platform.</li>
+<li>International CXOs at Spatial / ODA / Qt will read the reference correctly; it does the patriotic positioning for us in a single word.</li>
+</ul>
+<p><strong>Sub-brand family:</strong></p>
+<ul>
+<li><strong>TejasCAD</strong> — master brand, the platform</li>
+<li><strong>Tejas Engine</strong> — the C++ runtime / core engine</li>
+<li><strong>Tejas Forge</strong> — the plugin marketplace</li>
+<li><strong>Tejas Cloud</strong> — the SaaS / co-edit / AI surface</li>
+<li><strong>Tejas SDK</strong> — developer-facing extension toolkit</li>
+</ul>
+<p><strong>Watch-outs:</strong></p>
+<ul>
+<li><strong>TM exposure:</strong> &ldquo;Tejas&rdquo; is heavily used in India (HAL itself uses it; many Indian SaaS startups; a personal name). TM clearance for <strong>TejasCAD</strong> specifically should clear because no CAD vendor uses the compound, but the bare <strong>Tejas</strong> mark is busy. Recommendation: register <strong>TejasCAD</strong> + the sub-brand family compounds; do not attempt to own bare &ldquo;Tejas.&rdquo;</li>
+<li><strong>Domain:</strong> <code>tejascad.com</code> to be checked. Likely available. <code>.cad</code> TLD doesn&rsquo;t exist; <code>tejas.io</code> is taken.</li>
+<li><strong>Pronunciation:</strong> stress on first syllable in Sanskrit (TEH-jus); some Westerners will say &ldquo;TAY-jus.&rdquo; Both work.</li>
+</ul>
+<p><strong>Recommendation rank: #1.</strong></p>
+<h3 id="22-nirmaancad"><a class="toclink" href="#22-nirmaancad">2.2 <strong>NirmaanCAD</strong></a></h3>
+<p><strong>Sanskrit / Hindi:</strong> निर्माण — <em>construction, creation, building, manufacture</em></p>
+<p><strong>Patriotic anchor:</strong> &ldquo;<strong>Bharat Nirmaan</strong>&rdquo; — the multi-decade nation-building idiom, formalized as a flagship rural infrastructure program. &ldquo;Nation-building&rdquo; in Indian political discourse is <em>Rashtra Nirmaan</em>. The word carries a &ldquo;we are building the future&rdquo; resonance natively.</p>
+<p><strong>Why it works for this platform:</strong></p>
+<ul>
+<li><strong>Literal vertical fit.</strong> CAD is the tool of <em>nirmaan</em>. The brand reads as &ldquo;the tool that builds the buildings.&rdquo; No semantic gap for AEC customers.</li>
+<li>Three syllables before &ldquo;CAD&rdquo; → <strong>Nir-maan-CAD</strong>. Slightly longer than Tejas but the rhythm is fine.</li>
+<li>Tech-context-friendly: Razorpay uses a &ldquo;Nirmaan&rdquo; sub-brand; the name is already proven to work in modern SaaS.</li>
+</ul>
+<p><strong>Sub-brand family:</strong></p>
+<ul>
+<li><strong>NirmaanCAD</strong> — master brand</li>
+<li><strong>Nirmaan Engine</strong> — runtime</li>
+<li><strong>Nirmaan Forge</strong> — marketplace</li>
+<li><strong>Nirmaan Cloud</strong> — SaaS surface</li>
+</ul>
+<p><strong>Watch-outs:</strong></p>
+<ul>
+<li>Common Hindi word → lower TM distinctiveness on the bare word. <strong>NirmaanCAD</strong> compound is much more defensible.</li>
+<li>Pronunciation: foreign speakers may say &ldquo;Nir-MAHN&rdquo; vs &ldquo;NIR-mahn.&rdquo; Acceptable variance.</li>
+<li>Spelling: &ldquo;Nirmaan&rdquo; vs &ldquo;Nirman&rdquo; — pick one in writing and never deviate. Recommendation: <strong>Nirmaan</strong> (double-a preserves the long vowel and reads more correctly for non-Hindi speakers).</li>
+</ul>
+<p><strong>Recommendation rank: #2.</strong></p>
+<h3 id="23-gagancad"><a class="toclink" href="#23-gagancad">2.3 <strong>GaganCAD</strong></a></h3>
+<p><strong>Sanskrit / Hindi:</strong> गगन — <em>sky, heavens, firmament</em></p>
+<p><strong>Patriotic anchor:</strong> <strong>Gaganyaan</strong> — India&rsquo;s first crewed spaceflight mission, <strong>the Modi-era ISRO flagship.</strong> Direct association with India&rsquo;s most ambitious current engineering project.</p>
+<p><strong>Why it works for this platform:</strong></p>
+<ul>
+<li>&ldquo;Sky / horizon&rdquo; framing positions the brand as <em>the future of CAD</em>, not just another DWG editor.</li>
+<li>Two syllables before &ldquo;CAD&rdquo; → <strong>Ga-gan-CAD</strong>. Easy to say, easy to remember.</li>
+<li>Modern but rooted; not religious, not loaded politically beyond the ISRO association.</li>
+<li>The Gaganyaan connection signals &ldquo;Indian engineering at the frontier&rdquo; without being on-the-nose.</li>
+</ul>
+<p><strong>Sub-brand family:</strong></p>
+<ul>
+<li><strong>GaganCAD</strong> — master brand</li>
+<li><strong>Gagan Engine</strong> — runtime</li>
+<li><strong>Gagan Forge</strong> — marketplace</li>
+<li><strong>Gagan Cloud</strong> — SaaS surface (the &ldquo;cloud&rdquo; pun is intentional and good)</li>
+</ul>
+<p><strong>Watch-outs:</strong></p>
+<ul>
+<li>&ldquo;Gagan&rdquo; is a personal name in India — moderate TM background traffic.</li>
+<li>The Gaganyaan reference may date if the mission slips — but the underlying meaning (&ldquo;sky&rdquo;) is timeless, so brand survives the news cycle.</li>
+<li><code>gagancad.com</code> to be checked.</li>
+</ul>
+<p><strong>Recommendation rank: #3.</strong></p>
+<h3 id="24-vikramcad"><a class="toclink" href="#24-vikramcad">2.4 <strong>VikramCAD</strong></a></h3>
+<p><strong>Sanskrit:</strong> विक्रम — <em>valor, prowess, stride; also the name of the legendary king Vikramaditya</em></p>
+<p><strong>Patriotic anchor:</strong> <strong>Vikram lander</strong> (Chandrayaan-2, Chandrayaan-3) — the lander that put India on the Moon&rsquo;s south pole in 2023. Modi-era space patriotism at peak intensity.</p>
+<p><strong>Why it works for this platform:</strong></p>
+<ul>
+<li>The Chandrayaan-3 success is the single most emotionally resonant Indian engineering moment of the 2020s. The brand inherits that mood.</li>
+<li>Two syllables before &ldquo;CAD&rdquo; → <strong>Vik-ram-CAD</strong>. Strong consonant rhythm.</li>
+<li>&ldquo;Vikramaditya&rdquo; (the king) also carries a Bharat-civilizational confidence.</li>
+</ul>
+<p><strong>Watch-outs:</strong></p>
+<ul>
+<li>&ldquo;Vikram&rdquo; is one of the most common Indian male personal names → TM distinctiveness on the compound is fine, but the bare word is hopelessly contested.</li>
+<li>Could be misread as a personal product (&ldquo;Vikram&rsquo;s CAD&rdquo;) more than the others.</li>
+</ul>
+<p><strong>Recommendation rank: #4.</strong></p>
+<hr />
+<h2 id="3-tier-2-strong-engineering-signal-softer-patriotism"><a class="toclink" href="#3-tier-2-strong-engineering-signal-softer-patriotism">3. Tier 2 — strong engineering signal, softer patriotism</a></h2>
+<p>Names that lead with engineering credibility; the patriotism is via reclaiming classical Indian engineering vocabulary rather than tying to a current symbol.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Root</th>
+<th>Why it could work</th>
+<th>Why it&rsquo;s not Tier 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>YantraCAD</strong></td>
+<td>यन्त्र — <em>instrument, machine, engineering device</em></td>
+<td>Pure engineering signal; Yantra is the Sanskrit word for any precision device. Distinctly Indian.</td>
+<td>Parallel meaning is &ldquo;mystic diagram&rdquo; — some Western readers may mis-read as new-age. Manageable with positioning.</td>
+</tr>
+<tr>
+<td><strong>AakarCAD</strong></td>
+<td>आकार — <em>form, shape</em></td>
+<td>Direct CAD-vocabulary fit (CAD literally creates <em>aakaar</em>). Two syllables, modern feel.</td>
+<td>Weakest patriotic punch in the list. Reads as &ldquo;smart&rdquo; more than &ldquo;patriotic.&rdquo;</td>
+</tr>
+<tr>
+<td><strong>ShilpaCAD</strong></td>
+<td>शिल्प — <em>craft, sculpture, architecture</em> (Shilpa Shastra = classical Indian architectural science)</td>
+<td>Architecture / AEC fit; ancient Indian engineering reference.</td>
+<td>&ldquo;Shilpa&rdquo; is a very common Indian feminine personal name → low TM distinctiveness, mild personal-product mis-read.</td>
+</tr>
+<tr>
+<td><strong>SrishtiCAD</strong></td>
+<td>सृष्टि — <em>creation, the act of creating</em></td>
+<td>Creation / making fit; feminine-coded but tech-context-neutral.</td>
+<td>Common personal name; patriotic resonance is generic-Hindu rather than Modi-era.</td>
+</tr>
+<tr>
+<td><strong>VimaanCAD</strong></td>
+<td>विमान — <em>flying chariot, aircraft</em></td>
+<td>Aerospace / aviation; classical Indian aerospace reference (vimana in ancient texts).</td>
+<td>Aerospace-vertical narrow; not ideal for AEC framing.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="4-tier-3-defense-themed-very-strong-patriotism-heavier-voice"><a class="toclink" href="#4-tier-3-defense-themed-very-strong-patriotism-heavier-voice">4. Tier 3 — defense-themed, very strong patriotism, heavier voice</a></h2>
+<p>Names tied to Indian defense / missile / weapon systems. <strong>Highest patriotic intensity</strong> but heavier in tone — these say &ldquo;Atmanirbhar Bharat military&rdquo; rather than &ldquo;modern SaaS.&rdquo;</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Root + association</th>
+<th>Recommend?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AstraCAD</strong></td>
+<td>अस्त्र — weapon; Astra is the BVRAAM missile system</td>
+<td>Strong patriotism; aggressive voice; may feel too defense-coded for civilian AEC customers</td>
+</tr>
+<tr>
+<td><strong>AkashCAD</strong></td>
+<td>आकाश — sky; also the Akash surface-to-air missile</td>
+<td>Lighter than Astra; sky-association makes it dual-readable (positive)</td>
+</tr>
+<tr>
+<td><strong>VajraCAD</strong></td>
+<td>वज्र — thunderbolt, Indra&rsquo;s weapon, also &ldquo;diamond&rdquo;</td>
+<td>Sharp, strong; &ldquo;diamond&rdquo; reading is interesting (hardness, precision)</td>
+</tr>
+<tr>
+<td><strong>AgniCAD</strong></td>
+<td>अग्नि — fire; Agni ICBM missile family</td>
+<td>Heavy, intense; probably too aggressive for the brand</td>
+</tr>
+<tr>
+<td><strong>ShaktiCAD</strong></td>
+<td>शक्ति — power, energy, the divine feminine</td>
+<td>Modi-era resonance (women empowerment + Shakti nuclear test); positive valence</td>
+</tr>
+</tbody>
+</table>
+<p>Tier 3 is recorded for completeness but not recommended unless the brand voice explicitly wants the defense / strength register. <strong>For a partner-recruitment platform brand, Tier 1 is the right register.</strong></p>
+<hr />
+<h2 id="5-names-considered-and-set-aside"><a class="toclink" href="#5-names-considered-and-set-aside">5. Names considered and set aside</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Why set aside</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>BharatCAD</strong></td>
+<td>Too literal. Reads as a government scheme, not a private platform</td>
+</tr>
+<tr>
+<td><strong>IndiaCAD</strong></td>
+<td>Same, worse — feels like a regional sub-product of someone else&rsquo;s CAD</td>
+</tr>
+<tr>
+<td><strong>DesiCAD</strong></td>
+<td>Informal register, undermines engineering credibility</td>
+</tr>
+<tr>
+<td><strong>SetuCAD</strong></td>
+<td>Setu metaphor is great, but <code>setu.co</code> (Indian fintech) is established → TM conflict</td>
+</tr>
+<tr>
+<td><strong>PragatiCAD</strong></td>
+<td>&ldquo;Progress&rdquo; is too generic; used by many gov programs</td>
+</tr>
+<tr>
+<td><strong>AdityaCAD</strong></td>
+<td>Aditya-L1 reference is current but the Hindu sun-god association may read religious in some markets</td>
+</tr>
+<tr>
+<td><strong>AryaCAD</strong></td>
+<td>&ldquo;Arya&rdquo; is politically and historically loaded internationally → reputational risk</td>
+</tr>
+<tr>
+<td><strong>PranavCAD</strong></td>
+<td>Pranav = the primordial Om; explicitly religious → risk for international B2B</td>
+</tr>
+<tr>
+<td><strong>VedaCAD / VedicCAD</strong></td>
+<td>Religious-coded; risk</td>
+</tr>
+<tr>
+<td><strong>RashtraCAD</strong></td>
+<td>&ldquo;Rashtra&rdquo; = nation; correct meaning but reads as government / political party brand</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-recommendation-in-one-sentence"><a class="toclink" href="#6-recommendation-in-one-sentence">6. Recommendation in one sentence</a></h2>
+<p><strong>TejasCAD</strong> is the strongest fit on every criterion; <strong>NirmaanCAD</strong> is the strongest fit specifically for the AEC vertical positioning; <strong>GaganCAD</strong> is the strongest forward-looking (sky / future / Gaganyaan) framing. <strong>My recommendation is TejasCAD with the <code>Tejas Engine</code> / <code>Tejas Forge</code> / <code>Tejas Cloud</code> / <code>Tejas SDK</code> sub-brand family</strong> — it carries the Atmanirbhar Bharat story in a single word, reads internationally, supports a clean sub-brand structure, and clears TM as a compound even though the bare &ldquo;Tejas&rdquo; mark is contested.</p>
+<hr />
+<h2 id="7-next-steps-when-a-direction-is-picked"><a class="toclink" href="#7-next-steps-when-a-direction-is-picked">7. Next steps when a direction is picked</a></h2>
+<ol>
+<li><strong>TM clearance</strong> in IN, US, EU, SG, AU, AE for the chosen mark + sub-brand family</li>
+<li><strong>Domain acquisition</strong> — <code>.com</code> is primary; <code>.io</code>, <code>.tech</code>, <code>.cad-tld-if-exists</code>, <code>.in</code> as defenses</li>
+<li><strong>Common-law search</strong> — Google, GitHub, Producthunt, Crunchbase for existing usage</li>
+<li><strong>Linguistic check</strong> — surface negative meanings in target languages (Tamil, Marathi, Bengali, plus EU and SEA languages)</li>
+<li><strong>Sub-brand lock</strong> — decide the family naming pattern (<code>[Name] Engine</code> vs <code>[Name]Core</code>, <code>[Name] Forge</code> vs <code>[Name] Market</code>) and apply consistently across all artifacts</li>
+<li>Then — and only then — update <code>docs/platform-strategy.md</code> §10.2, <code>docs/exec-presentation.md</code>, and the README with the chosen brand</li>
+</ol>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="rearchitecture-plan.html">plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry outlook</a> ·
+        <a href="memory-architecture.html">memory architecture</a> ·
+        <a href="platform-strategy.html">platform strategy</a> ·
+        <a href="brand-shortlist.html">brand shortlist</a> ·
+        <a href="exec-presentation.html">exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
