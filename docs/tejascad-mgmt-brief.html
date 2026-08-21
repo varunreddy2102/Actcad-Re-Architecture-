@@ -247,6 +247,7 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <li><a href="#the-lesson-from-oda-cheap-memberships-won">The lesson from ODA — cheap memberships won</a></li>
 <li><a href="#two-speeds-a-wide-funnel-and-a-paid-core">Two speeds — a wide funnel and a paid core</a></li>
 <li><a href="#what-each-tier-gates">What each tier gates</a></li>
+<li><a href="#ai-bundle-the-capability-meter-the-consumption">AI: bundle the capability, meter the consumption</a></li>
 <li><a href="#the-price-matrix-and-it-ramps">The price matrix — and it ramps</a></li>
 <li><a href="#membership-royalty-or-membership-only">Membership + royalty, or membership only?</a></li>
 <li><a href="#founding-status-earned-by-tier-not-by-showing-up-early">Founding status — earned by tier, not by showing up early</a></li>
@@ -634,6 +635,40 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </blockquote>
 <p><strong>This is not a contradiction of &ldquo;bundle, don&rsquo;t itemize.&rdquo;</strong> A member buys <em>Plus</em>. They never see a line item called &ldquo;AI — $40K&rdquo; that invites comparison to ITC&rsquo;s $8K experiment.</p>
 <hr />
+<h2 id="ai-bundle-the-capability-meter-the-consumption"><a class="toclink" href="#ai-bundle-the-capability-meter-the-consumption">AI: bundle the capability, meter the consumption</a></h2>
+<p><strong>AI carries an ongoing marginal cost, and that has to be capped.</strong> Bundling inference unmetered would put an <strong>unbounded liability against a fixed fee</strong> — a 10,000-seat member with 20% active AI use could plausibly burn more in inference than their entire platform fee. That single mistake would take the ~70% margin to nothing.</p>
+<p><strong>So we treat AI inference exactly as we treat ACIS royalties: a pass-through cost, never a margin line.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Mechanism</th>
+<th>How it works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Per-seat allowance</strong></td>
+<td>Each tier includes a modest monthly allowance — enough for normal drafting use</td>
+</tr>
+<tr>
+<td><strong>Metered above it</strong></td>
+<td>Beyond the allowance, billed at <strong>cost plus a small ops margin</strong>. Never subsidised.</td>
+</tr>
+<tr>
+<td><strong>Bring your own key</strong></td>
+<td>Member supplies their own model API key — <strong>unlimited use, and it costs us nothing</strong></td>
+</tr>
+<tr>
+<td><strong>They resell it</strong></td>
+<td>Members price AI to their end customers however they like. <strong>It becomes their revenue line, not our cost centre.</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>And most calls should never hit a frontier model.</strong> Routine work — command suggestion, drawing health, block detection — runs on <strong>small or on-device models</strong>. Frontier models are reserved for genuine agent tasks. That is the difference between a cost that scales with usage and one that doesn&rsquo;t.</p>
+<blockquote>
+<p>⚠️ <strong>Open item, stated honestly: we do not yet know our real inference cost per active user.</strong> Sizing the allowance requires measuring it. <strong>That is a Phase 1 task</strong>, alongside the customer-hardware performance baseline — and until it is measured, the AI allowance numbers stay deliberately unset.</p>
+</blockquote>
+<hr />
 <h2 id="the-price-matrix-and-it-ramps"><a class="toclink" href="#the-price-matrix-and-it-ramps">The price matrix — and it ramps</a></h2>
 <p><strong>$300K on day one is steep for a vendor paying ITC $100K.</strong> So we don&rsquo;t ask on day one, and we don&rsquo;t charge everyone the same.</p>
 <table>
@@ -903,6 +938,7 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </tr>
 </tbody>
 </table>
+<p><em>Cost to serve excludes AI inference, which is metered and passed through — see the AI slide. That is what keeps this margin real rather than notional.</em></p>
 <p><strong>What that compounds to:</strong></p>
 <table>
 <thead>
@@ -1259,6 +1295,7 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 - First soft conversation with 2 candidate members from ActCAD&rsquo;s warm network — no LOI ask, just problem discovery. <strong>We can show them the working viewer.</strong>
 - External crypto firm engaged to review encrypted licensing v0 design
 - Customer-hardware perf baseline measurement (the exit criterion still owed from Phase 0)
+- <strong>Instrument AI inference cost per active user</strong> — the number that sizes the allowance and protects the margin
 - Public web-launch decision — first candidate-member conversations may benefit from a controlled public demo</p>
 <p>By month 2, we come back to this room with:
 - A confirmed entity plan

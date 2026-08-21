@@ -216,6 +216,25 @@ ODA and IntelliCAD sell into **the same market**. Look at what they charge and w
 
 ---
 
+## AI: bundle the capability, meter the consumption
+
+**AI carries an ongoing marginal cost, and that has to be capped.** Bundling inference unmetered would put an **unbounded liability against a fixed fee** — a 10,000-seat member with 20% active AI use could plausibly burn more in inference than their entire platform fee. That single mistake would take the ~70% margin to nothing.
+
+**So we treat AI inference exactly as we treat ACIS royalties: a pass-through cost, never a margin line.**
+
+| Mechanism | How it works |
+|---|---|
+| **Per-seat allowance** | Each tier includes a modest monthly allowance — enough for normal drafting use |
+| **Metered above it** | Beyond the allowance, billed at **cost plus a small ops margin**. Never subsidised. |
+| **Bring your own key** | Member supplies their own model API key — **unlimited use, and it costs us nothing** |
+| **They resell it** | Members price AI to their end customers however they like. **It becomes their revenue line, not our cost centre.** |
+
+**And most calls should never hit a frontier model.** Routine work — command suggestion, drawing health, block detection — runs on **small or on-device models**. Frontier models are reserved for genuine agent tasks. That is the difference between a cost that scales with usage and one that doesn't.
+
+> ⚠️ **Open item, stated honestly: we do not yet know our real inference cost per active user.** Sizing the allowance requires measuring it. **That is a Phase 1 task**, alongside the customer-hardware performance baseline — and until it is measured, the AI allowance numbers stay deliberately unset.
+
+---
+
 ## The price matrix — and it ramps
 
 **$300K on day one is steep for a vendor paying ITC $100K.** So we don't ask on day one, and we don't charge everyone the same.
@@ -307,6 +326,8 @@ ODA and IntelliCAD sell into **the same market**. Look at what they charge and w
 | **Recurring revenue per member** | **~$230K** |
 | Platform cost to serve one additional member | ~$70K |
 | **Gross margin per additional member** | **~70%** |
+
+*Cost to serve excludes AI inference, which is metered and passed through — see the AI slide. That is what keeps this margin real rather than notional.*
 
 **What that compounds to:**
 
@@ -507,6 +528,7 @@ Weeks 2–4:
 - First soft conversation with 2 candidate members from ActCAD's warm network — no LOI ask, just problem discovery. **We can show them the working viewer.**
 - External crypto firm engaged to review encrypted licensing v0 design
 - Customer-hardware perf baseline measurement (the exit criterion still owed from Phase 0)
+- **Instrument AI inference cost per active user** — the number that sizes the allowance and protects the margin
 - Public web-launch decision — first candidate-member conversations may benefit from a controlled public demo
 
 By month 2, we come back to this room with:
