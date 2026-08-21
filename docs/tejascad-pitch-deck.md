@@ -78,6 +78,27 @@ For thirty years, the value in the CAD-alternative market was **owning the DWG p
 
 ---
 
+## Architecture in one picture
+
+**10-module C++ core.** Engine is tenant-agnostic; tenant identity lives in the shell only.
+
+| Module | Role |
+|---|---|
+| **`db`** | Drawing database. Only mutator. Emits typed op-stream. |
+| **`geom`** | Kernel Abstraction Layer over ACIS. No ACIS types in public headers. |
+| **`render`** | Visualize backends — DirectX 12 / Vulkan / Metal / WebGPU. |
+| **`cmd`** | Command bus. The single seam AI + plugins + scripts talk to. |
+| **`script`** | LISP, Python, JS. Everything routes through `cmd`, never `db`. |
+| **`plugin`** | API-parity native + WASM plugin host. |
+| **`net`** | Sync, document service, telemetry (Rust). |
+| **`agent`** | MCP server, tool catalog, permission scoping (Rust). |
+| **`platform`** | File I/O, fonts, printer, GPU surface. Only module with `#ifdef`. |
+| **`ui-bridge`** | One C ABI. Qt shell + WASM shell + tenant shells all consume it. |
+
+Full spec: `docs/rearchitecture-plan.md` §3.
+
+---
+
 ## The three differentiators
 
 **1. Modern — AI, cloud, web from day one.** MCP server inside the engine, transactional undo per agent tool call, browser editor in Phase 2, real-time co-edit at GA. Nothing in the IntelliCAD-based segment ships this credibly.
@@ -87,6 +108,50 @@ For thirty years, the value in the CAD-alternative market was **owning the DWG p
 **3. Encrypted, platform-blind licensing.** Members serve their own customers through TejasCAD's licensing infrastructure — perpetual, subscription, floating, node-locked. **We architecturally cannot see the data.** Not a policy — a cryptographic property. Third-party audited annually.
 
 > **These three, together, are what no competitor offers. Any one of them alone is a category-defining differentiator.**
+
+---
+
+## Differentiator #1 in detail — AI
+
+**The commitment no competitor has made:** every AI tool call resolves to **exactly one transaction in the host undo stack.**
+
+- **AI as a tool (Phase 1).** Markup Assist (PDF redline → DWG edits), Smart Blocks (block detection + conversion), Drawing Health (layer cleanup, dimstyle normalization). Inline, deterministic, undoable.
+- **MCP server (Phase 1–2).** Local MCP (host running, agent commands inside host transaction) + remote MCP data server (cloud, read-only DWG queries). Mirrors Autodesk Fusion 2026 pattern. Works with Claude, Cursor, ChatGPT out of the box.
+- **Generative CAD (Phase 3, conditional).** Only when editable parametric round-trip is proven. Hypar's lesson: text-to-BIM via chat alone was the wrong abstraction.
+
+**Why this matters commercially:** every member's brand ships AI-inside-CAD on day one. This closes the #1 lost-deal reason for IntelliCAD-based competitors in the 2027–2029 window.
+
+---
+
+## Differentiator #2 in detail — white-label ready-to-ship
+
+**Tenant profile = one JSON + one asset bundle → one signed, branded product.**
+
+What a member configures:
+- Brand identity (name, icons, splash, EULA, about-box copy)
+- Command-line prefix (e.g. `ACAD-` → `MYCAD-`)
+- File-format identity (custom DXF app-id, "open with" handler)
+- Update channel (per-tenant signed manifest)
+- Feature flags (which verticals / plugins / kernels / AI tools)
+- License endpoint (per-tenant license-server URL)
+- Help + docs URLs, AI assistant identity, marketplace-tenant-share percentage
+
+**A new tenant is a build configuration, not a code change.** The engine never sees `if (tenant == ...)`. Full spec: `docs/platform-strategy.md` §3.
+
+---
+
+## Differentiator #3 in detail — encrypted, platform-blind licensing
+
+Four-level cryptographic key hierarchy. **The critical property: TejasCAD does not hold the keys to see member customer data.**
+
+- **Platform Root** — offline HSM; signs member LA public keys
+- **Member License Authority (LA) key** — **held by the member.** TejasCAD generates on onboarding, transmits under one-time envelope crypto, deletes its copy. LA private key never lives in our infrastructure after handoff.
+- **Per-license symmetric keys** — wrapped for end-user's specific machine; only that machine can decrypt
+- **Aggregate attestation key** — member signs quarterly deployment counts for ACIS royalty; we see numbers, not identities
+
+**What we can see:** aggregate deployment counters (per member, per quarter), infrastructure health metrics. **What we cannot see:** customer identities, seat counts per customer, pricing, license contents, drawing data. Not by policy. By math.
+
+Third-party audit report published under CC-BY; members redistribute to their own customers as proof. Full spec: `docs/tejascad-licensing-architecture.md`.
 
 ---
 
@@ -100,7 +165,7 @@ For thirty years, the value in the CAD-alternative market was **owning the DWG p
 
 **Q: If TejasCAD gets a subpoena for our customer data, what happens?** We hand over what we hold — ciphertext. Which is useless. We cannot break the crypto for the government any more than for an attacker.
 
-**Q: If TejasCAD terminates our membership, do our customers still work?** Yes. LA is yours. License artifacts are cryptographically valid independent of TejasCAD's continuity.
+**Q: If TejasCAD terminates our membership, do our customers still work?** Yes. LA is yours. License artifacts are cryptographically valid independent of TejasCAD's continuity. Documented "TejasCAD-independent operations" playbook ships with the SDK.
 
 **Q: Can we prove this to our customers?** Yes. Annual third-party crypto audit report, published under CC-BY for redistribution.
 
@@ -196,7 +261,7 @@ Full spec: `docs/tejascad-company-structure.md` §12.
 
 ## Company structure — Delaware C-Corp + Indian Op-Co
 
-**Recommended entity:** TejasCAD Inc. (Delaware C-Corp holdco) with 100%-owned TejasCAD Technologies Pvt Ltd (India). Rationale: institutional Series A / B / growth-round investors overwhelmingly prefer Delaware; flipping later costs months of runway and 3–5% in legal + tax.
+**Recommended entity:** TejasCAD Inc. (Delaware C-Corp holdco) with 100%-owned TejasCAD Technologies Pvt Ltd (India). Rationale: institutional Series A / B / growth-round investors overwhelmingly prefer Delaware; flipping later costs months of runway and 3–5% in legal + tax. India Op-Co employs the team, holds Indian contracts, assigns IP to the C-Corp.
 
 **Founding cap table (illustrative, at incorporation):**
 
@@ -210,6 +275,19 @@ Full spec: `docs/tejascad-company-structure.md` §12.
 **Founder-promoter allocation reflects that promoters are both (a) the seed capital source AND (b) the strategic underwriter of the anchor tenant (ActCAD).** No competitor can start a white-label CAD platform with a working revenue-generating brand as tenant zero.
 
 Full detail: `docs/tejascad-company-structure.md` §2.
+
+---
+
+## ActCAD carve-out — how the anchor tenant relationship works
+
+Both entities preserve independent optionality.
+
+- **Jytra Technology Solutions** continues to own the ActCAD brand, customer relationships, perpetual license base, reseller channel, support org.
+- **TejasCAD Inc.** owns the engine, platform, license infrastructure, marketplace, master ACIS / ODA / Qt contracts.
+- **Master Platform License Agreement between Jytra and TejasCAD Inc.:** Jytra becomes a member tenant from day 1. Standard member terms, standard fees, standard royalty pass-through. **No preferential pricing — that keeps the cap table clean for later members and for exit diligence.**
+- At TejasCAD exit, Jytra remains as-is: still a Jytra, still a member tenant, master agreement survives change-of-control. **Jytra shareholders (same promoter group) can sell Jytra separately, keep it, or merge it into the acquirer.**
+
+Full detail: `docs/tejascad-company-structure.md` §7.
 
 ---
 
@@ -228,6 +306,24 @@ Every round has a specific purpose. Numbers illustrative.
 **Total capital raised over 7 years:** ~$172M primary + $10M secondary = ~$182M.
 
 Full detail: `docs/tejascad-company-structure.md` §3.
+
+---
+
+## Round 0 — Promoter Seed (illustrative $4M)
+
+**Source: ActCAD promoter group, in personal capacity.**
+
+- Structured as **founder equity + convertible notes with Series A valuation cap of $12M pre-money and 20% discount** — defers valuation to the Series A investor, which is exactly what a promoter friends-and-family round should do.
+- **Two tranches:** $1.5M at incorporation (spike + M0–6 ramp); $2.5M at M6 (released against spike-pass + ACIS bilateral term sheet signed).
+- **No institutional dilution before there is a shipping engine and locked ACIS terms.** This is the discipline that preserves 46% promoter ownership at Series A, versus ~25–30% if seed had been institutional.
+
+**Uses (illustrative $4M):**
+- Feasibility spike: $500K
+- Engineering payroll (8 engineers, 12 months): $640K
+- ACIS initial + ODA + Qt subscriptions: ~$350K
+- Cloud + AI dev tooling: ~$150K
+- Legal / contract work (ACIS, ODA, Qt): ~$200K
+- Working capital + contingency: rest
 
 ---
 
@@ -272,8 +368,8 @@ Full detail: `docs/tejascad-company-structure.md` §3.
 
 | Phase | Months | Headline deliverables |
 |---|---|---|
-| **Phase 1: Foundation** | 0–12 | Engine on ODA. Full DWG fidelity. 2D drafting. Native Windows beta. Browser viewer in parallel. LISP runtime. AI-as-tool features. MCP server skeleton. **Tenant-profile layer built from day 1.** Encrypted licensing v1. |
-| **Phase 2: Production v1** | 12–24 | Mac / Linux Qt at parity. Browser full editor. Light 3D via ACIS. **Cloud co-edit on 2D.** LISP 95th percentile + migration tool. **AI assistant GA.** ActCAD-new GA at month 24. Soft outreach to 2–3 candidate members. |
+| **Phase 1: Foundation** | 0–12 | Engine on ODA. Full DWG fidelity. 2D drafting. Native Windows beta to willing-customer cohort. Browser viewer in parallel. LISP runtime. AI-as-tool features shipped. MCP server skeleton. **Tenant-profile layer built from day 1.** Encrypted licensing v1. |
+| **Phase 2: Production v1** | 12–24 | Mac / Linux Qt at parity. Browser becomes full editor. Light 3D via ACIS through KAL. **Cloud co-edit on 2D.** LISP 95th percentile + migration tool. **AI assistant GA.** ActCAD-new GA at month 24. Soft outreach to 2–3 candidate members. |
 | **Phase 2→3 gate** | Month 24 | **Partner-validation gate.** ≥2 members at LOI? → pursue platform amendment with Spatial + open marketplace + open to outside members. |
 | **Phase 3: Parity-or-better + platform** | 24–36 | Full 3D + BIM-lite (IFC). MEP / Electrical / Structural verticals reshipped as plugins. Mobile shells. **First 3 external members onboarded. Marketplace opens.** IntelliCAD ActCAD sunset. |
 
@@ -300,6 +396,20 @@ Full detail: `docs/rearchitecture-plan.md` §5, `docs/platform-strategy.md` §9.
 
 ---
 
+## Modeled cost envelopes (salary excluded — full picture in `rearchitecture-plan.md` §15)
+
+| Phase | Engineers | Stack + tools + cloud |
+|---|---|---|
+| **Phase 1** (0–12) | 8 | **~$383K** (incl. ~$300K ACIS initial + recurring) |
+| **Phase 2** (12–24) | 20 | **~$449K** (incl. ~$210K ACIS recurring + royalty at GA) |
+| **Phase 3** (24–36) | 30 | **~$1.26M** (incl. ~$660K ACIS recurring + royalty at scale) |
+
+**In scope:** ODA Sustaining ($7.5K → $4.5K renewal, unlimited seats + Web/SaaS rights), Qt Commercial (~$4K/dev/yr), **ACIS commercial OEM** (initial + 15–20% maintenance + per-deployment royalty + module fees + DELA), VS Code primary + 2–3 VS Enterprise seats for perf devs, AI dev tooling (~$50/dev/mo), AWS infra, Clerk + Stripe.
+
+**ACIS is the dominant line.** §15.1.1 per-deployment ask locks the model at SMB scale.
+
+---
+
 ## Risk register (top 5 of 12; full list `company-structure.md` §13)
 
 | # | Risk | Impact | Mitigation |
@@ -309,6 +419,8 @@ Full detail: `docs/rearchitecture-plan.md` §5, `docs/platform-strategy.md` §9.
 | 3 | **ACIS round-trip fails on customer DWGs** | Anchor migration path breaks | Spike 1a; KAL preserves kernel-swap option |
 | 4 | **Two product lines for 24 months** | Support / marketing bandwidth split | Dual-product operating plan in P1; explicit customer communication template |
 | 5 | **Cadence trap re-emerges under TejasCAD** — we become the new slow consortium | Kills our own value prop | Rolling engine releases; tenant profile absorbs member-specific requests; formalized but non-blocking member input |
+
+Full 12-risk register: `docs/tejascad-company-structure.md` §13.
 
 ---
 
@@ -343,6 +455,23 @@ Sales motion for member recruitment, phased against product maturity:
 
 ---
 
+## Founders and team (placeholder — to be filled by promoter group)
+
+- **[Founder 1]** — [role, ActCAD tenure, prior]. Leads platform strategy + investor relations.
+- **[Founder 2]** — [role, tenure]. Leads product + member success.
+- **CTO / engineering lead** — TBD (external hire vs internal promotion; decision at incorporation)
+- **CPO / product lead** — TBD
+- **VP Partnerships** — TBD (hired between M9 and M12)
+- **Advisory board (post-incorporation targets):**
+  - A former Bricsys / ARES / Onshape senior product / engineering leader
+  - A CAD industry corp-dev veteran (M&A pattern-matching)
+  - A crypto / security recognized expert (validation of the platform-blind licensing story)
+  - A large-scale open ecosystem operator (Shopify, Atlassian, Autodesk App Store perspective)
+
+**The credibility founding team gets from day 1:** working relationships with ODA, Spatial, Qt, and the ActCAD channel partners — not from a pitch, from history.
+
+---
+
 ## The "from India, for the world" positioning
 
 **Why this framing matters commercially, not just narratively:**
@@ -353,6 +482,22 @@ Sales motion for member recruitment, phased against product maturity:
 - The name **Tejas** carries the story: HAL Tejas LCA is the living Atmanirbhar Bharat engineering symbol, and it is now being **exported** — Malaysia signed 2023, Argentina + Egypt in pipeline. "India-engineered, world-flown" is not a slogan; it's a track record we associate with.
 
 Full brand rationale: `docs/brand-shortlist.md`.
+
+---
+
+## Milestones and value gates (what each round unlocks)
+
+| Milestone | Value delivered | Round it enables |
+|---|---|---|
+| Feasibility spike passes | Engineering risk retired | Promoter capital tranche 2 |
+| ACIS bilateral signed | Commercial exposure retired | ActCAD-new engineering start |
+| Native beta ships | Product risk retired | Series A conversations open |
+| GA + 2 member LOIs | Platform model validated | Series A closes |
+| 3–5 members live + marketplace GMV | Platform model proven | Series B closes |
+| 10+ members, $50M ARR, marketplace flywheel | Category leadership established | Growth round opens |
+| Strategic conversations at IOI | Acquisition tension real | Growth round closes |
+| Growth round closes | Valuation floor set | Acquisition from strength |
+| 18–24 months of growth-round execution | ARR at $100–150M | Exit at $1.5–2.5B envelope |
 
 ---
 
