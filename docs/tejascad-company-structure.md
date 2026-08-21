@@ -52,8 +52,8 @@ Notes:
 - **The 50/50 relationship is preserved through dilution** — an ESOP pool dilutes both sides proportionally, so parity survives.
 - The ESOP pool exists because TejasCAD employs the engine team directly (dev, QA, dev support). Those hires need equity; the pool is sized at incorporation rather than negotiated later under pressure.
 - **Both sides are principals in both entities.** That makes alignment easy and makes the arm's-length intercompany discipline in §5 and §7 more necessary, not less — nothing enforces it except the agreement itself.
-- Vesting: standard 4-year, 1-year cliff for the CTO / CPO. Promoter shares fully vested at inception (they're capitalizing, not employed).
-- ESOP pool is **separate** and gets created at the Series A round (§3.2), sized at 12–15%.
+- Vesting: standard 4-year, 1-year cliff on ESOP grants. Founder shares fully vested at inception — both sides are capitalising, not being employed into their stake.
+- The pool is created **at incorporation**, not deferred to a later round. With no institutional round now planned, there is no later event to attach it to.
 
 ---
 
