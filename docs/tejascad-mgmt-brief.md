@@ -173,7 +173,9 @@ The viewer is proving something else: **some ODA features are not exposed throug
 | **QA, release engineering, the corpus and regression harness** | **TejasCAD QA** — hired. Phase 0 already runs 594 web tests and a native gate harness; that discipline needs staffing to scale. |
 | **Dev support — SDK, docs, migration engineering, member L3** | **TejasCAD dev support** — hired. This is the function that keeps members off ActCAD's team. |
 | **Domain expertise, verticals, IRX-level customisation, product judgement, what customers actually need** | **ActCAD's team.** Fifteen years of it, and not replaceable by hiring. |
-| **A member's own L1 / L2 support** | The member. Never us. |
+| **Member acquisition — selling platform memberships** | **TejasCAD.** Founder-led warm intros first; a partnerships hire only once there is something to sell. Few deals, long cycles, senior conversations. |
+| **Selling ActCAD to end customers** | **ActCAD's existing sales organisation. Completely unchanged.** New engine, same channel, same team, same customers. |
+| **A member's own L1 / L2 support and their end-customer sales** | The member. Never us. |
 
 > **This is a genuine complementarity, not a polite division.** The verticals are the most differentiated thing we can license — and they exist because of domain judgement the platform team could not produce. The engine exists because of systems work the ActCAD team does not do. **Neither half is sufficient alone.**
 
@@ -272,6 +274,34 @@ We are an IntelliCAD member. **We know this market's economics because we live t
 | Mac / full web app / web editor | — | **Not available. IntelliCAD is Windows-tied.** |
 
 > **The add-ons are cheap because they are not really products.** That matters for how we price: **we bundle, we do not itemize.** The moment we put a line item called "AI" on a quote, we get compared to an $8K experiment. Bundled into one platform fee that retires most of a $700K–1.3M stack, the comparison is the one we want.
+
+---
+
+## IntelliCAD++ — the same idea, with ownership and responsibility fixed
+
+**The consortium model was right about one thing: small CAD vendors cannot each fund an engine.** What it got wrong is who owns the result and who carries the burden of it.
+
+| | **IntelliCAD (ITC)** | **TejasCAD — IntelliCAD++** |
+|---|---|---|
+| **What you receive** | ~1M lines of source | **A shipping product you configure** |
+| **Who maintains the engine** | **You do. Forever.** Fork it, patch it, re-merge on every uptake | **We do.** You never touch engine code |
+| **Who owns the IP** | Consortium-held; you hold a licence | Platform-held; you hold a licence **— and founding members hold equity** |
+| **Who sets direction** | Member supermajority. **The slowest member sets the pace** | Platform decides. **Members have voice, not veto** |
+| **Your bug fixes** | Flow to every member, **including your competitors** | **Stay yours** |
+| **Release cadence** | Coordinated, annual | **Rolling. You ship when you are ready** |
+| **Platform reach** | Windows | Windows, Mac, Linux, web, Android |
+| **AI** | ~$8K experimental add-on | **In every tier** |
+| **Licensing / DRM** | Buy your own | **Included, and platform-blind** |
+
+<div class="big" markdown="1">
+
+**The consortium gave members shared ownership of a codebase and sole responsibility for running it. We invert that: we carry the responsibility, and we share the ownership with the members who matter most.**
+
+</div>
+
+> **The "++" is not just a better engine — it is a better deal on who does the work.** That is the sentence to lead with in every member conversation.
+
+> ⚠️ **One thing this raises that needs deciding:** how far the ownership-sharing goes. Founding Partner warrants are three small slots — parity between us is preserved. **Going further, toward genuine member co-ownership, buys deeper commitment but reintroduces exactly the governance drag that made ITC slow.** Our position is warrants yes, votes no — but it is a decision, not a given.
 
 ---
 
