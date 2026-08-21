@@ -247,20 +247,27 @@ ODA and IntelliCAD sell into **the same market**. Look at what they charge and w
 
 ---
 
-## Founding members — the first three to five
+## Founding status — earned by tier, not by showing up early
 
-The first members take the most risk and are worth the most to us. They should be paid for it.
+**Founding benefits cost us real money. They go to members who bring real reference value and take real risk — not to everyone who signs first.**
 
-| What they get | Why it costs us little and buys a lot |
-|---|---|
-| **30% below standard tier, locked 5 years** | Cheap now, when we have no members; the reference customer is worth more than the discount |
-| **Warrants — a small equity stake, vesting over 3–4 years** | **Costs no cash. Aligns them to the platform's exit, not just their licence.** The single strongest retention tool we have |
-| **Technical advisory board seat** | Real roadmap influence — and free product direction from people who run CAD businesses |
-| **Better vertical split** (50 / 30 / 20 vs 40 / 40 / 20) | Only pays out if their vertical actually sells |
-| **Marketplace fee holiday, 24 months** | Zero cost while the marketplace is empty anyway |
-| **Public "founding member" designation** | Free. And it is how we recruit members four through ten. |
+| | **Founding Partner** | **Founding Member** | **Early adopter** | **Developer tier** |
+|---|---|---|---|---|
+| Who qualifies | **Scale / Enterprise** (20K+ seats, $300K+) | **Growth** (5–20K seats, $180K) | **Launch** ($90K) | $6K self-serve |
+| Slots available | **Max 3** | **Max 5** | uncapped | uncapped |
+| Fee discount | **30%, locked 5 yrs** | **20%, locked 3 yrs** | 15%, 2 yrs | — *(already the cheap rung)* |
+| **Warrants** | **Yes** — small equity stake, vests 3–4 yrs | No | No | No |
+| Governance | **Technical advisory board seat** | Roadmap input, no seat | — | — |
+| Vertical co-dev split | **50 / 30 / 20** | 45 / 35 / 20 | standard 40 / 40 / 20 | n/a |
+| Marketplace fee holiday | 24 months | 12 months | — | — |
+| Public designation | **"Founding Partner"** | "Founding Member" | — | — |
 
-> **The warrants are the piece worth arguing about.** Giving equity to customers is unusual — but a founding member holding warrants stops being a licensee and starts being an ally who wants the platform to be acquired well. At three to five members, the dilution is negligible.
+**Two conditions on all of it:**
+
+1. **A deadline** — founding agreements must be signed **before platform GA**. After that the designation closes permanently, or it stops meaning anything.
+2. **ActCAD does not take a founding slot.** It pays standard Scale-tier rates as the anchor tenant. **The arm's-length discipline matters more than the discount**, and it keeps all three Partner slots available for genuine external reference customers.
+
+> **The warrants are the piece worth arguing about.** Giving equity to a customer is unusual — but a Founding Partner holding warrants stops being a licensee and becomes an ally who wants the platform **acquired well**. At three slots the dilution is negligible, and it is the strongest retention tool we have against a member drifting back to ITC or building their own.
 
 ---
 
