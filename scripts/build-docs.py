@@ -54,6 +54,36 @@ DESCRIPTIONS = {
         "name ends in 'CAD'. Tiered candidates, sub-brand families, "
         "TM watch-outs, names set aside."
     ),
+    "tejascad-story.md": (
+        "The TejasCAD narrative — the moment, the problem seen from three "
+        "chairs, the insight, the bet, the promise, who founds it and why "
+        "they can, the three-act arc across seven years to acquisition."
+    ),
+    "tejascad-company-structure.md": (
+        "Corporate spine — entity choice (Delaware C-Corp + India Op-Co), "
+        "founding cap table, five-round funding waterfall (Seed → Series "
+        "A → B → pre-exit Growth round → exit), IP ownership, ActCAD "
+        "carve-out, exit landscape and acquirer archetypes, verticalised "
+        "solutions program, risk register, unit economics."
+    ),
+    "tejascad-licensing-architecture.md": (
+        "Encrypted, platform-blind licensing — cryptographic key "
+        "hierarchy, license artifact structure, issuance and activation "
+        "flows, what TejasCAD does and doesn't see, third-party audit "
+        "artifact, GDPR/DPDPA compliance mapping."
+    ),
+    "tejascad-vs-intellicad.md": (
+        "Head-to-head with the IntelliCAD Consortium — feature-by-feature "
+        "and architectural comparison, commercial comparison, three "
+        "differentiators, honest counter-cases, illustrative migration "
+        "case study ('RegionCAD')."
+    ),
+    "tejascad-pitch-deck.md": (
+        "Pitch deck (Marp-formatted) for management, prospective members, "
+        "and investors — synthesizes story + structure + licensing + "
+        "differentiation + funding waterfall + exit landscape. Also "
+        "renders as a browsable HTML document."
+    ),
     "exec-presentation.html": (
         "Slide deck for the management decision briefing (reveal.js)."
     ),
@@ -314,13 +344,18 @@ PAGE_TEMPLATE = """<!DOCTYPE html>
     <footer class="doc-footer">
       <p>Companion documents:
         <a href="index.html">index</a> ·
-        <a href="rearchitecture-plan.html">plan</a> ·
-        <a href="architecture-overview.html">overview</a> ·
-        <a href="industry-outlook.html">industry outlook</a> ·
-        <a href="memory-architecture.html">memory architecture</a> ·
+        <a href="tejascad-story.html">TejasCAD story</a> ·
+        <a href="tejascad-pitch-deck.html">TejasCAD deck</a> ·
+        <a href="tejascad-vs-intellicad.html">vs IntelliCAD</a> ·
+        <a href="tejascad-company-structure.html">company structure</a> ·
+        <a href="tejascad-licensing-architecture.html">licensing</a> ·
         <a href="platform-strategy.html">platform strategy</a> ·
-        <a href="brand-shortlist.html">brand shortlist</a> ·
-        <a href="exec-presentation.html">exec deck</a>
+        <a href="rearchitecture-plan.html">engine plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry</a> ·
+        <a href="memory-architecture.html">memory</a> ·
+        <a href="brand-shortlist.html">brand</a> ·
+        <a href="exec-presentation.html">original exec deck</a>
       </p>
     </footer>
   </main>
@@ -346,13 +381,18 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
     <nav class="toc-nav">
       <ul>
         <li><a href="index.html"><strong>Index</strong></a></li>
-        <li><a href="rearchitecture-plan.html">Master plan</a></li>
+        <li><a href="tejascad-story.html"><strong>TejasCAD story</strong></a></li>
+        <li><a href="tejascad-pitch-deck.html">TejasCAD pitch deck</a></li>
+        <li><a href="tejascad-vs-intellicad.html">TejasCAD vs IntelliCAD</a></li>
+        <li><a href="tejascad-company-structure.html">Company structure & funding</a></li>
+        <li><a href="tejascad-licensing-architecture.html">Licensing architecture</a></li>
+        <li><a href="platform-strategy.html">Platform strategy</a></li>
+        <li><a href="rearchitecture-plan.html">Engine master plan</a></li>
         <li><a href="architecture-overview.html">Current architecture</a></li>
         <li><a href="industry-outlook.html">Industry outlook</a></li>
         <li><a href="memory-architecture.html">Memory architecture</a></li>
-        <li><a href="platform-strategy.html">Platform strategy</a></li>
         <li><a href="brand-shortlist.html">Brand shortlist</a></li>
-        <li><a href="exec-presentation.html">Executive deck</a></li>
+        <li><a href="exec-presentation.html">Original exec deck</a></li>
       </ul>
     </nav>
   </aside>
@@ -374,9 +414,17 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 """
 
 
+FRONTMATTER_RE = re.compile(r"\A---\n.*?\n---\n", re.DOTALL)
+MARP_COMMENT_RE = re.compile(r"<!--\s*_class:.*?-->\s*|<!--\s*_paginate:.*?-->\s*", re.IGNORECASE)
+
+
 def convert(md_path: Path) -> tuple[str, str, str]:
     """Return (title, toc_html, body_html) for a markdown source file."""
     text = md_path.read_text(encoding="utf-8")
+    # Strip Marp YAML frontmatter and Marp-only directive comments so the
+    # HTML preview reads as a document. The Marp source is unaffected on disk.
+    text = FRONTMATTER_RE.sub("", text)
+    text = MARP_COMMENT_RE.sub("", text)
     md = markdown.Markdown(
         extensions=["extra", "toc", "sane_lists", "smarty"],
         extension_configs={
@@ -419,13 +467,20 @@ def build_pages(md_files: list[Path]) -> list[tuple[Path, str]]:
 
 def build_index(pages: list[tuple[Path, str]]) -> None:
     """Write docs/index.html linking to every document."""
-    # Order: plan, overview, industry, memory, platform strategy, brand shortlist, exec deck (hand-authored)
+    # Order: TejasCAD story first (the narrative front door), then TejasCAD
+    # pack (structure, licensing, vs-intellicad, deck), then engine plan &
+    # supporting docs, then brand shortlist, then original exec deck.
     order = [
+        "tejascad-story.html",
+        "tejascad-pitch-deck.html",
+        "tejascad-vs-intellicad.html",
+        "tejascad-company-structure.html",
+        "tejascad-licensing-architecture.html",
+        "platform-strategy.html",
         "rearchitecture-plan.html",
         "architecture-overview.html",
         "industry-outlook.html",
         "memory-architecture.html",
-        "platform-strategy.html",
         "brand-shortlist.html",
         "exec-presentation.html",
     ]
