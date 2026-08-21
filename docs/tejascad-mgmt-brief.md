@@ -298,6 +298,10 @@ Not competition. Segments where they'd rather share the platform cost than fund 
 | **Plus** | + **web app, Mac, Android**, marketplace access, cloud AI |
 | **Complete** | + **the ActCAD-derived vertical modules** (Arch / Mech / Elec / BIM / GIS), co-development priority |
 
+| **3D** *(future — not part of this decision)* | A **separate product on the C3D kernel**, built alongside rather than bundled into the main engine. For members it would eventually be **an additional licensable module**, not a change to the tiers above. |
+
+> **On the 3D product:** it is a distinct line, not a kernel swap — the main engine's ACIS reasoning is unchanged. One item to clear **before it is ever offered to members**: C3D is Russian-origin, so export and jurisdiction constraints would need resolving for **EU / UK / US members specifically**. Manageable for a product we ship ourselves; a real question the moment we license it onward. **Flagged now so it is not discovered later — out of scope for today.**
+
 > **AI ships in every tier, deliberately.** It is our sharpest edge over IntelliCAD — we want it in front of *every* member's end customers, not held back as an upsell. What we gate is the genuinely expensive-to-serve stuff: **extra platform shells, marketplace operations, and our verticals.**
 
 **This is not a contradiction of "bundle, don't itemize."** A member buys *Plus*. They never see a line item called "AI — $40K" that invites comparison to ITC's $8K experiment.
@@ -353,7 +357,7 @@ Two variables drive everything: **how many members we sign**, and **what mix of 
 
 **The honest read: a strong adjacent business line, not a venture-scale company.** The aggressive case is a ~$7M ARR business worth ~$50M, throwing off ~$5M/year. That is an excellent return on a few engineer-months of incremental work on an engine we are funding anyway — and it is not a unicorn.
 
-> **What would make it materially bigger?** Not this model. Twenty members at $340K caps out near $50M. Reaching $20M+ ARR needs **~60–100 members** (the global long tail, a decade of partner management) or selling **direct to end users** alongside our members — a bigger, more competitive, quite different business. **A question to open deliberately later, not to assume today.**
+> **What would make it materially bigger?** Not this model. Twenty members at $340K caps out near $50M. Reaching $20M+ ARR needs **~60–100 members** (the global long tail, a decade of partner management), or selling **direct to end users** alongside our members, or **a second licensable product line — the 3D product on C3D is the obvious candidate.** All three are questions to open deliberately later, not to assume today.
 
 ---
 
