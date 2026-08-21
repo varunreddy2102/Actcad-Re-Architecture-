@@ -157,21 +157,110 @@ We are an IntelliCAD member. **We know this market's economics because we live t
 
 ---
 
-## What we sell, and what we charge for it
+## The lesson from ODA — cheap memberships won
 
-Three tiers. A small vertical ISV gets in cheaply; a large regional vendor taking everything pays materially more.
+ODA and IntelliCAD sell into **the same market**. Look at what they charge and what it got them.
 
-| Tier | What's included | Per year |
+| | **IntelliCAD (ITC)** | **ODA** |
 |---|---|---|
-| **Core** | Engine, DWG/DXF fidelity, white-label shell + build pipeline, **encrypted licensing infrastructure** | **~$120K** |
-| **Plus** | Core + **AI**, web viewer & web app, **Mac**, **Android**, marketplace access | **~$220K** |
-| **Complete** | Plus + **the ActCAD-derived vertical modules** (Architecture / Mechanical / Electrical / BIM / GIS), co-development access | **~$320K** |
+| Entry price | ~$100K / year | **$3K first yr / $2.25K renewal** |
+| Main commercial tier | ~$100K + paid add-ons | **$7.5K first yr / $4.5K renewal** — unlimited seats, no per-seat royalty |
+| Top tier | — | $37.5K / $18K — full source, Git access, **board nomination** |
+| Add-ons | AI ~$8K, Android ~$8K | Extensions $5–10K each |
+| **Members** | **~40** | **~1,200+** |
+| Who's on it | Regional CAD vendors | Bricsys, GstarCAD, ZWCAD, NanoCAD, Graphisoft, Vectorworks, Bentley, Trimble, Dassault |
 
-**Component royalties (ACIS etc.) pass through at cost** — the same $15–20/sale they pay today. No markup. That keeps the one number they can directly compare honest.
+**ODA charges roughly 1/20th of ITC and has ~30× the members.** That is not an accident — **low friction beat high extraction**, in exactly the market we are entering.
 
-**The Complete tier is the piece no other engine vendor can offer.** Fifteen years of ActCAD's own vertical development — the diff between stock IntelliCAD and ActCAD — is real, shippable IP. A member would otherwise fund that themselves over a decade.
+**But we cannot simply copy their price, and it's important to be clear why:** ODA ships *components*. The member does their own integration, and ODA's cost to serve each member is near zero. **We ship a turnkey white-labeled product with migration support** — our cost to serve is real (~$70K/member). Price below that and every member loses us money.
 
-> ⚠️ **This one needs a decision, not just a price.** Licensing our verticals arms vendors who may compete with ActCAD in adjacent markets. The Verticalised Solutions Program already has named-competitor exclusions and territory carve-outs — **those clauses stop being boilerplate and start being load-bearing** the moment we sell the Complete tier.
+> **So we copy ODA's structure, not their number:** a genuinely cheap, genuinely self-serve bottom rung that costs us almost nothing to support — and paid rungs above it where we do real work. That is the next slide.
+
+---
+
+## Two speeds — a wide funnel and a paid core
+
+| | **Developer tier** *(the ODA lesson)* | **Commercial tiers** *(where the revenue is)* |
+|---|---|---|
+| Price | **$6K first yr / $4K renewal** | $90K – $450K / yr |
+| Who | Vertical ISVs, BIM-lite startups, individual devs, evaluators | Regional CAD vendors, funded ISVs shipping at scale |
+| What they get | Engine + SDK + build pipeline, docs, community support, marketplace publishing | Full white-label, migration engineering, dedicated support, verticals, AI, multiplatform |
+| Support model | **Self-serve. Near-zero cost to serve.** | Hands-on. ~$70K/member/yr |
+| Seat cap | Capped (e.g. 500 seats) — outgrow it, move up | Uncapped |
+| Why we do it | **Funnel + ecosystem + marketplace supply** | Pays for the platform |
+
+**The developer tier is not a revenue line — it is the growth engine.** Sixty developer members at $4K is $240K, which is rounding error. What it actually buys:
+
+- **Reach into the ~200 vertical ISVs and ~40 BIM-lite startups** who would never write a $90K cheque but might write a $6K one
+- **A pipeline that graduates upward** — today's $6K ISV shipping 300 seats is tomorrow's $180K Growth-tier member
+- **Marketplace supply** — plugins need developers, and developers need cheap access
+- **The path past ~20 members.** I said earlier this model caps out near $50M because 20 members is the realistic ceiling. **A cheap bottom rung is how you get to 60–100.** ODA proved that in this exact market.
+
+> **This partially reverses my earlier ceiling.** Twenty commercial members caps out around $50M. But an ODA-shaped funnel feeding those twenty — and graduating members into them over a decade — is a materially bigger business. It is a **Year 8–12 story, not a Year 7 one**, and it should not change today's decision. But it is the strongest argument that the ceiling is higher than the base case suggests.
+
+---
+
+## The membership model — priced by the member's scale, not a flat sticker
+
+**$250K on day one sounds steep to a vendor who pays ITC $100K.** So we don't ask for it on day one, and we don't charge everyone the same.
+
+**Tier by the member's own installed base** — small vendors get in cheap, large ones pay real money:
+
+| Tier | Member's active seat base | Standard fee / yr |
+|---|---|---|
+| **Launch** | under 5,000 seats | **~$90K** |
+| **Growth** | 5,000 – 20,000 | **~$180K** |
+| **Scale** | 20,000 – 50,000 | **~$300K** |
+| **Enterprise** | 50,000+ | **$450K+**, negotiated |
+
+*(ActCAD sits in **Scale** — so the anchor tenant pays a real, arm's-length number, which is the discipline that makes the whole model credible.)*
+
+**And it ramps, because their revenue on our platform ramps:**
+
+| Migration year | They pay |
+|---|---|
+| Year 1 — porting, still paying ITC in parallel | **50%** of tier |
+| Year 2 — GA under their brand | **75%** |
+| Year 3+ — fully migrated, ITC contract ended | **100%** |
+
+**Feature tiers layer on top of scale tiers:** Core (engine + white-label + licensing) → **Plus** (+ AI, web app, Mac, Android, marketplace) → **Complete** (+ the ActCAD-derived vertical modules). Most members land on Plus.
+
+> ⚠️ **The Complete tier needs a decision, not just a price.** Licensing our verticals arms vendors who may compete with ActCAD in adjacent markets. The named-competitor exclusions and territory carve-outs in the Verticalised Solutions Program **stop being boilerplate the moment we sell that tier.**
+
+---
+
+## Membership + royalty, or membership only?
+
+**Recommendation: no per-seat royalty to us. Tier by scale instead.**
+
+| | Membership + per-sale royalty | **Tier by seat band (recommended)** |
+|---|---|---|
+| Revenue scales with member success | Yes | **Yes — same economics, via the band** |
+| How it reads to an ITC member | A **downgrade** — ITC is royalty-free at the ITC level | Familiar; like any subscription |
+| Reporting burden | Per-sale reporting, audits, friction | **One annual seat attestation** |
+| Trust posture | We audit them | **They self-attest; we verify the signature** |
+| Marketing line | — | **"No per-seat royalty to the platform."** Clean and quotable. |
+
+**The elegant part: our licensing architecture already produces exactly the number we need.** The quarterly aggregate attestation — a signed count of active deployments, with no customer identities in it — is already in the design for ACIS royalty reporting. **The tier true-up rides on infrastructure we're building anyway, and it works without us ever seeing who their customers are.**
+
+**Component royalties (ACIS etc.) still pass through at cost** — the same $15–20/sale they already pay. No markup. That's the one number they can compare directly, so it stays scrupulously clean.
+
+---
+
+## Founding members — the first three to five
+
+The first members take the most risk and are worth the most to us. They should be paid for it.
+
+| What they get | Why it costs us little and buys a lot |
+|---|---|
+| **30% below standard tier, locked 5 years** | Cheap now, when we have no members; the reference customer is worth more than the discount |
+| **Warrants — a small equity stake, vesting over 3–4 years** | **Costs no cash. Aligns them to the platform's exit, not just their licence.** The single strongest retention tool we have |
+| **Technical advisory board seat** | Real roadmap influence — and free product direction from people who run CAD businesses |
+| **Better vertical split** (50 / 30 / 20 vs 40 / 40 / 20) | Only pays out if their vertical actually sells |
+| **Marketplace fee holiday, 24 months** | Zero cost while the marketplace is empty anyway |
+| **Public "founding member" designation** | Free. And it is how we recruit members four through ten. |
+
+> **The warrants are the piece worth arguing about.** Giving equity to customers is unusual — but a founding member holding warrants stops being a licensee and starts being an ally who wants the platform to be acquired well. At three to five members, the dilution is negligible.
 
 ---
 
@@ -208,7 +297,8 @@ Two variables drive everything: **how many members we sign**, and **what each is
 
 | | **Conservative** | **Base** | **Aggressive** |
 |---|---|---|---|
-| Members by Y7 (incl. ActCAD) | 5 | 12 | 20 |
+| **Commercial** members by Y7 (incl. ActCAD) | 5 | 12 | 20 |
+| Developer-tier members (funnel) | ~10 | ~40 | ~80 |
 | Tier mix | mostly Core | Core / Plus mix | mostly Plus & Complete |
 | Avg revenue per member at Y7 | ~$170K | ~$265K | ~$340K |
 | **Platform ARR at Y7** | **~$850K** | **~$3.2M** | **~$6.8M** |
@@ -218,9 +308,33 @@ Two variables drive everything: **how many members we sign**, and **what each is
 | **Indicative enterprise value** | not saleable at this scale | **~$16–19M** | **~$48–54M** |
 | What we'd likely do | Don't sell. Run it — it pays for itself | Sell, or keep compounding | Competitive process; genuine strategic interest |
 
+*Developer-tier revenue is excluded above — at $4K it is immaterial (~$320K even at 80 members). **Its value is the graduation pipeline into the commercial tiers**, which is what makes the Y8–12 picture bigger than the Y7 one.*
+
 **The honest read: a strong adjacent business line, not a venture-scale company.** The aggressive case is a ~$7M ARR business worth ~$50M, throwing off ~$5M/year. That is an excellent return on a few engineer-months of incremental work on an engine we are funding anyway — and it is not a unicorn.
 
 > **What would make it materially bigger?** Not this model. Twenty members at $340K caps out near $50M. Reaching $20M+ ARR needs **~60–100 members** (the global long tail, a decade of partner management) or selling **direct to end users** alongside our members — a bigger, more competitive, quite different business. **A question to open deliberately later, not to assume today.**
+
+---
+
+## Funding path — and what actually sets an acquisition floor
+
+**Promoter-funded at the start, as intended.** But the ask is small, because the expensive part is already committed.
+
+| Stage | When | Size | Purpose |
+|---|---|---|---|
+| **Promoter seed** | Now → Y2 | **$1–2M** | Platform layer + licensing infra + first member onboarding. **The engine is already funded and building — this is the increment on top.** |
+| **Strategic round** *(optional)* | Y4–5 | **$5–10M at $40–60M pre** | **The floor-setter.** See below. |
+| **Exit** | Y6–7 | Target $50–100M | Competitive process, if the strategic round created tension |
+
+**On setting a floor — the honest mechanics:**
+
+- A priced round's post-money **does** anchor board and shareholder expectations. That part is real.
+- But it only holds **if the valuation was defensible.** An inflated round doesn't create a floor — it creates down-round risk and scares acquirers off.
+- **What actually forces price up is competition between buyers, not a prior round.**
+
+> **So the highest-leverage move is not a big financial round — it's a small strategic one.** $5–10M from a *plausible acquirer* (an ODA-ecosystem vendor, a CAD-adjacent strategic, an Indian engineering major) does three things a financial round cannot: it **sets a defensible floor**, it **puts a real buyer on the cap table**, and it **forces rival buyers to move** rather than wait.
+
+**And a caution worth stating plainly:** at ~74% margins this business likely **self-funds from year 3**. Raising money we don't need is dilution without benefit. **Take the strategic round for the strategic reason — the floor and the tension — not for the cash.**
 
 ---
 
