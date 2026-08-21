@@ -145,8 +145,8 @@ The viewer is proving something else: **some ODA features are not exposed throug
 | **Does my team become a support desk?** | **No.** Platform support is a **separate function with its own headcount**, funded out of member fees. ActCAD engineers are never on the hook for another vendor's bug. |
 | **Who decides we're arming a competitor?** | **You do.** Whether we sell any tier to a given vendor is ActCAD's operating call, not a committee's. **Named-competitor exclusion is a veto you hold**, not a clause you hope works. |
 | **Does ActCAD wait behind members?** | **Every platform capability lands in ActCAD first**, before it is offered to any member. We are not building for members at ActCAD's expense. |
-| **What do I get out of it?** | A **founder-level stake in TejasCAD** — not a spectator's view of a sibling entity taking a new cost line out of your P&L. |
-| **Whose expertise is this built on?** | The verticals are licensable *because of* fifteen years of ActCAD product judgement. **That is the input the platform cannot buy**, and it should be recognised in role and equity, not just acknowledged. |
+| **What do I get out of it?** | **A founding stake and an operating role in TejasCAD.** This is not a sibling entity billing you from across a table — **you are a principal on both sides of it.** |
+| **Whose expertise is this built on?** | The verticals are licensable *because of* fifteen years of ActCAD product judgement. **That is the input the platform cannot buy** — recognised in role and equity, not merely acknowledged. |
 
 <div class="big" markdown="1">
 
@@ -154,7 +154,9 @@ The viewer is proving something else: **some ODA features are not exposed throug
 
 </div>
 
-> **If the two ever conflict, ActCAD wins.** That belongs in the operating agreement in writing, not left to goodwill between people who currently agree.
+**One consequence of us all being on both sides, stated plainly:** common ownership makes alignment easy and makes **written discipline more necessary, not less.** When the same people sit on both sides of an intercompany agreement, **nothing enforces arm's-length pricing except the agreement itself** — and a future investor or acquirer will examine exactly that in diligence. The discipline protects the *value* of both entities, not one from the other.
+
+> **If ActCAD and the platform ever conflict, ActCAD wins.** Worth writing down now — while we all agree — precisely because we are the same people today and may not always be the ones making the call.
 
 ---
 
@@ -372,7 +374,7 @@ Two variables drive everything: **how many members we sign**, and **what mix of 
 | **Where the engine lives** | Owned by a new entity (TejasCAD Inc. + India Op-Co), licensed to Jytra for ActCAD on **standard-member terms** — same as every other member |
 | **P&L reporting** | Two entities, two sets of books, arm's-length invoices between them |
 | **Promoters' equity in ActCAD** | No change |
-| **Promoters' equity in TejasCAD** | New — the founding cap table, capitalized in personal capacity |
+| **Promoters' equity in TejasCAD** | New — the founding cap table, capitalised in personal capacity. **The same principals, including ActCAD's operating partner, sit on both sides.** |
 | **Existing ActCAD customer commitments** | Fully honored. Migration plan is transparent, staged over 24 months. |
 
 **The discipline that makes this work:** ActCAD pays TejasCAD the same rate as any external member. That is what makes the platform economics real for investors and clean for a future acquirer.
