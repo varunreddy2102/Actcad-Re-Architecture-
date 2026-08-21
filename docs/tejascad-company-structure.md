@@ -6,6 +6,15 @@
 
 ## 0. Status
 
+> ⚠️ **SUPERSEDED IN PART — read `docs/tejascad-mgmt-brief.md` first.**
+>
+> This document was written before the commercial model was grounded in ActCAD's actual IntelliCAD costs and before the 50/50 ownership was confirmed. **§1 (Delaware C-Corp), §3 (the five-round, $172M funding waterfall), §8 (the $1.5–2.5B exit envelope) and §14 (the $100M ARR walk) do not survive that grounding** and are retained only as a record of the earlier thinking.
+>
+> **Current position:** ~$2.8M ARR base case at Y7, ~$47–54M aggressive enterprise value, a $1–2M promoter seed with an optional $5–10M strategic round, and an entity structure yet to be chosen. §2 (cap table), §5 (IP), §7 (ActCAD carve-out) and §12 (verticalised solutions) remain current.
+
+---
+
+
 Companion to `docs/tejascad-story.md`. This document is the operational and financial spine: how the entity is structured, who owns what at each stage, how promoter capital seeds the company, when institutional rounds open, how valuations walk from ~$10M pre-money at seed to a $1.5–2.5B exit envelope in year 7, and which acquirer archetypes are credible at that price.
 
 ---
@@ -30,17 +39,19 @@ Two credible structures. Pick during pre-spike legal review.
 
 Before promoter cash is contributed, the cap table is pure founder equity. This is the "who agreed to what" moment.
 
-| Holder | Shares | % |
+**TejasCAD mirrors ActCAD's existing ownership: 50 / 50.** This is not a new negotiation — it is the current partnership carried across.
+
+| Holder | At incorporation | After a 15% ESOP pool |
 |---|---|---|
-| Promoter Group (ActCAD founders, personal capacity, split per their internal agreement) | 8,500,000 | **85.0%** |
-| Founding CTO / engineering lead (recruited or existing) | 500,000 | 5.0% |
-| Founding CPO / product lead | 500,000 | 5.0% |
-| Reserve for early operating hires (non-ESOP, pre-Series-A) | 500,000 | 5.0% |
-| **Total common** | **10,000,000** | **100.0%** |
+| **ActCAD operating partner** | **50.0%** | **42.5%** |
+| **Jytra promoter side** | **50.0%** | **42.5%** |
+| ESOP pool (for the dev / QA / dev-support team being hired) | — | 15.0% |
+| **Total** | **100.0%** | **100.0%** |
 
 Notes:
-- The 85% to the promoter group reflects that they are **both** the seed capital source AND the strategic underwriter of the anchor tenant (ActCAD) which is what makes the platform bootstrap credible. This is a "founder-promoter" allocation typical of family-office-backed platforms.
-- Splits inside the promoter group are their internal decision. Assume this document treats them as one signing block.
+- **The 50/50 relationship is preserved through dilution** — an ESOP pool dilutes both sides proportionally, so parity survives.
+- The ESOP pool exists because TejasCAD employs the engine team directly (dev, QA, dev support). Those hires need equity; the pool is sized at incorporation rather than negotiated later under pressure.
+- **Both sides are principals in both entities.** That makes alignment easy and makes the arm's-length intercompany discipline in §5 and §7 more necessary, not less — nothing enforces it except the agreement itself.
 - Vesting: standard 4-year, 1-year cliff for the CTO / CPO. Promoter shares fully vested at inception (they're capitalizing, not employed).
 - ESOP pool is **separate** and gets created at the Series A round (§3.2), sized at 12–15%.
 

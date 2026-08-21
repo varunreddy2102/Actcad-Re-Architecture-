@@ -148,7 +148,7 @@ The viewer is proving something else: **some ODA features are not exposed throug
 | **Does my team become a support desk?** | **No — and they are not the ones who could.** Deep engine and platform work sits with the platform team. **ActCAD's team does what it is genuinely best at: domain expertise, verticals, IRX-level customisation, product judgement.** Platform L3 support is separate headcount, funded from member fees. |
 | **Who decides we're arming a competitor?** | **You do.** Whether we sell any tier to a given vendor is ActCAD's operating call, not a committee's. **Named-competitor exclusion is a veto you hold**, not a clause you hope works. |
 | **Does ActCAD wait behind members?** | **Every platform capability lands in ActCAD first**, before it is offered to any member. We are not building for members at ActCAD's expense. |
-| **What do I get out of it?** | **A founding stake and an operating role in TejasCAD.** This is not a sibling entity billing you from across a table — **you are a principal on both sides of it.** |
+| **What do I get out of it?** | **The same 50/50 partnership, carried into the new entity.** Not a minority stake in someone else's venture — **the identical split we have in ActCAD today.** You are a principal on both sides, in equal measure. |
 | **Whose expertise is this built on?** | The verticals are licensable *because of* fifteen years of ActCAD product judgement. **That is the input the platform cannot buy** — recognised in role and equity, not merely acknowledged. |
 
 <div class="big" markdown="1">
@@ -169,14 +169,19 @@ The viewer is proving something else: **some ODA features are not exposed throug
 
 | Function | Who does it |
 |---|---|
-| **Engine, multi-tenancy, licensing infrastructure, deep systems work** | **Platform team — to be built and led from the TejasCAD side.** This is C++/Rust systems engineering. |
-| **Domain expertise, verticals, IRX-level customisation, product judgement, what customers actually need** | **ActCAD's team.** Fifteen years of it, and it is not replaceable by hiring. |
-| **Platform L3 support to members** | Platform team, separate headcount, funded from member fees |
+| **Engine, multi-tenancy, licensing infrastructure, deep systems work** | **TejasCAD's own dev team** — hired into the new entity. C++/Rust systems engineering. |
+| **QA, release engineering, the corpus and regression harness** | **TejasCAD QA** — hired. Phase 0 already runs 594 web tests and a native gate harness; that discipline needs staffing to scale. |
+| **Dev support — SDK, docs, migration engineering, member L3** | **TejasCAD dev support** — hired. This is the function that keeps members off ActCAD's team. |
+| **Domain expertise, verticals, IRX-level customisation, product judgement, what customers actually need** | **ActCAD's team.** Fifteen years of it, and not replaceable by hiring. |
 | **A member's own L1 / L2 support** | The member. Never us. |
 
 > **This is a genuine complementarity, not a polite division.** The verticals are the most differentiated thing we can license — and they exist because of domain judgement the platform team could not produce. The engine exists because of systems work the ActCAD team does not do. **Neither half is sufficient alone.**
 
-**But it means one thing must be said clearly: the platform engineering team does not exist yet.** It has to be hired, and the ~3–6 engineer-months figure assumes those people are in place and productive. **Recruitment and ramp are the real schedule risk here** — more than the architecture, which is already proving out.
+**Three things follow, and they should be said plainly:**
+
+1. **The TejasCAD team does not exist yet.** Dev, QA and dev support all have to be hired. **Recruitment and ramp are the real schedule risk** — more than the architecture, which is already proving out in Phase 0.
+2. **That team is the engine team.** It is not an extra cost created by the platform — **it is the cost of building ActCAD-new, which we are paying either way.** The platform decides who employs them and who else helps pay for them.
+3. **Which makes ActCAD's member fee the actual funding mechanism, not bookkeeping.** For the first two years there are no external members. **ActCAD is what funds the platform team** — that is precisely why its fee has to be a real, arm's-length number rather than a notional entry.
 
 ---
 
@@ -398,7 +403,7 @@ Two variables drive everything: **how many members we sign**, and **what mix of 
 | **Where the engine lives** | Owned by a new entity (TejasCAD Inc. + India Op-Co), licensed to Jytra for ActCAD on **standard-member terms** — same as every other member |
 | **P&L reporting** | Two entities, two sets of books, arm's-length invoices between them |
 | **Promoters' equity in ActCAD** | No change |
-| **Promoters' equity in TejasCAD** | New — the founding cap table, capitalised in personal capacity. **The same principals, including ActCAD's operating partner, sit on both sides.** |
+| **Promoters' equity in TejasCAD** | **The same 50/50 split as ActCAD**, capitalised in personal capacity. Same principals, same proportions, both sides. |
 | **Existing ActCAD customer commitments** | Fully honored. Migration plan is transparent, staged over 24 months. |
 
 **The discipline that makes this work:** ActCAD pays TejasCAD the same rate as any external member. That is what makes the platform economics real for investors and clean for a future acquirer.
