@@ -116,57 +116,87 @@ And a specific market opened at the same time:
 | Extra P1 engineering cost | Baseline | **~3–6 engineer-months** for the tenant layer done properly |
 | Revenue model | ActCAD license + AI/cloud subs | Same for ActCAD **plus** member fees + royalty pass-through + marketplace share + vertical co-development royalties |
 | Passive-revenue upside | Zero | **Real** — every member added is annuity income from work we already did |
-| Exit optionality | ActCAD sold as a product | TejasCAD platform sold as a category — a materially bigger valuation multiple |
+| Exit optionality | ActCAD sold as a product | A second, separately saleable asset — modest on its own (~$16–54M, see scenarios), but it also makes ActCAD itself a cleaner acquisition |
 | Risk if platform play fails | — | We still shipped a great ActCAD. Nothing wasted. |
 
 > **The platform path costs a small P1 discipline premium and unlocks a much larger long-term option.** If members don't come, we've still shipped ActCAD. If they do, we own a category.
 
 ---
 
-## What a member actually pays today — our own bill as the benchmark
+## What a member pays IntelliCAD today — and what they actually get for it
 
-We are an IntelliCAD member. **We know exactly what this market pays, because we pay it.**
+We are an IntelliCAD member. **We know this market's economics because we live them.**
 
-| What ActCAD pays today | Amount |
+| ActCAD's ITC bill | Amount |
 |---|---|
-| ITC membership + extras | **~$100K / year** |
-| Per-seat royalty to ITC | **$0** — membership is royalty-free at the ITC level |
-| Component royalties (ACIS and a few others) | **$15–20 per sale** |
+| ITC membership + extras | ~$100K / year |
+| Per-seat royalty to ITC | $0 — royalty-free at the ITC level |
+| Component royalties (ACIS and a few others) | $15–20 per sale |
 
-**This is the number that disciplines our entire pricing model.** No ITC-tier vendor is going to pay us $250K/year for an engine when they pay ~$100K today — however much better ours is. Our fee has to land in the same neighbourhood and win on what it includes, not on price.
+**But the membership fee is the small part of the cost.** What ITC hands you is roughly **a million lines of source code**. That is not a product you can ship. It is a codebase you now have to staff, patch, fork, and re-merge on every ITC version uptake — **forever** — before you can sell a single seat.
 
-**So the model is:**
+**The real cost of being an IntelliCAD member:**
 
-- **Platform fee $100–150K/year** — comparable to what they pay ITC now, but it includes AI, cloud, web, mobile, the marketplace, and the encrypted licensing stack, none of which ITC can deliver at any price
-- **Component royalties passed straight through at cost** — the same $15–20/sale they already pay, no markup, no margin for us
-- **Marketplace and vertical royalties on top** — these grow slowly and only become material once the ecosystem is real
+| Line | Typical mid-size member |
+|---|---|
+| ITC membership + extras | ~$100K |
+| Component royalties (~3–4K sales/yr) | ~$60K |
+| Third-party DRM (Sentinel / Reprise) + integration | $50–150K |
+| 6–8 engineers maintaining the fork and building features | $500K–1M |
+| **Realistic all-in cost of ownership** | **~$700K – $1.3M / year** |
 
-> **We are not trying to extract more per member than ITC does. We're trying to be worth the same money and deliver a product they cannot otherwise get.** That's a much easier sale, and it's the honest one.
+**What ITC sells as paid add-ons — and what they actually are:**
+
+| Add-on | ITC price | Reality |
+|---|---|---|
+| AI | ~$7–8K / yr | Experimental. Unclear how much is genuinely usable. |
+| Android viewer | ~$8K / yr | Exists, but weak. |
+| Mac / full web app / web editor | — | **Not available. IntelliCAD is Windows-tied.** |
+
+> **The add-ons are cheap because they are not really products.** That matters for how we price: **we bundle, we do not itemize.** The moment we put a line item called "AI" on a quote, we get compared to an $8K experiment. Bundled into one platform fee that retires most of a $700K–1.3M stack, the comparison is the one we want.
 
 ---
 
-## The passive-revenue picture — realistic
+## What we sell, and what we charge for it
 
-Per-member economics at maturity, priced against the benchmark above:
+Three tiers. A small vertical ISV gets in cheaply; a large regional vendor taking everything pays materially more.
+
+| Tier | What's included | Per year |
+|---|---|---|
+| **Core** | Engine, DWG/DXF fidelity, white-label shell + build pipeline, **encrypted licensing infrastructure** | **~$120K** |
+| **Plus** | Core + **AI**, web viewer & web app, **Mac**, **Android**, marketplace access | **~$220K** |
+| **Complete** | Plus + **the ActCAD-derived vertical modules** (Architecture / Mechanical / Electrical / BIM / GIS), co-development access | **~$320K** |
+
+**Component royalties (ACIS etc.) pass through at cost** — the same $15–20/sale they pay today. No markup. That keeps the one number they can directly compare honest.
+
+**The Complete tier is the piece no other engine vendor can offer.** Fifteen years of ActCAD's own vertical development — the diff between stock IntelliCAD and ActCAD — is real, shippable IP. A member would otherwise fund that themselves over a decade.
+
+> ⚠️ **This one needs a decision, not just a price.** Licensing our verticals arms vendors who may compete with ActCAD in adjacent markets. The Verticalised Solutions Program already has named-competitor exclusions and territory carve-outs — **those clauses stop being boilerplate and start being load-bearing** the moment we sell the Complete tier.
+
+---
+
+## The passive-revenue picture
+
+Per-member economics at maturity, on the tiered model:
 
 | Line | Per member / year |
 |---|---|
-| Platform fee (blended: ~$60K small ISV → ~$200K large vendor) | ~$120K |
+| Platform fee (blended across tiers) | ~$215K |
 | Component royalties (ACIS etc.) | **$0 to us** — passed through at cost |
 | Marketplace share (15% of ~$230K GMV, once mature) | ~$35K |
-| Vertical co-development royalty (variable, when applicable) | ~$15K |
-| **Recurring revenue per member** | **~$170K** |
-| Platform cost to serve one additional member | ~$50K |
-| **Gross margin per additional member** | **~70%** |
+| Vertical co-development royalty (variable) | ~$15K |
+| **Recurring revenue per member** | **~$265K** |
+| Platform cost to serve one additional member | ~$70K |
+| **Gross margin per additional member** | **~74%** |
 
 **What that compounds to:**
 
-| Members (incl. ActCAD) | Recurring platform revenue | Contribution at ~70% margin |
+| Members (incl. ActCAD) | Recurring platform revenue | Contribution at ~74% margin |
 |---|---|---|
-| 3 | ~$450K/yr | ~$315K/yr |
-| 6 | ~$1.0M/yr | ~$700K/yr |
-| 12 | ~$2.0M/yr | ~$1.4M/yr |
-| 20 | ~$3.4M/yr | ~$2.4M/yr |
+| 3 | ~$650K/yr | ~$480K/yr |
+| 6 | ~$1.5M/yr | ~$1.1M/yr |
+| 12 | ~$3.2M/yr | ~$2.4M/yr |
+| 20 | ~$5.3M/yr | ~$3.9M/yr |
 
 > **This is on top of ActCAD's own revenue** — which we keep, in full, inside Jytra. And it comes from engineering we are funding anyway.
 
@@ -179,17 +209,18 @@ Two variables drive everything: **how many members we sign**, and **what each is
 | | **Conservative** | **Base** | **Aggressive** |
 |---|---|---|---|
 | Members by Y7 (incl. ActCAD) | 5 | 12 | 20 |
-| Avg revenue per member at Y7 | ~$130K | ~$170K | ~$220K |
-| **Platform ARR at Y7** | **~$650K** | **~$2.0M** | **~$4.4M** |
-| Gross margin | ~65% | ~70% | ~72% |
-| **Annual profit contribution** | **~$420K** | **~$1.4M** | **~$3.2M** |
+| Tier mix | mostly Core | Core / Plus mix | mostly Plus & Complete |
+| Avg revenue per member at Y7 | ~$170K | ~$265K | ~$340K |
+| **Platform ARR at Y7** | **~$850K** | **~$3.2M** | **~$6.8M** |
+| Gross margin | ~70% | ~74% | ~76% |
+| **Annual profit contribution** | **~$600K** | **~$2.4M** | **~$5.2M** |
 | Indicative exit multiple | — | 5–6× | 7–8× |
-| **Indicative enterprise value** | not saleable at this scale | **~$10–12M** | **~$30–35M** |
-| What we'd likely do | Don't sell. Run it — it still pays for itself | Sell, or keep compounding | Competitive process; genuine strategic interest |
+| **Indicative enterprise value** | not saleable at this scale | **~$16–19M** | **~$48–54M** |
+| What we'd likely do | Don't sell. Run it — it pays for itself | Sell, or keep compounding | Competitive process; genuine strategic interest |
 
-**Read this honestly: this is a profitable adjacent business line, not a venture-scale company.** Even the aggressive case is a ~$4M ARR business worth ~$35M. That is a very good outcome for a few engineer-months of incremental work on an engine we are building anyway — and a poor outcome for anyone expecting a unicorn.
+**The honest read: a strong adjacent business line, not a venture-scale company.** The aggressive case is a ~$7M ARR business worth ~$50M, throwing off ~$5M/year. That is an excellent return on a few engineer-months of incremental work on an engine we are funding anyway — and it is not a unicorn.
 
-> **What would it take to be materially bigger?** Not this model. Twenty members at $220K caps out around $35M. Getting to $20M+ ARR needs **~100 members** (the full global long tail, a decade of partner management) or selling **direct to end users** alongside our members — a bigger, more competitive, quite different business. **That is a question to open deliberately later, not something to assume today.**
+> **What would make it materially bigger?** Not this model. Twenty members at $340K caps out near $50M. Reaching $20M+ ARR needs **~60–100 members** (the global long tail, a decade of partner management) or selling **direct to end users** alongside our members — a bigger, more competitive, quite different business. **A question to open deliberately later, not to assume today.**
 
 ---
 
@@ -302,7 +333,7 @@ If we do not take the platform path, this is what happens:
 
 ## The three questions we'd like directors to sit with
 
-1. **Is a ~$2–4M/year, ~70%-margin adjacent business worth the operational complexity** of running a second entity, managing partner relationships, and supporting other vendors' engineering teams? The revenue is real but it is not transformational — the honest question is whether the distraction cost is worth it.
+1. **Is a ~$3–7M/year, ~75%-margin adjacent business worth the operational complexity** of running a second entity, managing partner relationships, and supporting other vendors' engineering teams? The revenue is real but it is not transformational — the honest question is whether the distraction cost is worth it.
 
 2. **Are we willing to run Jytra + TejasCAD as two clean entities**, with ActCAD paying standard-member fees like any other member? That discipline is what makes the economics legible to members — but it also means real intercompany accounting for a business this size.
 

@@ -243,8 +243,9 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <li><a href="#the-phase-1-architectural-direction-what-we-already-know">The Phase 1 architectural direction — what we already know</a></li>
 <li><a href="#where-the-platform-idea-came-from-and-why-now">Where the platform idea came from — and why now</a></li>
 <li><a href="#building-for-actcad-vs-building-for-the-world-the-two-paths-side-by-side">Building for ActCAD vs building for the world — the two paths, side by side</a></li>
-<li><a href="#what-a-member-actually-pays-today-our-own-bill-as-the-benchmark">What a member actually pays today — our own bill as the benchmark</a></li>
-<li><a href="#the-passive-revenue-picture-realistic">The passive-revenue picture — realistic</a></li>
+<li><a href="#what-a-member-pays-intellicad-today-and-what-they-actually-get-for-it">What a member pays IntelliCAD today — and what they actually get for it</a></li>
+<li><a href="#what-we-sell-and-what-we-charge-for-it">What we sell, and what we charge for it</a></li>
+<li><a href="#the-passive-revenue-picture">The passive-revenue picture</a></li>
 <li><a href="#what-this-could-become-conservative-base-aggressive">What this could become — conservative, base, aggressive</a></li>
 <li><a href="#who-our-first-members-would-be">Who our first members would be</a></li>
 <li><a href="#how-we-bring-a-member-on-the-90-day-pattern">How we bring a member on — the 90-day pattern</a></li>
@@ -396,7 +397,7 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <tr>
 <td>Exit optionality</td>
 <td>ActCAD sold as a product</td>
-<td>TejasCAD platform sold as a category — a materially bigger valuation multiple</td>
+<td>A second, separately saleable asset — modest on its own (~$16–54M, see scenarios), but it also makes ActCAD itself a cleaner acquisition</td>
 </tr>
 <tr>
 <td>Risk if platform play fails</td>
@@ -409,43 +410,129 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <p><strong>The platform path costs a small P1 discipline premium and unlocks a much larger long-term option.</strong> If members don&rsquo;t come, we&rsquo;ve still shipped ActCAD. If they do, we own a category.</p>
 </blockquote>
 <hr />
-<h2 id="what-a-member-actually-pays-today-our-own-bill-as-the-benchmark"><a class="toclink" href="#what-a-member-actually-pays-today-our-own-bill-as-the-benchmark">What a member actually pays today — our own bill as the benchmark</a></h2>
-<p>We are an IntelliCAD member. <strong>We know exactly what this market pays, because we pay it.</strong></p>
+<h2 id="what-a-member-pays-intellicad-today-and-what-they-actually-get-for-it"><a class="toclink" href="#what-a-member-pays-intellicad-today-and-what-they-actually-get-for-it">What a member pays IntelliCAD today — and what they actually get for it</a></h2>
+<p>We are an IntelliCAD member. <strong>We know this market&rsquo;s economics because we live them.</strong></p>
 <table>
 <thead>
 <tr>
-<th>What ActCAD pays today</th>
+<th>ActCAD&rsquo;s ITC bill</th>
 <th>Amount</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>ITC membership + extras</td>
-<td><strong>~$100K / year</strong></td>
+<td>~$100K / year</td>
 </tr>
 <tr>
 <td>Per-seat royalty to ITC</td>
-<td><strong>$0</strong> — membership is royalty-free at the ITC level</td>
+<td>$0 — royalty-free at the ITC level</td>
 </tr>
 <tr>
 <td>Component royalties (ACIS and a few others)</td>
-<td><strong>$15–20 per sale</strong></td>
+<td>$15–20 per sale</td>
 </tr>
 </tbody>
 </table>
-<p><strong>This is the number that disciplines our entire pricing model.</strong> No ITC-tier vendor is going to pay us $250K/year for an engine when they pay ~$100K today — however much better ours is. Our fee has to land in the same neighbourhood and win on what it includes, not on price.</p>
-<p><strong>So the model is:</strong></p>
-<ul>
-<li><strong>Platform fee $100–150K/year</strong> — comparable to what they pay ITC now, but it includes AI, cloud, web, mobile, the marketplace, and the encrypted licensing stack, none of which ITC can deliver at any price</li>
-<li><strong>Component royalties passed straight through at cost</strong> — the same $15–20/sale they already pay, no markup, no margin for us</li>
-<li><strong>Marketplace and vertical royalties on top</strong> — these grow slowly and only become material once the ecosystem is real</li>
-</ul>
+<p><strong>But the membership fee is the small part of the cost.</strong> What ITC hands you is roughly <strong>a million lines of source code</strong>. That is not a product you can ship. It is a codebase you now have to staff, patch, fork, and re-merge on every ITC version uptake — <strong>forever</strong> — before you can sell a single seat.</p>
+<p><strong>The real cost of being an IntelliCAD member:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Typical mid-size member</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ITC membership + extras</td>
+<td>~$100K</td>
+</tr>
+<tr>
+<td>Component royalties (~3–4K sales/yr)</td>
+<td>~$60K</td>
+</tr>
+<tr>
+<td>Third-party DRM (Sentinel / Reprise) + integration</td>
+<td>$50–150K</td>
+</tr>
+<tr>
+<td>6–8 engineers maintaining the fork and building features</td>
+<td>$500K–1M</td>
+</tr>
+<tr>
+<td><strong>Realistic all-in cost of ownership</strong></td>
+<td><strong>~$700K – $1.3M / year</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>What ITC sells as paid add-ons — and what they actually are:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Add-on</th>
+<th>ITC price</th>
+<th>Reality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI</td>
+<td>~$7–8K / yr</td>
+<td>Experimental. Unclear how much is genuinely usable.</td>
+</tr>
+<tr>
+<td>Android viewer</td>
+<td>~$8K / yr</td>
+<td>Exists, but weak.</td>
+</tr>
+<tr>
+<td>Mac / full web app / web editor</td>
+<td>—</td>
+<td><strong>Not available. IntelliCAD is Windows-tied.</strong></td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<p><strong>We are not trying to extract more per member than ITC does. We&rsquo;re trying to be worth the same money and deliver a product they cannot otherwise get.</strong> That&rsquo;s a much easier sale, and it&rsquo;s the honest one.</p>
+<p><strong>The add-ons are cheap because they are not really products.</strong> That matters for how we price: <strong>we bundle, we do not itemize.</strong> The moment we put a line item called &ldquo;AI&rdquo; on a quote, we get compared to an $8K experiment. Bundled into one platform fee that retires most of a $700K–1.3M stack, the comparison is the one we want.</p>
 </blockquote>
 <hr />
-<h2 id="the-passive-revenue-picture-realistic"><a class="toclink" href="#the-passive-revenue-picture-realistic">The passive-revenue picture — realistic</a></h2>
-<p>Per-member economics at maturity, priced against the benchmark above:</p>
+<h2 id="what-we-sell-and-what-we-charge-for-it"><a class="toclink" href="#what-we-sell-and-what-we-charge-for-it">What we sell, and what we charge for it</a></h2>
+<p>Three tiers. A small vertical ISV gets in cheaply; a large regional vendor taking everything pays materially more.</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>What&rsquo;s included</th>
+<th>Per year</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Core</strong></td>
+<td>Engine, DWG/DXF fidelity, white-label shell + build pipeline, <strong>encrypted licensing infrastructure</strong></td>
+<td><strong>~$120K</strong></td>
+</tr>
+<tr>
+<td><strong>Plus</strong></td>
+<td>Core + <strong>AI</strong>, web viewer &amp; web app, <strong>Mac</strong>, <strong>Android</strong>, marketplace access</td>
+<td><strong>~$220K</strong></td>
+</tr>
+<tr>
+<td><strong>Complete</strong></td>
+<td>Plus + <strong>the ActCAD-derived vertical modules</strong> (Architecture / Mechanical / Electrical / BIM / GIS), co-development access</td>
+<td><strong>~$320K</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Component royalties (ACIS etc.) pass through at cost</strong> — the same $15–20/sale they pay today. No markup. That keeps the one number they can directly compare honest.</p>
+<p><strong>The Complete tier is the piece no other engine vendor can offer.</strong> Fifteen years of ActCAD&rsquo;s own vertical development — the diff between stock IntelliCAD and ActCAD — is real, shippable IP. A member would otherwise fund that themselves over a decade.</p>
+<blockquote>
+<p>⚠️ <strong>This one needs a decision, not just a price.</strong> Licensing our verticals arms vendors who may compete with ActCAD in adjacent markets. The Verticalised Solutions Program already has named-competitor exclusions and territory carve-outs — <strong>those clauses stop being boilerplate and start being load-bearing</strong> the moment we sell the Complete tier.</p>
+</blockquote>
+<hr />
+<h2 id="the-passive-revenue-picture"><a class="toclink" href="#the-passive-revenue-picture">The passive-revenue picture</a></h2>
+<p>Per-member economics at maturity, on the tiered model:</p>
 <table>
 <thead>
 <tr>
@@ -455,8 +542,8 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </thead>
 <tbody>
 <tr>
-<td>Platform fee (blended: ~$60K small ISV → ~$200K large vendor)</td>
-<td>~$120K</td>
+<td>Platform fee (blended across tiers)</td>
+<td>~$215K</td>
 </tr>
 <tr>
 <td>Component royalties (ACIS etc.)</td>
@@ -467,20 +554,20 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <td>~$35K</td>
 </tr>
 <tr>
-<td>Vertical co-development royalty (variable, when applicable)</td>
+<td>Vertical co-development royalty (variable)</td>
 <td>~$15K</td>
 </tr>
 <tr>
 <td><strong>Recurring revenue per member</strong></td>
-<td><strong>~$170K</strong></td>
+<td><strong>~$265K</strong></td>
 </tr>
 <tr>
 <td>Platform cost to serve one additional member</td>
-<td>~$50K</td>
+<td>~$70K</td>
 </tr>
 <tr>
 <td><strong>Gross margin per additional member</strong></td>
-<td><strong>~70%</strong></td>
+<td><strong>~74%</strong></td>
 </tr>
 </tbody>
 </table>
@@ -490,29 +577,29 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <tr>
 <th>Members (incl. ActCAD)</th>
 <th>Recurring platform revenue</th>
-<th>Contribution at ~70% margin</th>
+<th>Contribution at ~74% margin</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>3</td>
-<td>~$450K/yr</td>
-<td>~$315K/yr</td>
+<td>~$650K/yr</td>
+<td>~$480K/yr</td>
 </tr>
 <tr>
 <td>6</td>
-<td>~$1.0M/yr</td>
-<td>~$700K/yr</td>
+<td>~$1.5M/yr</td>
+<td>~$1.1M/yr</td>
 </tr>
 <tr>
 <td>12</td>
-<td>~$2.0M/yr</td>
-<td>~$1.4M/yr</td>
+<td>~$3.2M/yr</td>
+<td>~$2.4M/yr</td>
 </tr>
 <tr>
 <td>20</td>
-<td>~$3.4M/yr</td>
-<td>~$2.4M/yr</td>
+<td>~$5.3M/yr</td>
+<td>~$3.9M/yr</td>
 </tr>
 </tbody>
 </table>
@@ -539,28 +626,34 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <td>20</td>
 </tr>
 <tr>
+<td>Tier mix</td>
+<td>mostly Core</td>
+<td>Core / Plus mix</td>
+<td>mostly Plus &amp; Complete</td>
+</tr>
+<tr>
 <td>Avg revenue per member at Y7</td>
-<td>~$130K</td>
 <td>~$170K</td>
-<td>~$220K</td>
+<td>~$265K</td>
+<td>~$340K</td>
 </tr>
 <tr>
 <td><strong>Platform ARR at Y7</strong></td>
-<td><strong>~$650K</strong></td>
-<td><strong>~$2.0M</strong></td>
-<td><strong>~$4.4M</strong></td>
+<td><strong>~$850K</strong></td>
+<td><strong>~$3.2M</strong></td>
+<td><strong>~$6.8M</strong></td>
 </tr>
 <tr>
 <td>Gross margin</td>
-<td>~65%</td>
 <td>~70%</td>
-<td>~72%</td>
+<td>~74%</td>
+<td>~76%</td>
 </tr>
 <tr>
 <td><strong>Annual profit contribution</strong></td>
-<td><strong>~$420K</strong></td>
-<td><strong>~$1.4M</strong></td>
-<td><strong>~$3.2M</strong></td>
+<td><strong>~$600K</strong></td>
+<td><strong>~$2.4M</strong></td>
+<td><strong>~$5.2M</strong></td>
 </tr>
 <tr>
 <td>Indicative exit multiple</td>
@@ -571,20 +664,20 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <tr>
 <td><strong>Indicative enterprise value</strong></td>
 <td>not saleable at this scale</td>
-<td><strong>~$10–12M</strong></td>
-<td><strong>~$30–35M</strong></td>
+<td><strong>~$16–19M</strong></td>
+<td><strong>~$48–54M</strong></td>
 </tr>
 <tr>
 <td>What we&rsquo;d likely do</td>
-<td>Don&rsquo;t sell. Run it — it still pays for itself</td>
+<td>Don&rsquo;t sell. Run it — it pays for itself</td>
 <td>Sell, or keep compounding</td>
 <td>Competitive process; genuine strategic interest</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Read this honestly: this is a profitable adjacent business line, not a venture-scale company.</strong> Even the aggressive case is a ~$4M ARR business worth ~$35M. That is a very good outcome for a few engineer-months of incremental work on an engine we are building anyway — and a poor outcome for anyone expecting a unicorn.</p>
+<p><strong>The honest read: a strong adjacent business line, not a venture-scale company.</strong> The aggressive case is a ~$7M ARR business worth ~$50M, throwing off ~$5M/year. That is an excellent return on a few engineer-months of incremental work on an engine we are funding anyway — and it is not a unicorn.</p>
 <blockquote>
-<p><strong>What would it take to be materially bigger?</strong> Not this model. Twenty members at $220K caps out around $35M. Getting to $20M+ ARR needs <strong>~100 members</strong> (the full global long tail, a decade of partner management) or selling <strong>direct to end users</strong> alongside our members — a bigger, more competitive, quite different business. <strong>That is a question to open deliberately later, not something to assume today.</strong></p>
+<p><strong>What would make it materially bigger?</strong> Not this model. Twenty members at $340K caps out near $50M. Reaching $20M+ ARR needs <strong>~60–100 members</strong> (the global long tail, a decade of partner management) or selling <strong>direct to end users</strong> alongside our members — a bigger, more competitive, quite different business. <strong>A question to open deliberately later, not to assume today.</strong></p>
 </blockquote>
 <hr />
 <h2 id="who-our-first-members-would-be"><a class="toclink" href="#who-our-first-members-would-be">Who our first members would be</a></h2>
@@ -751,7 +844,7 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <h2 id="the-three-questions-wed-like-directors-to-sit-with"><a class="toclink" href="#the-three-questions-wed-like-directors-to-sit-with">The three questions we&rsquo;d like directors to sit with</a></h2>
 <ol>
 <li>
-<p><strong>Is a ~$2–4M/year, ~70%-margin adjacent business worth the operational complexity</strong> of running a second entity, managing partner relationships, and supporting other vendors&rsquo; engineering teams? The revenue is real but it is not transformational — the honest question is whether the distraction cost is worth it.</p>
+<p><strong>Is a ~$3–7M/year, ~75%-margin adjacent business worth the operational complexity</strong> of running a second entity, managing partner relationships, and supporting other vendors&rsquo; engineering teams? The revenue is real but it is not transformational — the honest question is whether the distraction cost is worth it.</p>
 </li>
 <li>
 <p><strong>Are we willing to run Jytra + TejasCAD as two clean entities</strong>, with ActCAD paying standard-member fees like any other member? That discipline is what makes the economics legible to members — but it also means real intercompany accounting for a business this size.</p>
