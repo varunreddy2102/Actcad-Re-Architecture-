@@ -4,7 +4,7 @@ theme: default
 paginate: true
 size: 16:9
 header: 'TejasCAD · Directors briefing · Concept approval in principle'
-footer: 'Confidential · Working brand pending TM clearance · Illustrative numbers'
+footer: 'Confidential · Working brand pending TM clearance · Competitor pricing = actuals; our projections = illustrative'
 style: |
   section { font-size: 24px; padding: 60px 70px; }
   h1 { color: #1a3a6c; }
@@ -27,7 +27,7 @@ style: |
 **Companion documents already circulated:**
 `docs/tejascad-story.md` · `docs/tejascad-company-structure.md` · `docs/tejascad-vs-intellicad.md` · `docs/tejascad-licensing-architecture.md`
 
-*Working brand TejasCAD pending TM clearance. Numbers illustrative — this briefing asks for concept approval, not a spend commitment.*
+*Working brand TejasCAD pending TM clearance. **ITC and ODA pricing are actuals we pay or can verify; our own projections are illustrative.** This briefing asks for concept approval, not a spend commitment.*
 
 ---
 
@@ -49,7 +49,7 @@ The technical answer to "can we build this?" is now yes — with real evidence. 
 
 ## Phase 0 today — what already ships
 
-Six weeks in, ~207 commits, versioning aligned to ActCAD's own (26.1 → 26.3.7 delivered today, fixing 5 team-reported bugs).
+Six weeks in, ~207 commits, versioning aligned to ActCAD's own (26.1 → 26.3.7, the latest drop fixing 5 team-reported bugs).
 
 | Area | Status |
 |---|---|
@@ -58,7 +58,7 @@ Six weeks in, ~207 commits, versioning aligned to ActCAD's own (26.1 → 26.3.7 
 | **Rendering perf** | 250K entities at 61 fps via region rendering + culling; regen 17× faster; instant zoom-extents. |
 | **3D** | Visualize camera bound — orbit, standard views, live 3D ViewCube shipping. Layouts + paper space viewports work end-to-end. |
 | **Beyond scope** | DWG↔DWG + PDF revision comparison, color plotting, batch print, print-to-PDF, sidecar markup overlays. |
-| **Distribution** | Tauri Windows MSI + `setup.exe` shipping today. macOS CI build green. Android Tauri prototype exists. |
+| **Distribution** | Tauri Windows MSI + `setup.exe` shipping. macOS CI build green. Android Tauri prototype exists. |
 | **Test posture** | 594/594 web tests green; gate-5 native harness (22 cases, 223 assertions) exercises the ui-bridge with no shell-specific branching in core. |
 | **Feedback loop** | **The ActCAD team is the de-facto closed beta** — filing numbered bugs against each drop, driving priorities. 13+ release drops delivered. |
 | **The one hard rule** | **Read-only guarantee has held throughout.** No `db` writes anywhere in the codebase. Structurally intact. |
@@ -103,7 +103,7 @@ And a specific market opened at the same time:
 - ~200 vertical ISVs have no clean CAD engine to license
 - BIM-lite / AEC startup segment is looking for a foundation they don't have to build
 
-**They already pay six-figure sums per year for a foundation they don't love.** We can offer them a better one.
+**They already spend $700K–1.3M a year all-in on a foundation they don't love** — next slide. We can offer them a better one.
 
 ---
 
@@ -116,10 +116,10 @@ And a specific market opened at the same time:
 | Extra P1 engineering cost | Baseline | **~3–6 engineer-months** for the tenant layer done properly |
 | Revenue model | ActCAD license + AI/cloud subs | Same for ActCAD **plus** member fees + royalty pass-through + marketplace share + vertical co-development royalties |
 | Passive-revenue upside | Zero | **Real** — every member added is annuity income from work we already did |
-| Exit optionality | ActCAD sold as a product | A second, separately saleable asset — modest on its own (~$16–54M, see scenarios), but it also makes ActCAD itself a cleaner acquisition |
+| Exit optionality | ActCAD sold as a product | A second, separately saleable asset — modest on its own (~$14–54M, see scenarios), but it also makes ActCAD itself a cleaner acquisition |
 | Risk if platform play fails | — | We still shipped a great ActCAD. Nothing wasted. |
 
-> **The platform path costs a small P1 discipline premium and unlocks a much larger long-term option.** If members don't come, we've still shipped ActCAD. If they do, we own a category.
+> **The platform path costs a small P1 discipline premium and unlocks a real second revenue line.** If members don't come, we've still shipped ActCAD. If they do, we have a profitable business that cost us almost nothing to option.
 
 ---
 
@@ -194,38 +194,50 @@ ODA and IntelliCAD sell into **the same market**. Look at what they charge and w
 - **Reach into the ~200 vertical ISVs and ~40 BIM-lite startups** who would never write a $90K cheque but might write a $6K one
 - **A pipeline that graduates upward** — today's $6K ISV shipping 300 seats is tomorrow's $180K Growth-tier member
 - **Marketplace supply** — plugins need developers, and developers need cheap access
-- **The path past ~20 members.** I said earlier this model caps out near $50M because 20 members is the realistic ceiling. **A cheap bottom rung is how you get to 60–100.** ODA proved that in this exact market.
+- **The path past ~20 members.** Twenty commercial members is the realistic Y7 ceiling, and that caps the business near $50M. **A cheap bottom rung is how you get to 60–100.** ODA proved that in this exact market.
 
-> **This partially reverses my earlier ceiling.** Twenty commercial members caps out around $50M. But an ODA-shaped funnel feeding those twenty — and graduating members into them over a decade — is a materially bigger business. It is a **Year 8–12 story, not a Year 7 one**, and it should not change today's decision. But it is the strongest argument that the ceiling is higher than the base case suggests.
+> **This is the one argument that the ceiling is higher than the base case suggests.** Twenty commercial members caps out around $50M — but an ODA-shaped funnel feeding those twenty, and graduating members into them over a decade, is a materially bigger business. It is a **Year 8–12 story, not a Year 7 one**, and it should not change today's decision.
 
 ---
 
-## The membership model — priced by the member's scale, not a flat sticker
+## What each tier gates
 
-**$250K on day one sounds steep to a vendor who pays ITC $100K.** So we don't ask for it on day one, and we don't charge everyone the same.
+**Two axes: how big they are, and how much of the platform they take.**
 
-**Tier by the member's own installed base** — small vendors get in cheap, large ones pay real money:
+| Tier | What it unlocks |
+|---|---|
+| **Core** | Engine, DWG/DXF fidelity, white-label shell + build pipeline, encrypted licensing, **and AI** |
+| **Plus** | + **web app, Mac, Android**, marketplace access, cloud AI |
+| **Complete** | + **the ActCAD-derived vertical modules** (Arch / Mech / Elec / BIM / GIS), co-development priority |
 
-| Tier | Member's active seat base | Standard fee / yr |
-|---|---|---|
-| **Launch** | under 5,000 seats | **~$90K** |
-| **Growth** | 5,000 – 20,000 | **~$180K** |
-| **Scale** | 20,000 – 50,000 | **~$300K** |
-| **Enterprise** | 50,000+ | **$450K+**, negotiated |
+> **AI ships in every tier, deliberately.** It is our sharpest edge over IntelliCAD — we want it in front of *every* member's end customers, not held back as an upsell. What we gate is the genuinely expensive-to-serve stuff: **extra platform shells, marketplace operations, and our verticals.**
 
-*(ActCAD sits in **Scale** — so the anchor tenant pays a real, arm's-length number, which is the discipline that makes the whole model credible.)*
+**This is not a contradiction of "bundle, don't itemize."** A member buys *Plus*. They never see a line item called "AI — $40K" that invites comparison to ITC's $8K experiment.
+
+---
+
+## The price matrix — and it ramps
+
+**$300K on day one is steep for a vendor paying ITC $100K.** So we don't ask on day one, and we don't charge everyone the same.
+
+| Member's seat base | **Core** | **Plus** | **Complete** |
+|---|---|---|---|
+| **Launch** — under 5,000 | $90K | $130K | $190K |
+| **Growth** — 5,000–20,000 | $180K | $230K | $300K |
+| **Scale** — 20,000–50,000 | $300K | $360K | $450K |
+| **Enterprise** — 50,000+ | $450K | $520K | $620K+ |
+
+*(ActCAD sits in **Scale / Plus — $360K**. The anchor tenant pays a real, arm's-length number. That discipline is what makes the model credible to everyone else.)*
 
 **And it ramps, because their revenue on our platform ramps:**
 
 | Migration year | They pay |
 |---|---|
-| Year 1 — porting, still paying ITC in parallel | **50%** of tier |
+| Year 1 — porting, still paying ITC in parallel | **50%** |
 | Year 2 — GA under their brand | **75%** |
 | Year 3+ — fully migrated, ITC contract ended | **100%** |
 
-**Feature tiers layer on top of scale tiers:** Core (engine + white-label + licensing) → **Plus** (+ AI, web app, Mac, Android, marketplace) → **Complete** (+ the ActCAD-derived vertical modules). Most members land on Plus.
-
-> ⚠️ **The Complete tier needs a decision, not just a price.** Licensing our verticals arms vendors who may compete with ActCAD in adjacent markets. The named-competitor exclusions and territory carve-outs in the Verticalised Solutions Program **stop being boilerplate the moment we sell that tier.**
+> ⚠️ **Complete needs a decision, not just a price.** Licensing our verticals arms vendors who may compete with ActCAD in adjacent markets. The named-competitor exclusions and territory carve-outs in the Verticalised Solutions Program **stop being boilerplate the moment we sell that tier.**
 
 ---
 
@@ -273,26 +285,39 @@ ODA and IntelliCAD sell into **the same market**. Look at what they charge and w
 
 ## The passive-revenue picture
 
-Per-member economics at maturity, on the tiered model:
+**The blended fee depends entirely on who actually signs, so here is the assumed mix — not a number pulled from the air.** A realistic 12-member book at Year 7:
+
+| Count | Tier | Fee |
+|---|---|---|
+| 4 | Launch / Core | $90K |
+| 3 | Launch / Plus | $130K |
+| 2 | Growth / Plus | $230K |
+| 2 | Growth / Complete | $300K |
+| 1 | Scale / Plus *(ActCAD)* | $360K |
+| **12** | | **$2.17M → ~$181K blended** |
+
+**Per-member economics on that mix:**
 
 | Line | Per member / year |
 |---|---|
-| Platform fee (blended across tiers) | ~$215K |
+| Platform fee (blended, per above) | ~$181K |
 | Component royalties (ACIS etc.) | **$0 to us** — passed through at cost |
 | Marketplace share (15% of ~$230K GMV, once mature) | ~$35K |
 | Vertical co-development royalty (variable) | ~$15K |
-| **Recurring revenue per member** | **~$265K** |
+| **Recurring revenue per member** | **~$230K** |
 | Platform cost to serve one additional member | ~$70K |
-| **Gross margin per additional member** | **~74%** |
+| **Gross margin per additional member** | **~70%** |
 
 **What that compounds to:**
 
-| Members (incl. ActCAD) | Recurring platform revenue | Contribution at ~74% margin |
+| Members (incl. ActCAD) | Recurring platform revenue | Contribution at ~70% margin |
 |---|---|---|
-| 3 | ~$650K/yr | ~$480K/yr |
-| 6 | ~$1.5M/yr | ~$1.1M/yr |
-| 12 | ~$3.2M/yr | ~$2.4M/yr |
-| 20 | ~$5.3M/yr | ~$3.9M/yr |
+| 3 | ~$550K/yr | ~$385K/yr |
+| 6 | ~$1.2M/yr | ~$840K/yr |
+| 12 | ~$2.8M/yr | ~$2.0M/yr |
+| 20 | ~$4.6M/yr | ~$3.2M/yr |
+
+*Early members sit below the mature figure — the ramp means a year-1 member pays half. The 3- and 6-member rows reflect that.*
 
 > **This is on top of ActCAD's own revenue** — which we keep, in full, inside Jytra. And it comes from engineering we are funding anyway.
 
@@ -300,22 +325,25 @@ Per-member economics at maturity, on the tiered model:
 
 ## What this could become — conservative, base, aggressive
 
-Two variables drive everything: **how many members we sign**, and **what each is worth per year** (fee + marketplace + vertical royalties, maturing from ~$120K early to ~$220K for a large, long-tenured member).
+Two variables drive everything: **how many members we sign**, and **what mix of tiers they buy.**
 
 | | **Conservative** | **Base** | **Aggressive** |
 |---|---|---|---|
 | **Commercial** members by Y7 (incl. ActCAD) | 5 | 12 | 20 |
 | Developer-tier members (funnel) | ~10 | ~40 | ~80 |
-| Tier mix | mostly Core | Core / Plus mix | mostly Plus & Complete |
-| Avg revenue per member at Y7 | ~$170K | ~$265K | ~$340K |
-| **Platform ARR at Y7** | **~$850K** | **~$3.2M** | **~$6.8M** |
-| Gross margin | ~70% | ~74% | ~76% |
-| **Annual profit contribution** | **~$600K** | **~$2.4M** | **~$5.2M** |
+| Tier mix | mostly Launch / Core | the mix on the previous slide | skews Growth+ / Plus & Complete |
+| Blended fee per member | ~$105K | ~$181K | ~$285K |
+| **+ marketplace & vertical royalties** | ~$25K | ~$50K | ~$50K |
+| **Platform ARR at Y7** | **~$650K** | **~$2.8M** | **~$6.7M** |
+| Gross margin | ~68% | ~70% | ~73% |
+| **Annual profit contribution** | **~$440K** | **~$2.0M** | **~$4.9M** |
 | Indicative exit multiple | — | 5–6× | 7–8× |
-| **Indicative enterprise value** | not saleable at this scale | **~$16–19M** | **~$48–54M** |
+| **Indicative enterprise value** | not saleable at this scale | **~$14–17M** | **~$47–54M** |
 | What we'd likely do | Don't sell. Run it — it pays for itself | Sell, or keep compounding | Competitive process; genuine strategic interest |
 
 *Developer-tier revenue is excluded above — at $4K it is immaterial (~$320K even at 80 members). **Its value is the graduation pipeline into the commercial tiers**, which is what makes the Y8–12 picture bigger than the Y7 one.*
+
+*Component royalties (ACIS etc.) are excluded throughout — they pass through at cost and earn us nothing.*
 
 **The honest read: a strong adjacent business line, not a venture-scale company.** The aggressive case is a ~$7M ARR business worth ~$50M, throwing off ~$5M/year. That is an excellent return on a few engineer-months of incremental work on an engine we are funding anyway — and it is not a unicorn.
 
@@ -424,13 +452,13 @@ That approval unlocks the following prep work — none of which commits capital 
 
 - Draft Master Platform License Agreement template (Jytra ↔ TejasCAD)
 - Open trademark clearance on TejasCAD + sub-brand family (TejasCAD Engine / Forge / Cloud / SDK)
-- Corporate counsel scoping of the Delaware C-Corp + India Op-Co entity structure
+- Corporate counsel scoping of the entity structure — **note the earlier Delaware C-Corp recommendation was premised on institutional VC rounds we are no longer planning; a simpler Indian structure may now be correct**
 - Non-binding scoping conversation with 3–5 candidate member CEOs (all in ActCAD's existing warm network)
 - Encrypted licensing v0 design review with an external crypto firm
 
 **We are NOT asking today for:**
 
-- Capital commitment (that comes with the tranche-1 promoter seed decision, separately)
+- Capital commitment (the $1–2M promoter seed is a separate, later decision)
 - Public announcement of any kind
 - Entity incorporation (that follows counsel review)
 - ACIS platform-amendment negotiation with Spatial (that follows the bilateral first)
@@ -448,7 +476,7 @@ If we do not take the platform path, this is what happens:
 - We forgo the passive-revenue stream. If a competitor (Hexagon, ODA, an Indian tech major) decides in 2–3 years to build the same white-label platform, they own the category — not us.
 - Our long-term exit is ActCAD as a product. The platform-multiplier is not available.
 
-**Both paths are respectable.** The platform path has a bigger ceiling and a bigger canvas. The single-product path has less complexity and preserves optionality-of-scale for another day.
+**Both paths are respectable.** The platform path adds a second revenue line and a second saleable asset. The single-product path is simpler, with no partner obligations and no second set of books.
 
 ---
 
@@ -469,13 +497,13 @@ If we do not take the platform path, this is what happens:
 ## What happens on Monday if the concept is approved
 
 Week 1 (this coming week):
-- Legal engagement: Delaware C-Corp + India Op-Co scoping
+- Legal engagement: entity structure scoping (Delaware C-Corp vs simpler Indian structure — the funding path has changed)
 - Trademark clearance opens on TejasCAD + sub-brand family
 - Draft of Master Platform License Agreement between Jytra and TejasCAD
 - **Phase 0 engineering continues at current pace** — no disruption, no scope change; the tenant-profile discipline gets folded into the build pipeline that already exists
 
 Weeks 2–4:
-- Draft of promoter capital tranche-1 structure (equity + convertible notes)
+- Draft of the $1–2M promoter seed structure (equity + convertible notes)
 - First soft conversation with 2 candidate members from ActCAD's warm network — no LOI ask, just problem discovery. **We can show them the working viewer.**
 - External crypto firm engaged to review encrypted licensing v0 design
 - Customer-hardware perf baseline measurement (the exit criterion still owed from Phase 0)
@@ -485,7 +513,7 @@ By month 2, we come back to this room with:
 - A confirmed entity plan
 - A trademark status update
 - Notes from the first 2 candidate-member conversations — **live product in hand for the demo, not slides**
-- A firm number on tranche-1 promoter capital
+- A firm number on the promoter seed
 - Customer-hardware perf numbers to close the last Phase 0 exit criterion
 
 **Nothing between now and month 2 is publicly visible. Nothing commits capital or brand until the promoter group approves the next step. Phase 0 engineering keeps shipping through all of it.**
