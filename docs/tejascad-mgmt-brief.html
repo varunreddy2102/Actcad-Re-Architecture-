@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building for ActCAD, or building for the world? — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#a-directors-briefing-concept-approval-in-principle">A directors briefing — concept approval in principle</a></li>
+<li><a href="#the-decision-on-the-table-today">The decision on the table today</a></li>
+<li><a href="#phase-0-today-what-already-ships">Phase 0 today — what already ships</a></li>
+<li><a href="#the-phase-1-architectural-direction-what-we-already-know">The Phase 1 architectural direction — what we already know</a></li>
+<li><a href="#where-the-platform-idea-came-from-and-why-now">Where the platform idea came from — and why now</a></li>
+<li><a href="#building-for-actcad-vs-building-for-the-world-the-two-paths-side-by-side">Building for ActCAD vs building for the world — the two paths, side by side</a></li>
+<li><a href="#the-passive-revenue-picture-illustrative">The passive-revenue picture — illustrative</a></li>
+<li><a href="#what-this-could-become-conservative-base-aggressive">What this could become — conservative, base, aggressive</a></li>
+<li><a href="#who-our-first-members-would-be">Who our first members would be</a></li>
+<li><a href="#how-we-bring-a-member-on-the-90-day-pattern">How we bring a member on — the 90-day pattern</a></li>
+<li><a href="#how-jytra-actcad-change-and-how-they-dont">How Jytra + ActCAD change (and how they don&rsquo;t)</a></li>
+<li><a href="#trust-wedge-what-we-tell-members-that-no-one-else-can">Trust wedge — what we tell members that no one else can</a></li>
+<li><a href="#what-were-asking-today-and-what-were-explicitly-not-asking">What we&rsquo;re asking today — and what we&rsquo;re explicitly NOT asking</a></li>
+<li><a href="#what-no-looks-like-the-honest-counter">What &ldquo;no&rdquo; looks like — the honest counter</a></li>
+<li><a href="#the-three-questions-wed-like-directors-to-sit-with">The three questions we&rsquo;d like directors to sit with</a></li>
+<li><a href="#what-happens-on-monday-if-the-concept-is-approved">What happens on Monday if the concept is approved</a></li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">tejascad-mgmt-brief.md</p>
+    </div>
+    <h1 id="building-for-actcad-or-building-for-the-world"><a class="toclink" href="#building-for-actcad-or-building-for-the-world">Building for ActCAD, or building for the world?</a></h1>
+<h3 id="a-directors-briefing-concept-approval-in-principle"><a class="toclink" href="#a-directors-briefing-concept-approval-in-principle">A directors briefing — concept approval in principle</a></h3>
+<p><strong>Companion documents already circulated:</strong>
+<code>docs/tejascad-story.md</code> · <code>docs/tejascad-company-structure.md</code> · <code>docs/tejascad-vs-intellicad.md</code> · <code>docs/tejascad-licensing-architecture.md</code></p>
+<p><em>Working brand TejasCAD pending TM clearance. Numbers illustrative — this briefing asks for concept approval, not a spend commitment.</em></p>
+<hr />
+<h2 id="the-decision-on-the-table-today"><a class="toclink" href="#the-decision-on-the-table-today">The decision on the table today</a></h2>
+<p>We are already re-architecting ActCAD off IntelliCAD onto our own engine. That work continues either way.</p>
+<p><strong>Today&rsquo;s question is one level higher:</strong></p>
+<div class="big">
+<p><strong>Do we build the new engine only for ActCAD — or do we build it as a platform that ActCAD is the anchor tenant of, and license the same platform to other CAD vendors under their own brand?</strong></p>
+</div>
+<p>The technical answer to &ldquo;can we build this?&rdquo; is now yes — with real evidence. Phase 0, six weeks in (~207 commits), already ships a working viewer that the ActCAD team is beta-testing daily. <strong>This is no longer a feasibility conversation. It is a strategy conversation.</strong> Detail on the next slide.</p>
+<hr />
+<h2 id="phase-0-today-what-already-ships"><a class="toclink" href="#phase-0-today-what-already-ships">Phase 0 today — what already ships</a></h2>
+<p>Six weeks in, ~207 commits, versioning aligned to ActCAD&rsquo;s own (26.1 → 26.3.7 delivered today, fixing 5 team-reported bugs).</p>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DWG/DXF open</strong></td>
+<td>Real customer files open in the browser on WASM + ODA inWEB. Both backends live.</td>
+</tr>
+<tr>
+<td><strong>Measurement + snap + count</strong></td>
+<td>Full 14-mode AutoCAD/ActCAD osnap suite; count + CSV/Excel export; quick calc.</td>
+</tr>
+<tr>
+<td><strong>Rendering perf</strong></td>
+<td>250K entities at 61 fps via region rendering + culling; regen 17× faster; instant zoom-extents.</td>
+</tr>
+<tr>
+<td><strong>3D</strong></td>
+<td>Visualize camera bound — orbit, standard views, live 3D ViewCube shipping. Layouts + paper space viewports work end-to-end.</td>
+</tr>
+<tr>
+<td><strong>Beyond scope</strong></td>
+<td>DWG↔DWG + PDF revision comparison, color plotting, batch print, print-to-PDF, sidecar markup overlays.</td>
+</tr>
+<tr>
+<td><strong>Distribution</strong></td>
+<td>Tauri Windows MSI + <code>setup.exe</code> shipping today. macOS CI build green. Android Tauri prototype exists.</td>
+</tr>
+<tr>
+<td><strong>Test posture</strong></td>
+<td>594/594 web tests green; gate-5 native harness (22 cases, 223 assertions) exercises the ui-bridge with no shell-specific branching in core.</td>
+</tr>
+<tr>
+<td><strong>Feedback loop</strong></td>
+<td><strong>The ActCAD team is the de-facto closed beta</strong> — filing numbered bugs against each drop, driving priorities. 13+ release drops delivered.</td>
+</tr>
+<tr>
+<td><strong>The one hard rule</strong></td>
+<td><strong>Read-only guarantee has held throughout.</strong> No <code>db</code> writes anywhere in the codebase. Structurally intact.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Competitive posture from live testing:</strong> the new viewer is <strong>faster than ActCAD&rsquo;s current product on many customer files, and significantly better than IntelliCAD&rsquo;s viewer and ODA&rsquo;s own web viewer.</strong> The engineering work has already produced a best-in-class result — before we&rsquo;ve even shipped it publicly.</p>
+</blockquote>
+<p><strong>Still owed from the exit criteria:</strong> customer-hardware perf gate measurement (2019-i5 baseline) and public web adoption signal (there is no public launch yet).</p>
+<p><strong>Vendor blockers logged:</strong> three ODA inWEB gaps (paper-space engine abort, TTF tessellation quality, unbound <code>appServices</code>) — all filed / worked around; none block the strategy.</p>
+<hr />
+<h2 id="the-phase-1-architectural-direction-what-we-already-know"><a class="toclink" href="#the-phase-1-architectural-direction-what-we-already-know">The Phase 1 architectural direction — what we already know</a></h2>
+<p>The viewer is proving something else: <strong>some ODA features are not exposed through the web stack.</strong> For those, the full-editor product needs a <strong>native application</strong> path, not just a browser.</p>
+<p><strong>Plan (already consistent with the original re-architecture plan):</strong></p>
+<ul>
+<li><strong>Now → viewer launch:</strong> continue on the current Rust/Tauri + WASM/inWEB stack. Ship the viewer.</li>
+<li><strong>After viewer launch:</strong> <strong>migrate the full-product to Qt + C++ native.</strong> This is where the ODA features currently missing from the web stack become available, and where the ActCAD team wants to live long-term.</li>
+<li><strong>The web viewer:</strong> either <strong>folds into the Qt stack</strong> as an alternate frontend on the same C++ engine, or <strong>stays on Rust/Tauri</strong> as an independent codebase. Open decision — settled with data during the migration.</li>
+</ul>
+<p><strong>Why the directors should hear this now:</strong></p>
+<ul>
+<li>The Qt/C++ direction is not a change of plan; it is what the re-architecture always intended for the full product. The Rust/Tauri viewer is the entry point, not the destination.</li>
+<li>The &ldquo;should the web viewer live in Qt or stay Rust/Tauri?&rdquo; question is a <strong>healthy</strong> architectural choice we get to make after the viewer ships, not a fire we&rsquo;re fighting.</li>
+<li><strong>None of this changes the platform argument.</strong> The platform seams (tenant profile, encrypted licensing, marketplace, MCP agent) live in the C++ core regardless of which shell wraps them.</li>
+</ul>
+<hr />
+<h2 id="where-the-platform-idea-came-from-and-why-now"><a class="toclink" href="#where-the-platform-idea-came-from-and-why-now">Where the platform idea came from — and why now</a></h2>
+<p>The re-architecture we approved earlier gave us <strong>an engine we own</strong> on ODA + ACIS + Qt + WASM, with a plugin surface, an MCP-based AI layer, and a modern shell.</p>
+<p>Halfway through building it, one thing became obvious:</p>
+<p><strong>Every seam we&rsquo;re building to serve ActCAD</strong> — the tenant-profile layer, the license service, the plugin marketplace, the AI agent — <strong>is exactly what a white-label CAD platform needs.</strong> We&rsquo;re paying the cost. We might as well capture the value.</p>
+<p>And a specific market opened at the same time:</p>
+<ul>
+<li>~40 IntelliCAD Consortium members are stuck exactly where ActCAD was</li>
+<li>~200 vertical ISVs have no clean CAD engine to license</li>
+<li>BIM-lite / AEC startup segment is looking for a foundation they don&rsquo;t have to build</li>
+</ul>
+<p><strong>They already pay six-figure sums per year for a foundation they don&rsquo;t love.</strong> We can offer them a better one.</p>
+<hr />
+<h2 id="building-for-actcad-vs-building-for-the-world-the-two-paths-side-by-side"><a class="toclink" href="#building-for-actcad-vs-building-for-the-world-the-two-paths-side-by-side">Building for ActCAD vs building for the world — the two paths, side by side</a></h2>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Build for ActCAD only</th>
+<th>Build as a platform (ActCAD = anchor tenant)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Engine work</td>
+<td>Same</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Ship date</td>
+<td>~24 months to GA</td>
+<td>Same 24 months to GA + tenant-profile discipline in P1</td>
+</tr>
+<tr>
+<td>Extra P1 engineering cost</td>
+<td>Baseline</td>
+<td><strong>~3–6 engineer-months</strong> for the tenant layer done properly</td>
+</tr>
+<tr>
+<td>Revenue model</td>
+<td>ActCAD license + AI/cloud subs</td>
+<td>Same for ActCAD <strong>plus</strong> member fees + royalty pass-through + marketplace share + vertical co-development royalties</td>
+</tr>
+<tr>
+<td>Passive-revenue upside</td>
+<td>Zero</td>
+<td><strong>Real</strong> — every member added is annuity income from work we already did</td>
+</tr>
+<tr>
+<td>Exit optionality</td>
+<td>ActCAD sold as a product</td>
+<td>TejasCAD platform sold as a category — a materially bigger valuation multiple</td>
+</tr>
+<tr>
+<td>Risk if platform play fails</td>
+<td>—</td>
+<td>We still shipped a great ActCAD. Nothing wasted.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>The platform path costs a small P1 discipline premium and unlocks a much larger long-term option.</strong> If members don&rsquo;t come, we&rsquo;ve still shipped ActCAD. If they do, we own a category.</p>
+</blockquote>
+<hr />
+<h2 id="the-passive-revenue-picture-illustrative"><a class="toclink" href="#the-passive-revenue-picture-illustrative">The passive-revenue picture — illustrative</a></h2>
+<p>Once the engine is live, every member we add is <strong>recurring income from work we already funded.</strong> Illustrative per-member steady-state economics (Year 3+):</p>
+<table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Per member / year</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Annual membership fee (sliding scale)</td>
+<td>~$250K</td>
+</tr>
+<tr>
+<td>ACIS royalty pass-through margin</td>
+<td>(~$0 — passed at cost)</td>
+</tr>
+<tr>
+<td>Marketplace share (platform&rsquo;s 15% of $500K GMV)</td>
+<td>~$75K</td>
+</tr>
+<tr>
+<td>Vertical co-development royalty (when applicable)</td>
+<td>~$50K</td>
+</tr>
+<tr>
+<td><strong>Recurring revenue per member</strong></td>
+<td><strong>~$375K</strong></td>
+</tr>
+<tr>
+<td>Platform cost to serve one additional member</td>
+<td>~$85K</td>
+</tr>
+<tr>
+<td><strong>Gross margin per additional member</strong></td>
+<td><strong>~77%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>What that compounds to (illustrative):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Members onboarded (incl. ActCAD)</th>
+<th>Recurring platform revenue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>~$1.1M/yr</td>
+</tr>
+<tr>
+<td>6</td>
+<td>~$2.3M/yr</td>
+</tr>
+<tr>
+<td>10</td>
+<td>~$3.8M/yr</td>
+</tr>
+<tr>
+<td>15</td>
+<td>~$5.6M/yr</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>This is on top of ActCAD&rsquo;s own revenue</strong> — which we keep, in full, inside Jytra.</p>
+</blockquote>
+<hr />
+<h2 id="what-this-could-become-conservative-base-aggressive"><a class="toclink" href="#what-this-could-become-conservative-base-aggressive">What this could become — conservative, base, aggressive</a></h2>
+<p>Two variables drive the whole outcome: <strong>how many members we sign</strong>, and <strong>what each is worth per year.</strong> Per-member value matures over time — roughly <strong>$275K in year 3 → $600K by year 7</strong> — as the member&rsquo;s own business grows on the platform, the marketplace fills up, and co-developed verticals start paying royalties.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Conservative</strong></th>
+<th><strong>Base</strong></th>
+<th><strong>Aggressive</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Members by Y7 (incl. ActCAD)</td>
+<td>6</td>
+<td>12</td>
+<td>20</td>
+</tr>
+<tr>
+<td>Avg revenue per member at Y7</td>
+<td>~$350K</td>
+<td>~$600K</td>
+<td>~$900K</td>
+</tr>
+<tr>
+<td><strong>Platform ARR at Y7</strong></td>
+<td><strong>~$2M</strong></td>
+<td><strong>~$7M</strong></td>
+<td><strong>~$18M</strong></td>
+</tr>
+<tr>
+<td>Gross margin</td>
+<td>~75%</td>
+<td>~78%</td>
+<td>~80%</td>
+</tr>
+<tr>
+<td>Indicative exit multiple</td>
+<td>6× (sub-scale)</td>
+<td>10×</td>
+<td>14× (ecosystem premium)</td>
+</tr>
+<tr>
+<td><strong>Indicative enterprise value</strong></td>
+<td><strong>~$12M</strong></td>
+<td><strong>~$70M</strong></td>
+<td><strong>~$250M</strong></td>
+</tr>
+<tr>
+<td>What we&rsquo;d likely do</td>
+<td>Don&rsquo;t sell — run it as a profitable adjunct to ActCAD (~$1.5M/yr contribution)</td>
+<td>Sell, or keep compounding</td>
+<td>Competitive process; real strategic interest</td>
+</tr>
+</tbody>
+</table>
+<p><strong>All three are acceptable outcomes.</strong> Even the conservative case returns the promoter capital several times over and leaves ActCAD on a materially better engine. <strong>None of them is a bet-the-company risk</strong> — the engine gets built either way; the platform layer is the option on top.</p>
+<blockquote>
+<p><strong>What would it take to be worth $1B+?</strong> Honestly: <strong>not this member model.</strong> Twenty members at $900K caps out near $250M. A billion-dollar outcome needs either ~10× the member count (the full global long tail, 200+ vendors) or the platform selling <strong>direct to end users</strong> alongside its members — a bigger, more competitive, and quite different business. <strong>That is a Phase 3 question to open deliberately, not something to assume today.</strong></p>
+</blockquote>
+<hr />
+<h2 id="who-our-first-members-would-be"><a class="toclink" href="#who-our-first-members-would-be">Who our first members would be</a></h2>
+<p>Not competition. Segments where they&rsquo;d rather share the platform cost than fund the R&amp;D alone.</p>
+<table>
+<thead>
+<tr>
+<th>Segment</th>
+<th>What they are</th>
+<th>Why they&rsquo;d talk to us</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Regional ITC members</strong></td>
+<td>progeCAD, CADian, CMS IntelliCAD, DoubleCAD, and the long tail of regional / vertical ITC-based products</td>
+<td>Stuck on the IntelliCAD ceiling for AI / cloud / web / mobile. Consortium sends their fixes to competitors.</td>
+</tr>
+<tr>
+<td><strong>Vertical ISVs</strong></td>
+<td>MEP, structural, electrical, survey, solar, curtain-wall specialists</td>
+<td>No clean engine option. Forced onto AutoCAD SDK or DIY. Would ship a full branded CAD in 90 days on us.</td>
+</tr>
+<tr>
+<td><strong>BIM-lite startups</strong></td>
+<td>New AEC-tech founders in Bengaluru, EU, ME, LATAM</td>
+<td>Need CAD + IFC + AI foundation; can&rsquo;t afford to build it</td>
+</tr>
+</tbody>
+</table>
+<p><strong>To be clear about who is NOT on this list:</strong> BricsCAD, ZWCAD, and GstarCAD are <strong>peers, not prospects.</strong> They each already left IntelliCAD and built their own engine direct on ODA — ZWCAD and GstarCAD are among ActCAD&rsquo;s most direct competitors in India today. <strong>We do not white-label to them.</strong></p>
+<blockquote>
+<p>That they made this exact move — and won — is the strongest external validation of the direction. We&rsquo;re taking the same road they took, and adding the white-label layer none of them built.</p>
+</blockquote>
+<p><strong>We approach the real prospects warmly, from ActCAD&rsquo;s existing network</strong> — not cold outbound. The founder&rsquo;s own relationships across India / SEA / MEA / EU open the first 10–15 conversations without a sales team.</p>
+<hr />
+<h2 id="how-we-bring-a-member-on-the-90-day-pattern"><a class="toclink" href="#how-we-bring-a-member-on-the-90-day-pattern">How we bring a member on — the 90-day pattern</a></h2>
+<p>Members don&rsquo;t build. Members configure. That is the whole point.</p>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>What happens</th>
+<th>Who does it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>W0</strong></td>
+<td>LOI signed. Member gets sandboxed evaluation build with their brand pre-configured, and their 20 hardest customer DWGs test-loaded.</td>
+<td>Member evaluates. TejasCAD supports.</td>
+</tr>
+<tr>
+<td><strong>W1–4</strong></td>
+<td>Tenant profile finalized: brand assets, EULA, command-prefix, feature flags, license-server endpoint, marketplace share %. <strong>License Authority key generated and handed to the member — we never see it again.</strong></td>
+<td>Joint.</td>
+</tr>
+<tr>
+<td><strong>W5–10</strong></td>
+<td>Existing extensions ported to our plugin SDK (95% of LISP works unchanged; .NET migration guide handles the rest). Dedicated migration engineer embedded.</td>
+<td>Member engineering + TejasCAD migration lead.</td>
+</tr>
+<tr>
+<td><strong>W11–13</strong></td>
+<td>Closed beta with 5–15 of the member&rsquo;s own friendly customers under NDA.</td>
+<td>Member.</td>
+</tr>
+<tr>
+<td><strong>W14+</strong></td>
+<td><strong>GA under the member&rsquo;s brand.</strong> Signed installers roll out of our build pipeline. AI, cloud, web features go live with their name on them.</td>
+<td>Member sells to their customers.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Full detail:</strong> <code>docs/tejascad-vs-intellicad.md</code> §6 + <code>docs/tejascad-licensing-architecture.md</code> §5–6.</p>
+<hr />
+<h2 id="how-jytra-actcad-change-and-how-they-dont"><a class="toclink" href="#how-jytra-actcad-change-and-how-they-dont">How Jytra + ActCAD change (and how they don&rsquo;t)</a></h2>
+<div class="big">
+<p><strong>Jytra keeps everything it has today. ActCAD keeps everything it has today. TejasCAD is a sibling entity built alongside.</strong></p>
+</div>
+<table>
+<thead>
+<tr>
+<th>Thing</th>
+<th>What changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ActCAD brand, customers, channel, pricing</strong></td>
+<td>No change</td>
+</tr>
+<tr>
+<td><strong>Jytra ownership of ActCAD</strong></td>
+<td>No change — Jytra remains the parent of ActCAD as a product</td>
+</tr>
+<tr>
+<td><strong>Where the engine lives</strong></td>
+<td>Owned by a new entity (TejasCAD Inc. + India Op-Co), licensed to Jytra for ActCAD on <strong>standard-member terms</strong> — same as every other member</td>
+</tr>
+<tr>
+<td><strong>P&amp;L reporting</strong></td>
+<td>Two entities, two sets of books, arm&rsquo;s-length invoices between them</td>
+</tr>
+<tr>
+<td><strong>Promoters&rsquo; equity in ActCAD</strong></td>
+<td>No change</td>
+</tr>
+<tr>
+<td><strong>Promoters&rsquo; equity in TejasCAD</strong></td>
+<td>New — the founding cap table, capitalized in personal capacity</td>
+</tr>
+<tr>
+<td><strong>Existing ActCAD customer commitments</strong></td>
+<td>Fully honored. Migration plan is transparent, staged over 24 months.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The discipline that makes this work:</strong> ActCAD pays TejasCAD the same rate as any external member. That is what makes the platform economics real for investors and clean for a future acquirer.</p>
+<hr />
+<h2 id="trust-wedge-what-we-tell-members-that-no-one-else-can"><a class="toclink" href="#trust-wedge-what-we-tell-members-that-no-one-else-can">Trust wedge — what we tell members that no one else can</a></h2>
+<p><strong>&ldquo;Ship your licensing through our infrastructure. We architecturally cannot see your customer list, your seat counts, your prices, or your license contents. Not by policy — by cryptography. Third-party audited annually.&rdquo;</strong></p>
+<ul>
+<li><strong>Member holds their own License Authority key.</strong> We generate it and destroy our copy at onboarding.</li>
+<li><strong>License payloads are encrypted with keys we don&rsquo;t have.</strong> Even if we&rsquo;re breached, attackers get ciphertext + aggregate counters.</li>
+<li><strong>Subpoena-resistant by design.</strong> We cannot break the crypto for a government any more than for an attacker.</li>
+<li><strong>Survives us.</strong> If TejasCAD ever goes away, the member&rsquo;s licensing keeps working. Playbook shipped with the SDK.</li>
+</ul>
+<p>Full technical spec: <code>docs/tejascad-licensing-architecture.md</code> (25 pages, external cryptographic audit planned before v1).</p>
+<blockquote>
+<p>This one property alone is worth a member conversation for every regulated-sector customer they&rsquo;re trying to close. <strong>No competitor offers it. IntelliCAD structurally cannot.</strong></p>
+</blockquote>
+<hr />
+<h2 id="what-were-asking-today-and-what-were-explicitly-not-asking"><a class="toclink" href="#what-were-asking-today-and-what-were-explicitly-not-asking">What we&rsquo;re asking today — and what we&rsquo;re explicitly NOT asking</a></h2>
+<p><strong>We&rsquo;re asking for: concept approval in principle.</strong> That&rsquo;s it.</p>
+<p>That approval unlocks the following prep work — none of which commits capital or public communication:</p>
+<ul>
+<li>Draft Master Platform License Agreement template (Jytra ↔ TejasCAD)</li>
+<li>Open trademark clearance on TejasCAD + sub-brand family (TejasCAD Engine / Forge / Cloud / SDK)</li>
+<li>Corporate counsel scoping of the Delaware C-Corp + India Op-Co entity structure</li>
+<li>Non-binding scoping conversation with 3–5 candidate member CEOs (all in ActCAD&rsquo;s existing warm network)</li>
+<li>Encrypted licensing v0 design review with an external crypto firm</li>
+</ul>
+<p><strong>We are NOT asking today for:</strong></p>
+<ul>
+<li>Capital commitment (that comes with the tranche-1 promoter seed decision, separately)</li>
+<li>Public announcement of any kind</li>
+<li>Entity incorporation (that follows counsel review)</li>
+<li>ACIS platform-amendment negotiation with Spatial (that follows the bilateral first)</li>
+<li>Any change to how ActCAD is run today</li>
+</ul>
+<hr />
+<h2 id="what-no-looks-like-the-honest-counter"><a class="toclink" href="#what-no-looks-like-the-honest-counter">What &ldquo;no&rdquo; looks like — the honest counter</a></h2>
+<p>If we do not take the platform path, this is what happens:</p>
+<ul>
+<li>We still ship modern ActCAD in 24 months. <strong>That is a great outcome.</strong></li>
+<li>We do not build the tenant / licensing / marketplace scaffolding — save ~3–6 engineer-months in P1.</li>
+<li>We keep all upside on ActCAD alone. No dilution risk from external investors later, no complexity of a two-entity structure, no partner-management overhead.</li>
+<li>We forgo the passive-revenue stream. If a competitor (Hexagon, ODA, an Indian tech major) decides in 2–3 years to build the same white-label platform, they own the category — not us.</li>
+<li>Our long-term exit is ActCAD as a product. The platform-multiplier is not available.</li>
+</ul>
+<p><strong>Both paths are respectable.</strong> The platform path has a bigger ceiling and a bigger canvas. The single-product path has less complexity and preserves optionality-of-scale for another day.</p>
+<hr />
+<h2 id="the-three-questions-wed-like-directors-to-sit-with"><a class="toclink" href="#the-three-questions-wed-like-directors-to-sit-with">The three questions we&rsquo;d like directors to sit with</a></h2>
+<ol>
+<li>
+<p><strong>Are we willing to run Jytra + TejasCAD as two clean entities</strong>, with ActCAD paying standard-member fees to TejasCAD like any other member, so the platform economics are believable to future members and acquirers?</p>
+</li>
+<li>
+<p><strong>Do we believe the founder team has the personal-capital appetite for the initial promoter seed</strong> (illustrative $4M over 18 months), knowing this is friends-and-family capital with a 5-7 year horizon?</p>
+</li>
+<li>
+<p><strong>Do we want to be the ones who build this category</strong> — the &ldquo;India-built CAD platform, exported to the world&rdquo; — or would we rather ship an excellent ActCAD and let someone else define the platform space?</p>
+</li>
+</ol>
+<p><strong>Concept approval today is a yes to exploring these questions rigorously, not a yes to answering them.</strong></p>
+<hr />
+<h2 id="what-happens-on-monday-if-the-concept-is-approved"><a class="toclink" href="#what-happens-on-monday-if-the-concept-is-approved">What happens on Monday if the concept is approved</a></h2>
+<p>Week 1 (this coming week):
+- Legal engagement: Delaware C-Corp + India Op-Co scoping
+- Trademark clearance opens on TejasCAD + sub-brand family
+- Draft of Master Platform License Agreement between Jytra and TejasCAD
+- <strong>Phase 0 engineering continues at current pace</strong> — no disruption, no scope change; the tenant-profile discipline gets folded into the build pipeline that already exists</p>
+<p>Weeks 2–4:
+- Draft of promoter capital tranche-1 structure (equity + convertible notes)
+- First soft conversation with 2 candidate members from ActCAD&rsquo;s warm network — no LOI ask, just problem discovery. <strong>We can show them the working viewer.</strong>
+- External crypto firm engaged to review encrypted licensing v0 design
+- Customer-hardware perf baseline measurement (the exit criterion still owed from Phase 0)
+- Public web-launch decision — first candidate-member conversations may benefit from a controlled public demo</p>
+<p>By month 2, we come back to this room with:
+- A confirmed entity plan
+- A trademark status update
+- Notes from the first 2 candidate-member conversations — <strong>live product in hand for the demo, not slides</strong>
+- A firm number on tranche-1 promoter capital
+- Customer-hardware perf numbers to close the last Phase 0 exit criterion</p>
+<p><strong>Nothing between now and month 2 is publicly visible. Nothing commits capital or brand until the promoter group approves the next step. Phase 0 engineering keeps shipping through all of it.</strong></p>
+<hr />
+<h1 id="the-ask-in-one-line"><a class="toclink" href="#the-ask-in-one-line">The ask, in one line</a></h1>
+<div class="big">
+<p><strong>Approve TejasCAD as a concept in principle — turn on the pre-work that lets us come back with real answers in eight weeks.</strong></p>
+</div>
+<p><code>docs/tejascad-story.md</code> · <code>docs/tejascad-company-structure.md</code> · <code>docs/tejascad-vs-intellicad.md</code> · <code>docs/tejascad-licensing-architecture.md</code> · <code>docs/tejascad-pitch-deck.md</code></p>
+<p>Questions?</p>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="tejascad-story.html">TejasCAD story</a> ·
+        <a href="tejascad-pitch-deck.html">TejasCAD deck</a> ·
+        <a href="tejascad-vs-intellicad.html">vs IntelliCAD</a> ·
+        <a href="tejascad-company-structure.html">company structure</a> ·
+        <a href="tejascad-licensing-architecture.html">licensing</a> ·
+        <a href="platform-strategy.html">platform strategy</a> ·
+        <a href="rearchitecture-plan.html">engine plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry</a> ·
+        <a href="memory-architecture.html">memory</a> ·
+        <a href="brand-shortlist.html">brand</a> ·
+        <a href="exec-presentation.html">original exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

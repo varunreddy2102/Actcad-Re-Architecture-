@@ -436,7 +436,7 @@ def convert(md_path: Path) -> tuple[str, str, str]:
     text = FRONTMATTER_RE.sub("", text)
     text = MARP_COMMENT_RE.sub("", text)
     md = markdown.Markdown(
-        extensions=["extra", "toc", "sane_lists", "smarty"],
+        extensions=["extra", "toc", "sane_lists", "smarty", "md_in_html"],
         extension_configs={
             "toc": {
                 "toc_depth": "2-3",

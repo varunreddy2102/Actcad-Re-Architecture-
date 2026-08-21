@@ -37,7 +37,7 @@ We are already re-architecting ActCAD off IntelliCAD onto our own engine. That w
 
 **Today's question is one level higher:**
 
-<div class="big">
+<div class="big" markdown="1">
 
 **Do we build the new engine only for ActCAD — or do we build it as a platform that ActCAD is the anchor tenant of, and license the same platform to other CAD vendors under their own brand?**
 
@@ -150,17 +150,41 @@ Once the engine is live, every member we add is **recurring income from work we 
 
 ---
 
+## What this could become — conservative, base, aggressive
+
+Two variables drive the whole outcome: **how many members we sign**, and **what each is worth per year.** Per-member value matures over time — roughly **$275K in year 3 → $600K by year 7** — as the member's own business grows on the platform, the marketplace fills up, and co-developed verticals start paying royalties.
+
+| | **Conservative** | **Base** | **Aggressive** |
+|---|---|---|---|
+| Members by Y7 (incl. ActCAD) | 6 | 12 | 20 |
+| Avg revenue per member at Y7 | ~$350K | ~$600K | ~$900K |
+| **Platform ARR at Y7** | **~$2M** | **~$7M** | **~$18M** |
+| Gross margin | ~75% | ~78% | ~80% |
+| Indicative exit multiple | 6× (sub-scale) | 10× | 14× (ecosystem premium) |
+| **Indicative enterprise value** | **~$12M** | **~$70M** | **~$250M** |
+| What we'd likely do | Don't sell — run it as a profitable adjunct to ActCAD (~$1.5M/yr contribution) | Sell, or keep compounding | Competitive process; real strategic interest |
+
+**All three are acceptable outcomes.** Even the conservative case returns the promoter capital several times over and leaves ActCAD on a materially better engine. **None of them is a bet-the-company risk** — the engine gets built either way; the platform layer is the option on top.
+
+> **What would it take to be worth $1B+?** Honestly: **not this member model.** Twenty members at $900K caps out near $250M. A billion-dollar outcome needs either ~10× the member count (the full global long tail, 200+ vendors) or the platform selling **direct to end users** alongside its members — a bigger, more competitive, and quite different business. **That is a Phase 3 question to open deliberately, not something to assume today.**
+
+---
+
 ## Who our first members would be
 
 Not competition. Segments where they'd rather share the platform cost than fund the R&D alone.
 
 | Segment | What they are | Why they'd talk to us |
 |---|---|---|
-| **Regional ITC members** | progeCAD, GstarCAD, ZWCAD, CADian, DoubleCAD, ~35 more | Stuck on IntelliCAD ceiling for AI / cloud / web / mobile. Consortium blocks fixes leaking to competitors. |
+| **Regional ITC members** | progeCAD, CADian, CMS IntelliCAD, DoubleCAD, and the long tail of regional / vertical ITC-based products | Stuck on the IntelliCAD ceiling for AI / cloud / web / mobile. Consortium sends their fixes to competitors. |
 | **Vertical ISVs** | MEP, structural, electrical, survey, solar, curtain-wall specialists | No clean engine option. Forced onto AutoCAD SDK or DIY. Would ship a full branded CAD in 90 days on us. |
 | **BIM-lite startups** | New AEC-tech founders in Bengaluru, EU, ME, LATAM | Need CAD + IFC + AI foundation; can't afford to build it |
 
-**We approach them warmly, from ActCAD's existing network** — not cold outbound. The founder's own relationships across India / SEA / MEA / EU open the first 10–15 conversations without a sales team.
+**To be clear about who is NOT on this list:** BricsCAD, ZWCAD, and GstarCAD are **peers, not prospects.** They each already left IntelliCAD and built their own engine direct on ODA — ZWCAD and GstarCAD are among ActCAD's most direct competitors in India today. **We do not white-label to them.**
+
+> That they made this exact move — and won — is the strongest external validation of the direction. We're taking the same road they took, and adding the white-label layer none of them built.
+
+**We approach the real prospects warmly, from ActCAD's existing network** — not cold outbound. The founder's own relationships across India / SEA / MEA / EU open the first 10–15 conversations without a sales team.
 
 ---
 
@@ -182,7 +206,7 @@ Members don't build. Members configure. That is the whole point.
 
 ## How Jytra + ActCAD change (and how they don't)
 
-<div class="big">
+<div class="big" markdown="1">
 
 **Jytra keeps everything it has today. ActCAD keeps everything it has today. TejasCAD is a sibling entity built alongside.**
 
@@ -296,7 +320,7 @@ By month 2, we come back to this room with:
 
 # The ask, in one line
 
-<div class="big">
+<div class="big" markdown="1">
 
 **Approve TejasCAD as a concept in principle — turn on the pre-work that lets us come back with real answers in eight weeks.**
 

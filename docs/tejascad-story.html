@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TejasCAD — The Story — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#0-the-one-paragraph-version">0. The one-paragraph version</a></li>
+<li><a href="#1-the-moment">1. The moment</a></li>
+<li><a href="#2-the-problem-seen-from-three-chairs">2. The problem, seen from three chairs</a><ul>
+<li><a href="#21-a-ceo-at-a-small-intellicad-member-vendor">2.1 A CEO at a small IntelliCAD member vendor</a></li>
+<li><a href="#22-a-founder-building-a-vertical-cad-tool">2.2 A founder building a vertical CAD tool</a></li>
+<li><a href="#23-an-smb-drafter-in-gurgaon-manila-sao-paulo-or-lagos">2.3 An SMB drafter in Gurgaon, Manila, São Paulo, or Lagos</a></li>
+</ul>
+</li>
+<li><a href="#3-the-insight">3. The insight</a></li>
+<li><a href="#4-the-bet">4. The bet</a></li>
+<li><a href="#5-the-promise-in-the-words-of-each-audience">5. The promise, in the words of each audience</a></li>
+<li><a href="#6-who-founds-this-and-why-they-can">6. Who founds this and why they can</a></li>
+<li><a href="#7-what-we-deliberately-dont-do">7. What we deliberately don&rsquo;t do</a></li>
+<li><a href="#8-the-three-act-arc-of-the-next-57-years">8. The three-act arc of the next 5–7 years</a><ul>
+<li><a href="#act-i-the-engine-year-0-year-2">Act I — The engine (year 0 → year 2)</a></li>
+<li><a href="#act-ii-the-platform-year-2-year-4">Act II — The platform (year 2 → year 4)</a></li>
+<li><a href="#act-iii-the-valuation-walk-to-exit-year-4-year-7">Act III — The valuation walk to exit (year 4 → year 7)</a></li>
+</ul>
+</li>
+<li><a href="#9-the-tagline">9. The tagline</a></li>
+<li><a href="#10-where-each-thread-continues">10. Where each thread continues</a></li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">tejascad-story.md</p>
+    </div>
+    <h1 id="tejascad-the-story"><a class="toclink" href="#tejascad-the-story">TejasCAD — The Story</a></h1>
+<blockquote>
+<p><em>Working brand: TejasCAD. Subject to TM clearance per <code>docs/brand-shortlist.md</code> §7. Illustrative dates, figures, and market numbers throughout; the shape of the argument is locked, specifics get confirmed with the promoter group before external use.</em></p>
+</blockquote>
+<hr />
+<h2 id="0-the-one-paragraph-version"><a class="toclink" href="#0-the-one-paragraph-version">0. The one-paragraph version</a></h2>
+<p>For thirty years, the world of &ldquo;AutoCAD-alternative&rdquo; CAD has run on a single shared engine: <strong>IntelliCAD</strong>, licensed by a consortium of ~40 small vendors who pay to receive the same source, ship it under their own brand, and compete on the margins. That model built a generation of businesses — ActCAD included — but it is quietly ending. AI is a first-class layer inside CAD now, cloud co-editing is the default for new drafters entering the profession, BIM is moving down into the SMB base, and none of those things arrive through a consortium license fast enough. <strong>TejasCAD</strong> is what those consortium vendors, the vertical MEP / Electrical / Structural / Survey ISVs, and a new generation of BIM-lite startups will run on instead: a modern, ODA-direct, ACIS-kernel CAD engine, wrapped in a ready-to-ship white-label front end, extended by a plugin marketplace, and licensed to members by encrypted contracts we ourselves cannot read. <strong>From India, for the world</strong> — funded initially by the ActCAD promoters in personal capacity, structured for an eventual industry acquisition.</p>
+<hr />
+<h2 id="1-the-moment"><a class="toclink" href="#1-the-moment">1. The moment</a></h2>
+<p>It is late 2026. Three things are true in CAD that were not true five years ago.</p>
+<p><strong>AI is inside the editor, not next to it.</strong> Autodesk shipped an MCP server in Revit 2027 and Fusion 2026. ARES Graebert shipped the A3 agent in ARES 2027. BricsCAD shipped AI Assistant V26. In three years, &ldquo;no AI inside&rdquo; reads the way &ldquo;no undo&rdquo; would read today. The lower half of the market — the AutoCAD-alternative segment ActCAD competes in — is structurally locked out of this shift because the shared IntelliCAD codebase can&rsquo;t be structurally modified without consortium coordination.</p>
+<p><strong>Cloud co-editing is the default assumption of new drafters.</strong> Anyone who learned drafting in the last three years learned it inside a Figma-shaped or Onshape-shaped multi-user environment. A single-user Windows-only DWG editor now reads to a fresh hire the way a floppy disk reads to a teenager. AutoCAD Web ships since 2018. ARES Kudo is a full browser DWG editor. Nothing in the IntelliCAD segment ships this credibly.</p>
+<p><strong>BIM is moving into the SMB base.</strong> The 14.7% CAGR of the BIM market plus the government mandates in Europe, the Gulf, Singapore, and increasingly India are pushing IFC import/export and lightweight parametric modeling down into the same SMB AEC shops that today buy ActCAD-tier products. Adding real BIM inside IntelliCAD is architecturally difficult because the shared engine wasn&rsquo;t designed for it.</p>
+<p>Three curves are bending upward. The IntelliCAD-based products are on the wrong side of all three.</p>
+<h2 id="2-the-problem-seen-from-three-chairs"><a class="toclink" href="#2-the-problem-seen-from-three-chairs">2. The problem, seen from three chairs</a></h2>
+<h3 id="21-a-ceo-at-a-small-intellicad-member-vendor"><a class="toclink" href="#21-a-ceo-at-a-small-intellicad-member-vendor">2.1 A CEO at a small IntelliCAD member vendor</a></h3>
+<p>They run a 40-person company doing $6–15M in ARR, mostly perpetual + light subscription, selling in one or two languages / regions. They pay the ITC royalty every year. They pass along consortium bug fixes to their customers. They ship a version behind AutoCAD&rsquo;s DWG format every year and a half. Their salespeople are being asked about AI, about web, about cloud co-edit, about IFC in every second demo. Their engineering team is 6–8 people; they can&rsquo;t build any of that on top of IntelliCAD without breaking the consortium license terms. They can&rsquo;t leave IntelliCAD because rebuilding a DWG-native engine from scratch is a 3-year, $15M project. <strong>They are stuck.</strong></p>
+<h3 id="22-a-founder-building-a-vertical-cad-tool"><a class="toclink" href="#22-a-founder-building-a-vertical-cad-tool">2.2 A founder building a vertical CAD tool</a></h3>
+<p>They&rsquo;re building an MEP design tool, or a solar-panel layout tool, or a curtain-wall detailer, or a shipbuilding drafter. They need a CAD engine that reads and writes DWG, has decent 2D drafting, has enough 3D to composite BIM elements, and lets them ship on Windows, browser, and increasingly Mac. Their options today are: <strong>(a)</strong> build on the AutoCAD SDK and pay Autodesk taxes forever, <strong>(b)</strong> build on BricsCAD&rsquo;s plugin API and accept the constraints, <strong>(c)</strong> try to license IntelliCAD (turned away most of the time — the consortium isn&rsquo;t set up for small-ticket verticals), <strong>(d)</strong> build their own engine (3 years, $15M, they don&rsquo;t have it), or <strong>(e)</strong> ship as a limited AutoCAD plugin and never own the customer relationship. <strong>They have no clean option.</strong></p>
+<h3 id="23-an-smb-drafter-in-gurgaon-manila-sao-paulo-or-lagos"><a class="toclink" href="#23-an-smb-drafter-in-gurgaon-manila-sao-paulo-or-lagos">2.3 An SMB drafter in Gurgaon, Manila, São Paulo, or Lagos</a></h3>
+<p>They spend eight hours a day inside a DWG editor. Their machine is a $600 laptop. Their internet is inconsistent. They want lower cost than AutoCAD, they want their existing DWGs to open without drift, they want their existing LISP scripts to keep working, they want to try AI features when their customers demand it, and they&rsquo;d like to eventually share a file with a colleague without emailing back and forth. <strong>They&rsquo;re a customer segment that grows every year and gets served worse every year.</strong></p>
+<h2 id="3-the-insight"><a class="toclink" href="#3-the-insight">3. The insight</a></h2>
+<p>Everyone in the AutoCAD-alternative market has spent thirty years believing that <strong>the value was in owning the DWG parser</strong> and the drafting commands. That was true when the barrier to a working DWG engine was writing a million lines of C++ against a spec Autodesk actively obfuscated. It is not true anymore. ODA has been reliable for a decade; a small team can stand up a working DWG viewer on ODA in a quarter. <strong>The value has moved.</strong> It&rsquo;s now in four places:</p>
+<ol>
+<li><strong>The AI layer</strong> — MCP servers, transactional agents, drawing-health tools. Anyone building CAD in 2026 who is not building this first is building the wrong product.</li>
+<li><strong>The cloud / co-edit layer</strong> — real-time multi-user editing, cloud file management, mobile / browser parity. The reference architecture is well-known now (op-log for geometry, LWW for annotations); shipping it takes a year of engineering, not five.</li>
+<li><strong>The plugin ecosystem</strong> — a marketplace where vertical developers ship extensions and get paid. AutoCAD has this via ObjectARX and Autodesk App Store; nobody else does at scale.</li>
+<li><strong>The white-label / brand-partner layer</strong> — the ability to ship the same engine under many brands so that regional CAD vendors, vertical ISVs, and BIM-lite startups all run on it without building their own foundation.</li>
+</ol>
+<p><strong>Nobody has built #4 as a real product.</strong> Every CAD engine today is either single-brand (AutoCAD, BricsCAD, ARES, ZWCAD, GstarCAD) or shared-source-consortium (IntelliCAD). The white-label-as-a-first-class-product model is missing from the market. The four layers together — engine + AI + cloud + white-label + marketplace — is what TejasCAD builds.</p>
+<h2 id="4-the-bet"><a class="toclink" href="#4-the-bet">4. The bet</a></h2>
+<p><strong>TejasCAD builds the platform the ActCAD-tier world will run on in 2030.</strong></p>
+<p>We build the engine once, on ODA + ACIS + Qt + WASM, exactly as detailed in <code>docs/rearchitecture-plan.md</code>. We wrap it in a ready-to-ship white-label front end so that a member vendor can be shipping a branded product within weeks of signing, not years. We build an encrypted licensing layer that lets members serve their own customers without the platform seeing customer identities, seat counts, or license contents (§10 of this document; full spec in <code>docs/tejascad-licensing-architecture.md</code>). We open a plugin marketplace where vertical developers publish once and sell across every member&rsquo;s shell. We ship AI as first-class from day one. We ship cloud co-edit at GA. We take a membership fee, we pass through the ACIS per-deployment royalty at cost, we take a percentage of marketplace GMV. <strong>We do not compete with our members. We power them.</strong></p>
+<h2 id="5-the-promise-in-the-words-of-each-audience"><a class="toclink" href="#5-the-promise-in-the-words-of-each-audience">5. The promise, in the words of each audience</a></h2>
+<p><strong>To a member vendor:</strong> &ldquo;You keep your customer relationship, your brand, your pricing, your channel, your L1/L2 support. You lose the IntelliCAD royalty, the consortium bug-fix bottleneck, the six-month AutoCAD-DWG lag, and the strategic ceiling. You gain AI, cloud, web, mobile, and a marketplace, on day one.&rdquo;</p>
+<p><strong>To a vertical ISV:</strong> &ldquo;Ship your vertical tool as a full branded CAD product in ninety days. We give you the drawing engine, the DWG file compatibility, the license server, the update channel, the crash-report pipeline, and the marketplace. You focus on the vertical logic that is actually your IP.&rdquo;</p>
+<p><strong>To a member who wants to co-build a vertical with us:</strong> &ldquo;You bring the domain expertise; our engineering team co-develops the vertical solution with you. You retain attribution and a first-position royalty every time the vertical ships — including when <em>another</em> member sells it inside their shell. We provide the development effort at cost or on a shared-cost model, take a platform share, and never build a competing vertical in your named segment without your consent. Full mechanics in <code>docs/tejascad-company-structure.md</code> §12 — the Verticalised Solutions Program.&rdquo;</p>
+<p><strong>To a SMB drafter:</strong> &ldquo;The product you buy from your local vendor uses the same engine and file formats that a Fortune 500 firm&rsquo;s tools use. AI features are the same. Cloud co-edit is the same. It costs a fraction of AutoCAD. It runs on your $600 laptop.&rdquo;</p>
+<p><strong>To an ActCAD customer today:</strong> &ldquo;Nothing changes for you until GA in year 2. Then your ActCAD gets faster, gets AI, gets cloud co-edit, gets web and mobile access, and your existing DWGs and LISP scripts keep working. In year 3, IntelliCAD-based ActCAD gets sunset and you&rsquo;re on the new engine — as a free upgrade for perpetual holders, as a subscription tier for new AI/cloud features.&rdquo;</p>
+<p><strong>To an eventual acquirer:</strong> &ldquo;You are buying the CAD platform that powers thirty regional vendors, forty vertical ISVs, and 500,000 end seats across the SMB long tail of AEC / MEP / Electrical / GIS. The platform is ODA-native, ACIS-native, has a shipping AI layer, a shipping cloud, a working marketplace, and the encrypted licensing infrastructure that keeps members&rsquo; data private from you and from us. It sits below and adjacent to your existing product lines, not on top.&rdquo;</p>
+<h2 id="6-who-founds-this-and-why-they-can"><a class="toclink" href="#6-who-founds-this-and-why-they-can">6. Who founds this and why they can</a></h2>
+<p>The <strong>current ActCAD promoters</strong> — the same people who built ActCAD into one of the largest AutoCAD-alternative brands in India / SEA — capitalize TejasCAD in personal capacity as founder-promoters. They bring:</p>
+<ul>
+<li><strong>A shipping CAD product</strong> (ActCAD) as the anchor tenant of the platform on day one. Nobody else in the market can capitalize a white-label CAD platform starting with a working, revenue-generating, tens-of-thousands-of-seats brand as tenant zero.</li>
+<li><strong>Twenty years of channel and customer knowledge</strong> in exactly the segment TejasCAD serves — SMB AEC in India / SEA / MEA / LATAM / EU — which is where the second and third members will come from.</li>
+<li><strong>Direct experience of the IntelliCAD pain from the inside</strong> — the release cadence, the consortium politics, the fix-goes-to-competitors problem, the AI-license-block. The founders know what to solve because they have lived with what is broken.</li>
+<li><strong>Personal capital sufficient for the promoter-seed round</strong> — no external dilution before there is a shipping engine and an ACIS bilateral contract, so the equity story stays clean into Series A.</li>
+</ul>
+<p>The founding team&rsquo;s day-one credibility with ODA, Spatial, Qt, and prospective member vendors is not a startup pitch — it is a working relationship those parties already have with the same people.</p>
+<h2 id="7-what-we-deliberately-dont-do"><a class="toclink" href="#7-what-we-deliberately-dont-do">7. What we deliberately don&rsquo;t do</a></h2>
+<ul>
+<li><strong>We don&rsquo;t build our own DWG parser.</strong> ODA already does this; ownership of the DWG codec is not where the value is anymore.</li>
+<li><strong>We don&rsquo;t compete with our members on branded CAD sales.</strong> ActCAD-the-product is a tenant of TejasCAD-the-platform. Other members are peers of ActCAD under the platform, not customers of ActCAD.</li>
+<li><strong>We don&rsquo;t ship a Jytra-branded consumer CAD product</strong> in markets where we have members. The platform brand is developer-facing and partner-facing; end users see the member&rsquo;s brand.</li>
+<li><strong>We don&rsquo;t read member customer data.</strong> The encrypted licensing layer (§10, full doc <code>tejascad-licensing-architecture.md</code>) is architecturally blind to license contents, seat counts, and end-customer identities. Members can prove this to their own customers with the same math.</li>
+<li><strong>We don&rsquo;t fork IntelliCAD, don&rsquo;t ship an IntelliCAD-compatible replacement, don&rsquo;t try to woo the consortium.</strong> We build alongside and eventually past.</li>
+<li><strong>We don&rsquo;t chase enterprise AutoCAD replacement.</strong> We serve the SMB long tail and the vertical ISV world — the segment the incumbents don&rsquo;t serve well.</li>
+<li><strong>We don&rsquo;t take institutional funding before the shipping engine.</strong> Promoter capital carries the seed / Phase 1 spike (see <code>docs/tejascad-company-structure.md</code> §3); institutional Series A only opens after the ACIS bilateral is locked and the engine feasibility spike passes.</li>
+</ul>
+<p>Each &ldquo;don&rsquo;t&rdquo; closes a door a competitor keeps open and pays for.</p>
+<h2 id="8-the-three-act-arc-of-the-next-57-years"><a class="toclink" href="#8-the-three-act-arc-of-the-next-57-years">8. The three-act arc of the next 5–7 years</a></h2>
+<h3 id="act-i-the-engine-year-0-year-2"><a class="toclink" href="#act-i-the-engine-year-0-year-2">Act I — The engine (year 0 → year 2)</a></h3>
+<p>Promoter-seeded. Small senior team. Feasibility spike runs and passes; ACIS bilateral OEM contract signed. Engine standup on ODA. ActCAD as anchor tenant. Native Windows beta at month 12; ActCAD-new GA at month 24. AI as-a-tool and MCP server ship inside the engine from the start. Encrypted licensing spec goes public. Soft outreach to 2–3 candidate members during Phase 2 conversations, no contracts. <strong>End of Act I: TejasCAD engine is real, ActCAD is a live tenant on it, and the platform seams are all built into the shell from day 1.</strong></p>
+<h3 id="act-ii-the-platform-year-2-year-4"><a class="toclink" href="#act-ii-the-platform-year-2-year-4">Act II — The platform (year 2 → year 4)</a></h3>
+<p>Partner-validation gate passes at month 24 (at least two members at LOI stage). ACIS platform-amendment negotiation opens with Spatial from a position of shipping success. First 2–3 external member tenants onboarded — target profile: one regional AutoCAD-alternative CAD vendor stuck on IntelliCAD, one vertical ISV in MEP / Electrical / Structural, and one BIM-lite startup. Plugin marketplace opens to outside developers. Cloud co-edit + web full editor ships. <strong>Series A at month 30</strong> (~$18M at ~$75M post-money illustrative), sized to observed member and marketplace demand. Series B at month 48–54 (~$50M at ~$350M post) once member count is 8–10 and marketplace GMV is meaningful. <strong>End of Act II: TejasCAD is a platform business with 3–5 members, a working marketplace, and its first two institutional rounds.</strong></p>
+<h3 id="act-iii-the-valuation-walk-to-exit-year-4-year-7"><a class="toclink" href="#act-iii-the-valuation-walk-to-exit-year-4-year-7">Act III — The valuation walk to exit (year 4 → year 7)</a></h3>
+<p>Member count reaches 10–15. IntelliCAD-based ActCAD is fully sunset; the platform&rsquo;s own tenants are the only live CAD products in the Jytra family. AI / cloud become the majority of new revenue; perpetual base is the durable floor.</p>
+<p><strong>Around month 60–66, the pre-exit growth round</strong> — the specific move the founders make to <em>increase</em> the company&rsquo;s valuation ahead of acquisition rather than just cover runway. Sized around $75–150M at ~$1.0–1.5B post-money valuation. Purpose is threefold: <strong>(a)</strong> the post-money price becomes the floor any acquirer must clear, <strong>(b)</strong> the capital funds 18–24 months of ARR growth that — at 10–15× forward-revenue multiples for platform / AI / marketplace businesses — compounds into another billion of enterprise value, and <strong>(c)</strong> a well-funded company with strong momentum negotiates from optionality, not necessity. This round is not mandatory: it is the value-creation lever the founders pull if the M&amp;A conversation would otherwise arrive at $500–800M and the case for $1.5–2.5B is credible.</p>
+<p><strong>Month 78–84 — acquisition.</strong> Target price envelope $1.5B–$3B depending on ARR trajectory, marketplace GMV, member count, and acquirer competition. Acquirer archetypes (full landscape in <code>docs/tejascad-company-structure.md</code> §8): a large CAD incumbent (Autodesk, Hexagon-Bricsys, Dassault, PTC, Bentley), an ODA member consortium buyer, a PE roll-up assembling a CAD portfolio, a strategic industrial vendor entering CAD, or an Indian tech major acquiring a global engineering platform. Founders exit or take secondary; members continue under the acquirer with survival clauses in the master license. <strong>End of Act III: TejasCAD acquired in the $1.5–2.5B envelope, or continues as a standalone with the growth-round capital fueling an IPO track.</strong></p>
+<h2 id="9-the-tagline"><a class="toclink" href="#9-the-tagline">9. The tagline</a></h2>
+<p><strong>TejasCAD. The CAD platform. Built in India, for the world.</strong></p>
+<p><em>Alternate phrasings under consideration: &ldquo;The platform every CAD is built on.&rdquo; / &ldquo;Your brand. Our engine. The world&rsquo;s CAD.&rdquo; / &ldquo;The DWG platform of the next decade.&rdquo;</em></p>
+<h2 id="10-where-each-thread-continues"><a class="toclink" href="#10-where-each-thread-continues">10. Where each thread continues</a></h2>
+<table>
+<thead>
+<tr>
+<th>Thread introduced here</th>
+<th>Full detail in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Company structure, promoter capital, cap table, funding path, acquisition</td>
+<td><code>docs/tejascad-company-structure.md</code></td>
+</tr>
+<tr>
+<td>Encrypted licensing that keeps member data private from the platform</td>
+<td><code>docs/tejascad-licensing-architecture.md</code></td>
+</tr>
+<tr>
+<td>Why the IntelliCAD-dependent world is the primary target and how we compare</td>
+<td><code>docs/tejascad-vs-intellicad.md</code></td>
+</tr>
+<tr>
+<td>The engineering plan (unchanged from the ActCAD re-arch)</td>
+<td><code>docs/rearchitecture-plan.md</code></td>
+</tr>
+<tr>
+<td>The white-label platform architecture superset</td>
+<td><code>docs/platform-strategy.md</code></td>
+</tr>
+<tr>
+<td>The pitch to members, investors, and acquirers</td>
+<td><code>docs/tejascad-pitch-deck.md</code></td>
+</tr>
+</tbody>
+</table>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="tejascad-story.html">TejasCAD story</a> ·
+        <a href="tejascad-pitch-deck.html">TejasCAD deck</a> ·
+        <a href="tejascad-vs-intellicad.html">vs IntelliCAD</a> ·
+        <a href="tejascad-company-structure.html">company structure</a> ·
+        <a href="tejascad-licensing-architecture.html">licensing</a> ·
+        <a href="platform-strategy.html">platform strategy</a> ·
+        <a href="rearchitecture-plan.html">engine plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry</a> ·
+        <a href="memory-architecture.html">memory</a> ·
+        <a href="brand-shortlist.html">brand</a> ·
+        <a href="exec-presentation.html">original exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

@@ -56,10 +56,12 @@ We are building a **white-label CAD platform** — the same modern engine ActCAD
 
 | Segment | Who they are | Count | Their problem |
 |---|---|---|---|
-| **Regional / national CAD vendors on IntelliCAD** | progeCAD, GstarCAD, ZWCAD, CADian, DoubleCAD, ~35 more | ~40 vendors, ~2M+ combined seats | Consortium ceiling on AI / cloud / web / mobile; fixes go to competitors |
+| **Regional / national CAD vendors on IntelliCAD** | progeCAD, CADian, CMS IntelliCAD, DoubleCAD, + long tail of regional / vertical ITC products | ~40 vendors | Consortium ceiling on AI / cloud / web / mobile; fixes go to competitors |
 | **Vertical ISVs building on shared CAD engines** | MEP, structural, electrical, survey, GIS, shipbuilding, curtain-wall specialists | ~200 globally in TAM | No clean engine license option; forced onto AutoCAD SDK or DIY |
 | **BIM-lite startups** | New AEC-tech companies building lightweight BIM for SMBs | ~40 companies globally | Need CAD foundation + IFC + AI; can't afford to build |
 | **SMB end customers** (indirect — reached via members) | Drafters in India / SEA / MEA / LATAM / EU SMBs | ~15M+ potential end seats | Under-served by AutoCAD-tier pricing; deserve modern features |
+
+**Not on this list — peers, not prospects:** BricsCAD, ZWCAD, GstarCAD each already left IntelliCAD and went ODA-direct. ZWCAD and GstarCAD compete with ActCAD in India today. We do not white-label to them; that they made this move and won is validation of the direction, not a sales lead.
 
 **TAM.** ~$1.2B in ITC-tier vendor revenue + $400M vertical ISV + $150M BIM-lite. **SAM (our member-reachable slice).** ~$500M-worth of member businesses could migrate over 5 years. **SOM (5-year target).** 10-15 members representing $60–120M of platform revenue.
 

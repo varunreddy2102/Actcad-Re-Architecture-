@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TejasCAD — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#the-white-label-cad-platform-built-in-india-for-the-world">The white-label CAD platform. Built in India. For the world.</a></li>
+<li><a href="#the-one-slide-version">The one-slide version</a></li>
+<li><a href="#why-now-three-curves-converging">Why now — three curves converging</a></li>
+<li><a href="#the-market-we-serve-segmentation">The market we serve (segmentation)</a></li>
+<li><a href="#the-insight-value-has-moved">The insight — value has moved</a></li>
+<li><a href="#architecture-in-one-picture">Architecture in one picture</a></li>
+<li><a href="#the-three-differentiators">The three differentiators</a></li>
+<li><a href="#differentiator-1-in-detail-ai">Differentiator #1 in detail — AI</a></li>
+<li><a href="#differentiator-2-in-detail-white-label-ready-to-ship">Differentiator #2 in detail — white-label ready-to-ship</a></li>
+<li><a href="#differentiator-3-in-detail-encrypted-platform-blind-licensing">Differentiator #3 in detail — encrypted, platform-blind licensing</a></li>
+<li><a href="#the-plain-english-trust-story-for-ceos-lawyers-procurement">The plain-English trust story (for CEOs, lawyers, procurement)</a></li>
+<li><a href="#comparison-tejascad-vs-intellicad">Comparison — TejasCAD vs IntelliCAD</a></li>
+<li><a href="#case-study-regioncad-illustrative">Case study — &ldquo;RegionCAD&rdquo; (illustrative)</a></li>
+<li><a href="#verticalised-solutions-program-cross-member-royalties">Verticalised Solutions Program — cross-member royalties</a></li>
+<li><a href="#business-model-three-revenue-lines">Business model — three revenue lines</a></li>
+<li><a href="#company-structure-delaware-c-corp-indian-op-co">Company structure — Delaware C-Corp + Indian Op-Co</a></li>
+<li><a href="#actcad-carve-out-how-the-anchor-tenant-relationship-works">ActCAD carve-out — how the anchor tenant relationship works</a></li>
+<li><a href="#five-round-funding-waterfall-over-7-years">Five-round funding waterfall over 7 years</a></li>
+<li><a href="#round-0-promoter-seed-illustrative-4m">Round 0 — Promoter Seed (illustrative $4M)</a></li>
+<li><a href="#the-pre-exit-growth-round-the-specific-move-to-lift-acquisition-value">The pre-exit growth round — the specific move to lift acquisition value</a></li>
+<li><a href="#exit-landscape-five-acquirer-archetypes">Exit landscape — five acquirer archetypes</a></li>
+<li><a href="#product-roadmap-3-years-to-platform-ga">Product roadmap — 3 years to platform GA</a></li>
+<li><a href="#feasibility-spike-46-weeks-before-phase-1-kickoff">Feasibility spike — 4–6 weeks before Phase 1 kickoff</a></li>
+<li><a href="#modeled-cost-envelopes-salary-excluded-full-picture-in-rearchitecture-planmd-15">Modeled cost envelopes (salary excluded — full picture in rearchitecture-plan.md §15)</a></li>
+<li><a href="#risk-register-top-5-of-12-full-list-company-structuremd-13">Risk register (top 5 of 12; full list company-structure.md §13)</a></li>
+<li><a href="#go-to-market-the-anchor-tenant-first-sequence">Go-to-market — the anchor-tenant-first sequence</a></li>
+<li><a href="#team-plan-headcount-walk">Team plan (headcount walk)</a></li>
+<li><a href="#founders-and-team-placeholder-to-be-filled-by-promoter-group">Founders and team (placeholder — to be filled by promoter group)</a></li>
+<li><a href="#the-from-india-for-the-world-positioning">The &ldquo;from India, for the world&rdquo; positioning</a></li>
+<li><a href="#milestones-and-value-gates-what-each-round-unlocks">Milestones and value gates (what each round unlocks)</a></li>
+<li><a href="#what-we-deliberately-dont-do">What we deliberately don&rsquo;t do</a></li>
+<li><a href="#what-were-asking-for-today">What we&rsquo;re asking for today</a></li>
+<li><a href="#companion-documents-reading-order">Companion documents (reading order)</a><ul>
+<li><a href="#the-cad-platform-built-in-india-for-the-world">The CAD platform. Built in India. For the world.</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">tejascad-pitch-deck.md</p>
+    </div>
+    <h1 id="tejascad"><a class="toclink" href="#tejascad">TejasCAD</a></h1>
+<h3 id="the-white-label-cad-platform-built-in-india-for-the-world"><a class="toclink" href="#the-white-label-cad-platform-built-in-india-for-the-world">The white-label CAD platform. Built in India. For the world.</a></h3>
+<p><strong>A strategic briefing for management, prospective members, and eventual investors.</strong></p>
+<p>Working brand — TM clearance pending (<code>docs/brand-shortlist.md</code> §7). Numbers illustrative — locked before external use.</p>
+<p>Companion documents: <code>docs/tejascad-story.md</code>, <code>docs/tejascad-company-structure.md</code>, <code>docs/tejascad-licensing-architecture.md</code>, <code>docs/tejascad-vs-intellicad.md</code>, <code>docs/rearchitecture-plan.md</code>, <code>docs/platform-strategy.md</code>.</p>
+<hr />
+<h2 id="the-one-slide-version"><a class="toclink" href="#the-one-slide-version">The one-slide version</a></h2>
+<p>We are building a <strong>white-label CAD platform</strong> — the same modern engine ActCAD-new will run on, licensed to other regional CAD vendors, vertical ISVs, and BIM-lite startups as their own branded product.</p>
+<ul>
+<li><strong>Engine on ODA + ACIS + Qt + WASM.</strong> Modern, cross-platform, AI-native from day one, cloud co-edit at GA.</li>
+<li><strong>Ready-to-ship white-label front end.</strong> A member goes from signed agreement to shipping their brand in <strong>90 days</strong>, not 3 years.</li>
+<li><strong>Encrypted, platform-blind licensing.</strong> Members serve their customers through our infrastructure; we architecturally cannot see the data.</li>
+<li><strong>Plugin marketplace + verticalized-solutions program.</strong> Cross-member revenue flows, not zero-sum competition.</li>
+<li><strong>From India, for the world.</strong> Founded and initially funded by the current ActCAD promoters in personal capacity.</li>
+<li><strong>Five funding rounds over seven years</strong> to a $1.5–2.5B acquisition envelope.</li>
+</ul>
+<hr />
+<h2 id="why-now-three-curves-converging"><a class="toclink" href="#why-now-three-curves-converging">Why now — three curves converging</a></h2>
+<ol>
+<li><strong>AI is inside the editor.</strong> Autodesk Revit 2027 MCP. Fusion 2026 MCP. ARES A3 agent. BricsCAD AI. In three years, &ldquo;no AI in CAD&rdquo; reads the way &ldquo;no undo&rdquo; would read today. The IntelliCAD-based segment is structurally locked out.</li>
+<li><strong>Cloud + web is the default assumption of every new drafter.</strong> Onshape, AutoCAD Web, ARES Kudo. A Windows-only single-user DWG editor is being aged out one graduating class at a time.</li>
+<li><strong>BIM is moving down into the SMB base.</strong> IFC and lightweight parametric are being asked for by the same customers who buy ActCAD-tier products. IntelliCAD-based products cannot deliver at parity.</li>
+</ol>
+<blockquote>
+<p><strong>The lower half of the CAD market — the ~40 IntelliCAD-Consortium vendors, the vertical ISVs, the SMB long tail — is on the wrong side of all three curves.</strong> That&rsquo;s the market we power.</p>
+</blockquote>
+<hr />
+<h2 id="the-market-we-serve-segmentation"><a class="toclink" href="#the-market-we-serve-segmentation">The market we serve (segmentation)</a></h2>
+<table>
+<thead>
+<tr>
+<th>Segment</th>
+<th>Who they are</th>
+<th>Count</th>
+<th>Their problem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Regional / national CAD vendors on IntelliCAD</strong></td>
+<td>progeCAD, CADian, CMS IntelliCAD, DoubleCAD, + long tail of regional / vertical ITC products</td>
+<td>~40 vendors</td>
+<td>Consortium ceiling on AI / cloud / web / mobile; fixes go to competitors</td>
+</tr>
+<tr>
+<td><strong>Vertical ISVs building on shared CAD engines</strong></td>
+<td>MEP, structural, electrical, survey, GIS, shipbuilding, curtain-wall specialists</td>
+<td>~200 globally in TAM</td>
+<td>No clean engine license option; forced onto AutoCAD SDK or DIY</td>
+</tr>
+<tr>
+<td><strong>BIM-lite startups</strong></td>
+<td>New AEC-tech companies building lightweight BIM for SMBs</td>
+<td>~40 companies globally</td>
+<td>Need CAD foundation + IFC + AI; can&rsquo;t afford to build</td>
+</tr>
+<tr>
+<td><strong>SMB end customers</strong> (indirect — reached via members)</td>
+<td>Drafters in India / SEA / MEA / LATAM / EU SMBs</td>
+<td>~15M+ potential end seats</td>
+<td>Under-served by AutoCAD-tier pricing; deserve modern features</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Not on this list — peers, not prospects:</strong> BricsCAD, ZWCAD, GstarCAD each already left IntelliCAD and went ODA-direct. ZWCAD and GstarCAD compete with ActCAD in India today. We do not white-label to them; that they made this move and won is validation of the direction, not a sales lead.</p>
+<p><strong>TAM.</strong> ~$1.2B in ITC-tier vendor revenue + $400M vertical ISV + $150M BIM-lite. <strong>SAM (our member-reachable slice).</strong> ~$500M-worth of member businesses could migrate over 5 years. <strong>SOM (5-year target).</strong> 10-15 members representing $60–120M of platform revenue.</p>
+<hr />
+<h2 id="the-insight-value-has-moved"><a class="toclink" href="#the-insight-value-has-moved">The insight — value has moved</a></h2>
+<p>For thirty years, the value in the CAD-alternative market was <strong>owning the DWG parser</strong>. That is no longer true — ODA is now a reliable, direct-license path. The value has moved to four layers, in this order:</p>
+<ol>
+<li><strong>AI layer</strong> — MCP servers, transactional agents, drawing-health tools</li>
+<li><strong>Cloud / co-edit</strong> — real-time multi-user editing, mobile/browser parity</li>
+<li><strong>Plugin ecosystem</strong> — marketplace of extensions that developers earn from</li>
+<li><strong>White-label / brand-partner layer</strong> — the same engine shipped under many brands</li>
+</ol>
+<blockquote>
+<p><strong>No one has built #4 as a first-class product.</strong> Every CAD engine today is either single-brand (AutoCAD, BricsCAD, ARES) or consortium (IntelliCAD). The white-label-as-a-real-product model is the market gap. TejasCAD builds all four.</p>
+</blockquote>
+<hr />
+<h2 id="architecture-in-one-picture"><a class="toclink" href="#architecture-in-one-picture">Architecture in one picture</a></h2>
+<p><strong>10-module C++ core.</strong> Engine is tenant-agnostic; tenant identity lives in the shell only.</p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><code>db</code></strong></td>
+<td>Drawing database. Only mutator. Emits typed op-stream.</td>
+</tr>
+<tr>
+<td><strong><code>geom</code></strong></td>
+<td>Kernel Abstraction Layer over ACIS. No ACIS types in public headers.</td>
+</tr>
+<tr>
+<td><strong><code>render</code></strong></td>
+<td>Visualize backends — DirectX 12 / Vulkan / Metal / WebGPU.</td>
+</tr>
+<tr>
+<td><strong><code>cmd</code></strong></td>
+<td>Command bus. The single seam AI + plugins + scripts talk to.</td>
+</tr>
+<tr>
+<td><strong><code>script</code></strong></td>
+<td>LISP, Python, JS. Everything routes through <code>cmd</code>, never <code>db</code>.</td>
+</tr>
+<tr>
+<td><strong><code>plugin</code></strong></td>
+<td>API-parity native + WASM plugin host.</td>
+</tr>
+<tr>
+<td><strong><code>net</code></strong></td>
+<td>Sync, document service, telemetry (Rust).</td>
+</tr>
+<tr>
+<td><strong><code>agent</code></strong></td>
+<td>MCP server, tool catalog, permission scoping (Rust).</td>
+</tr>
+<tr>
+<td><strong><code>platform</code></strong></td>
+<td>File I/O, fonts, printer, GPU surface. Only module with <code>#ifdef</code>.</td>
+</tr>
+<tr>
+<td><strong><code>ui-bridge</code></strong></td>
+<td>One C ABI. Qt shell + WASM shell + tenant shells all consume it.</td>
+</tr>
+</tbody>
+</table>
+<p>Full spec: <code>docs/rearchitecture-plan.md</code> §3.</p>
+<hr />
+<h2 id="the-three-differentiators"><a class="toclink" href="#the-three-differentiators">The three differentiators</a></h2>
+<p><strong>1. Modern — AI, cloud, web from day one.</strong> MCP server inside the engine, transactional undo per agent tool call, browser editor in Phase 2, real-time co-edit at GA. Nothing in the IntelliCAD-based segment ships this credibly.</p>
+<p><strong>2. Ready-to-ship white-label.</strong> Tenant-profile-driven build pipeline. A member&rsquo;s brand, icons, EULA, command-line prefix, feature flags, and license-server configuration are captured in a single JSON + asset bundle. Signed, branded MSI / DMG / DEB / WASM bundles come out of CI. <strong>New member goes from signed agreement to shipping their brand in 90 days.</strong></p>
+<p><strong>3. Encrypted, platform-blind licensing.</strong> Members serve their own customers through TejasCAD&rsquo;s licensing infrastructure — perpetual, subscription, floating, node-locked. <strong>We architecturally cannot see the data.</strong> Not a policy — a cryptographic property. Third-party audited annually.</p>
+<blockquote>
+<p><strong>These three, together, are what no competitor offers. Any one of them alone is a category-defining differentiator.</strong></p>
+</blockquote>
+<hr />
+<h2 id="differentiator-1-in-detail-ai"><a class="toclink" href="#differentiator-1-in-detail-ai">Differentiator #1 in detail — AI</a></h2>
+<p><strong>The commitment no competitor has made:</strong> every AI tool call resolves to <strong>exactly one transaction in the host undo stack.</strong></p>
+<ul>
+<li><strong>AI as a tool (Phase 1).</strong> Markup Assist (PDF redline → DWG edits), Smart Blocks (block detection + conversion), Drawing Health (layer cleanup, dimstyle normalization). Inline, deterministic, undoable.</li>
+<li><strong>MCP server (Phase 1–2).</strong> Local MCP (host running, agent commands inside host transaction) + remote MCP data server (cloud, read-only DWG queries). Mirrors Autodesk Fusion 2026 pattern. Works with Claude, Cursor, ChatGPT out of the box.</li>
+<li><strong>Generative CAD (Phase 3, conditional).</strong> Only when editable parametric round-trip is proven. Hypar&rsquo;s lesson: text-to-BIM via chat alone was the wrong abstraction.</li>
+</ul>
+<p><strong>Why this matters commercially:</strong> every member&rsquo;s brand ships AI-inside-CAD on day one. This closes the #1 lost-deal reason for IntelliCAD-based competitors in the 2027–2029 window.</p>
+<hr />
+<h2 id="differentiator-2-in-detail-white-label-ready-to-ship"><a class="toclink" href="#differentiator-2-in-detail-white-label-ready-to-ship">Differentiator #2 in detail — white-label ready-to-ship</a></h2>
+<p><strong>Tenant profile = one JSON + one asset bundle → one signed, branded product.</strong></p>
+<p>What a member configures:
+- Brand identity (name, icons, splash, EULA, about-box copy)
+- Command-line prefix (e.g. <code>ACAD-</code> → <code>MYCAD-</code>)
+- File-format identity (custom DXF app-id, &ldquo;open with&rdquo; handler)
+- Update channel (per-tenant signed manifest)
+- Feature flags (which verticals / plugins / kernels / AI tools)
+- License endpoint (per-tenant license-server URL)
+- Help + docs URLs, AI assistant identity, marketplace-tenant-share percentage</p>
+<p><strong>A new tenant is a build configuration, not a code change.</strong> The engine never sees <code>if (tenant == ...)</code>. Full spec: <code>docs/platform-strategy.md</code> §3.</p>
+<hr />
+<h2 id="differentiator-3-in-detail-encrypted-platform-blind-licensing"><a class="toclink" href="#differentiator-3-in-detail-encrypted-platform-blind-licensing">Differentiator #3 in detail — encrypted, platform-blind licensing</a></h2>
+<p>Four-level cryptographic key hierarchy. <strong>The critical property: TejasCAD does not hold the keys to see member customer data.</strong></p>
+<ul>
+<li><strong>Platform Root</strong> — offline HSM; signs member LA public keys</li>
+<li><strong>Member License Authority (LA) key</strong> — <strong>held by the member.</strong> TejasCAD generates on onboarding, transmits under one-time envelope crypto, deletes its copy. LA private key never lives in our infrastructure after handoff.</li>
+<li><strong>Per-license symmetric keys</strong> — wrapped for end-user&rsquo;s specific machine; only that machine can decrypt</li>
+<li><strong>Aggregate attestation key</strong> — member signs quarterly deployment counts for ACIS royalty; we see numbers, not identities</li>
+</ul>
+<p><strong>What we can see:</strong> aggregate deployment counters (per member, per quarter), infrastructure health metrics. <strong>What we cannot see:</strong> customer identities, seat counts per customer, pricing, license contents, drawing data. Not by policy. By math.</p>
+<p>Third-party audit report published under CC-BY; members redistribute to their own customers as proof. Full spec: <code>docs/tejascad-licensing-architecture.md</code>.</p>
+<hr />
+<h2 id="the-plain-english-trust-story-for-ceos-lawyers-procurement"><a class="toclink" href="#the-plain-english-trust-story-for-ceos-lawyers-procurement">The plain-English trust story (for CEOs, lawyers, procurement)</a></h2>
+<p><strong>Q: Can TejasCAD read our customer list?</strong> No. Customer identity never enters our systems. Members hold their own License Authority key.</p>
+<p><strong>Q: Can TejasCAD read our customers&rsquo; license files?</strong> No. Payloads are encrypted with keys we don&rsquo;t hold.</p>
+<p><strong>Q: If TejasCAD is breached, is our data in the breach?</strong> No. Attacker gets ciphertext + aggregate counters. Ciphertext is useless without the member&rsquo;s key.</p>
+<p><strong>Q: If TejasCAD gets a subpoena for our customer data, what happens?</strong> We hand over what we hold — ciphertext. Which is useless. We cannot break the crypto for the government any more than for an attacker.</p>
+<p><strong>Q: If TejasCAD terminates our membership, do our customers still work?</strong> Yes. LA is yours. License artifacts are cryptographically valid independent of TejasCAD&rsquo;s continuity. Documented &ldquo;TejasCAD-independent operations&rdquo; playbook ships with the SDK.</p>
+<p><strong>Q: Can we prove this to our customers?</strong> Yes. Annual third-party crypto audit report, published under CC-BY for redistribution.</p>
+<hr />
+<h2 id="comparison-tejascad-vs-intellicad"><a class="toclink" href="#comparison-tejascad-vs-intellicad">Comparison — TejasCAD vs IntelliCAD</a></h2>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>IntelliCAD (via any member)</th>
+<th>TejasCAD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AI-in-editor</td>
+<td>Structurally blocked</td>
+<td>MCP server + transactional undo</td>
+</tr>
+<tr>
+<td>Real-time co-edit</td>
+<td>None</td>
+<td>Two-tier op-log + LWW at GA</td>
+</tr>
+<tr>
+<td>Cross-platform</td>
+<td>Windows-first</td>
+<td>Windows + Mac + Linux + browser + mobile</td>
+</tr>
+<tr>
+<td>BIM / IFC</td>
+<td>Consortium-limited</td>
+<td>ODA IFC + BIM native</td>
+</tr>
+<tr>
+<td>Plugin marketplace</td>
+<td>None</td>
+<td>Platform-level cross-member catalog</td>
+</tr>
+<tr>
+<td>Cloud file services</td>
+<td>None</td>
+<td>TejasCAD Cloud (optional)</td>
+</tr>
+<tr>
+<td>Encrypted licensing</td>
+<td>Third-party (Sentinel, Reprise)</td>
+<td>Built-in, platform-blind, audited</td>
+</tr>
+<tr>
+<td>Release cadence</td>
+<td>Consortium-coordinated</td>
+<td>Member-controlled off rolling engine</td>
+</tr>
+<tr>
+<td>Bug fixes</td>
+<td>Shared with competitors</td>
+<td>Yours unless contributed</td>
+</tr>
+<tr>
+<td>Verticalization</td>
+<td>Member builds alone</td>
+<td>Co-development + cross-member royalty</td>
+</tr>
+<tr>
+<td>DWG fidelity</td>
+<td>6–18 mo behind AutoCAD</td>
+<td>ODA direct, 0–6 mo behind</td>
+</tr>
+</tbody>
+</table>
+<p>Full analysis: <code>docs/tejascad-vs-intellicad.md</code>. Case study: <code>docs/tejascad-vs-intellicad.md</code> §10.</p>
+<hr />
+<h2 id="case-study-regioncad-illustrative"><a class="toclink" href="#case-study-regioncad-illustrative">Case study — &ldquo;RegionCAD&rdquo; (illustrative)</a></h2>
+<p>Composite ITC member: 18K seats across Southern Europe + MENA, €6.5M ARR, IntelliCAD-based.</p>
+<p><strong>Year 1 delta (illustrative):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Cost line</th>
+<th>Old</th>
+<th>New</th>
+<th>Delta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ITC dues + royalties</td>
+<td>~€450K</td>
+<td>€0</td>
+<td>−€450K</td>
+</tr>
+<tr>
+<td>Sentinel DRM</td>
+<td>~€180K</td>
+<td>€0 (included)</td>
+<td>−€180K</td>
+</tr>
+<tr>
+<td>Mac port maintenance</td>
+<td>~€150K</td>
+<td>€0 (included)</td>
+<td>−€150K</td>
+</tr>
+<tr>
+<td>TejasCAD platform fee</td>
+<td>—</td>
+<td>€200K</td>
+<td>+€200K</td>
+</tr>
+<tr>
+<td>ACIS pass-through (new sales only)</td>
+<td>—</td>
+<td>~€30K</td>
+<td>+€30K</td>
+</tr>
+<tr>
+<td>Migration T&amp;M (one-time)</td>
+<td>—</td>
+<td>€80K</td>
+<td>+€80K</td>
+</tr>
+<tr>
+<td><strong>Year 1 total</strong></td>
+<td></td>
+<td></td>
+<td><strong>−€470K net saving</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Year 2 pro-forma with AI + web + cloud in market:</strong> +€1.3M revenue uplift (10% pricing on perpetual, subscription tier growth, marketplace share + verticalization royalty). <strong>Total Y2 improvement ~€1.77M annually.</strong></p>
+<p>Full case study: <code>docs/tejascad-vs-intellicad.md</code> §10.</p>
+<hr />
+<h2 id="verticalised-solutions-program-cross-member-royalties"><a class="toclink" href="#verticalised-solutions-program-cross-member-royalties">Verticalised Solutions Program — cross-member royalties</a></h2>
+<p>Beyond horizontal engine + platform + marketplace, a <strong>third revenue line</strong>: verticals co-developed with a partner member, resold across other members&rsquo; shells, with a <strong>first-position royalty back to the co-developer whenever the vertical sells — even from another tenant.</strong></p>
+<p><strong>Revenue split (illustrative):</strong>
+- Co-developing member (vertical IP owner): <strong>40–50%</strong>
+- TejasCAD (engineering + platform): <strong>30–40%</strong>
+- Selling member (tenant hosting the sale): <strong>15–25%</strong></p>
+<p><strong>Guardrails so this doesn&rsquo;t scare members off:</strong>
+- TejasCAD no-compete in the co-developer&rsquo;s named segment
+- Co-developer holds 30-day right of first refusal on overlapping verticals
+- Named-competitor exclusion (co-developer names up to 3 competitors who cannot buy)
+- Royalty floor guarantee for 5 years
+- Attribution across all tenant shells</p>
+<p><strong>First four verticals to co-develop:</strong> MEP, structural detailing, solar/PV layout, survey/civil. TejasCAD builds none on speculation — each waits for the right co-developer.</p>
+<p>Full spec: <code>docs/tejascad-company-structure.md</code> §12.</p>
+<hr />
+<h2 id="business-model-three-revenue-lines"><a class="toclink" href="#business-model-three-revenue-lines">Business model — three revenue lines</a></h2>
+<p><strong>1. Annual membership fee.</strong> ~$100–500K/member/year, sliding scale by tenant size. Funds platform engineering steady-state, tenant-profile pipeline, L3 support, marketplace listing rights.</p>
+<p><strong>2. ACIS per-deployment royalty pass-through.</strong> At cost. Members see a single line item; platform absorbs the master-contract negotiation. Zero platform margin — this is a pass-through, not a profit center.</p>
+<p><strong>3. Marketplace + verticalization revenue.</strong>
+- Marketplace: 70% developer / 15% platform / 15% tenant on GMV
+- Verticalization: platform takes 30–40% of vertical license revenue</p>
+<p><strong>Illustrative per-member steady-state economics (Year 3+):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Line</th>
+<th>~$/year per member</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Membership fee</td>
+<td>$250K</td>
+</tr>
+<tr>
+<td>ACIS pass-through</td>
+<td>$75K (at cost)</td>
+</tr>
+<tr>
+<td>Marketplace share (platform&rsquo;s 15%)</td>
+<td>$75K on $500K GMV</td>
+</tr>
+<tr>
+<td>Vertical royalty (variable)</td>
+<td>~$50K</td>
+</tr>
+<tr>
+<td><strong>Revenue per member</strong></td>
+<td><strong>~$450K</strong></td>
+</tr>
+<tr>
+<td>Cost to serve</td>
+<td>$85K</td>
+</tr>
+<tr>
+<td><strong>Gross margin</strong></td>
+<td><strong>~81%</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="company-structure-delaware-c-corp-indian-op-co"><a class="toclink" href="#company-structure-delaware-c-corp-indian-op-co">Company structure — Delaware C-Corp + Indian Op-Co</a></h2>
+<p><strong>Recommended entity:</strong> TejasCAD Inc. (Delaware C-Corp holdco) with 100%-owned TejasCAD Technologies Pvt Ltd (India). Rationale: institutional Series A / B / growth-round investors overwhelmingly prefer Delaware; flipping later costs months of runway and 3–5% in legal + tax. India Op-Co employs the team, holds Indian contracts, assigns IP to the C-Corp.</p>
+<p><strong>Founding cap table (illustrative, at incorporation):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Holder</th>
+<th>%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Promoter Group (ActCAD founders, personal capacity)</td>
+<td>85.0%</td>
+</tr>
+<tr>
+<td>Founding CTO / engineering lead</td>
+<td>5.0%</td>
+</tr>
+<tr>
+<td>Founding CPO / product lead</td>
+<td>5.0%</td>
+</tr>
+<tr>
+<td>Reserve for early operating hires</td>
+<td>5.0%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Founder-promoter allocation reflects that promoters are both (a) the seed capital source AND (b) the strategic underwriter of the anchor tenant (ActCAD).</strong> No competitor can start a white-label CAD platform with a working revenue-generating brand as tenant zero.</p>
+<p>Full detail: <code>docs/tejascad-company-structure.md</code> §2.</p>
+<hr />
+<h2 id="actcad-carve-out-how-the-anchor-tenant-relationship-works"><a class="toclink" href="#actcad-carve-out-how-the-anchor-tenant-relationship-works">ActCAD carve-out — how the anchor tenant relationship works</a></h2>
+<p>Both entities preserve independent optionality.</p>
+<ul>
+<li><strong>Jytra Technology Solutions</strong> continues to own the ActCAD brand, customer relationships, perpetual license base, reseller channel, support org.</li>
+<li><strong>TejasCAD Inc.</strong> owns the engine, platform, license infrastructure, marketplace, master ACIS / ODA / Qt contracts.</li>
+<li><strong>Master Platform License Agreement between Jytra and TejasCAD Inc.:</strong> Jytra becomes a member tenant from day 1. Standard member terms, standard fees, standard royalty pass-through. <strong>No preferential pricing — that keeps the cap table clean for later members and for exit diligence.</strong></li>
+<li>At TejasCAD exit, Jytra remains as-is: still a Jytra, still a member tenant, master agreement survives change-of-control. <strong>Jytra shareholders (same promoter group) can sell Jytra separately, keep it, or merge it into the acquirer.</strong></li>
+</ul>
+<p>Full detail: <code>docs/tejascad-company-structure.md</code> §7.</p>
+<hr />
+<h2 id="five-round-funding-waterfall-over-7-years"><a class="toclink" href="#five-round-funding-waterfall-over-7-years">Five-round funding waterfall over 7 years</a></h2>
+<p>Every round has a specific purpose. Numbers illustrative.</p>
+<table>
+<thead>
+<tr>
+<th>Round</th>
+<th>Timing</th>
+<th>Size</th>
+<th>Pre / Post ($M)</th>
+<th>ARR at close</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Promoter Seed</strong></td>
+<td>Y0–Y1.5</td>
+<td>$4M</td>
+<td>12 / 16 (conv. cap)</td>
+<td>pre-revenue</td>
+<td>Spike + ACIS bilateral + P1 build</td>
+</tr>
+<tr>
+<td><strong>Series A</strong></td>
+<td>Y2–Y2.5</td>
+<td>$18M</td>
+<td>57 / 75</td>
+<td>$3–5M</td>
+<td>Platform team + first 3 external members</td>
+</tr>
+<tr>
+<td><strong>Series B</strong></td>
+<td>Y4–Y4.5</td>
+<td>$50M + $10M secondary</td>
+<td>300 / 350</td>
+<td>$15–25M</td>
+<td>International scale to 10–15 members</td>
+</tr>
+<tr>
+<td><strong>Growth (pre-exit)</strong></td>
+<td>Y5.5–Y6</td>
+<td>$100M</td>
+<td>1,100 / 1,200</td>
+<td>$40–60M</td>
+<td><strong>Valuation floor + growth-into-multiple + optionality</strong></td>
+</tr>
+<tr>
+<td><strong>Exit</strong></td>
+<td>Y6.5–Y7</td>
+<td>Target $1.5–2.5B</td>
+<td>acquisition or IPO</td>
+<td>$75–150M</td>
+<td>Return distribution</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total capital raised over 7 years:</strong> ~$172M primary + $10M secondary = ~$182M.</p>
+<p>Full detail: <code>docs/tejascad-company-structure.md</code> §3.</p>
+<hr />
+<h2 id="round-0-promoter-seed-illustrative-4m"><a class="toclink" href="#round-0-promoter-seed-illustrative-4m">Round 0 — Promoter Seed (illustrative $4M)</a></h2>
+<p><strong>Source: ActCAD promoter group, in personal capacity.</strong></p>
+<ul>
+<li>Structured as <strong>founder equity + convertible notes with Series A valuation cap of $12M pre-money and 20% discount</strong> — defers valuation to the Series A investor, which is exactly what a promoter friends-and-family round should do.</li>
+<li><strong>Two tranches:</strong> $1.5M at incorporation (spike + M0–6 ramp); $2.5M at M6 (released against spike-pass + ACIS bilateral term sheet signed).</li>
+<li><strong>No institutional dilution before there is a shipping engine and locked ACIS terms.</strong> This is the discipline that preserves 46% promoter ownership at Series A, versus ~25–30% if seed had been institutional.</li>
+</ul>
+<p><strong>Uses (illustrative $4M):</strong>
+- Feasibility spike: $500K
+- Engineering payroll (8 engineers, 12 months): $640K
+- ACIS initial + ODA + Qt subscriptions: ~$350K
+- Cloud + AI dev tooling: ~$150K
+- Legal / contract work (ACIS, ODA, Qt): ~$200K
+- Working capital + contingency: rest</p>
+<hr />
+<h2 id="the-pre-exit-growth-round-the-specific-move-to-lift-acquisition-value"><a class="toclink" href="#the-pre-exit-growth-round-the-specific-move-to-lift-acquisition-value">The pre-exit growth round — the specific move to lift acquisition value</a></h2>
+<p><strong>Timing:</strong> Year 5.5–6, only if the acquisition conversation would otherwise arrive at $500–800M and the case for $1.5–2.5B is credible with 18–24 months more growth.</p>
+<p><strong>Size (illustrative):</strong> $100M at $1.2B post-money valuation.</p>
+<p><strong>Three distinct mechanisms:</strong></p>
+<ol>
+<li><strong>Price signal.</strong> $1.2B post becomes the floor any acquirer must clear. Board and later-round investors reject sale below last-round-post except at extreme discount.</li>
+<li><strong>Runway to grow into a higher multiple.</strong> $100M funds 18–24 months of ARR growth. At platform / AI / marketplace forward multiples of 10–15×, every $10M ARR added = $100–150M enterprise value. A $50M → $100M ARR walk maps to $500M → $1.5B EV.</li>
+<li><strong>Optionality signal.</strong> Well-funded companies with strong momentum negotiate from optionality, not necessity. Acquirers pay reluctance premiums to founders who could credibly say no.</li>
+</ol>
+<p><strong>Investors at this stage:</strong> late-stage crossover (Coatue, T. Rowe, Fidelity, D1, DST) or strategic corporate acquirer taking a minority position as pre-M&amp;A courtship (Autodesk Ventures, Hexagon corporate strategy, Dassault Ventures).</p>
+<hr />
+<h2 id="exit-landscape-five-acquirer-archetypes"><a class="toclink" href="#exit-landscape-five-acquirer-archetypes">Exit landscape — five acquirer archetypes</a></h2>
+<table>
+<thead>
+<tr>
+<th>Archetype</th>
+<th>Candidates</th>
+<th>Realistic multiple</th>
+<th>Likelihood</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Large CAD incumbent</strong></td>
+<td>Autodesk, Hexagon-Bricsys, Dassault, PTC, Bentley, Trimble</td>
+<td>8–12× forward ARR</td>
+<td>High for Hexagon-Bricsys; medium-high for Autodesk</td>
+</tr>
+<tr>
+<td><strong>ODA member consortium buyer</strong></td>
+<td>ODA itself or coalition of large ODA members</td>
+<td>6–8×</td>
+<td>Low but not zero</td>
+</tr>
+<tr>
+<td><strong>PE roll-up</strong></td>
+<td>Thoma Bravo, Vista, Insight, Providence</td>
+<td>6–9×</td>
+<td>Medium-high</td>
+</tr>
+<tr>
+<td><strong>Strategic industrial entering CAD</strong></td>
+<td>Procore, SAP/Oracle industrial, ConTech incumbents</td>
+<td>8–12×</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td><strong>Indian tech major</strong></td>
+<td>TCS / Infosys / HCL / Wipro / L&amp;T Tech / Cyient</td>
+<td>6–10×</td>
+<td>Medium (new-for-2020s pattern)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Exit outcome scenarios (illustrative, at Y7):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>ARR</th>
+<th>Multiple</th>
+<th>Enterprise Value</th>
+<th>Promoter proceeds (~36%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pessimistic</td>
+<td>$80M</td>
+<td>7×</td>
+<td>$560M</td>
+<td>$200M</td>
+</tr>
+<tr>
+<td><strong>Base</strong></td>
+<td>$100M</td>
+<td>12×</td>
+<td>$1.2B</td>
+<td>$432M</td>
+</tr>
+<tr>
+<td><strong>Strong (post-growth round)</strong></td>
+<td>$130M</td>
+<td>15×</td>
+<td>$1.95B</td>
+<td>$700M</td>
+</tr>
+<tr>
+<td>Optimistic (bidding war)</td>
+<td>$150M</td>
+<td>18×</td>
+<td>$2.7B</td>
+<td>$970M</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="product-roadmap-3-years-to-platform-ga"><a class="toclink" href="#product-roadmap-3-years-to-platform-ga">Product roadmap — 3 years to platform GA</a></h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Months</th>
+<th>Headline deliverables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Phase 1: Foundation</strong></td>
+<td>0–12</td>
+<td>Engine on ODA. Full DWG fidelity. 2D drafting. Native Windows beta to willing-customer cohort. Browser viewer in parallel. LISP runtime. AI-as-tool features shipped. MCP server skeleton. <strong>Tenant-profile layer built from day 1.</strong> Encrypted licensing v1.</td>
+</tr>
+<tr>
+<td><strong>Phase 2: Production v1</strong></td>
+<td>12–24</td>
+<td>Mac / Linux Qt at parity. Browser becomes full editor. Light 3D via ACIS through KAL. <strong>Cloud co-edit on 2D.</strong> LISP 95th percentile + migration tool. <strong>AI assistant GA.</strong> ActCAD-new GA at month 24. Soft outreach to 2–3 candidate members.</td>
+</tr>
+<tr>
+<td><strong>Phase 2→3 gate</strong></td>
+<td>Month 24</td>
+<td><strong>Partner-validation gate.</strong> ≥2 members at LOI? → pursue platform amendment with Spatial + open marketplace + open to outside members.</td>
+</tr>
+<tr>
+<td><strong>Phase 3: Parity-or-better + platform</strong></td>
+<td>24–36</td>
+<td>Full 3D + BIM-lite (IFC). MEP / Electrical / Structural verticals reshipped as plugins. Mobile shells. <strong>First 3 external members onboarded. Marketplace opens.</strong> IntelliCAD ActCAD sunset.</td>
+</tr>
+</tbody>
+</table>
+<p>Full detail: <code>docs/rearchitecture-plan.md</code> §5, <code>docs/platform-strategy.md</code> §9.</p>
+<hr />
+<h2 id="feasibility-spike-46-weeks-before-phase-1-kickoff"><a class="toclink" href="#feasibility-spike-46-weeks-before-phase-1-kickoff">Feasibility spike — 4–6 weeks before Phase 1 kickoff</a></h2>
+<p><strong>7 pass/fail items, decision-forcing.</strong> Items 1, 2, 3, 5 are deal-breakers if they fail.</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>What</th>
+<th>Pass criterion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>ACIS round-trip vs AutoCAD</strong> on 50 customer DWGs</td>
+<td>&lt;0.001 unit drift, booleans ≥98% pass, identical handle set</td>
+</tr>
+<tr>
+<td>1b</td>
+<td><strong>ACIS commercial scoping under NDA</strong> with Spatial</td>
+<td>Term sheet: module list, royalty model, WASM/Linux/macOS SKUs, source escrow, DELA</td>
+</tr>
+<tr>
+<td>2</td>
+<td>inWEB perf vs native Visualize</td>
+<td>inWEB ≤ 3× slower than native</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>ui-bridge</code> C ABI driving Qt + WASM from one <code>cmd</code></td>
+<td>One source of truth, no shell-specific branching</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Customer LISP script on minimal interpreter</td>
+<td>Visually identical to current ActCAD</td>
+</tr>
+<tr>
+<td>5</td>
+<td>MCP-driven &ldquo;draw a 3-bed apartment plan&rdquo;</td>
+<td>Agent-shaped commands, no corruption</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Qt Commercial multi-year quote</td>
+<td>Signed, target 15–35% below first quote</td>
+</tr>
+<tr>
+<td>7</td>
+<td>2-user op-log co-edit on real drawing</td>
+<td>Op-stream design supports replication</td>
+</tr>
+</tbody>
+</table>
+<p><strong>If 1, 2, 3, or 5 fail, the plan changes before kickoff — not at the Phase-2 boundary.</strong></p>
+<hr />
+<h2 id="modeled-cost-envelopes-salary-excluded-full-picture-in-rearchitecture-planmd-15"><a class="toclink" href="#modeled-cost-envelopes-salary-excluded-full-picture-in-rearchitecture-planmd-15">Modeled cost envelopes (salary excluded — full picture in <code>rearchitecture-plan.md</code> §15)</a></h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Engineers</th>
+<th>Stack + tools + cloud</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Phase 1</strong> (0–12)</td>
+<td>8</td>
+<td><strong>~$383K</strong> (incl. ~$300K ACIS initial + recurring)</td>
+</tr>
+<tr>
+<td><strong>Phase 2</strong> (12–24)</td>
+<td>20</td>
+<td><strong>~$449K</strong> (incl. ~$210K ACIS recurring + royalty at GA)</td>
+</tr>
+<tr>
+<td><strong>Phase 3</strong> (24–36)</td>
+<td>30</td>
+<td><strong>~$1.26M</strong> (incl. ~$660K ACIS recurring + royalty at scale)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>In scope:</strong> ODA Sustaining ($7.5K → $4.5K renewal, unlimited seats + Web/SaaS rights), Qt Commercial (~$4K/dev/yr), <strong>ACIS commercial OEM</strong> (initial + 15–20% maintenance + per-deployment royalty + module fees + DELA), VS Code primary + 2–3 VS Enterprise seats for perf devs, AI dev tooling (~$50/dev/mo), AWS infra, Clerk + Stripe.</p>
+<p><strong>ACIS is the dominant line.</strong> §15.1.1 per-deployment ask locks the model at SMB scale.</p>
+<hr />
+<h2 id="risk-register-top-5-of-12-full-list-company-structuremd-13"><a class="toclink" href="#risk-register-top-5-of-12-full-list-company-structuremd-13">Risk register (top 5 of 12; full list <code>company-structure.md</code> §13)</a></h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Risk</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Member pipeline stalls at ActCAD</strong> — no external LOIs by month 24</td>
+<td>Kills platform business case</td>
+<td>Soft outreach starts M12; ≥2 LOIs by M18 targeted; if not, defer platform → Phase 3</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>ACIS refuses platform-amendment</strong> at Series A/B</td>
+<td>Per-member economics break</td>
+<td>Bilateral first, amendment from position of shipping success; fallback = per-member with platform-brokered terms</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>ACIS round-trip fails on customer DWGs</strong></td>
+<td>Anchor migration path breaks</td>
+<td>Spike 1a; KAL preserves kernel-swap option</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Two product lines for 24 months</strong></td>
+<td>Support / marketing bandwidth split</td>
+<td>Dual-product operating plan in P1; explicit customer communication template</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Cadence trap re-emerges under TejasCAD</strong> — we become the new slow consortium</td>
+<td>Kills our own value prop</td>
+<td>Rolling engine releases; tenant profile absorbs member-specific requests; formalized but non-blocking member input</td>
+</tr>
+</tbody>
+</table>
+<p>Full 12-risk register: <code>docs/tejascad-company-structure.md</code> §13.</p>
+<hr />
+<h2 id="go-to-market-the-anchor-tenant-first-sequence"><a class="toclink" href="#go-to-market-the-anchor-tenant-first-sequence">Go-to-market — the anchor-tenant-first sequence</a></h2>
+<p>Sales motion for member recruitment, phased against product maturity:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>GTM motion</th>
+<th>Target output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Spike + P1 M0-M6</strong></td>
+<td>No outbound. Anchor-tenant-only. Build the product.</td>
+<td>ActCAD engineering + platform build</td>
+</tr>
+<tr>
+<td><strong>P1 M6–M12</strong></td>
+<td>Founder / promoter-led warm intros to ~15 target member vendors from ActCAD&rsquo;s existing network in India / SEA / MEA. <strong>Discovery conversations only.</strong></td>
+<td>15+ discovery meetings; 5–8 members intrigued</td>
+</tr>
+<tr>
+<td><strong>P2 M12–M18</strong></td>
+<td><strong>VP Partnerships hired.</strong> Structured outreach to top 25 ITC-tier vendors + top 30 vertical ISVs. Sandboxed evaluation-build offer at zero cost.</td>
+<td>8+ evaluations running; 3–5 LOI-stage conversations</td>
+</tr>
+<tr>
+<td><strong>P2 M18–M24</strong></td>
+<td>Convert LOI conversations to signed Master License Agreements gated on ActCAD-new GA proof.</td>
+<td>2–3 signed members by month 24 (partner-validation gate)</td>
+</tr>
+<tr>
+<td><strong>P3 M24–M36</strong></td>
+<td>First 3 members onboard sequentially (one per quarter). Marketplace opens. <strong>Second wave of 5–7 members</strong> approached.</td>
+<td>5–8 shipping members by month 36</td>
+</tr>
+<tr>
+<td><strong>Y4+</strong></td>
+<td>Land-and-expand: existing members co-develop verticals, new members added quarterly at steady 3–4/year</td>
+<td>12–15 members by Y5</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="team-plan-headcount-walk"><a class="toclink" href="#team-plan-headcount-walk">Team plan (headcount walk)</a></h2>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Headcount</th>
+<th>Composition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Y0.5</td>
+<td>8–10</td>
+<td>2 promoter + senior spike engineers</td>
+</tr>
+<tr>
+<td>Y1</td>
+<td>15</td>
+<td>+engine team, +platform-shell engineer, +finance/legal contractor</td>
+</tr>
+<tr>
+<td>Y2</td>
+<td>25</td>
+<td>+VP Partnerships, +marketplace lead, +tenant-build engineer</td>
+</tr>
+<tr>
+<td><strong>Y2.5 (Series A)</strong></td>
+<td>40</td>
+<td>+platform ops, +DevRel, +security/crypto, +3 partner-success engineers</td>
+</tr>
+<tr>
+<td>Y4 (pre Series B)</td>
+<td>65</td>
+<td>+regional sales (SEA, EU, LATAM), +ML/AI, +vertical templates</td>
+</tr>
+<tr>
+<td><strong>Y4.5 (Series B)</strong></td>
+<td>95</td>
+<td>+enterprise-tier GTM, +engineering scale, +customer success</td>
+</tr>
+<tr>
+<td>Y5.5</td>
+<td>130</td>
+<td>+Japan/MEA GTM, +M&amp;A/corp dev, +ML platform</td>
+</tr>
+<tr>
+<td><strong>Y6 (Growth)</strong></td>
+<td>170</td>
+<td>+growth-sprint hires across GTM + engineering</td>
+</tr>
+<tr>
+<td>Y7 (Exit)</td>
+<td>200</td>
+<td>Steady state</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="founders-and-team-placeholder-to-be-filled-by-promoter-group"><a class="toclink" href="#founders-and-team-placeholder-to-be-filled-by-promoter-group">Founders and team (placeholder — to be filled by promoter group)</a></h2>
+<ul>
+<li><strong>[Founder 1]</strong> — [role, ActCAD tenure, prior]. Leads platform strategy + investor relations.</li>
+<li><strong>[Founder 2]</strong> — [role, tenure]. Leads product + member success.</li>
+<li><strong>CTO / engineering lead</strong> — TBD (external hire vs internal promotion; decision at incorporation)</li>
+<li><strong>CPO / product lead</strong> — TBD</li>
+<li><strong>VP Partnerships</strong> — TBD (hired between M9 and M12)</li>
+<li><strong>Advisory board (post-incorporation targets):</strong></li>
+<li>A former Bricsys / ARES / Onshape senior product / engineering leader</li>
+<li>A CAD industry corp-dev veteran (M&amp;A pattern-matching)</li>
+<li>A crypto / security recognized expert (validation of the platform-blind licensing story)</li>
+<li>A large-scale open ecosystem operator (Shopify, Atlassian, Autodesk App Store perspective)</li>
+</ul>
+<p><strong>The credibility founding team gets from day 1:</strong> working relationships with ODA, Spatial, Qt, and the ActCAD channel partners — not from a pitch, from history.</p>
+<hr />
+<h2 id="the-from-india-for-the-world-positioning"><a class="toclink" href="#the-from-india-for-the-world-positioning">The &ldquo;from India, for the world&rdquo; positioning</a></h2>
+<p><strong>Why this framing matters commercially, not just narratively:</strong></p>
+<ul>
+<li>Anchor tenant is Indian (ActCAD); founders and initial capital are Indian; founding engineering is India-anchored — the story is honest.</li>
+<li>The Atmanirbhar Bharat / Vishwa Guru moment gives Indian institutional capital + Indian tech-major acquirers a mission-aligned reason to engage.</li>
+<li>International member vendors and end customers read Indian engineering pedigree as <em>credibility</em> in 2026 (post-UPI, post-Chandrayaan-3, post-Jio) in a way that would have been harder in 2016.</li>
+<li>The name <strong>Tejas</strong> carries the story: HAL Tejas LCA is the living Atmanirbhar Bharat engineering symbol, and it is now being <strong>exported</strong> — Malaysia signed 2023, Argentina + Egypt in pipeline. &ldquo;India-engineered, world-flown&rdquo; is not a slogan; it&rsquo;s a track record we associate with.</li>
+</ul>
+<p>Full brand rationale: <code>docs/brand-shortlist.md</code>.</p>
+<hr />
+<h2 id="milestones-and-value-gates-what-each-round-unlocks"><a class="toclink" href="#milestones-and-value-gates-what-each-round-unlocks">Milestones and value gates (what each round unlocks)</a></h2>
+<table>
+<thead>
+<tr>
+<th>Milestone</th>
+<th>Value delivered</th>
+<th>Round it enables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Feasibility spike passes</td>
+<td>Engineering risk retired</td>
+<td>Promoter capital tranche 2</td>
+</tr>
+<tr>
+<td>ACIS bilateral signed</td>
+<td>Commercial exposure retired</td>
+<td>ActCAD-new engineering start</td>
+</tr>
+<tr>
+<td>Native beta ships</td>
+<td>Product risk retired</td>
+<td>Series A conversations open</td>
+</tr>
+<tr>
+<td>GA + 2 member LOIs</td>
+<td>Platform model validated</td>
+<td>Series A closes</td>
+</tr>
+<tr>
+<td>3–5 members live + marketplace GMV</td>
+<td>Platform model proven</td>
+<td>Series B closes</td>
+</tr>
+<tr>
+<td>10+ members, $50M ARR, marketplace flywheel</td>
+<td>Category leadership established</td>
+<td>Growth round opens</td>
+</tr>
+<tr>
+<td>Strategic conversations at IOI</td>
+<td>Acquisition tension real</td>
+<td>Growth round closes</td>
+</tr>
+<tr>
+<td>Growth round closes</td>
+<td>Valuation floor set</td>
+<td>Acquisition from strength</td>
+</tr>
+<tr>
+<td>18–24 months of growth-round execution</td>
+<td>ARR at $100–150M</td>
+<td>Exit at $1.5–2.5B envelope</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="what-we-deliberately-dont-do"><a class="toclink" href="#what-we-deliberately-dont-do">What we deliberately don&rsquo;t do</a></h2>
+<ul>
+<li><strong>No IntelliCAD-compat drop-in replacement.</strong> Different engine, real port work.</li>
+<li><strong>No consortium-model shared source.</strong> Engine is licensed, not co-owned.</li>
+<li><strong>No preferential pricing for ActCAD-Jytra.</strong> Standard-member terms, always.</li>
+<li><strong>No competing with our members</strong> on their branded CAD sales.</li>
+<li><strong>No reading member customer data.</strong> Architecturally, not by policy.</li>
+<li><strong>No SDS / DIESEL / VBA / COM / ADS</strong> legacy compatibility.</li>
+<li><strong>No institutional funding before shipping engine + ACIS bilateral.</strong></li>
+<li><strong>No two products forever.</strong> IntelliCAD-based ActCAD sunsets in Phase 3.</li>
+<li><strong>No chat-in-canvas as primary AI UX</strong> — Hypar&rsquo;s lesson.</li>
+<li><strong>No selling to segments where we compete with a member</strong> without member consent.</li>
+</ul>
+<p>Each &ldquo;don&rsquo;t&rdquo; closes a door a competitor keeps open and pays for.</p>
+<hr />
+<h2 id="what-were-asking-for-today"><a class="toclink" href="#what-were-asking-for-today">What we&rsquo;re asking for today</a></h2>
+<p><strong>From the promoter group — decisions:</strong></p>
+<ol>
+<li>Approve incorporation of TejasCAD Inc. (Delaware) + TejasCAD Technologies Pvt Ltd (India) per entity choice in <code>company-structure.md</code> §1</li>
+<li>Commit Round-0 promoter capital envelope — illustrative $4M in two tranches</li>
+<li>Approve founding execs (internal promotion vs external recruit)</li>
+<li>Approve Master Platform License Agreement with Jytra at standard-member terms</li>
+<li>Approve the feasibility spike (6 weeks, senior team) and the ACIS Spike 1b outreach to Spatial</li>
+</ol>
+<p><strong>From this session — no external commitment.</strong> Internal decisions, no press, no announcements. Feasibility spike runs first; go / no-go on the full plan after spike data.</p>
+<p><strong>From prospective members — as engagements open (Y1+):</strong></p>
+<ul>
+<li>Sandboxed evaluation build with your brand pre-configured</li>
+<li>8-week no-commitment technical evaluation</li>
+<li>Standard Master License Agreement + tenant profile onboarding</li>
+</ul>
+<hr />
+<h2 id="companion-documents-reading-order"><a class="toclink" href="#companion-documents-reading-order">Companion documents (reading order)</a></h2>
+<table>
+<thead>
+<tr>
+<th>Order</th>
+<th>Document</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>docs/tejascad-story.md</code></td>
+<td>The narrative — why we exist, who we serve</td>
+</tr>
+<tr>
+<td>2</td>
+<td>This deck</td>
+<td>Discussion-starter for management + investors + members</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>docs/tejascad-vs-intellicad.md</code></td>
+<td>Head-to-head with the incumbent + case study</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>docs/tejascad-company-structure.md</code></td>
+<td>Entity, cap table, funding waterfall, exit landscape, risk register, unit economics</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>docs/tejascad-licensing-architecture.md</code></td>
+<td>Encrypted-licensing spec — the trust artifact</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>docs/platform-strategy.md</code></td>
+<td>Platform seams, tenant-profile layer, marketplace</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>docs/rearchitecture-plan.md</code></td>
+<td>Engineering plan (unchanged — 17 sections)</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>docs/brand-shortlist.md</code></td>
+<td>Working brand rationale + TM path</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="tejascad_1"><a class="toclink" href="#tejascad_1">TejasCAD</a></h1>
+<h3 id="the-cad-platform-built-in-india-for-the-world"><a class="toclink" href="#the-cad-platform-built-in-india-for-the-world">The CAD platform. Built in India. For the world.</a></h3>
+<p><strong>Questions?</strong></p>
+<p><code>docs/tejascad-story.md</code> · <code>docs/tejascad-pitch-deck.md</code></p>
+<p>Working brand — TM clearance pending.</p>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="tejascad-story.html">TejasCAD story</a> ·
+        <a href="tejascad-pitch-deck.html">TejasCAD deck</a> ·
+        <a href="tejascad-vs-intellicad.html">vs IntelliCAD</a> ·
+        <a href="tejascad-company-structure.html">company structure</a> ·
+        <a href="tejascad-licensing-architecture.html">licensing</a> ·
+        <a href="platform-strategy.html">platform strategy</a> ·
+        <a href="rearchitecture-plan.html">engine plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry</a> ·
+        <a href="memory-architecture.html">memory</a> ·
+        <a href="brand-shortlist.html">brand</a> ·
+        <a href="exec-presentation.html">original exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

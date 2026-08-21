@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TejasCAD — Company Structure, Funding, and Exit Path — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#0-status">0. Status</a></li>
+<li><a href="#1-entity-choice">1. Entity choice</a></li>
+<li><a href="#2-founding-cap-table-illustrative-at-incorporation-before-any-capital-in">2. Founding cap table (illustrative, at incorporation, before any capital in)</a></li>
+<li><a href="#3-funding-waterfall-five-rounds-over-seven-years">3. Funding waterfall — five rounds over seven years</a><ul>
+<li><a href="#31-round-0-promoter-seed-year-0-15">3.1 Round 0 — Promoter Seed (year 0 → 1.5)</a></li>
+<li><a href="#32-round-1-series-a-year-2-25-after-actcad-new-ga">3.2 Round 1 — Series A (year 2 → 2.5, after ActCAD-new GA)</a></li>
+<li><a href="#33-round-2-series-b-year-4-45-at-810-members">3.3 Round 2 — Series B (year 4 → 4.5, at 8–10 members)</a></li>
+<li><a href="#34-round-3-pre-exit-growth-round-year-55-6-the-valuation-pump-round">3.4 Round 3 — Pre-Exit Growth Round (year 5.5 → 6, the &ldquo;valuation-pump&rdquo; round)</a></li>
+<li><a href="#35-round-4-exit-year-65-7">3.5 Round 4 — Exit (year 6.5 → 7)</a></li>
+</ul>
+</li>
+<li><a href="#4-funding-waterfall-in-one-table">4. Funding waterfall in one table</a></li>
+<li><a href="#5-ip-ownership-and-cross-entity-ip-flow">5. IP ownership and cross-entity IP flow</a></li>
+<li><a href="#6-governance-and-board">6. Governance and board</a></li>
+<li><a href="#7-actcad-carve-out-how-the-anchor-tenant-relationship-works">7. ActCAD carve-out — how the anchor tenant relationship works</a></li>
+<li><a href="#8-exit-landscape-five-acquirer-archetypes">8. Exit landscape — five acquirer archetypes</a><ul>
+<li><a href="#81-large-cad-incumbent">8.1 Large CAD incumbent</a></li>
+<li><a href="#82-oda-member-consortium-buyer">8.2 ODA member consortium buyer</a></li>
+<li><a href="#83-pe-roll-up">8.3 PE roll-up</a></li>
+<li><a href="#84-strategic-industrial-vendor-entering-cad">8.4 Strategic industrial vendor entering CAD</a></li>
+<li><a href="#85-indian-tech-major">8.5 Indian tech major</a></li>
+<li><a href="#exit-outcome-model">Exit outcome model</a></li>
+</ul>
+</li>
+<li><a href="#9-milestones-and-value-gates-what-each-round-unlocks">9. Milestones and value gates (what each round unlocks)</a></li>
+<li><a href="#10-team-structure-across-the-seven-years">10. Team structure across the seven years</a></li>
+<li><a href="#11-governance-discipline-that-preserves-exit-value">11. Governance discipline that preserves exit value</a></li>
+<li><a href="#12-verticalised-solutions-program-co-developed-verticals-cross-member-royalties">12. Verticalised Solutions Program — co-developed verticals, cross-member royalties</a><ul>
+<li><a href="#121-why-this-exists">12.1 Why this exists</a></li>
+<li><a href="#122-how-the-deal-is-structured-four-party-revenue-split-illustrative">12.2 How the deal is structured (four-party revenue split, illustrative)</a></li>
+<li><a href="#123-development-support-commercial-options">12.3 Development-support commercial options</a></li>
+<li><a href="#124-ip-ownership">12.4 IP ownership</a></li>
+<li><a href="#125-guardrails-so-this-doesnt-scare-members-off">12.5 Guardrails so this doesn&rsquo;t scare members off</a></li>
+<li><a href="#126-why-this-makes-the-platform-stronger-not-weaker">12.6 Why this makes the platform stronger, not weaker</a></li>
+<li><a href="#127-illustrative-first-four-verticals-to-co-develop">12.7 Illustrative first four verticals to co-develop</a></li>
+</ul>
+</li>
+<li><a href="#13-risk-register-and-mitigations">13. Risk register and mitigations</a><ul>
+<li><a href="#131-category-commercial-go-to-market">13.1 Category — commercial / go-to-market</a></li>
+<li><a href="#132-category-technical-product">13.2 Category — technical / product</a></li>
+<li><a href="#133-category-organizational-execution">13.3 Category — organizational / execution</a></li>
+<li><a href="#134-category-market-competitive">13.4 Category — market / competitive</a></li>
+</ul>
+</li>
+<li><a href="#14-unit-economics-assumptions-behind-the-valuation-walk">14. Unit economics assumptions behind the valuation walk</a><ul>
+<li><a href="#141-per-member-economics-steady-state-year-3">14.1 Per-member economics (steady-state, ~year 3+)</a></li>
+<li><a href="#142-member-count-trajectory-driving-arr-walk">14.2 Member-count trajectory driving ARR walk</a></li>
+<li><a href="#143-sales-and-marketing-efficiency">14.3 Sales and marketing efficiency</a></li>
+<li><a href="#144-sensitivity-what-breaks-the-model">14.4 Sensitivity — what breaks the model</a></li>
+</ul>
+</li>
+<li><a href="#15-open-decisions-for-the-promoter-group">15. Open decisions for the promoter group</a></li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">tejascad-company-structure.md</p>
+    </div>
+    <h1 id="tejascad-company-structure-funding-and-exit-path"><a class="toclink" href="#tejascad-company-structure-funding-and-exit-path">TejasCAD — Company Structure, Funding, and Exit Path</a></h1>
+<blockquote>
+<p><em>Working brand: TejasCAD, subject to TM clearance (<code>docs/brand-shortlist.md</code> §7). Cap-table percentages, round sizes, valuations, ARR targets, and exit multiples in this document are illustrative modelling numbers, chosen to make the shape of the plan concrete. Real numbers land after (a) the ACIS bilateral term sheet from Spike 1b, (b) the promoter group&rsquo;s actual capital commitment, and (c) legal counsel review of the entity choice. No external commitments should be made against these figures.</em></p>
+</blockquote>
+<hr />
+<h2 id="0-status"><a class="toclink" href="#0-status">0. Status</a></h2>
+<p>Companion to <code>docs/tejascad-story.md</code>. This document is the operational and financial spine: how the entity is structured, who owns what at each stage, how promoter capital seeds the company, when institutional rounds open, how valuations walk from ~$10M pre-money at seed to a $1.5–2.5B exit envelope in year 7, and which acquirer archetypes are credible at that price.</p>
+<hr />
+<h2 id="1-entity-choice"><a class="toclink" href="#1-entity-choice">1. Entity choice</a></h2>
+<p>Two credible structures. Pick during pre-spike legal review.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Structure</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A. Indian Pvt Ltd holdco, wholly-owned Indian operating company</strong></td>
+<td>TejasCAD Technologies Pvt Ltd (holdco) + wholly-owned Op-Co</td>
+<td>Simpler legal filings, all Indian; ESOP under Indian regime; Indian tax residency</td>
+<td>Harder for US / EU institutional investors to write cheques; complex FDI + ODI when adding foreign investors</td>
+</tr>
+<tr>
+<td><strong>B. Delaware C-Corp holdco with Indian subsidiary (recommended for institutional path)</strong></td>
+<td>TejasCAD Inc. (Delaware C-Corp) with 100% owned TejasCAD Technologies Pvt Ltd India</td>
+<td>Standard structure for US / global venture capital; simpler cap table for international rounds; India Pvt Ltd employs the team, holds Indian contracts, IP assigned to the C-Corp</td>
+<td>Higher setup cost (~$30–50K legal); intercompany transfer pricing to manage; both jurisdictions&rsquo; compliance</td>
+</tr>
+<tr>
+<td><strong>C. Singapore Pte Ltd holdco with Indian subsidiary</strong></td>
+<td>TejasCAD Pte Ltd (Singapore) + Indian Op-Co</td>
+<td>Common for SEA-focused SaaS; access to Singapore GIC / Temasek etc.; tax treaty benefits</td>
+<td>Less common for pure India-led founding teams; some US institutional investors still prefer Delaware</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Recommendation: Option B (Delaware C-Corp holdco + Indian Op-Co).</strong> The Series A / B / growth-round investors we&rsquo;ll approach in years 2–6 are overwhelmingly US-anchored or global funds that prefer Delaware structures. Setting this up at incorporation avoids a painful flip later (which loses months of runway and costs 3–5% in legal + tax). The Indian Op-Co keeps ESOP administration, employment, GST, and government subsidies clean.</p>
+<p>The one meaningful trade-off: promoter capital moving into Delaware requires ODI (Overseas Direct Investment) filings from India — routine but not free. Counsel should walk through this before incorporation.</p>
+</blockquote>
+<hr />
+<h2 id="2-founding-cap-table-illustrative-at-incorporation-before-any-capital-in"><a class="toclink" href="#2-founding-cap-table-illustrative-at-incorporation-before-any-capital-in">2. Founding cap table (illustrative, at incorporation, before any capital in)</a></h2>
+<p>Before promoter cash is contributed, the cap table is pure founder equity. This is the &ldquo;who agreed to what&rdquo; moment.</p>
+<table>
+<thead>
+<tr>
+<th>Holder</th>
+<th>Shares</th>
+<th>%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Promoter Group (ActCAD founders, personal capacity, split per their internal agreement)</td>
+<td>8,500,000</td>
+<td><strong>85.0%</strong></td>
+</tr>
+<tr>
+<td>Founding CTO / engineering lead (recruited or existing)</td>
+<td>500,000</td>
+<td>5.0%</td>
+</tr>
+<tr>
+<td>Founding CPO / product lead</td>
+<td>500,000</td>
+<td>5.0%</td>
+</tr>
+<tr>
+<td>Reserve for early operating hires (non-ESOP, pre-Series-A)</td>
+<td>500,000</td>
+<td>5.0%</td>
+</tr>
+<tr>
+<td><strong>Total common</strong></td>
+<td><strong>10,000,000</strong></td>
+<td><strong>100.0%</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Notes:
+- The 85% to the promoter group reflects that they are <strong>both</strong> the seed capital source AND the strategic underwriter of the anchor tenant (ActCAD) which is what makes the platform bootstrap credible. This is a &ldquo;founder-promoter&rdquo; allocation typical of family-office-backed platforms.
+- Splits inside the promoter group are their internal decision. Assume this document treats them as one signing block.
+- Vesting: standard 4-year, 1-year cliff for the CTO / CPO. Promoter shares fully vested at inception (they&rsquo;re capitalizing, not employed).
+- ESOP pool is <strong>separate</strong> and gets created at the Series A round (§3.2), sized at 12–15%.</p>
+<hr />
+<h2 id="3-funding-waterfall-five-rounds-over-seven-years"><a class="toclink" href="#3-funding-waterfall-five-rounds-over-seven-years">3. Funding waterfall — five rounds over seven years</a></h2>
+<p>The whole plan hinges on this walk. Each round&rsquo;s purpose, timing, size, valuation, dilution, and use of funds is spelled out below. Numbers illustrative.</p>
+<h3 id="31-round-0-promoter-seed-year-0-15"><a class="toclink" href="#31-round-0-promoter-seed-year-0-15">3.1 Round 0 — Promoter Seed (year 0 → 1.5)</a></h3>
+<p><strong>Purpose.</strong> Fund the feasibility spike, the ACIS bilateral term sheet, and Phase 1 initial engineering (8-engineer team, 12 months) as scoped in <code>docs/rearchitecture-plan.md</code>. Get to a working native Windows beta with ActCAD as the anchor tenant. <strong>No institutional dilution before there is a shipping engine and locked ACIS terms.</strong></p>
+<p><strong>Source.</strong> The ActCAD promoter group, in personal capacity. Structured as a mix of:
+- Founder equity subscription (paid-in against the 85% at par value)
+- Interest-bearing promoter loan for the working-capital layer above equity (optional, keeps equity clean if the round is larger than the promoters want to fully equitize)
+- Convertible notes with a Series A valuation cap and a 20% discount (<strong>recommended</strong>) — this defers valuation to the Series A investor, which is exactly what a promoter-friend-and-family round should do</p>
+<p><strong>Size.</strong> Illustrative <strong>$4M USD (~₹35 Cr)</strong> across two tranches:
+- Tranche 1: $1.5M at incorporation, covers the 6-week feasibility spike (~$0.5M) and month 0–6 engineering ramp (~$1M)
+- Tranche 2: $2.5M at month 6, released against spike-pass and ACIS bilateral term sheet signed, covers month 6–18 engineering + ACIS initial-fee + ODA + Qt subscriptions</p>
+<p><strong>Valuation.</strong> Deferred (convertible notes with <strong>valuation cap at $12M pre-money</strong>, 20% discount to Series A). This means a Series A at $75M post gets these notes converting at effectively $12M pre — a ~7× uplift for the promoter capital vs the Series A investor, which is the correct outcome for who took the earliest risk.</p>
+<p><strong>Dilution at conversion.</strong> Once converted at Series A, promoter capital converts to roughly 22–25% additional dilution on the pre-A cap table (numbers depend on exact conversion mechanics; see §3.2).</p>
+<p><strong>Use of funds.</strong>
+- Feasibility spike (6 weeks, senior team): $500K
+- Engineering payroll (8 engineers, 12 months, blended $80K/engr fully loaded): $640K
+- ACIS initial + ODA Sustaining + Qt Commercial: ~$350K
+- Cloud infra + AI dev tooling: ~$150K
+- Legal (incorporation, ACIS contract, DELA, ODA membership, Qt commercial): ~$200K
+- Working capital + contingency: rest</p>
+<h3 id="32-round-1-series-a-year-2-25-after-actcad-new-ga"><a class="toclink" href="#32-round-1-series-a-year-2-25-after-actcad-new-ga">3.2 Round 1 — Series A (year 2 → 2.5, after ActCAD-new GA)</a></h3>
+<p><strong>Purpose.</strong> Fund the transition from single-product engine to a <strong>platform business</strong> with 3–5 external member tenants and an opening plugin marketplace. Extend runway 24 months to Series B. Build the platform team (18–22 engineers), the go-to-market motion for member recruitment, the marketplace certification pipeline, and the encrypted licensing infrastructure at production scale.</p>
+<p><strong>Trigger conditions (must be true for the round to open).</strong>
+- ACIS bilateral OEM contract signed and shipping in ActCAD-new
+- ActCAD-new is in GA or within 3 months of it
+- At least <strong>2 candidate members at LOI stage</strong> (per <code>docs/platform-strategy.md</code> §8&rsquo;s partner-validation gate)
+- Encrypted licensing v1 shipping with third-party crypto audit
+- Unit economics on the anchor tenant showing target ARR growth trajectory</p>
+<p><strong>Size.</strong> Illustrative <strong>$18M USD</strong> primary.</p>
+<p><strong>Valuation.</strong> <strong>$57M pre-money / $75M post-money.</strong> Rationale: the CAD-adjacent platform SaaS band at Series A with a shipping product, an anchor tenant of ~30K seats, ODA + ACIS locked in, and 2 external LOIs credibly supports a $60–100M post. Investors at this stage will be either a global venture fund with a deep-tech thesis (Lightspeed, Accel, Bessemer, Insight) or an India-anchored VC that can lead a $18M cheque (Peak XV / Sequoia India, Lightspeed India, Elevation, Nexus). A strategic corporate investor (an ODA member? a Hexagon subsidiary? Autodesk Ventures?) is a possibility but adds channel complexity — decide case by case.</p>
+<p><strong>Dilution.</strong> Series A investor takes <strong>24%</strong> (18/75). Promoter-note conversion adds another ~22% dilution to the pre-A cap table. Combined dilution on Round 0 cap table: ~46%. Post-Series-A cap table (illustrative):</p>
+<table>
+<thead>
+<tr>
+<th>Holder</th>
+<th>% post-A</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Promoter Group</td>
+<td>~46%</td>
+</tr>
+<tr>
+<td>Founding execs (CTO / CPO / early hires)</td>
+<td>~9%</td>
+</tr>
+<tr>
+<td>ESOP pool (freshly created at 15%, unallocated)</td>
+<td>~15%</td>
+</tr>
+<tr>
+<td>Promoter-note conversion (already in promoter %)</td>
+<td>included</td>
+</tr>
+<tr>
+<td>Series A investors</td>
+<td>~24%</td>
+</tr>
+<tr>
+<td>Reserved / other</td>
+<td>~6%</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>100%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Use of funds ($18M over 24 months).</strong>
+- Engineering team expansion from 12 → 22 headcount ($10.5M / 24mo fully loaded)
+- Go-to-market team (VP Partnerships, 3 partner-success engineers, 2 marketing / evangelism): $2.5M
+- Platform infrastructure at production scale (multi-tenant license service, marketplace, telemetry, crash-report pipeline, code-signing infra): $1.5M
+- ACIS recurring + royalties + ODA + Qt: $1.5M
+- Third-party audits (crypto, security, SOC 2): $500K
+- Working capital + contingency: $1.5M</p>
+<h3 id="33-round-2-series-b-year-4-45-at-810-members"><a class="toclink" href="#33-round-2-series-b-year-4-45-at-810-members">3.3 Round 2 — Series B (year 4 → 4.5, at 8–10 members)</a></h3>
+<p><strong>Purpose.</strong> Scale internationally, expand member count from 3–5 to 10–15, mature the marketplace, potentially acquire a smaller CAD vendor for member roll-up. This is the &ldquo;become the segment-leading platform&rdquo; round.</p>
+<p><strong>Trigger conditions.</strong>
+- 5+ external members shipping in production, plus ActCAD
+- Marketplace GMV crossing $5M annualized
+- ARR at $15–25M with 80%+ gross margin
+- Multiple validated member archetypes (regional CAD vendor, vertical ISV, BIM-lite startup) — proves platform-model generality
+- Two or more strategic conversations already happening informally with potential acquirers (early signals, not offers)</p>
+<p><strong>Size.</strong> Illustrative <strong>$50M USD</strong> primary + $10M secondary (allows founders and Series A investors to take partial liquidity).</p>
+<p><strong>Valuation.</strong> <strong>$300M pre-money / $350M post-money.</strong> Rationale: at $20M ARR growing 80–100% YoY, with a working marketplace, platform positioning, AI + cloud maturing, the industry comparable is 15–20× forward ARR at Series B for platform SaaS. Investors at this stage: growth funds (Iconiq, Coatue, GA, Meritech), sovereign wealth (GIC, Temasek), or a strategic corporate at a premium (rare — dilutes exit optionality; decline unless the strategic brings clear channel or tech).</p>
+<p><strong>Dilution.</strong> Series B primary takes <strong>14.3%</strong> (50/350). Secondary is a cap-table redistribution, not new dilution.</p>
+<p><strong>Post-Series-B cap table (illustrative).</strong></p>
+<table>
+<thead>
+<tr>
+<th>Holder</th>
+<th>% post-B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Promoter Group</td>
+<td>~39% (after ~7% secondary sale)</td>
+</tr>
+<tr>
+<td>Founding execs</td>
+<td>~7% (after minor secondary)</td>
+</tr>
+<tr>
+<td>ESOP (allocated + unallocated)</td>
+<td>~14%</td>
+</tr>
+<tr>
+<td>Series A investors</td>
+<td>~20% (net of secondary)</td>
+</tr>
+<tr>
+<td>Series B investors</td>
+<td>~14%</td>
+</tr>
+<tr>
+<td>Reserved</td>
+<td>~6%</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>100%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Use of funds ($50M).</strong>
+- Engineering scale to 30 headcount + platform ops team: $22M / 24 months
+- Go-to-market scale: regional sales in India / SEA / EU / LATAM, member success org: $8M
+- Marketplace acceleration: developer relations, certification automation, revenue-share ops: $3M
+- Optional bolt-on acquisition of a small IntelliCAD-dependent vendor to accelerate member count: $10M budget (may not deploy)
+- Working capital, ACIS scale royalty, cloud infra scale: $7M</p>
+<h3 id="34-round-3-pre-exit-growth-round-year-55-6-the-valuation-pump-round"><a class="toclink" href="#34-round-3-pre-exit-growth-round-year-55-6-the-valuation-pump-round">3.4 Round 3 — Pre-Exit Growth Round (year 5.5 → 6, the &ldquo;valuation-pump&rdquo; round)</a></h3>
+<p><strong>This is the round the founders make specifically to increase the acquisition price.</strong> It&rsquo;s optional. It runs only if the Series B → M&amp;A conversation is arriving at $500–800M and the case for $1.5–2.5B is credible with 18–24 months more growth.</p>
+<p><strong>Purpose (three distinct mechanisms).</strong></p>
+<ol>
+<li><strong>Price signal.</strong> A $1.0–1.5B post-money round becomes the floor any acquirer must clear. Board and later-round investors would reject a sale below the last round&rsquo;s post-money except at extreme discount, which acquirers know. <strong>The last round&rsquo;s price becomes the negotiating floor.</strong></li>
+<li><strong>Runway to grow into a higher multiple.</strong> The capital funds another 18–24 months of ARR growth. At platform / AI / marketplace forward multiples of 10–15×, every $10M of ARR added compounds into $100–150M of enterprise value. A $100M round at $1.2B post that lets the company grow ARR from $50M to $100M compounds directly into a $1.5–2B exit envelope.</li>
+<li><strong>Optionality signal.</strong> A well-funded company with strong momentum doesn&rsquo;t need to sell. Acquirers pay reluctance premiums to founders who could credibly say no. The round funds the option to say no, which is what makes the yes worth more.</li>
+</ol>
+<p><strong>Trigger conditions.</strong>
+- ARR at $40–60M growing 60–80% YoY
+- Member count at 10+ with strong retention (95%+ net retention)
+- Marketplace GMV at $15–30M annualized with growing take-rate
+- At least 2 strategic acquirer conversations at informal-offer or IOI stage
+- Board consensus that acquiring at current valuation would leave $500M–1.5B on the table vs a 12–18 month growth window</p>
+<p><strong>Size.</strong> Illustrative <strong>$100M USD</strong> primary.</p>
+<p><strong>Valuation.</strong> <strong>$1.1B pre-money / $1.2B post-money.</strong> Rationale: at $50M ARR growing 60–80%, platform positioning, marketplace GMV attached, comparables at this stage justify 20–25× forward — the round underwrites growth to $100M ARR at 15× = $1.5B, giving investors a 25% target return within 24 months of the round closing.</p>
+<p><strong>Dilution.</strong> Growth round takes <strong>8.3%</strong> (100/1200).</p>
+<p><strong>Post-growth-round cap table (illustrative).</strong></p>
+<table>
+<thead>
+<tr>
+<th>Holder</th>
+<th>% post-growth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Promoter Group</td>
+<td>~36%</td>
+</tr>
+<tr>
+<td>Founding execs</td>
+<td>~6%</td>
+</tr>
+<tr>
+<td>ESOP</td>
+<td>~13%</td>
+</tr>
+<tr>
+<td>Series A</td>
+<td>~18%</td>
+</tr>
+<tr>
+<td>Series B</td>
+<td>~13%</td>
+</tr>
+<tr>
+<td>Growth round</td>
+<td>~8%</td>
+</tr>
+<tr>
+<td>Reserved</td>
+<td>~6%</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>100%</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Investors at this stage.</strong> Late-stage / crossover funds (Coatue, T. Rowe, Fidelity, D1, DST), or a strategic corporate acquirer taking a minority position as pre-M&amp;A courtship (Autodesk Ventures, Hexagon corporate strategy, Dassault Ventures) — this last is common in industrial SaaS and often <em>does</em> signal a subsequent acquisition attempt.</p>
+<p><strong>Use of funds ($100M over 18 months, not 24 — this is a growth sprint into acquisition, not runway).</strong>
+- Sales &amp; marketing scale (double the GTM team, add enterprise-tier motion): $35M
+- Engineering acceleration on differentiating features (AI, marketplace, mobile, vertical templates): $30M
+- International expansion — Japan, Middle East, LATAM member pipelines: $10M
+- Optional strategic bolt-on M&amp;A (small vendor acquisitions to add members): $15M
+- Working capital, ACIS scaled royalty, cloud: $10M</p>
+<h3 id="35-round-4-exit-year-65-7"><a class="toclink" href="#35-round-4-exit-year-65-7">3.5 Round 4 — Exit (year 6.5 → 7)</a></h3>
+<p>Not a fundraise. The acquisition or IPO event. Detail in §7 and §8.</p>
+<hr />
+<h2 id="4-funding-waterfall-in-one-table"><a class="toclink" href="#4-funding-waterfall-in-one-table">4. Funding waterfall in one table</a></h2>
+<table>
+<thead>
+<tr>
+<th>Round</th>
+<th>Timing</th>
+<th>Size</th>
+<th>Pre / Post ($M)</th>
+<th>Dilution</th>
+<th>ARR at close</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Promoter Seed</strong></td>
+<td>Y0–Y1.5</td>
+<td>$4M</td>
+<td>12 / 16 (conv. cap)</td>
+<td>~22% at conversion</td>
+<td>pre-revenue</td>
+<td>Engine spike + ACIS bilateral + Phase 1 build</td>
+</tr>
+<tr>
+<td><strong>Series A</strong></td>
+<td>Y2–Y2.5</td>
+<td>$18M</td>
+<td>57 / 75</td>
+<td>24%</td>
+<td>$3–5M</td>
+<td>Platform team + first 3 external members + marketplace v1</td>
+</tr>
+<tr>
+<td><strong>Series B</strong></td>
+<td>Y4–Y4.5</td>
+<td>$50M + $10M secondary</td>
+<td>300 / 350</td>
+<td>14%</td>
+<td>$15–25M</td>
+<td>International scale to 10–15 members + potentially bolt-on</td>
+</tr>
+<tr>
+<td><strong>Growth</strong></td>
+<td>Y5.5–Y6</td>
+<td>$100M</td>
+<td>1,100 / 1,200</td>
+<td>8%</td>
+<td>$40–60M</td>
+<td><strong>Valuation floor + growth-into-multiple + optionality</strong></td>
+</tr>
+<tr>
+<td><strong>Exit</strong></td>
+<td>Y6.5–Y7</td>
+<td>Target $1.5–2.5B</td>
+<td>acquisition or IPO</td>
+<td>—</td>
+<td>$75–150M</td>
+<td>Return distribution</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total capital raised across the seven years:</strong> ~$172M primary + $10M secondary = ~$182M.</p>
+<p><strong>Founder / promoter ownership walk:</strong> 85% → ~46% (post-A, incl. seed conversion) → ~39% (post-B, incl. minor secondary) → ~36% (post-growth) → ~36% at exit. At a $2B exit and 36% ownership, promoter group returns ~$720M gross before tax.</p>
+<p><strong>Series A investor walk:</strong> buys at $75M post, exits at $2B → 26× on paper, ~$470M gross on the $18M cheque.</p>
+<p><strong>Series B investor walk:</strong> buys at $350M post, exits at $2B → 5.7× on paper.</p>
+<p><strong>Growth-round investor walk:</strong> buys at $1.2B post, exits at $2B → 1.7×. Small return; the whole point of the growth round is to move the exit price up, not to make a big return for these investors. They&rsquo;re pricing in the acquisition premium, not further growth.</p>
+<hr />
+<h2 id="5-ip-ownership-and-cross-entity-ip-flow"><a class="toclink" href="#5-ip-ownership-and-cross-entity-ip-flow">5. IP ownership and cross-entity IP flow</a></h2>
+<ul>
+<li>All engine IP (the C++ core, Rust net/agent, KAL, MCP server, marketplace) is owned by <strong>TejasCAD Inc. (Delaware C-Corp)</strong>.</li>
+<li>Indian Op-Co licenses the IP from the C-Corp under an intercompany agreement at arm&rsquo;s-length rates (transfer pricing).</li>
+<li>Indian Op-Co employees assign all inventions to the Indian Op-Co, which sub-assigns to the C-Corp.</li>
+<li><strong>ActCAD-the-product IP</strong> stays with Jytra Technology Solutions (existing entity). The new-engine ActCAD is built by TejasCAD Inc. under a <strong>master license agreement between Jytra and TejasCAD Inc.</strong>: Jytra pays TejasCAD&rsquo;s standard member fee + royalty pass-through, just like any other member. This keeps ActCAD&rsquo;s brand and customer relationships inside Jytra while giving it access to the new engine on identical commercial terms as future members.</li>
+<li>The critical clause: <strong>ActCAD-Jytra receives no preferential platform pricing</strong> vs future members. If it did, incoming members would (rightly) demand parity, or the ACIS master contract would treat ActCAD as a special case. Treating ActCAD as tenant zero on identical terms is the discipline that makes the platform business real.</li>
+</ul>
+<hr />
+<h2 id="6-governance-and-board"><a class="toclink" href="#6-governance-and-board">6. Governance and board</a></h2>
+<p><strong>At incorporation.</strong> Board of 3: two promoter representatives, one founding executive (CTO or CPO). All shareholders sign a shareholders&rsquo; agreement establishing standard protective provisions.</p>
+<p><strong>Post-Series A (5-person board).</strong> 2 promoter, 1 founding exec, 1 Series A investor, 1 independent (industry veteran — target: former Bricsys / Autodesk / Onshape executive).</p>
+<p><strong>Post-Series B (7-person board).</strong> 2 promoter, 1 founding exec, 1 Series A, 1 Series B, 2 independents.</p>
+<p><strong>Post-Growth round.</strong> Board adds a Growth investor observer (not voting) unless the round is led by a strategic; strategic investors typically demand a board seat.</p>
+<p><strong>Committees.</strong> Audit + Compensation formed at Series A. Nominating &amp; Governance at Series B.</p>
+<p><strong>Founder protective provisions to preserve through Series A.</strong> Board-level: super-majority approval required for sale of company below 2× last round&rsquo;s post-money; issuance of new shares senior to common; hiring/firing of CEO. Standard VC term sheets accept these when the promoter group retains 30%+ ownership and demonstrable operational control.</p>
+<hr />
+<h2 id="7-actcad-carve-out-how-the-anchor-tenant-relationship-works"><a class="toclink" href="#7-actcad-carve-out-how-the-anchor-tenant-relationship-works">7. ActCAD carve-out — how the anchor tenant relationship works</a></h2>
+<p>This is the most contract-sensitive relationship in the whole structure and it needs to be right on day 1.</p>
+<ul>
+<li><strong>Jytra owns ActCAD</strong>, the brand, the customer relationships, the perpetual license base, the reseller channel, the support organization.</li>
+<li><strong>TejasCAD Inc. owns the engine, the platform, the license infrastructure, the marketplace, the ACIS + ODA + Qt master contracts.</strong></li>
+<li>The two entities sign a <strong>Master Platform License Agreement</strong>:</li>
+<li>Jytra becomes a member tenant of TejasCAD from day 1</li>
+<li>Jytra pays the standard member annual fee and the per-deployment ACIS royalty pass-through, invoiced quarterly</li>
+<li>Jytra&rsquo;s ActCAD tenant profile is built and signed by TejasCAD&rsquo;s tenant-build pipeline like any other member&rsquo;s</li>
+<li>Jytra retains full customer and pricing sovereignty</li>
+<li>Jytra has no board representation on TejasCAD (unless the promoter group is on both boards, which they can be — but Jytra as an entity doesn&rsquo;t get a seat)</li>
+<li>Master agreement runs the same length and same survival clauses as external member agreements</li>
+<li><strong>Why this matters at acquisition:</strong> an acquirer buying TejasCAD is buying a platform that has a proven customer in ActCAD-Jytra. If TejasCAD had preferential ActCAD pricing, the ARR would be artificially inflated / deflated depending on how it was structured, and diligence would find it. Arm&rsquo;s-length terms preserve deal cleanliness.</li>
+<li><strong>What happens to Jytra at TejasCAD exit:</strong> Jytra remains a Jytra. It stays a member tenant of TejasCAD under the master agreement, which survives change-of-control of TejasCAD (standard survival clause). The Jytra shareholders (the same promoter group) can choose to sell Jytra separately, keep it, or merge it into the acquirer if the acquirer wants ActCAD as a brand too. <strong>Both entities have independent exit optionality.</strong></li>
+</ul>
+<hr />
+<h2 id="8-exit-landscape-five-acquirer-archetypes"><a class="toclink" href="#8-exit-landscape-five-acquirer-archetypes">8. Exit landscape — five acquirer archetypes</a></h2>
+<p>At the $1.5–2.5B valuation envelope and Year 6–7 timing, credible acquirer archetypes:</p>
+<h3 id="81-large-cad-incumbent"><a class="toclink" href="#81-large-cad-incumbent">8.1 Large CAD incumbent</a></h3>
+<p><strong>Candidates.</strong> Autodesk, Hexagon (owns Bricsys, Leica, MSC), Dassault Systèmes, PTC (owns Onshape), Bentley Systems, Trimble.</p>
+<p><strong>Strategic rationale.</strong> Buy the SMB / vertical-ISV segment they don&rsquo;t serve well. Absorb the marketplace and the encrypted licensing infrastructure as horizontal capabilities. Take the AI-in-CAD roadmap as a defensive move against each other.</p>
+<p><strong>Realistic multiple.</strong> 8–12× forward ARR for a strategic platform acquisition. At $100M ARR: $800M–$1.2B; at $150M ARR: $1.2–1.8B; premium possible for competitive process.</p>
+<p><strong>Likelihood.</strong> High for Hexagon-Bricsys (already has an SMB CAD line in BricsCAD; TejasCAD adds the SMB long-tail plus a platform play they can&rsquo;t build easily). Medium-high for Autodesk (segment they&rsquo;ve ceded; buying it back is defensible). Medium for Dassault / PTC / Bentley.</p>
+<h3 id="82-oda-member-consortium-buyer"><a class="toclink" href="#82-oda-member-consortium-buyer">8.2 ODA member consortium buyer</a></h3>
+<p><strong>Rationale.</strong> ODA itself, or a coalition of large ODA members, might acquire TejasCAD to standardize the ODA-based downstream ecosystem. Less about revenue, more about strategic control of the format-alternative space.</p>
+<p><strong>Realistic multiple.</strong> Lower — 6–8× forward. This is a consolidation buyer, not a strategic premium buyer.</p>
+<p><strong>Likelihood.</strong> Low but not zero. Would require unusual coordination.</p>
+<h3 id="83-pe-roll-up"><a class="toclink" href="#83-pe-roll-up">8.3 PE roll-up</a></h3>
+<p><strong>Rationale.</strong> A PE firm building a CAD portfolio (Thoma Bravo, Vista, Insight, Providence). Roll TejasCAD together with 2–4 other engineering-software targets into a larger platform. Financial engineering + operational leverage exit to a strategic at higher multiple in 4–6 years.</p>
+<p><strong>Realistic multiple.</strong> 6–9× forward on a cash-flow-attractive business.</p>
+<p><strong>Likelihood.</strong> Medium-high — PE has been very active in engineering software post-2022.</p>
+<h3 id="84-strategic-industrial-vendor-entering-cad"><a class="toclink" href="#84-strategic-industrial-vendor-entering-cad">8.4 Strategic industrial vendor entering CAD</a></h3>
+<p><strong>Rationale.</strong> A large industrial or construction-tech vendor (Procore, Autodesk&rsquo;s competitors in ConTech, an SAP / Oracle industrial line) buys CAD as an entry into design tooling that complements their post-design workflows.</p>
+<p><strong>Realistic multiple.</strong> 8–12× — they need the strategic beachhead and will pay for it.</p>
+<p><strong>Likelihood.</strong> Medium. Depends on whether any of them has publicly stated a CAD ambition by year 5.</p>
+<h3 id="85-indian-tech-major"><a class="toclink" href="#85-indian-tech-major">8.5 Indian tech major</a></h3>
+<p><strong>Rationale.</strong> TCS / Infosys / HCL / Wipro / Tech Mahindra / L&amp;T Technology Services / Cyient — one of them acquires TejasCAD as a <strong>product IP asset</strong> they can bundle with services delivery. India-out ambition + owning a global engineering-software platform is strategically consistent with the &ldquo;India for the world&rdquo; narrative TejasCAD carries.</p>
+<p><strong>Realistic multiple.</strong> 6–10× — Indian majors are more disciplined on multiples than US strategics but pay a premium for product-IP scarcity.</p>
+<p><strong>Likelihood.</strong> Medium — new-for-2020s pattern (TCS has been on this hunt; L&amp;T Tech acquired Data Patterns&rsquo; engineering unit; Tech Mahindra has done comparable moves).</p>
+<h3 id="exit-outcome-model"><a class="toclink" href="#exit-outcome-model">Exit outcome model</a></h3>
+<p>Modelling 4 scenarios at Year 7 with $100M ARR and different multiples / competitive dynamics:</p>
+<table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>ARR</th>
+<th>Multiple</th>
+<th>Enterprise Value</th>
+<th>Promoter proceeds (36%)</th>
+<th>Series A proceeds (18%)</th>
+<th>Growth-round proceeds (8%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pessimistic</strong> — single acquirer, no auction, pre-growth-round price</td>
+<td>$80M</td>
+<td>7×</td>
+<td>$560M</td>
+<td>$200M</td>
+<td>$100M</td>
+<td>— (round didn&rsquo;t happen)</td>
+</tr>
+<tr>
+<td><strong>Base</strong> — competitive process, one strategic wins</td>
+<td>$100M</td>
+<td>12×</td>
+<td>$1.2B</td>
+<td>$432M</td>
+<td>$216M</td>
+<td>$96M (@0.8×)</td>
+</tr>
+<tr>
+<td><strong>Strong</strong> — growth-round done, competitive process, strategic premium</td>
+<td>$130M</td>
+<td>15×</td>
+<td>$1.95B</td>
+<td>$700M</td>
+<td>$350M</td>
+<td>$156M (@1.3×)</td>
+</tr>
+<tr>
+<td><strong>Optimistic</strong> — bidding war between 2 strategics</td>
+<td>$150M</td>
+<td>18×</td>
+<td>$2.7B</td>
+<td>$970M</td>
+<td>$486M</td>
+<td>$216M (@1.8×)</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>growth round</strong> is why &ldquo;Base&rdquo; and above are achievable. Without it, the pessimistic case is where 60–70% of platform-SaaS exits at this scale actually land.</p>
+<hr />
+<h2 id="9-milestones-and-value-gates-what-each-round-unlocks"><a class="toclink" href="#9-milestones-and-value-gates-what-each-round-unlocks">9. Milestones and value gates (what each round unlocks)</a></h2>
+<table>
+<thead>
+<tr>
+<th>Milestone</th>
+<th>Value delivered</th>
+<th>Round it enables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Feasibility spike passes</td>
+<td>Engineering risk retired</td>
+<td>Continued promoter capital tranche 2</td>
+</tr>
+<tr>
+<td>ACIS bilateral signed</td>
+<td>Commercial exposure retired</td>
+<td>ActCAD-new engineering start</td>
+</tr>
+<tr>
+<td>ActCAD-new native beta ships</td>
+<td>Product risk retired</td>
+<td>Series A conversations open</td>
+</tr>
+<tr>
+<td>ActCAD-new GA + 2 member LOIs</td>
+<td>Platform-model validated</td>
+<td>Series A closes</td>
+</tr>
+<tr>
+<td>3–5 members live + marketplace GMV real</td>
+<td>Platform-model proven</td>
+<td>Series B closes</td>
+</tr>
+<tr>
+<td>10+ members, $50M ARR, marketplace flywheel</td>
+<td>Category leadership established</td>
+<td>Growth round opens</td>
+</tr>
+<tr>
+<td>Strategic conversations at IOI</td>
+<td>Acquisition tension real</td>
+<td>Growth round closes</td>
+</tr>
+<tr>
+<td>Growth round closes</td>
+<td>Valuation floor set</td>
+<td>Acquisition negotiation from strength</td>
+</tr>
+<tr>
+<td>18–24 months of growth-round execution</td>
+<td>ARR at $100–150M</td>
+<td>Exit at $1.5–2.5B envelope</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="10-team-structure-across-the-seven-years"><a class="toclink" href="#10-team-structure-across-the-seven-years">10. Team structure across the seven years</a></h2>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Headcount</th>
+<th>Composition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Y0.5</strong></td>
+<td>8–10</td>
+<td>2 promoter + spike engineers (senior)</td>
+</tr>
+<tr>
+<td><strong>Y1</strong></td>
+<td>15</td>
+<td>+engine team + 1 platform-shell engineer + finance/legal contractor</td>
+</tr>
+<tr>
+<td><strong>Y2</strong></td>
+<td>25</td>
+<td>+GTM (VP Partnerships), +marketplace lead, +tenant-build engineer</td>
+</tr>
+<tr>
+<td><strong>Y2.5 (post Series A)</strong></td>
+<td>40</td>
+<td>+Platform ops, +DevRel, +security/crypto, +3 partner-success engineers</td>
+</tr>
+<tr>
+<td><strong>Y4 (pre Series B)</strong></td>
+<td>65</td>
+<td>+regional sales (SEA, EU, LATAM), +ML/AI team, +vertical-templates team</td>
+</tr>
+<tr>
+<td><strong>Y4.5 (post Series B)</strong></td>
+<td>95</td>
+<td>+enterprise-tier GTM, +engineering scale, +customer success at member scale</td>
+</tr>
+<tr>
+<td><strong>Y5.5 (pre-growth)</strong></td>
+<td>130</td>
+<td>+Japan/MEA GTM, +M&amp;A / corp dev lead, +ML platform team</td>
+</tr>
+<tr>
+<td><strong>Y6 (post-growth)</strong></td>
+<td>170</td>
+<td>+growth-sprint hires across GTM and engineering</td>
+</tr>
+<tr>
+<td><strong>Y7 (exit)</strong></td>
+<td>200</td>
+<td>steady state at scale</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="11-governance-discipline-that-preserves-exit-value"><a class="toclink" href="#11-governance-discipline-that-preserves-exit-value">11. Governance discipline that preserves exit value</a></h2>
+<ul>
+<li><strong>Never blend ActCAD-Jytra P&amp;L with TejasCAD P&amp;L.</strong> Two entities, two sets of books, arm&rsquo;s-length invoices between them. An acquirer needs to see clean platform economics.</li>
+<li><strong>Never sell a discount to a member that isn&rsquo;t offered to all members.</strong> ARR quality matters more than ARR magnitude at exit.</li>
+<li><strong>Never take strategic corporate money at Series A.</strong> Locks doors. Series B is the earliest strategic money makes sense, and only from strategics that don&rsquo;t foreclose acquisition options.</li>
+<li><strong>Never let the ACIS deployment count drift from platform-level attribution.</strong> Every member&rsquo;s deployments are attributed to the platform master contract; ActCAD deployments too. Acquirer diligence will pick this apart.</li>
+<li><strong>Never take on features that can&rsquo;t be built inside the tenant-agnostic engine.</strong> &ldquo;Just for ActCAD&rdquo; features are a moral hazard that ruin the platform&rsquo;s exit multiple.</li>
+</ul>
+<hr />
+<h2 id="12-verticalised-solutions-program-co-developed-verticals-cross-member-royalties"><a class="toclink" href="#12-verticalised-solutions-program-co-developed-verticals-cross-member-royalties">12. Verticalised Solutions Program — co-developed verticals, cross-member royalties</a></h2>
+<p>Beyond horizontal engine + platform + marketplace, TejasCAD offers a <strong>third revenue line</strong>: <strong>verticalised solutions</strong>, co-developed with a partner member, resold across other members&rsquo; shells, with a <strong>first-position royalty back to the co-development member every time the vertical is sold — even by a different tenant.</strong></p>
+<h3 id="121-why-this-exists"><a class="toclink" href="#121-why-this-exists">12.1 Why this exists</a></h3>
+<p>A regional CAD vendor with two decades of MEP domain expertise, or a structural-engineering ISV with a specialised detailing engine, holds real vertical IP that would take TejasCAD years to build alone. Meanwhile, other members — a BIM-lite startup in a different region, a facilities-management platform, a construction-tech vendor — want to <em>offer</em> MEP or structural verticals to their end customers without building them from scratch. <strong>The Verticalised Solutions Program is the marketplace between those two.</strong> TejasCAD supplies the engineering effort and the platform reach; the vertical co-developer supplies the domain IP; the selling member supplies the customer relationship.</p>
+<h3 id="122-how-the-deal-is-structured-four-party-revenue-split-illustrative"><a class="toclink" href="#122-how-the-deal-is-structured-four-party-revenue-split-illustrative">12.2 How the deal is structured (four-party revenue split, illustrative)</a></h3>
+<table>
+<thead>
+<tr>
+<th>Party</th>
+<th>Contribution</th>
+<th>Share of vertical license revenue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Co-developing member (vertical IP owner)</strong></td>
+<td>Domain expertise, requirements, testing, first customer proof, ongoing spec authority</td>
+<td><strong>40–50%</strong></td>
+</tr>
+<tr>
+<td><strong>TejasCAD (engineering + platform)</strong></td>
+<td>Co-development engineering hours, integration with platform, certification, distribution across members, revenue-share ops</td>
+<td><strong>30–40%</strong></td>
+</tr>
+<tr>
+<td><strong>Selling member (tenant in whose shell the license was sold)</strong></td>
+<td>Customer relationship, sales, L1/L2 support</td>
+<td><strong>15–25%</strong></td>
+</tr>
+<tr>
+<td><strong>End-customer support surface</strong></td>
+<td>Handled by selling member; escalates to TejasCAD for engine issues, to co-developing member for vertical-logic issues</td>
+<td>(built into shares)</td>
+</tr>
+</tbody>
+</table>
+<p>Splits negotiated per vertical. The <strong>guiding principle: the co-developer never falls below 40% for the first three years of a vertical&rsquo;s life</strong>, protecting the incentive to co-build.</p>
+<h3 id="123-development-support-commercial-options"><a class="toclink" href="#123-development-support-commercial-options">12.3 Development-support commercial options</a></h3>
+<p>TejasCAD offers three co-development engagement models, chosen by the member:</p>
+<ol>
+<li><strong>Time-and-materials.</strong> Member pays TejasCAD&rsquo;s engineering rate for hours worked. Vertical IP shared per §13.4. Highest short-term cost to member, lowest ongoing royalty share to TejasCAD (25–30%).</li>
+<li><strong>Shared-cost.</strong> TejasCAD absorbs 50–70% of development cost against a higher ongoing royalty share (35–40%). Recommended default for members with a strong vertical thesis.</li>
+<li><strong>TejasCAD-underwritten.</strong> TejasCAD absorbs 100% of development cost when it wants a vertical in its catalog badly enough. Vertical IP structured as joint ownership, ongoing royalty share is highest (40–45%) and the co-developing member retains attribution + a <strong>guaranteed minimum royalty floor</strong> regardless of TejasCAD&rsquo;s platform share.</li>
+</ol>
+<h3 id="124-ip-ownership"><a class="toclink" href="#124-ip-ownership">12.4 IP ownership</a></h3>
+<ul>
+<li><strong>Vertical-specific domain IP</strong> (rules, calculation engines, specialised UI, industry-specific data models): <strong>owned by the co-developing member</strong>, licensed exclusively to TejasCAD for redistribution to other members under the program terms.</li>
+<li><strong>Platform-side integration code</strong> (adapters, plugin scaffolding, engine hooks): owned by TejasCAD, licensed to the vertical.</li>
+<li><strong>Joint-owned code</strong> (created together, indivisible): joint ownership with mutual license.</li>
+<li><strong>Written IP schedule per vertical</strong>, exhibit to the master agreement. No ambiguity at exit.</li>
+</ul>
+<h3 id="125-guardrails-so-this-doesnt-scare-members-off"><a class="toclink" href="#125-guardrails-so-this-doesnt-scare-members-off">12.5 Guardrails so this doesn&rsquo;t scare members off</a></h3>
+<p>This is where the design has to be sharp. The obvious member fear: <em>&ldquo;If I co-build a vertical with TejasCAD, will TejasCAD (a) start competing with me, (b) let a competitor of mine sell my vertical against my will, or (c) squeeze my royalty over time?&rdquo;</em> Contractual answers to each:</p>
+<ol>
+<li><strong>No-compete-in-segment for TejasCAD.</strong> For every vertical a member co-develops with TejasCAD, TejasCAD contractually agrees <strong>not to build a competing vertical in the same named segment</strong> (e.g. &ldquo;MEP-electrical for AEC SMBs in India / SEA&rdquo;) without the co-developing member&rsquo;s consent, for the term of the agreement + 24 months post-termination.</li>
+<li><strong>Segment / territory first-refusal for the co-developer.</strong> If a <em>third-party</em> co-developer wants to build a vertical in an overlapping segment, the original co-developer gets a 30-day right of first refusal to either extend their vertical&rsquo;s scope or veto (with veto capped — cannot indefinitely block the platform from adding a segment).</li>
+<li><strong>Named-competitor exclusion.</strong> The co-developing member can name <strong>up to three specific competitors</strong> in their master agreement. Those competitors are excluded from selling the vertical, no matter what tenant they are on the platform. If TejasCAD ever admits one of those competitors as a member (rare but possible), the vertical is not available in that tenant&rsquo;s shell.</li>
+<li><strong>Royalty floor guarantee.</strong> The co-developer&rsquo;s share cannot drop below the contracted percentage for a minimum of five years, regardless of platform economics changes.</li>
+<li><strong>Attribution.</strong> The vertical carries an &ldquo;Original by [Member]&rdquo; attribution in the About dialog and in the marketplace listing across all tenant shells. Removes only at co-developer&rsquo;s written request.</li>
+<li><strong>Data pipeline transparency.</strong> The co-developer sees, on a member portal, real-time counts of vertical deployments and royalty accrual by tenant, so they can audit their own income independently.</li>
+</ol>
+<h3 id="126-why-this-makes-the-platform-stronger-not-weaker"><a class="toclink" href="#126-why-this-makes-the-platform-stronger-not-weaker">12.6 Why this makes the platform stronger, not weaker</a></h3>
+<ul>
+<li><strong>Members contribute IP without losing it.</strong> The co-developed vertical becomes a cross-member revenue stream that outlives any single tenant relationship.</li>
+<li><strong>The catalog grows without TejasCAD paying full development cost.</strong> Verticals arrive as fast as members co-develop them.</li>
+<li><strong>Cross-member royalty flow creates a network effect.</strong> A member earning royalties from another member&rsquo;s shell has a positive interest in seeing that member succeed — flips zero-sum competitor dynamics into positive-sum ecosystem dynamics.</li>
+<li><strong>At exit, the vertical program is a distinct valuation multiplier.</strong> A CAD platform with 8 co-developed verticals and cross-member royalty flow reads as an ecosystem, not just a licensed engine. Comparables: Autodesk&rsquo;s App Store, Shopify&rsquo;s app ecosystem — both add materially to enterprise value.</li>
+</ul>
+<h3 id="127-illustrative-first-four-verticals-to-co-develop"><a class="toclink" href="#127-illustrative-first-four-verticals-to-co-develop">12.7 Illustrative first four verticals to co-develop</a></h3>
+<p>Priority order for outbound conversations, based on the biggest gaps in the IntelliCAD-dependent world:</p>
+<table>
+<thead>
+<tr>
+<th>Vertical</th>
+<th>Target co-developer archetype</th>
+<th>Why it&rsquo;s the right first four</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MEP (Mechanical / Electrical / Plumbing)</strong></td>
+<td>Regional CAD vendor with 15+ years MEP focus</td>
+<td>Largest AEC vertical demand; strong existing player pool</td>
+</tr>
+<tr>
+<td><strong>Structural detailing</strong></td>
+<td>Vertical ISV, likely EU or India</td>
+<td>Highest willingness-to-pay per seat; existing tools are aging</td>
+</tr>
+<tr>
+<td><strong>Solar / PV layout</strong></td>
+<td>New-generation vertical startup, likely EU / India</td>
+<td>Growing 30%+ per year; no dominant CAD platform yet</td>
+</tr>
+<tr>
+<td><strong>Survey / civil / land development</strong></td>
+<td>Regional vendor in geo where IntelliCAD is dominant (LATAM, SEA)</td>
+<td>Cross-sells to existing IntelliCAD-migrating base</td>
+</tr>
+</tbody>
+</table>
+<p>TejasCAD&rsquo;s own engineering team builds none of these on speculation — they get built the moment a credible co-development member signs.</p>
+<hr />
+<h2 id="13-risk-register-and-mitigations"><a class="toclink" href="#13-risk-register-and-mitigations">13. Risk register and mitigations</a></h2>
+<p>Every venture-scale investor will demand this. Ten risks, ranked by expected impact × probability. Each with a named owner (promoter group, board, or platform team) and a monitoring signal.</p>
+<h3 id="131-category-commercial-go-to-market"><a class="toclink" href="#131-category-commercial-go-to-market">13.1 Category — commercial / go-to-market</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Risk</th>
+<th>Impact</th>
+<th>Prob.</th>
+<th>Mitigation</th>
+<th>Owner</th>
+<th>Monitoring signal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Member pipeline stalls at ActCAD</strong> — no external LOIs by month 24 partner-validation gate</td>
+<td>Kills the platform business case; company reverts to single-product</td>
+<td>Medium</td>
+<td>Soft outreach starts month 12, not 24; target 8–10 qualified conversations by month 18; if &lt;2 LOIs, defer platform → Phase 3 and continue as single-product</td>
+<td>Board</td>
+<td>Number of stage-2+ member conversations tracked monthly</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>ACIS refuses platform-amendment terms</strong> at Series A / B stage</td>
+<td>Per-member deployment economics break; platform gross margin thins</td>
+<td>Medium</td>
+<td>Bilateral ACIS contract signed first (§9 of rearch plan); platform amendment negotiated from position of shipping success; fallback = per-member ACIS contracts with platform brokering the terms</td>
+<td>Board + Legal</td>
+<td>Spike 1b + amendment negotiation status</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Member churn</strong> — an early member leaves at year 2–3</td>
+<td>Reference-account loss; ARR hit; competitive fuel for ITC</td>
+<td>Low-Med</td>
+<td>Master agreement includes 3-year initial term with renewal; verticalized-solutions program creates cross-member revenue that raises switching cost; standard SaaS retention practices</td>
+<td>GTM</td>
+<td>Net revenue retention per member cohort</td>
+</tr>
+</tbody>
+</table>
+<h3 id="132-category-technical-product"><a class="toclink" href="#132-category-technical-product">13.2 Category — technical / product</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Risk</th>
+<th>Impact</th>
+<th>Prob.</th>
+<th>Mitigation</th>
+<th>Owner</th>
+<th>Monitoring signal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4</td>
+<td><strong>ACIS round-trip fidelity fails on customer DWGs</strong></td>
+<td>Anchor-tenant migration path breaks; every downstream milestone slips</td>
+<td>Low</td>
+<td>Spike 1a (§9 of rearch plan) tests 50 real customer DWGs before contract; KAL preserves swap option to alternative kernel if needed</td>
+<td>Engineering</td>
+<td>Spike 1a pass/fail</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>inWEB / WebGPU performance below 3× native</strong> in Phase 2</td>
+<td>Web GA slips; competitive positioning weakens</td>
+<td>Medium</td>
+<td>Spike 2 (§9 of rearch plan); if fail, ship web viewer-only in P2 and defer full editor to P3; native + Qt shells cover the primary market either way</td>
+<td>Engineering</td>
+<td>Spike 2 result + browser-editor perf benchmarks</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Encrypted-licensing crypto audit finds a design flaw</strong> in Phase 1</td>
+<td>Trust story delayed; member conversations lose the key differentiator</td>
+<td>Low</td>
+<td>External audit budgeted from day 1; iterate on design pre-GA; second audit at Phase 2 GA</td>
+<td>Platform team + external auditor</td>
+<td>Audit report cadence</td>
+</tr>
+</tbody>
+</table>
+<h3 id="133-category-organizational-execution"><a class="toclink" href="#133-category-organizational-execution">13.3 Category — organizational / execution</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Risk</th>
+<th>Impact</th>
+<th>Prob.</th>
+<th>Mitigation</th>
+<th>Owner</th>
+<th>Monitoring signal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7</td>
+<td><strong>Two product lines (IntelliCAD-ActCAD + TejasCAD-based ActCAD) for 24 months</strong></td>
+<td>Support / marketing bandwidth split; customer confusion</td>
+<td>Medium-High</td>
+<td>Explicit dual-product operating plan in P1; clear customer communication template; sunset date announced only at GA, not up front</td>
+<td>Jytra-ActCAD leadership</td>
+<td>Support ticket volume, revenue trajectory</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Key-person risk in the founding team</strong></td>
+<td>Company velocity depends on 3–5 specific people</td>
+<td>Medium</td>
+<td>Standard key-person insurance for promoters + founding execs; documented decision-authority matrix; deep bench at eng-lead level by year 3</td>
+<td>Board</td>
+<td>Retention + KPI on-track</td>
+</tr>
+<tr>
+<td>9</td>
+<td><strong>Cadence trap</strong> — TejasCAD becomes its own consortium-slow bottleneck</td>
+<td>The exact problem we accuse IntelliCAD of; kills our own value prop</td>
+<td>Medium</td>
+<td>Rolling engine releases (no fixed member-alignment slots); tenant profile absorbs most member-specific requests without core changes; member roadmap input formalized but non-blocking</td>
+<td>Board + Platform team</td>
+<td>Engine release velocity vs member request queue</td>
+</tr>
+</tbody>
+</table>
+<h3 id="134-category-market-competitive"><a class="toclink" href="#134-category-market-competitive">13.4 Category — market / competitive</a></h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Risk</th>
+<th>Impact</th>
+<th>Prob.</th>
+<th>Mitigation</th>
+<th>Owner</th>
+<th>Monitoring signal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td><strong>A competitor announces a competing white-label CAD platform</strong> — Bricsys / Hexagon spins one, or ODA itself does</td>
+<td>Category defined by someone with more resources</td>
+<td>Low-Medium</td>
+<td>First-mover on encrypted licensing + verticalized-solutions program = differentiators competitor can&rsquo;t easily copy; ODA is a partner not competitor (they&rsquo;re a component vendor, not a competing platform); explicit IP + patent strategy on the tenant + licensing seams</td>
+<td>Board</td>
+<td>Competitive intel quarterly</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Autodesk ships a low-cost AutoCAD LT plus embedded AI</strong> at price parity with SMB CAD</td>
+<td>Compresses the SMB / ITC-tier market</td>
+<td>Low</td>
+<td>Historical Autodesk pattern is to leave SMB SEA / MEA / LATAM to the alternative CAD segment; even if they enter, our members&rsquo; regional / vertical / language positioning is defensible</td>
+<td>GTM</td>
+<td>Autodesk SMB pricing / product moves</td>
+</tr>
+<tr>
+<td>12</td>
+<td><strong>Adverse global-macro or India-specific policy shift</strong> (data localization, encryption regulation, ODI restrictions)</td>
+<td>Structural friction on entity / operations</td>
+<td>Low</td>
+<td>Delaware C-Corp holdco + India Op-Co structure absorbs most policy shifts; encryption compliance is easier with our blind-licensing story than with typical DRM</td>
+<td>Board + Legal</td>
+<td>Policy tracking</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Overall risk posture:</strong> the platform play is <strong>medium-risk / high-return</strong>. The single largest risk is #1 (member pipeline stalls) — which is why the partner-validation gate at month 24 is a hard decision point in the story arc, not a soft aspiration.</p>
+<hr />
+<h2 id="14-unit-economics-assumptions-behind-the-valuation-walk"><a class="toclink" href="#14-unit-economics-assumptions-behind-the-valuation-walk">14. Unit economics assumptions behind the valuation walk</a></h2>
+<p>Investor diligence will pressure-test these. Numbers illustrative; refined at Series A pitch.</p>
+<h3 id="141-per-member-economics-steady-state-year-3"><a class="toclink" href="#141-per-member-economics-steady-state-year-3">14.1 Per-member economics (steady-state, ~year 3+)</a></h3>
+<table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Illustrative value</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Average annual member fee</strong></td>
+<td>$250K</td>
+<td>Sliding scale: $100K small vertical ISV → $500K large regional CAD vendor</td>
+</tr>
+<tr>
+<td><strong>ACIS royalty pass-through per member</strong></td>
+<td>$75K/year</td>
+<td>Depends on member&rsquo;s deployment volume; at cost, no margin</td>
+</tr>
+<tr>
+<td><strong>Marketplace GMV per member (year 3+)</strong></td>
+<td>$500K</td>
+<td>Platform takes 15%, tenant takes 15%, developer takes 70%</td>
+</tr>
+<tr>
+<td><strong>Marketplace share to platform per member</strong></td>
+<td>$75K</td>
+<td>15% of $500K GMV</td>
+</tr>
+<tr>
+<td><strong>Verticalized-solutions revenue attributed to platform</strong></td>
+<td>$50K (variable)</td>
+<td>30–40% of vertical license revenue when applicable</td>
+</tr>
+<tr>
+<td><strong>Total revenue per member (year 3+)</strong></td>
+<td>$450K</td>
+<td>Recurring + variable</td>
+</tr>
+<tr>
+<td><strong>Platform cost to serve one member</strong></td>
+<td>$85K</td>
+<td>15–20% of revenue; scales sub-linearly with member count</td>
+</tr>
+<tr>
+<td><strong>Gross margin per member</strong></td>
+<td>~81%</td>
+<td>Strong SaaS-comparable margin</td>
+</tr>
+</tbody>
+</table>
+<h3 id="142-member-count-trajectory-driving-arr-walk"><a class="toclink" href="#142-member-count-trajectory-driving-arr-walk">14.2 Member-count trajectory driving ARR walk</a></h3>
+<table>
+<thead>
+<tr>
+<th>Year</th>
+<th>Members (incl. ActCAD)</th>
+<th>ARR ($M)</th>
+<th>ARR per member</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Y2 (Series A)</td>
+<td>1 anchor + 2 LOI</td>
+<td>$3.5</td>
+<td>ActCAD-heavy</td>
+</tr>
+<tr>
+<td>Y3</td>
+<td>3 shipping</td>
+<td>$10</td>
+<td>$2–4M ActCAD + smaller external</td>
+</tr>
+<tr>
+<td>Y4 (Series B)</td>
+<td>6–8 shipping</td>
+<td>$22</td>
+<td>Mix stabilizing</td>
+</tr>
+<tr>
+<td>Y5</td>
+<td>10–12 shipping</td>
+<td>$40</td>
+<td>Marketplace revenue material</td>
+</tr>
+<tr>
+<td>Y6 (Growth)</td>
+<td>13–16</td>
+<td>$60</td>
+<td>Platform steady-state</td>
+</tr>
+<tr>
+<td>Y7 (Exit)</td>
+<td>15–20</td>
+<td>$100</td>
+<td>Peak platform performance</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ARR growth pattern:</strong> 40% CAGR Y3→Y7 sustained. Below hypergrowth SaaS but well above typical enterprise-software CAGR — defensible at platform / marketplace multiples.</p>
+<h3 id="143-sales-and-marketing-efficiency"><a class="toclink" href="#143-sales-and-marketing-efficiency">14.3 Sales and marketing efficiency</a></h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Illustrative target</th>
+<th>Comparable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Payback period (member acquisition)</strong></td>
+<td>12–18 months</td>
+<td>Typical B2B SaaS platform</td>
+</tr>
+<tr>
+<td><strong>LTV / CAC (member)</strong></td>
+<td>5–8×</td>
+<td>Strong; supported by low churn (multi-year master contracts)</td>
+</tr>
+<tr>
+<td><strong>Net revenue retention (per member cohort)</strong></td>
+<td>115–130%</td>
+<td>Growth in ACIS pass-through + marketplace share + vertical royalties</td>
+</tr>
+<tr>
+<td><strong>Gross churn</strong></td>
+<td>5–8% annual</td>
+<td>Low, given the switching cost after a member has migrated</td>
+</tr>
+</tbody>
+</table>
+<h3 id="144-sensitivity-what-breaks-the-model"><a class="toclink" href="#144-sensitivity-what-breaks-the-model">14.4 Sensitivity — what breaks the model</a></h3>
+<ul>
+<li><strong>Member count below 6 by Y4:</strong> ARR misses; Series B compressed valuation</li>
+<li><strong>Net revenue retention below 105%:</strong> implies members not growing on the platform; long-term compounding weakens</li>
+<li><strong>Marketplace GMV growing &lt; 40% YoY after Y4:</strong> the marketplace flywheel isn&rsquo;t real; valuation multiple drops to pure-SaaS levels (10–12× vs 15–20×)</li>
+<li><strong>Gross margin below 70%:</strong> cost-to-serve is too high; investor concerns on operating leverage</li>
+</ul>
+<hr />
+<h2 id="15-open-decisions-for-the-promoter-group"><a class="toclink" href="#15-open-decisions-for-the-promoter-group">15. Open decisions for the promoter group</a></h2>
+<ol>
+<li><strong>Entity choice.</strong> Delaware C-Corp holdco confirmed? (§1 recommendation.)</li>
+<li><strong>Promoter capital envelope.</strong> Is the illustrative $4M realistic given the promoter group&rsquo;s personal capacity? Larger = more runway before Series A + more retention; smaller = earlier Series A (harder valuation).</li>
+<li><strong>Founding execs.</strong> Recruit CTO / CPO externally, or promote from ActCAD-Jytra? Trade-off between institutional CAD knowledge (Jytra hires) and platform / venture-scaling experience (external).</li>
+<li><strong>Board composition.</strong> Which two promoters represent the group?</li>
+<li><strong>ActCAD master agreement terms.</strong> Standard-member terms or slight preferential? (§7 recommendation: standard, for cap-table cleanliness at exit.)</li>
+<li><strong>Timing of Series A opening.</strong> Immediately at ActCAD-new GA, or delay 6 months to get first member LOIs signed?</li>
+<li><strong>Growth-round trigger.</strong> What ARR / member-count / competitive-tension threshold triggers the growth round? Predefine so the decision isn&rsquo;t made under acquisition-approach pressure.</li>
+<li><strong>Exit preferences.</strong> Rank the five acquirer archetypes by promoter preference — some will care more about strategic buyer identity than pure price.</li>
+</ol>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="tejascad-story.html">TejasCAD story</a> ·
+        <a href="tejascad-pitch-deck.html">TejasCAD deck</a> ·
+        <a href="tejascad-vs-intellicad.html">vs IntelliCAD</a> ·
+        <a href="tejascad-company-structure.html">company structure</a> ·
+        <a href="tejascad-licensing-architecture.html">licensing</a> ·
+        <a href="platform-strategy.html">platform strategy</a> ·
+        <a href="rearchitecture-plan.html">engine plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry</a> ·
+        <a href="memory-architecture.html">memory</a> ·
+        <a href="brand-shortlist.html">brand</a> ·
+        <a href="exec-presentation.html">original exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

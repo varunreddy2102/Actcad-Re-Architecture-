@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TejasCAD — Encrypted, Platform-Blind Licensing Architecture — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#0-what-this-document-is">0. What this document is</a></li>
+<li><a href="#1-requirements-in-the-words-of-each-stakeholder">1. Requirements — in the words of each stakeholder</a><ul>
+<li><a href="#11-a-member-vendors-requirements">1.1 A member vendor&rsquo;s requirements</a></li>
+<li><a href="#12-an-end-customers-requirements-my-members-customer">1.2 An end customer&rsquo;s requirements (my member&rsquo;s customer)</a></li>
+<li><a href="#13-tejascads-requirements-what-we-do-need-to-see-aggregated-only">1.3 TejasCAD&rsquo;s requirements (what we DO need to see, aggregated only)</a></li>
+<li><a href="#14-regulators-requirements-gdpr-dpdpa-india-ccpa">1.4 Regulators&rsquo; requirements (GDPR, DPDPA India, CCPA)</a></li>
+</ul>
+</li>
+<li><a href="#2-threat-model-what-we-defend-against">2. Threat model — what we defend against</a></li>
+<li><a href="#3-cryptographic-key-hierarchy">3. Cryptographic key hierarchy</a><ul>
+<li><a href="#31-platform-root-tejascad-held">3.1 Platform Root (TejasCAD-held)</a></li>
+<li><a href="#32-member-license-authority-key-member-held-tejascad-generated-on-member-onboarding">3.2 Member License Authority Key (member-held, TejasCAD-generated on member onboarding)</a></li>
+<li><a href="#33-per-license-symmetric-keys-member-generated-license-scoped">3.3 Per-License Symmetric Keys (member-generated, license-scoped)</a></li>
+<li><a href="#34-aggregate-attestation-key-member-held-tejascad-verified">3.4 Aggregate Attestation Key (member-held, TejasCAD-verified)</a></li>
+</ul>
+</li>
+<li><a href="#4-license-artifact-structure">4. License artifact structure</a></li>
+<li><a href="#5-issuance-flow-what-happens-when-a-member-sells-a-license">5. Issuance flow (what happens when a member sells a license)</a></li>
+<li><a href="#6-activation-flow-end-user-first-run">6. Activation flow (end-user first-run)</a></li>
+<li><a href="#7-renewal-revocation-and-revocation-list-distribution">7. Renewal, revocation, and revocation-list distribution</a></li>
+<li><a href="#8-what-tejascads-licensing-infrastructure-does-do">8. What TejasCAD&rsquo;s licensing infrastructure DOES do</a></li>
+<li><a href="#9-what-tejascads-licensing-infrastructure-does-not-do">9. What TejasCAD&rsquo;s licensing infrastructure DOES NOT do</a></li>
+<li><a href="#10-how-a-member-proves-the-property-to-their-end-customer">10. How a member proves the property to their end customer</a></li>
+<li><a href="#11-failure-modes-and-their-remediation">11. Failure modes and their remediation</a></li>
+<li><a href="#12-compliance-mapping">12. Compliance mapping</a></li>
+<li><a href="#13-third-party-crypto-audit-the-trust-artifact">13. Third-party crypto audit — the trust artifact</a></li>
+<li><a href="#14-what-we-deliberately-dont-do-in-v1">14. What we deliberately don&rsquo;t do in v1</a></li>
+<li><a href="#15-where-each-thread-continues">15. Where each thread continues</a></li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">tejascad-licensing-architecture.md</p>
+    </div>
+    <h1 id="tejascad-encrypted-platform-blind-licensing-architecture"><a class="toclink" href="#tejascad-encrypted-platform-blind-licensing-architecture">TejasCAD — Encrypted, Platform-Blind Licensing Architecture</a></h1>
+<blockquote>
+<p><em>Working brand: TejasCAD, subject to TM clearance (<code>docs/brand-shortlist.md</code> §7). This document specifies the licensing subsystem in enough detail that legal, security, and prospective members can audit the promise. Cryptographic choices below are illustrative-but-defensible — final selections happen after the Phase 1 security review with an external crypto auditor.</em></p>
+</blockquote>
+<hr />
+<h2 id="0-what-this-document-is"><a class="toclink" href="#0-what-this-document-is">0. What this document is</a></h2>
+<p>The single hardest promise TejasCAD makes to its members is: <strong>&ldquo;Ship your licensing through our infrastructure. We give you a working license server, a license file format, an offline validator, revocation, renewals, floating seats, all of it. And we cannot see your customer list, your seat counts per customer, your pricing, your license contents, or any drawing data. Neither can anyone else who breaches us.&rdquo;</strong></p>
+<p>This document specifies how that promise is kept — the threat model, the key hierarchy, the artifact structure, the flows for issuance / validation / renewal / revocation, what TejasCAD <em>does</em> see (aggregate counters and platform-royalty attestations, and nothing else), what safeguards keep us honest about that, and how a member proves the property to their own customers.</p>
+<p>Companion to <code>docs/platform-strategy.md</code> §3 (which introduces the licensing seam) and <code>docs/tejascad-company-structure.md</code> §5 (which establishes IP ownership).</p>
+<hr />
+<h2 id="1-requirements-in-the-words-of-each-stakeholder"><a class="toclink" href="#1-requirements-in-the-words-of-each-stakeholder">1. Requirements — in the words of each stakeholder</a></h2>
+<h3 id="11-a-member-vendors-requirements"><a class="toclink" href="#11-a-member-vendors-requirements">1.1 A member vendor&rsquo;s requirements</a></h3>
+<ul>
+<li><strong>&ldquo;I want a working license server on day one — perpetual, subscription, floating-seat, node-locked, all four modes.&rdquo;</strong></li>
+<li><strong>&ldquo;Nobody at TejasCAD can see my customer list, my per-customer seat counts, my pricing, or which of my customers is renewing when.&rdquo;</strong></li>
+<li><strong>&ldquo;I can prove to a customer under NDA that TejasCAD cannot see their license file contents.&rdquo;</strong></li>
+<li><strong>&ldquo;If TejasCAD is breached, my license database and my customer data are not in the breach.&rdquo;</strong></li>
+<li><strong>&ldquo;If TejasCAD terminates my membership, I can keep serving my existing customers under a survival clause — the license infrastructure keeps working for the seats already sold.&rdquo;</strong></li>
+<li><strong>&ldquo;I control my own license keys. Not a shared secret. Not something TejasCAD can regenerate without my consent.&rdquo;</strong></li>
+</ul>
+<h3 id="12-an-end-customers-requirements-my-members-customer"><a class="toclink" href="#12-an-end-customers-requirements-my-members-customer">1.2 An end customer&rsquo;s requirements (my member&rsquo;s customer)</a></h3>
+<ul>
+<li><strong>&ldquo;The license file on my laptop cannot be read by anyone but me.&rdquo;</strong></li>
+<li><strong>&ldquo;When I renew, my company name and email are not visible to a third party (TejasCAD).&rdquo;</strong></li>
+<li><strong>&ldquo;When the software phones home, it doesn&rsquo;t send TejasCAD my drawing contents or my identity.&rdquo;</strong></li>
+<li><strong>&ldquo;If my member vendor goes out of business, I have a documented failover — my perpetual seats keep working; my subscription seats have a grace period plus a defined process.&rdquo;</strong></li>
+</ul>
+<h3 id="13-tejascads-requirements-what-we-do-need-to-see-aggregated-only"><a class="toclink" href="#13-tejascads-requirements-what-we-do-need-to-see-aggregated-only">1.3 TejasCAD&rsquo;s requirements (what we DO need to see, aggregated only)</a></h3>
+<ul>
+<li><strong>Platform-royalty attestation for ACIS per-deployment counting.</strong> ACIS master contract requires deployment counts. We need a defensible, auditable <strong>number</strong>, not identities.</li>
+<li><strong>License-server uptime / health metrics.</strong> We host the infra; we monitor the infra. We see request rates, error rates, latency — never contents.</li>
+<li><strong>Aggregate telemetry with member consent.</strong> Total active seats per member for billing (which is a number the member already tells us; we cross-check but never derive from customer identities).</li>
+<li><strong>Anti-piracy signal at the aggregate level.</strong> We can tell a member &ldquo;your license key is being used from 12 different countries in the last hour&rdquo; as an anomaly signal, without seeing who those users are.</li>
+</ul>
+<h3 id="14-regulators-requirements-gdpr-dpdpa-india-ccpa"><a class="toclink" href="#14-regulators-requirements-gdpr-dpdpa-india-ccpa">1.4 Regulators&rsquo; requirements (GDPR, DPDPA India, CCPA)</a></h3>
+<ul>
+<li>Personal data of end customers processed only by the member, not by TejasCAD. TejasCAD is not even a data processor for that layer.</li>
+<li>Cryptographic proof that platform architecture supports the &ldquo;no access&rdquo; claim — not just a policy assertion.</li>
+<li>Right to erasure at the member level; TejasCAD provides tooling but does not hold the data being erased.</li>
+</ul>
+<hr />
+<h2 id="2-threat-model-what-we-defend-against"><a class="toclink" href="#2-threat-model-what-we-defend-against">2. Threat model — what we defend against</a></h2>
+<table>
+<thead>
+<tr>
+<th>Threat</th>
+<th>Attacker capability</th>
+<th>Defense</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Casual license theft</strong></td>
+<td>End user copies license file to another machine</td>
+<td>Node-lock via machine fingerprint; hardware-signature binding in the license artifact</td>
+</tr>
+<tr>
+<td><strong>Sophisticated piracy</strong></td>
+<td>Reverse-engineered validator, patched binaries</td>
+<td>Not addressed here (addressed in <code>platform-strategy.md</code> platform-signing + tamper detection); licensing layer assumes binaries are trusted</td>
+</tr>
+<tr>
+<td><strong>Compromise of TejasCAD infrastructure</strong></td>
+<td>Attacker steals all data at TejasCAD&rsquo;s license service</td>
+<td>Attacker gets ciphertext + aggregate counters only; no plaintext of license contents, no customer identities, no seat counts per customer</td>
+</tr>
+<tr>
+<td><strong>Compromise of a member&rsquo;s license authority</strong></td>
+<td>Attacker steals a member&rsquo;s signing key</td>
+<td>Compromise is scoped to that member — other members unaffected; revocation path documented</td>
+</tr>
+<tr>
+<td><strong>Compromise of an end-customer machine</strong></td>
+<td>Attacker steals license file + local key material</td>
+<td>License is bound to that machine (node-lock); moving to another machine invalidates it</td>
+</tr>
+<tr>
+<td><strong>Malicious insider at TejasCAD</strong></td>
+<td>An engineer with production access wants to read a member&rsquo;s data</td>
+<td>Data at rest is encrypted with keys the insider does not hold (keys are held per member in a KMS the insider does not have console access to); data in transit uses per-member envelope encryption</td>
+</tr>
+<tr>
+<td><strong>Legal compulsion on TejasCAD</strong></td>
+<td>Government orders TejasCAD to hand over customer identities</td>
+<td>We can hand over the ciphertext we hold, which is useless without the member&rsquo;s key. We cannot break the crypto for the government any more than we can for an attacker</td>
+</tr>
+</tbody>
+</table>
+<p>The last row is why this design is <em>architectural</em> rather than <em>policy</em>. A &ldquo;we promise not to look&rdquo; policy fails against subpoena. A &ldquo;we don&rsquo;t hold the keys to look&rdquo; architecture doesn&rsquo;t.</p>
+<hr />
+<h2 id="3-cryptographic-key-hierarchy"><a class="toclink" href="#3-cryptographic-key-hierarchy">3. Cryptographic key hierarchy</a></h2>
+<p>Four levels of key material, each with a documented lifetime, rotation policy, and holder.</p>
+<h3 id="31-platform-root-tejascad-held"><a class="toclink" href="#31-platform-root-tejascad-held">3.1 Platform Root (TejasCAD-held)</a></h3>
+<ul>
+<li><strong>Purpose.</strong> Signs the master platform certificate that all member License Authorities chain to. Establishes the &ldquo;this is a legitimate TejasCAD platform member&rdquo; trust root.</li>
+<li><strong>Algorithm.</strong> Ed25519 (fast signature, small key, well-analyzed) with a fallback RSA-4096 root for legacy systems.</li>
+<li><strong>Storage.</strong> Offline HSM in a physical vault; used only for annual re-issuance ceremonies.</li>
+<li><strong>Rotation.</strong> 10-year lifetime with 2-year overlap for rotation.</li>
+<li><strong>What TejasCAD can decrypt with this key.</strong> Nothing. This key only signs; it doesn&rsquo;t encrypt.</li>
+</ul>
+<h3 id="32-member-license-authority-key-member-held-tejascad-generated-on-member-onboarding"><a class="toclink" href="#32-member-license-authority-key-member-held-tejascad-generated-on-member-onboarding">3.2 Member License Authority Key (member-held, TejasCAD-generated on member onboarding)</a></h3>
+<ul>
+<li><strong>Purpose.</strong> Each member gets their own License Authority (LA) key pair. All licenses that member issues are signed with the LA private key. The LA public key is signed by the Platform Root, so end-user validators can chain-verify the license → LA → Platform Root without contacting the network.</li>
+<li><strong>Algorithm.</strong> Ed25519 for signing + X25519 for key agreement (or comparable NIST P-256 for compliance environments).</li>
+<li><strong>Storage.</strong> <strong>Held by the member.</strong> TejasCAD generates the initial pair as a bootstrap convenience, transmits it under one-time envelope encryption, and immediately deletes its copy after signed member confirmation. Member is expected to store it in their own KMS / HSM / Vault. <strong>This is the architectural key — the private LA key never lives in TejasCAD infrastructure after handoff.</strong></li>
+<li><strong>Rotation.</strong> Member-driven. TejasCAD provides tooling to rotate (issue new LA, publish revocation for the old, migrate customers over 90-day overlap).</li>
+<li><strong>What TejasCAD can decrypt with this key.</strong> <strong>Nothing. We don&rsquo;t have it.</strong> The member&rsquo;s licenses are signed by a key we do not hold and cannot regenerate.</li>
+</ul>
+<h3 id="33-per-license-symmetric-keys-member-generated-license-scoped"><a class="toclink" href="#33-per-license-symmetric-keys-member-generated-license-scoped">3.3 Per-License Symmetric Keys (member-generated, license-scoped)</a></h3>
+<ul>
+<li><strong>Purpose.</strong> Each license artifact contains an encrypted payload (customer identity, seat count, feature entitlements, expiry, node-lock fingerprint) protected by a symmetric key. That symmetric key is wrapped for the specific end-customer&rsquo;s machine (client-side key derivation) so only that machine can decrypt the payload.</li>
+<li><strong>Algorithm.</strong> AES-256-GCM for payload; the wrapping key is derived from an X25519 ECDH between the member&rsquo;s LA and a machine-generated end-user key pair.</li>
+<li><strong>Storage.</strong> The wrapped key ships inside the license file. The unwrapping key lives on the end-user&rsquo;s machine, tied to hardware.</li>
+<li><strong>What TejasCAD can decrypt with this key.</strong> <strong>Nothing.</strong> We don&rsquo;t have the member&rsquo;s LA private key, and we don&rsquo;t have the end-user machine&rsquo;s key. Even if we intercepted every license file in flight, we cannot open one.</li>
+</ul>
+<h3 id="34-aggregate-attestation-key-member-held-tejascad-verified"><a class="toclink" href="#34-aggregate-attestation-key-member-held-tejascad-verified">3.4 Aggregate Attestation Key (member-held, TejasCAD-verified)</a></h3>
+<ul>
+<li><strong>Purpose.</strong> The one number TejasCAD needs — deployment count for ACIS royalty attribution — is produced by a <strong>member-generated attestation</strong>: a signed statement of the form &ldquo;member M attests it has 12,847 active deployments this quarter.&rdquo; The attestation is signed by the member&rsquo;s LA and verified against a cryptographic accumulator that binds attestations to previous attestations (so a member cannot silently deflate a number without proof of decline).</li>
+<li><strong>Algorithm.</strong> Signed count + Merkle-tree accumulator; optional zero-knowledge proof for advanced auditors to verify aggregate consistency without revealing per-license detail.</li>
+<li><strong>Verification.</strong> TejasCAD verifies the signature and accumulator consistency. If a member&rsquo;s attestations are structurally inconsistent (e.g., a sudden 50% drop with no revocation events), that triggers an audit conversation, not automatic action.</li>
+<li><strong>What TejasCAD sees.</strong> A number per quarter, per member. Nothing more.</li>
+</ul>
+<hr />
+<h2 id="4-license-artifact-structure"><a class="toclink" href="#4-license-artifact-structure">4. License artifact structure</a></h2>
+<p>A single license file is a structured binary (recommended: Protocol Buffers or CBOR) with the following fields:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Encrypted?</th>
+<th>Signed?</th>
+<th>Who reads it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Version</strong></td>
+<td>No</td>
+<td>Yes</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td><strong>Member LA public key + Platform Root signature chain</strong></td>
+<td>No</td>
+<td>(chain)</td>
+<td>Validator</td>
+</tr>
+<tr>
+<td><strong>License ID (opaque UUID)</strong></td>
+<td>No</td>
+<td>Yes</td>
+<td>Everyone; TejasCAD sees this for aggregate attestation only</td>
+</tr>
+<tr>
+<td><strong>Issued-at timestamp</strong></td>
+<td>No</td>
+<td>Yes</td>
+<td>Everyone</td>
+</tr>
+<tr>
+<td><strong>Wrapped symmetric key</strong> (X25519-ECDH-derived, wrapped to end-user&rsquo;s machine key)</td>
+<td>(it is itself a wrapper)</td>
+<td>Yes</td>
+<td>End-user machine only</td>
+</tr>
+<tr>
+<td><strong>Encrypted payload</strong> (customer name, org, email, seat count, features, node-lock fingerprint, expiry, tier)</td>
+<td><strong>Yes</strong> (AES-256-GCM)</td>
+<td>Yes</td>
+<td>End-user machine only after unwrap</td>
+</tr>
+<tr>
+<td><strong>Feature-entitlement hash</strong></td>
+<td>No</td>
+<td>Yes</td>
+<td>Validator uses this to check hasCapability(X) without decrypting the whole payload</td>
+</tr>
+<tr>
+<td><strong>Revocation list URL + last-good timestamp</strong></td>
+<td>No</td>
+<td>Yes</td>
+<td>Validator periodically checks; hard offline mode uses last-known-good</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key property.</strong> The only unencrypted fields are: version, key chain, an opaque UUID, timestamps, entitlement hashes, and revocation-check URL. <strong>No customer identity, no seat count, no pricing, no member customer-facing info is ever visible outside the end-user&rsquo;s machine.</strong></p>
+<hr />
+<h2 id="5-issuance-flow-what-happens-when-a-member-sells-a-license"><a class="toclink" href="#5-issuance-flow-what-happens-when-a-member-sells-a-license">5. Issuance flow (what happens when a member sells a license)</a></h2>
+<ol>
+<li>Member&rsquo;s sales system captures customer info in the member&rsquo;s own systems.</li>
+<li>Member&rsquo;s License Portal (either self-hosted or hosted by TejasCAD under the member&rsquo;s LA) generates the license artifact.</li>
+<li>Payload is encrypted with a fresh symmetric key. Symmetric key is wrapped to the end-user&rsquo;s machine key at first-run (§6) or wrapped for offline delivery if the customer is provisioning air-gapped.</li>
+<li>Artifact is signed with the member&rsquo;s LA private key.</li>
+<li>Artifact is transmitted to the end user (email, download portal, whatever the member&rsquo;s business flow is).</li>
+<li><strong>The License ID (opaque UUID)</strong> is registered with TejasCAD&rsquo;s aggregate-attestation service — this is the only fact TejasCAD learns. Customer identity, seat count, and pricing never leave the member&rsquo;s systems.</li>
+<li>Member&rsquo;s attestation Merkle-accumulator adds this License ID; next quarterly attestation includes it in the signed total.</li>
+</ol>
+<p><strong>What TejasCAD&rsquo;s servers see during issuance:</strong> an opaque UUID, a member ID, a timestamp. Nothing else.</p>
+<hr />
+<h2 id="6-activation-flow-end-user-first-run"><a class="toclink" href="#6-activation-flow-end-user-first-run">6. Activation flow (end-user first-run)</a></h2>
+<ol>
+<li>User installs the member&rsquo;s branded CAD product. Enters license key or drops in license file.</li>
+<li>Local validator checks signature chain (License → LA → Platform Root) with only public keys — <strong>fully offline.</strong></li>
+<li>First-run activation: local validator generates a fresh machine key pair from a Trusted Platform Module (TPM), Secure Enclave, or software equivalent bound to hardware fingerprint. Sends the machine public key to the <strong>member&rsquo;s activation service</strong> (not TejasCAD).</li>
+<li>Member&rsquo;s activation service unwraps the license&rsquo;s wrapped symmetric key with the LA private key + re-wraps it with the machine public key. Returns to the end user.</li>
+<li>Local validator now has the machine-scoped wrapped key; it can decrypt the payload and read seat count / features / expiry.</li>
+<li><strong>TejasCAD sees:</strong> nothing in this entire flow. Activation is a member ↔ end-user transaction.</li>
+</ol>
+<p><strong>Optional online-check mode.</strong> For subscription tier only, the local validator periodically checks a revocation list (fetched over HTTPS from the member&rsquo;s revocation endpoint, or from a mirror TejasCAD hosts for members who don&rsquo;t want to run their own). The check request contains only the opaque License ID and a signed &ldquo;still alive&rdquo; token; no customer data.</p>
+<hr />
+<h2 id="7-renewal-revocation-and-revocation-list-distribution"><a class="toclink" href="#7-renewal-revocation-and-revocation-list-distribution">7. Renewal, revocation, and revocation-list distribution</a></h2>
+<ul>
+<li><strong>Renewal.</strong> Handled entirely inside the member&rsquo;s systems. A new license artifact is issued with a new expiry; the old artifact is optionally added to the revocation list. TejasCAD sees a UUID transition in aggregate attestation, nothing more.</li>
+<li><strong>Revocation.</strong> Member publishes a signed revocation list at a URL the license artifact references. TejasCAD hosts a mirror of the revocation list for members that don&rsquo;t want to run their own — but the list is signed by the member&rsquo;s LA, and the contents are opaque UUIDs, so hosting the mirror gives TejasCAD zero additional information.</li>
+<li><strong>Cascade revocation.</strong> If the member&rsquo;s LA is compromised, the Platform Root can revoke the LA. Validators reject any license whose LA is revoked. Member issues a new LA (§3.2) and migrates their active customers over a 90-day overlap window.</li>
+<li><strong>Offline hard mode.</strong> Certain regulated / air-gapped environments cannot phone home. Validator supports a &ldquo;last-known-good&rdquo; mode: if the revocation list can&rsquo;t be reached, the license is honored for a member-configurable grace period (default 30 days for subscription; unlimited for perpetual with no revocation state) before entering a warning state.</li>
+</ul>
+<hr />
+<h2 id="8-what-tejascads-licensing-infrastructure-does-do"><a class="toclink" href="#8-what-tejascads-licensing-infrastructure-does-do">8. What TejasCAD&rsquo;s licensing infrastructure DOES do</a></h2>
+<ul>
+<li><strong>Hosts the platform PKI</strong> — Platform Root signs Member LA public keys during onboarding. Publishes the LA public-key directory so end-user validators can verify chains.</li>
+<li><strong>Hosts the aggregate-attestation service</strong> — receives quarterly signed attestations from members, verifies signatures and accumulator consistency, produces the ACIS royalty deployment count for the master contract.</li>
+<li><strong>Hosts mirrored infrastructure for members who want it</strong> — license portal SaaS, revocation-list mirror, machine-activation service SaaS. Every one of these runs <strong>as the member&rsquo;s agent under the member&rsquo;s LA</strong>, meaning TejasCAD hosts the compute but cryptographically cannot read the data.</li>
+<li><strong>Provides SDKs, samples, integration guides, and reference implementations</strong> so members can integrate quickly.</li>
+<li><strong>Runs the third-party crypto audit</strong> and publishes the results — this is the artifact members show their own customers as proof.</li>
+</ul>
+<h2 id="9-what-tejascads-licensing-infrastructure-does-not-do"><a class="toclink" href="#9-what-tejascads-licensing-infrastructure-does-not-do">9. What TejasCAD&rsquo;s licensing infrastructure DOES NOT do</a></h2>
+<ul>
+<li><strong>Cannot decrypt license artifact payloads.</strong> We don&rsquo;t have the keys.</li>
+<li><strong>Cannot see customer identities.</strong> They never enter our systems.</li>
+<li><strong>Cannot see per-customer seat counts.</strong> We see the member&rsquo;s aggregate quarterly attestation; that&rsquo;s it.</li>
+<li><strong>Cannot see pricing.</strong> Prices are in the member&rsquo;s systems, never in ours.</li>
+<li><strong>Cannot see drawing data.</strong> Drawing data doesn&rsquo;t touch the licensing infrastructure at all — it lives inside the member&rsquo;s cloud (if the member uses TejasCAD Cloud for co-edit) with per-tenant encryption, or on the end user&rsquo;s local machine.</li>
+<li><strong>Cannot re-issue a member&rsquo;s licenses without their LA key.</strong> If the member&rsquo;s LA key is destroyed, TejasCAD cannot recover it. (Members are strongly advised to keep an offline backup under their own control.)</li>
+<li><strong>Cannot be legally compelled to produce plaintext of customer data.</strong> We can be compelled to produce ciphertext we hold; the ciphertext is useless without the member&rsquo;s LA.</li>
+</ul>
+<hr />
+<h2 id="10-how-a-member-proves-the-property-to-their-end-customer"><a class="toclink" href="#10-how-a-member-proves-the-property-to-their-end-customer">10. How a member proves the property to their end customer</a></h2>
+<p>The member&rsquo;s marketing / legal materials can include:</p>
+<ol>
+<li><strong>A public statement of the architectural claim</strong> (&ldquo;our licensing infrastructure is architecturally blind to your data — this is not a policy promise, it is a cryptographic property&rdquo;).</li>
+<li><strong>A pointer to this document</strong> as the technical specification.</li>
+<li><strong>The third-party crypto audit report</strong> commissioned by TejasCAD and published under a permissive CC-BY license.</li>
+<li><strong>A demonstration script</strong> — a customer&rsquo;s technical team can run a tool that intercepts every network request the CAD product makes to member and TejasCAD infrastructure, and shows that no request contains any decrypted customer data.</li>
+<li><strong>Legal boilerplate</strong> in the master license agreement explicitly disclaiming TejasCAD&rsquo;s access to customer data, with contractual damages if the property is violated by architectural change.</li>
+</ol>
+<hr />
+<h2 id="11-failure-modes-and-their-remediation"><a class="toclink" href="#11-failure-modes-and-their-remediation">11. Failure modes and their remediation</a></h2>
+<table>
+<thead>
+<tr>
+<th>Failure</th>
+<th>Impact</th>
+<th>Remediation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Member LA private key lost</td>
+<td>Member cannot issue new licenses; existing licenses continue to validate against the LA public key</td>
+<td>Member issues a new LA via TejasCAD (a signed request from a pre-registered recovery credential rotates their LA); 90-day migration window; existing customers migrated to newly signed licenses at renewal</td>
+</tr>
+<tr>
+<td>Member LA private key compromised</td>
+<td>Attacker can issue false licenses under the member&rsquo;s name</td>
+<td>Member publishes revocation of the LA (via a break-glass workflow); Platform Root re-signs the new LA; validators reject old-LA-signed artifacts within the grace period</td>
+</tr>
+<tr>
+<td>End-user machine loses TPM / machine key</td>
+<td>User cannot decrypt their license payload</td>
+<td>User&rsquo;s machine re-enrolls via member&rsquo;s activation service; member&rsquo;s LA re-wraps the symmetric key for the new machine key; old machine binding is invalidated</td>
+</tr>
+<tr>
+<td>TejasCAD platform PKI Root compromised</td>
+<td>All LA chains break</td>
+<td>New Root; every member re-signs their LA against the new Root; documented rollover ceremony</td>
+</tr>
+<tr>
+<td>TejasCAD as a company goes away</td>
+<td>Member LA still works; member can keep issuing licenses; validators still work offline; revocation lists still verify</td>
+<td>The whole point of the design. Member&rsquo;s infrastructure keeps functioning independent of TejasCAD&rsquo;s continuity. Documented &ldquo;TejasCAD-independent operations&rdquo; playbook shipped with member SDK</td>
+</tr>
+<tr>
+<td>A member&rsquo;s business ends</td>
+<td>Existing licenses continue to validate (they are cryptographically valid); revocation stops being updated</td>
+<td>End users retain perpetual functionality; subscription tier enters grace-period per configured hard-offline mode</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="12-compliance-mapping"><a class="toclink" href="#12-compliance-mapping">12. Compliance mapping</a></h2>
+<table>
+<thead>
+<tr>
+<th>Regulation</th>
+<th>How this design complies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GDPR (EU)</strong></td>
+<td>TejasCAD is not a controller or processor of end-customer personal data; the data does not enter our systems. Members are controllers of their own customer data; they use TejasCAD only for cryptographic and hosting services on ciphertext they own. Data Protection Impact Assessment for members made straightforward by the ciphertext-only architecture</td>
+</tr>
+<tr>
+<td><strong>DPDPA (India)</strong></td>
+<td>Data Fiduciary role sits with the member; TejasCAD is neither a Data Fiduciary nor a Data Processor for member customer data. Data localization requirements met at the member level (member chooses their region); TejasCAD platform infrastructure runs in configurable regions</td>
+</tr>
+<tr>
+<td><strong>CCPA / CPRA (California)</strong></td>
+<td>TejasCAD does not &ldquo;sell&rdquo; or &ldquo;share&rdquo; personal information — it never sees personal information</td>
+</tr>
+<tr>
+<td><strong>SOC 2 Type II</strong></td>
+<td>TejasCAD&rsquo;s own controls (over the ciphertext we hold, the aggregate attestation service, the platform PKI) audited annually and published</td>
+</tr>
+<tr>
+<td><strong>ISO 27001</strong></td>
+<td>Held by TejasCAD; per-member operations are the member&rsquo;s responsibility, framed as &ldquo;customer of TejasCAD&rdquo; in their own ISO scope</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="13-third-party-crypto-audit-the-trust-artifact"><a class="toclink" href="#13-third-party-crypto-audit-the-trust-artifact">13. Third-party crypto audit — the trust artifact</a></h2>
+<p>TejasCAD commissions an independent cryptographic audit by a firm of the community&rsquo;s choice (candidates: Trail of Bits, NCC Group, Kudelski Security, Cure53, IIT Bombay CSE), spending ~$150K per audit cycle. Audit deliverables:</p>
+<ul>
+<li><strong>Design review.</strong> Crypto choices, key hierarchy, protocol correctness.</li>
+<li><strong>Implementation review.</strong> Sample of the reference libraries, member SDK, activation service, license artifact parser.</li>
+<li><strong>Threat-model review.</strong> Adequacy of the defense against each threat in §2.</li>
+<li><strong>Public report.</strong> Published under CC-BY on <code>security.tejascad.com/audit-2027.pdf</code>, member permission to redistribute.</li>
+<li><strong>Cadence.</strong> Annual for the first three years; biennial thereafter unless significant architectural changes.</li>
+</ul>
+<p>The audit report is the single most important artifact for member-selling and for enterprise-customer trust. Budget for it goes in every year, ring-fenced.</p>
+<hr />
+<h2 id="14-what-we-deliberately-dont-do-in-v1"><a class="toclink" href="#14-what-we-deliberately-dont-do-in-v1">14. What we deliberately don&rsquo;t do in v1</a></h2>
+<ul>
+<li><strong>No zero-knowledge seat-count proofs to TejasCAD.</strong> In v2 we may explore letting members prove their deployment count to us using a ZK protocol that reveals literally nothing beyond the number. For v1, signed attestation is trust-but-verify.</li>
+<li><strong>No hardware-token requirement.</strong> The design supports TPM / Secure Enclave binding but does not require it — falls back to software machine fingerprinting. Members with high-security customers can require hardware.</li>
+<li><strong>No confidential-compute / TEE-based license service.</strong> Overkill for v1; the architecture already achieves the property without TEEs.</li>
+<li><strong>No blockchain / smart-contract licensing.</strong> Adds no useful property this design doesn&rsquo;t already have; adds complexity, latency, and audit surface. Not used.</li>
+</ul>
+<hr />
+<h2 id="15-where-each-thread-continues"><a class="toclink" href="#15-where-each-thread-continues">15. Where each thread continues</a></h2>
+<table>
+<thead>
+<tr>
+<th>Thread</th>
+<th>Full detail in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The tenant-profile layer that decides which encrypted-licensing configuration a member ships with</td>
+<td><code>docs/platform-strategy.md</code> §3</td>
+</tr>
+<tr>
+<td>How the platform PKI&rsquo;s Platform Root ownership sits inside the corporate structure</td>
+<td><code>docs/tejascad-company-structure.md</code> §5 (IP ownership)</td>
+</tr>
+<tr>
+<td>How the encrypted-licensing story lands in the sales conversation with an IntelliCAD-dependent vendor</td>
+<td><code>docs/tejascad-vs-intellicad.md</code> §5</td>
+</tr>
+<tr>
+<td>The pitch-deck one-slide version of this design</td>
+<td><code>docs/tejascad-pitch-deck.md</code> slide 13 (illustrative index)</td>
+</tr>
+</tbody>
+</table>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="tejascad-story.html">TejasCAD story</a> ·
+        <a href="tejascad-pitch-deck.html">TejasCAD deck</a> ·
+        <a href="tejascad-vs-intellicad.html">vs IntelliCAD</a> ·
+        <a href="tejascad-company-structure.html">company structure</a> ·
+        <a href="tejascad-licensing-architecture.html">licensing</a> ·
+        <a href="platform-strategy.html">platform strategy</a> ·
+        <a href="rearchitecture-plan.html">engine plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry</a> ·
+        <a href="memory-architecture.html">memory</a> ·
+        <a href="brand-shortlist.html">brand</a> ·
+        <a href="exec-presentation.html">original exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>

@@ -6,7 +6,7 @@
 
 ## 0. Who this is for
 
-- **CEOs / founders of the ~40 ITC member vendors** — progeCAD, GstarCAD, ZWCAD (in part), CADian, DoubleCAD, Ares (in part), NanoCAD-compat SKUs, and the long tail of regional / vertical ITC-based products.
+- **CEOs / founders of the ~40 ITC member vendors** — progeCAD, CADian (IntelliKorea), CMS IntelliCAD, DoubleCAD, and the long tail of regional / vertical ITC-based products. **Note:** BricsCAD, ZWCAD, and GstarCAD are *not* in this group — each already left IntelliCAD and built their own engine on ODA. They are peers who made this same move, not migration prospects.
 - **Vertical ISVs building on IntelliCAD** — MEP, structural, survey, GIS specialists whose product is a shell over IntelliCAD's DWG core.
 - **Investors and acquirers evaluating IntelliCAD-based businesses** — anyone doing due diligence needs the honest comparison, not the ITC marketing story.
 

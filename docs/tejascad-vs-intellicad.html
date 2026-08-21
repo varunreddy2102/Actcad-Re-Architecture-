@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TejasCAD vs. IntelliCAD — The Case for Switching — ActCAD Re-Architecture</title>
+<style>
+:root {
+  --bg: #fafbfc;
+  --panel: #ffffff;
+  --border: #d8dce1;
+  --text: #1a2332;
+  --muted: #5b6675;
+  --accent: #1a3a6c;
+  --accent-2: #2d5fa7;
+  --code-bg: #f3f5f7;
+  --hover: #eef2f8;
+  --pill: #eef4fb;
+}
+* { box-sizing: border-box; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg);
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.toc-sidebar {
+  border-right: 1px solid var(--border);
+  background: var(--panel);
+  padding: 24px 20px 40px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.toc-header { border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 12px; }
+.toc-header .back-link { color: var(--accent-2); font-size: 0.85rem; }
+.toc-header h2 {
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--muted); margin: 12px 0 0; font-weight: 600;
+}
+.toc-nav { font-size: 0.85rem; }
+.toc-nav ul { list-style: none; padding-left: 12px; margin: 4px 0; }
+.toc-nav > ul { padding-left: 0; }
+.toc-nav li { margin: 3px 0; }
+.toc-nav a {
+  color: var(--text);
+  display: block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  line-height: 1.35;
+}
+.toc-nav a:hover { background: var(--hover); color: var(--accent); text-decoration: none; }
+.toc-nav > ul > li > a { font-weight: 600; color: var(--accent); }
+
+.content {
+  padding: 40px 60px 80px;
+  max-width: 920px;
+  width: 100%;
+}
+.doc-kicker {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+  line-height: 1.3;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  scroll-margin-top: 1em;
+}
+h1 { font-size: 2.1rem; margin-top: 0; padding-bottom: 12px; border-bottom: 2px solid var(--accent); }
+h2 { font-size: 1.55rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--accent-2); }
+h3 { font-size: 1.2rem; color: var(--accent-2); }
+h4 { font-size: 1.05rem; }
+h5 { font-size: 0.95rem; color: var(--accent); }
+h6 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+
+p { margin: 0.6em 0 1em; }
+
+strong { color: var(--accent); }
+
+ul, ol { margin: 0.6em 0 1em; padding-left: 1.6em; }
+li { margin: 0.3em 0; }
+li > ul, li > ol { margin: 0.3em 0; }
+
+blockquote {
+  border-left: 4px solid var(--accent-2);
+  margin: 1em 0;
+  padding: 0.5em 1.2em;
+  color: var(--text);
+  background: var(--pill);
+  border-radius: 0 6px 6px 0;
+}
+blockquote p:first-child { margin-top: 0; }
+blockquote p:last-child { margin-bottom: 0; }
+
+code {
+  font-family: "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  font-size: 0.86em;
+  line-height: 1.5;
+}
+pre code { background: none; padding: 0; font-size: 1em; }
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+  width: 100%;
+  font-size: 0.9em;
+  display: block;
+  overflow-x: auto;
+}
+@media (min-width: 700px) {
+  table { display: table; }
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--panel); color: var(--accent); font-weight: 600; }
+tr:nth-child(even) td { background: var(--panel); }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 2em 0; }
+
+.headerlink {
+  opacity: 0;
+  margin-left: 0.4em;
+  color: var(--muted);
+  font-weight: normal;
+  text-decoration: none;
+  font-size: 0.85em;
+}
+h1:hover .headerlink, h2:hover .headerlink, h3:hover .headerlink,
+h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.doc-meta { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.doc-footer {
+  margin-top: 4em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.doc-footer a { color: var(--accent-2); }
+
+/* Index page */
+.index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 2em;
+}
+.index-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.index-card:hover { border-color: var(--accent-2); transform: translateY(-2px); }
+.index-card h3 { margin: 0 0 8px; font-size: 1.15rem; border: 0; padding: 0; }
+.index-card h3 a { color: var(--accent); }
+.index-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.45; }
+.index-card .file-name {
+  display: inline-block;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 10px;
+}
+
+@media (max-width: 1024px) {
+  .layout { grid-template-columns: 1fr; }
+  .toc-sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--border); }
+  .content { padding: 30px 24px 60px; }
+}
+
+@media print {
+  .toc-sidebar, .doc-footer { display: none; }
+  .layout { grid-template-columns: 1fr; max-width: none; }
+  .content { max-width: none; padding: 0; }
+  body { background: white; font-size: 10.5pt; }
+  pre, table { page-break-inside: avoid; }
+  h1, h2, h3 { page-break-after: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc-sidebar">
+    <div class="toc-header">
+      <a href="index.html" class="back-link">← All documents</a>
+      <h2>On this page</h2>
+    </div>
+    <nav class="toc-nav"><div class="toc">
+<ul>
+<li><a href="#0-who-this-is-for">0. Who this is for</a></li>
+<li><a href="#1-what-the-intellicad-consortium-is-in-one-page">1. What the IntelliCAD Consortium is, in one page</a></li>
+<li><a href="#2-feature-by-feature-comparison">2. Feature-by-feature comparison</a></li>
+<li><a href="#3-architectural-differences-why-it-matters-even-if-features-are-similar-today">3. Architectural differences — why it matters even if features are similar today</a><ul>
+<li><a href="#31-shared-source-consortium-vs-first-party-engine">3.1 Shared-source consortium vs first-party engine</a></li>
+<li><a href="#32-windows-first-monolith-vs-modular-multi-platform-engine">3.2 Windows-first monolith vs modular multi-platform engine</a></li>
+<li><a href="#33-command-bus-with-agent-access-vs-command-dispatcher">3.3 Command-bus with agent access vs command-dispatcher</a></li>
+</ul>
+</li>
+<li><a href="#4-commercial-comparison">4. Commercial comparison</a></li>
+<li><a href="#5-the-three-differentiators-that-matter-most-to-a-switching-member">5. The three differentiators that matter most to a switching member</a><ul>
+<li><a href="#51-modern-engineering-ai-cloud-web-from-day-one">5.1 Modern engineering — AI, cloud, web from day one</a></li>
+<li><a href="#52-fully-ready-to-use-white-label-you-ship-a-branded-product-in-90-days">5.2 Fully ready-to-use white-label — you ship a branded product in 90 days</a></li>
+<li><a href="#53-encrypted-licensing-your-customers-can-trust-architecturally-not-by-policy">5.3 Encrypted licensing your customers can trust — architecturally, not by policy</a></li>
+</ul>
+</li>
+<li><a href="#6-migration-path-how-a-rational-intellicad-based-vendor-actually-switches">6. Migration path — how a rational IntelliCAD-based vendor actually switches</a></li>
+<li><a href="#7-why-a-rational-intellicad-member-switches">7. Why a rational IntelliCAD member switches</a></li>
+<li><a href="#8-why-a-rational-intellicad-member-does-not-switch-honest-counter-cases">8. Why a rational IntelliCAD member does NOT switch (honest counter-cases)</a></li>
+<li><a href="#9-what-tejascad-does-not-do-vs-intellicad-deliberately">9. What TejasCAD does NOT do vs IntelliCAD, deliberately</a></li>
+<li><a href="#10-illustrative-migration-case-study-regioncad">10. Illustrative migration case study — &ldquo;RegionCAD&rdquo;</a><ul>
+<li><a href="#101-the-company-today">10.1 The company today</a></li>
+<li><a href="#102-migration-decision-timeline">10.2 Migration decision timeline</a></li>
+<li><a href="#103-year-1-financial-impact-illustrative">10.3 Year 1 financial impact (illustrative)</a></li>
+<li><a href="#104-strategic-outcomes-over-3-years">10.4 Strategic outcomes over 3 years</a></li>
+<li><a href="#105-what-makes-this-case-study-realistic-vs-optimistic">10.5 What makes this case study realistic vs optimistic</a></li>
+</ul>
+</li>
+<li><a href="#11-in-one-paragraph-for-the-itc-member-ceo">11. In one paragraph, for the ITC member CEO</a></li>
+</ul>
+</div>
+</nav>
+  </aside>
+  <main class="content">
+    <div class="doc-header">
+      <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
+      <p class="doc-meta">tejascad-vs-intellicad.md</p>
+    </div>
+    <h1 id="tejascad-vs-intellicad-the-case-for-switching"><a class="toclink" href="#tejascad-vs-intellicad-the-case-for-switching">TejasCAD vs. IntelliCAD — The Case for Switching</a></h1>
+<blockquote>
+<p><em>Working brand: TejasCAD, subject to TM clearance (<code>docs/brand-shortlist.md</code> §7). This document is designed to be read by an existing IntelliCAD Consortium (ITC) member vendor&rsquo;s leadership team when deciding whether to migrate. It is intentionally honest about where switching is easy, where it is hard, and where a rational vendor might choose not to switch. Numbers illustrative; specifics reflect public ITC and industry pricing at time of writing.</em></p>
+</blockquote>
+<hr />
+<h2 id="0-who-this-is-for"><a class="toclink" href="#0-who-this-is-for">0. Who this is for</a></h2>
+<ul>
+<li><strong>CEOs / founders of the ~40 ITC member vendors</strong> — progeCAD, CADian (IntelliKorea), CMS IntelliCAD, DoubleCAD, and the long tail of regional / vertical ITC-based products. <strong>Note:</strong> BricsCAD, ZWCAD, and GstarCAD are <em>not</em> in this group — each already left IntelliCAD and built their own engine on ODA. They are peers who made this same move, not migration prospects.</li>
+<li><strong>Vertical ISVs building on IntelliCAD</strong> — MEP, structural, survey, GIS specialists whose product is a shell over IntelliCAD&rsquo;s DWG core.</li>
+<li><strong>Investors and acquirers evaluating IntelliCAD-based businesses</strong> — anyone doing due diligence needs the honest comparison, not the ITC marketing story.</li>
+</ul>
+<hr />
+<h2 id="1-what-the-intellicad-consortium-is-in-one-page"><a class="toclink" href="#1-what-the-intellicad-consortium-is-in-one-page">1. What the IntelliCAD Consortium is, in one page</a></h2>
+<p>The <strong>IntelliCAD Technology Consortium (ITC)</strong>, founded in 1997, is a member-based organization that licenses a shared C++ DWG-native CAD codebase to its ~40 member vendors. Each member pays annual dues (illustrative: $30–100K/year sliding by seat volume) plus per-seat royalties (illustrative: $10–30/seat on a sliding scale), receives the shared source, ships it under their own brand, contributes bug fixes back to the consortium pool, and commits their engineering resources under the consortium license terms.</p>
+<p><strong>What the ITC has done well for thirty years.</strong></p>
+<ul>
+<li>Shared engineering cost across ~40 vendors, each of whom could not have afforded to build the engine independently.</li>
+<li>Kept the ITC codebase reasonably competitive with AutoCAD on DWG file-format fidelity (usually 6–18 months behind Autodesk&rsquo;s format bumps).</li>
+<li>Enabled a diverse regional / vertical / language-localized ecosystem of AutoCAD alternatives that would not otherwise exist.</li>
+<li>Provided a legal / commercial framework that regional vendors can operate under.</li>
+</ul>
+<p><strong>What the ITC structurally cannot do.</strong></p>
+<ul>
+<li><strong>Ship a modern AI layer inside the engine.</strong> The consortium license restricts structural modifications; every member gets the same features at the same time; AI-inside-CAD requires architectural changes that touch the core.</li>
+<li><strong>Ship cloud-native / web-native versions.</strong> IntelliCAD&rsquo;s C++ codebase and its Windows shell dependencies are not designed for WASM / server-side operation; the consortium has not funded a rewrite.</li>
+<li><strong>Ship real-time multi-user collaboration.</strong> Requires an op-log architecture and server infrastructure the consortium&rsquo;s engineering model doesn&rsquo;t produce.</li>
+<li><strong>Move faster than the slowest member&rsquo;s release calendar.</strong> Coordinated releases mean coordinated release schedules.</li>
+<li><strong>Prevent bug fixes from flowing to a member&rsquo;s direct competitors.</strong> Every fix becomes consortium property.</li>
+<li><strong>Change fundamental architectural direction</strong> (e.g., adopt a new 3D kernel, replace the render layer, add a plugin marketplace) without a consortium supermajority.</li>
+</ul>
+<p>The list of what the ITC <em>cannot</em> do is now the list of what modern CAD <em>must</em> do. That&rsquo;s the whole problem.</p>
+<hr />
+<h2 id="2-feature-by-feature-comparison"><a class="toclink" href="#2-feature-by-feature-comparison">2. Feature-by-feature comparison</a></h2>
+<p>Read this table as &ldquo;on the day both products ship equivalent 2027 releases.&rdquo; TejasCAD&rsquo;s numbers assume the roadmap in <code>docs/rearchitecture-plan.md</code> executes.</p>
+<table>
+<thead>
+<tr>
+<th>Capability</th>
+<th>IntelliCAD (via any member)</th>
+<th>TejasCAD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DWG read/write fidelity</strong></td>
+<td>ITC-maintained, generally 6–18 months behind Autodesk&rsquo;s format bumps</td>
+<td>ODA Drawings SDK, direct membership; ODA typically 0–6 months behind Autodesk</td>
+</tr>
+<tr>
+<td><strong>3D kernel</strong></td>
+<td>ACIS, via ITC&rsquo;s consortium-scoped license</td>
+<td><strong>ACIS, via TejasCAD&rsquo;s direct OEM contract</strong> — same round-trip fidelity as AutoCAD (ASM is an ACIS fork); <em>your</em> deployment counted at platform level, not per-vendor</td>
+</tr>
+<tr>
+<td><strong>Rendering</strong></td>
+<td>ITC-provided, historically Windows-first, per-machine tuning required</td>
+<td>ODA Visualize (DirectX 12 / Vulkan / Metal); WebGPU for browser; <strong>no per-machine tuning</strong> at customer sites</td>
+</tr>
+<tr>
+<td><strong>Platform</strong></td>
+<td>Windows-first; Mac / Linux ports exist for some members but at reduced parity</td>
+<td><strong>Windows + Mac + Linux + browser + mobile</strong> — same engine, same file formats, same behavior</td>
+</tr>
+<tr>
+<td><strong>AI-in-editor</strong></td>
+<td>Structurally blocked</td>
+<td>MCP server inside the engine + agent tools + Markup Assist + Smart Blocks + Drawing Health, all with transactional undo</td>
+</tr>
+<tr>
+<td><strong>Real-time co-edit</strong></td>
+<td>None</td>
+<td>Two-tier op-log + LWW; ships in Phase 2</td>
+</tr>
+<tr>
+<td><strong>BIM / IFC support</strong></td>
+<td>Consortium-limited</td>
+<td>ODA IFC + BIM SDKs; native</td>
+</tr>
+<tr>
+<td><strong>MCAD file import</strong> (SolidWorks, Inventor, CATIA)</td>
+<td>Limited</td>
+<td>ODA MCAD translator; direct read</td>
+</tr>
+<tr>
+<td><strong>LISP compatibility</strong></td>
+<td>Full (ITC codebase)</td>
+<td>95th percentile at GA; migration tool for the tail</td>
+</tr>
+<tr>
+<td><strong>.NET / ObjectARX-compat extensions</strong></td>
+<td>Consortium-approved surface</td>
+<td>Opinionated modern surface (no legacy SDS / DIESEL / VBA / COM / ADS); ObjectARX-compatible plugin loader is opt-in</td>
+</tr>
+<tr>
+<td><strong>Web extensions</strong></td>
+<td>None</td>
+<td>Iframe + OAuth REST, same command surface as native — write once</td>
+</tr>
+<tr>
+<td><strong>Plugin marketplace</strong></td>
+<td>None (member-by-member)</td>
+<td>Platform-level marketplace, cross-member catalog</td>
+</tr>
+<tr>
+<td><strong>Cloud file services</strong></td>
+<td>None</td>
+<td>TejasCAD Cloud (optional; member can bring their own)</td>
+</tr>
+<tr>
+<td><strong>Encrypted licensing</strong></td>
+<td>Member-built or third-party (Sentinel, Reprise)</td>
+<td>Built-in, platform-blind, cryptographically-audited (§<code>tejascad-licensing-architecture.md</code>)</td>
+</tr>
+<tr>
+<td><strong>Release cadence</strong></td>
+<td>ITC coordinated — annually</td>
+<td>Member controls their own release cadence off a rolling platform engine</td>
+</tr>
+<tr>
+<td><strong>Bug-fix confidentiality</strong></td>
+<td>Every fix shared with consortium (=competitors)</td>
+<td>Fixes are yours unless you contribute them to platform commons</td>
+</tr>
+<tr>
+<td><strong>Verticalization</strong></td>
+<td>Member-built alone</td>
+<td>Optional co-development with TejasCAD + cross-member royalty (see <code>tejascad-company-structure.md</code> §12)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="3-architectural-differences-why-it-matters-even-if-features-are-similar-today"><a class="toclink" href="#3-architectural-differences-why-it-matters-even-if-features-are-similar-today">3. Architectural differences — why it matters even if features are similar today</a></h2>
+<p>At feature-parity in a given year, the <em>architecture</em> still tells you which product is on the right side of the trend in the next year. Three architectural differences drive most of the strategic gap:</p>
+<h3 id="31-shared-source-consortium-vs-first-party-engine"><a class="toclink" href="#31-shared-source-consortium-vs-first-party-engine">3.1 Shared-source consortium vs first-party engine</a></h3>
+<p><strong>IntelliCAD:</strong> Every member ships the same core. Your differentiation is on the shell, the vertical, the packaging, the channel, the price. Your engine improvements go to your competitors after one release cycle.</p>
+<p><strong>TejasCAD:</strong> You license the platform engine, but you own your shell, your tenant profile, your verticals, your customer relationships, your feature-flag configuration. Nothing you build on top flows back to other members unless you contribute it. <strong>Your engineering investment stays yours.</strong></p>
+<h3 id="32-windows-first-monolith-vs-modular-multi-platform-engine"><a class="toclink" href="#32-windows-first-monolith-vs-modular-multi-platform-engine">3.2 Windows-first monolith vs modular multi-platform engine</a></h3>
+<p><strong>IntelliCAD:</strong> The codebase evolved under Windows-first assumptions. Cross-platform ports exist but at reduced parity. Web / mobile essentially not possible without a rewrite. The consortium has never funded that rewrite because the cost-share math is prohibitive.</p>
+<p><strong>TejasCAD:</strong> Modular from the start (10 C++ modules with one C ABI <code>ui-bridge</code>). Native shells (Qt 6) and WASM shell consume the same C ABI. Mobile roadmap is a shell over the same engine. <strong>Cross-platform is a first-day property, not a retrofit.</strong></p>
+<h3 id="33-command-bus-with-agent-access-vs-command-dispatcher"><a class="toclink" href="#33-command-bus-with-agent-access-vs-command-dispatcher">3.3 Command-bus with agent access vs command-dispatcher</a></h3>
+<p><strong>IntelliCAD:</strong> Commands are dispatched to a monolithic engine; there&rsquo;s no clean seam an AI agent can talk to safely. Any AI integration is a bolt-on layer without transaction guarantees. This is why ITC members shipping &ldquo;AI features&rdquo; are shipping cloud-side sidecars, not in-engine agents.</p>
+<p><strong>TejasCAD:</strong> The <code>cmd</code> module is the <strong>single seam</strong> for command dispatch. Every AI tool call resolves to exactly one transaction in the undo stack. Every command is auditable, revertible, and testable. This is the architectural property that lets AI ship deep instead of shallow.</p>
+<hr />
+<h2 id="4-commercial-comparison"><a class="toclink" href="#4-commercial-comparison">4. Commercial comparison</a></h2>
+<table>
+<thead>
+<tr>
+<th>Cost line</th>
+<th>Typical IntelliCAD member</th>
+<th>Equivalent for a TejasCAD member</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Annual consortium / platform fee</strong></td>
+<td>ITC dues: illustrative $30–100K/year sliding by seat volume</td>
+<td>TejasCAD member fee: illustrative $100–500K/year sliding by tenant scale (higher — but includes engine + platform + marketplace + licensing infra + AI infra + tenant-profile build pipeline; consortium dues buy only the engine license)</td>
+</tr>
+<tr>
+<td><strong>Per-seat / per-deployment engine royalty</strong></td>
+<td>ITC per-seat royalty: illustrative $10–30/seat/year</td>
+<td>Platform ACIS pass-through: illustrative per-deployment one-time, at the master-contract rate; no per-seat annual escalation on perpetual base</td>
+</tr>
+<tr>
+<td><strong>Kernel royalty (ACIS)</strong></td>
+<td>Embedded in ITC costs; not directly negotiable</td>
+<td>Pass-through at cost from TejasCAD&rsquo;s master contract; <strong>the same rate as the platform&rsquo;s own tenants; leveraged buying power vs any single member&rsquo;s own contract</strong></td>
+</tr>
+<tr>
+<td><strong>Feature engineering (AI, cloud, web, mobile)</strong></td>
+<td>Not shipped by ITC — member funds independently at ~$3–8M/year for a modern-features roadmap they can&rsquo;t fully build</td>
+<td>Included in the platform fee; member does not fund independently</td>
+</tr>
+<tr>
+<td><strong>License / DRM infrastructure</strong></td>
+<td>Third-party (Sentinel HASP, Reprise, etc.): $50–200K/year + integration</td>
+<td>Included; encrypted, platform-blind</td>
+</tr>
+<tr>
+<td><strong>Marketplace SDK + certification</strong></td>
+<td>Not applicable; no marketplace</td>
+<td>Included; 70% dev / 15% platform / 15% tenant split on marketplace sales</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rough take:</strong> A regional CAD vendor doing $8M ARR pays ITC roughly $150–300K/year all-in (dues + royalties). A TejasCAD member fee at $250K/year is directly comparable on the engine-license line, and it <em>replaces</em> the $3–8M/year that member would need to fund independently to get AI + cloud + web + mobile + marketplace. <strong>The line item that dominates is not the platform fee — it&rsquo;s the R&amp;D the member no longer has to fund alone.</strong></p>
+<p>The catch: TejasCAD ships that R&amp;D as a <strong>platform</strong> — meaning your competitor members also get it. Your differentiation is now on shell, tenant configuration, vertical specialization, channel, and customer relationship. Not on the engine.</p>
+<p><strong>For most ITC members, that trade is very favorable.</strong> The R&amp;D you couldn&rsquo;t fund alone is what&rsquo;s actually competitive-critical; the engine you paid ITC dues for is now a table-stakes commodity.</p>
+<hr />
+<h2 id="5-the-three-differentiators-that-matter-most-to-a-switching-member"><a class="toclink" href="#5-the-three-differentiators-that-matter-most-to-a-switching-member">5. The three differentiators that matter most to a switching member</a></h2>
+<h3 id="51-modern-engineering-ai-cloud-web-from-day-one"><a class="toclink" href="#51-modern-engineering-ai-cloud-web-from-day-one">5.1 Modern engineering — AI, cloud, web from day one</a></h3>
+<p>The reason to switch is not that IntelliCAD is broken today. IntelliCAD is fine today. The reason to switch is that the <em>ceiling</em> on what IntelliCAD-based products can become is defined by the consortium&rsquo;s coordinated velocity, and every year that ceiling falls further behind AutoCAD / Bricsys / ARES / Onshape. <strong>TejasCAD&rsquo;s ceiling is defined by your own product velocity plus the platform&rsquo;s platform-team output — much higher.</strong></p>
+<h3 id="52-fully-ready-to-use-white-label-you-ship-a-branded-product-in-90-days"><a class="toclink" href="#52-fully-ready-to-use-white-label-you-ship-a-branded-product-in-90-days">5.2 Fully ready-to-use white-label — you ship a branded product in 90 days</a></h3>
+<p>TejasCAD ships a <strong>tenant-profile-driven build pipeline</strong>: a member&rsquo;s brand identity, icons, EULA, command-line prefix, help URLs, feature flags, and license service configuration are captured in a single tenant-profile document. Signed, branded MSI / DMG / DEB / WASM bundles come out of the pipeline. <strong>A new member goes from signed agreement to shipping a branded, working CAD product in 90 days</strong>, versus 18–36 months for an ITC member ramping up on a new codebase or 3–5 years for a brand starting from scratch.</p>
+<p>Full engineering seam detail in <code>docs/platform-strategy.md</code> §3. The relevant point for a switching member: <strong>you don&rsquo;t burn 18 months on integration.</strong></p>
+<h3 id="53-encrypted-licensing-your-customers-can-trust-architecturally-not-by-policy"><a class="toclink" href="#53-encrypted-licensing-your-customers-can-trust-architecturally-not-by-policy">5.3 Encrypted licensing your customers can trust — architecturally, not by policy</a></h3>
+<p>Full spec in <code>docs/tejascad-licensing-architecture.md</code>. The one-sentence version: <strong>your customer list, your seat counts, your pricing, your license contents are not visible to TejasCAD, not visible to other members, not visible to attackers who breach TejasCAD, and not producible under legal compulsion of TejasCAD — because the crypto is architected so we cannot see them, not because we promise not to look.</strong> Third-party audited annually. Report published under CC-BY for you to redistribute to your customers.</p>
+<p>For an ITC member migrating to TejasCAD, this replaces a third-party DRM vendor (Sentinel / Reprise / custom) with a first-party service that has <strong>stronger</strong> privacy properties than most third-party DRM.</p>
+<hr />
+<h2 id="6-migration-path-how-a-rational-intellicad-based-vendor-actually-switches"><a class="toclink" href="#6-migration-path-how-a-rational-intellicad-based-vendor-actually-switches">6. Migration path — how a rational IntelliCAD-based vendor actually switches</a></h2>
+<p>The switch is real work. TejasCAD&rsquo;s success depends on making it as low-friction as possible. Standard migration package for an incoming member:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Duration</th>
+<th>What member does</th>
+<th>What TejasCAD does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>0. Evaluate</strong></td>
+<td>4–6 weeks</td>
+<td>Runs their top 20 customer DWGs through TejasCAD engine in a sandboxed build. Compares fidelity, performance, feature coverage.</td>
+<td>Provides sandboxed evaluation build with the member&rsquo;s LOGO pre-configured; runs joint testing session</td>
+</tr>
+<tr>
+<td><strong>1. Tenant setup</strong></td>
+<td>4–6 weeks</td>
+<td>Finalizes brand assets (icons, EULA, splash, colors, command-line prefix, feature flags, license-server config). Reviews and signs Master License Agreement</td>
+<td>Configures tenant profile; provisions license authority (member-held key per §3 of licensing arch); stands up the member&rsquo;s build pipeline</td>
+</tr>
+<tr>
+<td><strong>2. Extension port</strong></td>
+<td>8–16 weeks</td>
+<td>Ports member&rsquo;s existing verticalizations and .NET / IRX / LISP customizations to TejasCAD&rsquo;s plugin surface (95% of ITC LISP works unchanged; .NET requires the migration guide)</td>
+<td>Provides plugin SDK, sample ports, dedicated migration engineer during this phase</td>
+</tr>
+<tr>
+<td><strong>3. Beta rollout</strong></td>
+<td>4–8 weeks</td>
+<td>Beta to 5–15 friendly customers under an NDA</td>
+<td>Field-support engineer on standby; expedited engine-level fix path</td>
+</tr>
+<tr>
+<td><strong>4. GA + parallel operation</strong></td>
+<td>6–12 months</td>
+<td>Ships new product to new customers under the member&rsquo;s brand; keeps IntelliCAD-based product available to existing customers on the old contract</td>
+<td>Standard member support tier</td>
+</tr>
+<tr>
+<td><strong>5. IntelliCAD sunset</strong></td>
+<td>12–24 months later</td>
+<td>Announces sunset of IntelliCAD-based product; migrates remaining perpetual customers to TejasCAD-based product on the same brand</td>
+<td>Provides migration tools (LISP migration, DWG-check tool, etc.)</td>
+</tr>
+</tbody>
+</table>
+<p>Total elapsed calendar from &ldquo;signed agreement&rdquo; to &ldquo;shipping GA under our brand&rdquo;: <strong>9–18 months for most members</strong>, faster for verticals with simple extension surfaces.</p>
+<hr />
+<h2 id="7-why-a-rational-intellicad-member-switches"><a class="toclink" href="#7-why-a-rational-intellicad-member-switches">7. Why a rational IntelliCAD member switches</a></h2>
+<ul>
+<li>The AI / cloud / web / mobile ceiling of the ITC codebase becomes commercially fatal within 24–36 months in most competitive segments.</li>
+<li>The R&amp;D the member would need to fund independently to close that gap is 5–20× the TejasCAD member fee.</li>
+<li>The ITC governance model (coordinated releases, shared bug fixes with competitors, member supermajority for direction changes) becomes actively harmful the moment the member&rsquo;s competitive positioning depends on speed or exclusivity of a feature.</li>
+<li>The encrypted licensing story is a real, salable customer trust upgrade — enterprise / regulated / government customers actively ask for this.</li>
+<li>The verticalized-solutions program (<code>tejascad-company-structure.md</code> §12) turns the member&rsquo;s domain IP into a cross-tenant revenue stream, not just a shell-level differentiator.</li>
+<li><strong>The acquirer optionality is real.</strong> An ITC-based vendor is a hard acquisition target for a strategic — the buyer inherits consortium license terms and a codebase they don&rsquo;t control. A TejasCAD-based vendor is a clean acquisition — the buyer inherits a defined platform license.</li>
+</ul>
+<hr />
+<h2 id="8-why-a-rational-intellicad-member-does-not-switch-honest-counter-cases"><a class="toclink" href="#8-why-a-rational-intellicad-member-does-not-switch-honest-counter-cases">8. Why a rational IntelliCAD member does NOT switch (honest counter-cases)</a></h2>
+<ul>
+<li><strong>The member&rsquo;s product is deeply forked from IntelliCAD</strong> — significant proprietary modifications to the engine that would need to be re-implemented as TejasCAD plugins. Cost of migration exceeds cost of continuing.</li>
+<li><strong>The member&rsquo;s customer base is on perpetual-only, low-refresh, in a segment where AI / cloud / web don&rsquo;t matter</strong> (e.g., a highly specialized detailing tool for a stable regulatory environment). &ldquo;Modern&rdquo; is not what the customer values.</li>
+<li><strong>The member is exiting the CAD business</strong> and doesn&rsquo;t want to invest in a migration during runoff.</li>
+<li><strong>The member sees the IntelliCAD Consortium&rsquo;s shared engineering model as a philosophical fit</strong> and does not want to enter a for-profit platform relationship.</li>
+<li><strong>The member&rsquo;s shell has irreducibly Windows-first design</strong> that would need a full UI rewrite to run on the multi-platform TejasCAD shell — cost exceeds benefit for their customer base.</li>
+<li><strong>Trust — the member does not yet trust TejasCAD&rsquo;s operational stability</strong>, licensing-crypto claims, or founder team. Legitimate; addressed only by track record and third-party audits over time.</li>
+</ul>
+<p><strong>TejasCAD&rsquo;s outbound sales approach: acknowledge these counter-cases upfront, focus outreach on the members whose profile doesn&rsquo;t match them.</strong> The ITC member pool is ~40; the switching-fit pool at any moment is probably 8–15. That&rsquo;s the pipeline.</p>
+<hr />
+<h2 id="9-what-tejascad-does-not-do-vs-intellicad-deliberately"><a class="toclink" href="#9-what-tejascad-does-not-do-vs-intellicad-deliberately">9. What TejasCAD does NOT do vs IntelliCAD, deliberately</a></h2>
+<ul>
+<li><strong>We do not offer an IntelliCAD-compatible drop-in replacement.</strong> The engine is different (ODA-direct vs ITC-shared); porting is real work.</li>
+<li><strong>We do not preserve every ITC extension surface.</strong> SDS / DIESEL / VBA / COM / ADS are not in scope; ObjectARX-compat is opt-in and modernized.</li>
+<li><strong>We do not commit to matching every ITC release feature-for-feature.</strong> Our roadmap is defined by our platform and members, not by consortium coordination.</li>
+<li><strong>We do not offer consortium-model shared source.</strong> The engine is licensed, not co-owned. The trade-off is R&amp;D velocity for equity.</li>
+<li><strong>We do not compete with our members for their customers.</strong> An ITC member typically competes with 40 other ITC members; a TejasCAD member competes only with peers in their same segment, and platform-provided verticalization revenues can align rather than oppose incentives.</li>
+</ul>
+<hr />
+<h2 id="10-illustrative-migration-case-study-regioncad"><a class="toclink" href="#10-illustrative-migration-case-study-regioncad">10. Illustrative migration case study — &ldquo;RegionCAD&rdquo;</a></h2>
+<p>Illustrative composite based on typical ITC member profiles; not a real company. Numbers directional.</p>
+<h3 id="101-the-company-today"><a class="toclink" href="#101-the-company-today">10.1 The company today</a></h3>
+<ul>
+<li><strong>Product:</strong> RegionCAD 2027 — an IntelliCAD-based DWG editor + MEP vertical add-on</li>
+<li><strong>Headquarters:</strong> Barcelona; sales offices in Madrid, Milan, Warsaw, Istanbul</li>
+<li><strong>Team:</strong> 45 people (12 engineering, 18 sales/support, 15 admin/operations)</li>
+<li><strong>Customers:</strong> ~18,000 seats across Southern Europe + Turkey + MENA; 60% perpetual, 40% annual subscription</li>
+<li><strong>ARR:</strong> ~€6.5M</li>
+<li><strong>Growth rate:</strong> 4% YoY (declining from 12% five years ago)</li>
+<li><strong>Chief pain points reported by CEO:</strong></li>
+<li>Cannot ship any credible AI feature (their #1 lost-deal reason in the last four quarters)</li>
+<li>Web preview requested by 40% of new prospects, has no path to deliver it</li>
+<li>MEP vertical increasingly asked for BIM/IFC interoperability, IntelliCAD BIM extension is not usable in production</li>
+<li>ITC royalties + Sentinel HASP DRM fees + limited-parity Mac port maintenance = €780K/year of &ldquo;keeping the lights on&rdquo;</li>
+</ul>
+<h3 id="102-migration-decision-timeline"><a class="toclink" href="#102-migration-decision-timeline">10.2 Migration decision timeline</a></h3>
+<table>
+<thead>
+<tr>
+<th>Month</th>
+<th>Milestone</th>
+<th>Investment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>M0</strong></td>
+<td>RegionCAD leadership evaluates TejasCAD; runs top 20 customer DWGs through eval build</td>
+<td>~€25K (evaluation license + 4 weeks of 2 engineers&rsquo; time)</td>
+</tr>
+<tr>
+<td><strong>M2</strong></td>
+<td>Signs Letter of Intent; TejasCAD engineering assigned as migration partner</td>
+<td>LOI, no cash commitment</td>
+</tr>
+<tr>
+<td><strong>M3</strong></td>
+<td>Master Platform License Agreement signed</td>
+<td>Year 1 platform fee €200K committed</td>
+</tr>
+<tr>
+<td><strong>M4</strong></td>
+<td>RegionCAD brand tenant profile finalized; License Authority key generated and held by RegionCAD</td>
+<td>Included in platform fee</td>
+</tr>
+<tr>
+<td><strong>M4-M8</strong></td>
+<td>RegionCAD extension port (MEP vertical, custom LISP libraries, .NET plugins) with 2 TejasCAD migration engineers embedded</td>
+<td>€80K in TejasCAD migration-support fees (T&amp;M)</td>
+</tr>
+<tr>
+<td><strong>M8-M10</strong></td>
+<td>Closed beta with 12 friendly RegionCAD customers under NDA</td>
+<td>RegionCAD field engineering</td>
+</tr>
+<tr>
+<td><strong>M11</strong></td>
+<td><strong>RegionCAD 2028 GA on TejasCAD engine</strong> — sold to new customers under RegionCAD brand; runs alongside legacy RegionCAD 2027 for existing perpetual base</td>
+<td>Marketing, packaging, launch</td>
+</tr>
+<tr>
+<td><strong>M12</strong></td>
+<td>AI-in-editor features (Markup Assist, Smart Blocks, Drawing Health) shipped as marketing headline for RegionCAD 2028</td>
+<td>Included in platform</td>
+</tr>
+<tr>
+<td><strong>M14</strong></td>
+<td>Web viewer + markup shipped to all RegionCAD 2028 customers</td>
+<td>Included in platform</td>
+</tr>
+<tr>
+<td><strong>M18</strong></td>
+<td>Cloud co-edit shipped</td>
+<td>Included in platform</td>
+</tr>
+<tr>
+<td><strong>M24</strong></td>
+<td>60% of new sales are on RegionCAD 2028 (TejasCAD-based); IntelliCAD-based RegionCAD 2027 enters sunset with 24-month runoff plan for perpetual customers</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>M42</strong></td>
+<td>IntelliCAD-based RegionCAD 2027 fully sunset; ITC membership terminated</td>
+<td>Savings begin</td>
+</tr>
+</tbody>
+</table>
+<h3 id="103-year-1-financial-impact-illustrative"><a class="toclink" href="#103-year-1-financial-impact-illustrative">10.3 Year 1 financial impact (illustrative)</a></h3>
+<p><strong>Costs.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Old (IntelliCAD-based)</th>
+<th>New (TejasCAD-based)</th>
+<th>Delta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ITC dues + per-seat royalty (18K seats)</td>
+<td>~€450K</td>
+<td>€0</td>
+<td>−€450K</td>
+</tr>
+<tr>
+<td>Sentinel HASP DRM + integration</td>
+<td>~€180K</td>
+<td>€0 (included)</td>
+<td>−€180K</td>
+</tr>
+<tr>
+<td>Mac port maintenance (external contractor)</td>
+<td>~€150K</td>
+<td>€0 (included via TejasCAD Qt shell)</td>
+<td>−€150K</td>
+</tr>
+<tr>
+<td>TejasCAD platform annual fee</td>
+<td>—</td>
+<td>€200K</td>
+<td>+€200K</td>
+</tr>
+<tr>
+<td>ACIS per-deployment pass-through (new sales only in Y1)</td>
+<td>—</td>
+<td>~€30K</td>
+<td>+€30K</td>
+</tr>
+<tr>
+<td>TejasCAD migration-support fees (one-time, Y1 only)</td>
+<td>—</td>
+<td>€80K</td>
+<td>+€80K</td>
+</tr>
+<tr>
+<td><strong>Total delta Y1</strong></td>
+<td></td>
+<td></td>
+<td><strong>−€470K</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Revenue.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Old</th>
+<th>New (Y2 pro forma with AI + web + cloud in market)</th>
+<th>Delta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Perpetual license revenue (SE Europe + Turkey + MENA)</td>
+<td>€2.6M</td>
+<td>€2.9M (10% uplift from AI-headline pricing power)</td>
+<td>+€300K</td>
+</tr>
+<tr>
+<td>Subscription revenue (existing base)</td>
+<td>€2.6M</td>
+<td>€3.4M (subscription tier + AI/cloud add-ons)</td>
+<td>+€800K</td>
+</tr>
+<tr>
+<td><strong>New:</strong> Marketplace revenue share (RegionCAD hosts other vendors&rsquo; MEP plugins in their shell)</td>
+<td>€0</td>
+<td>€120K (15% tenant share of $800K GMV)</td>
+<td>+€120K</td>
+</tr>
+<tr>
+<td><strong>New:</strong> Verticalization royalty (RegionCAD co-develops MEP-Southern-Europe vertical with TejasCAD, gets 45% royalty when TejasCAD Cloud sells it to other tenants&rsquo; end customers)</td>
+<td>€0</td>
+<td>€80K in Y2</td>
+<td>+€80K</td>
+</tr>
+<tr>
+<td><strong>Total delta Y2 (steady state)</strong></td>
+<td></td>
+<td></td>
+<td><strong>+€1.3M revenue + €470K cost savings = €1.77M annual improvement</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="104-strategic-outcomes-over-3-years"><a class="toclink" href="#104-strategic-outcomes-over-3-years">10.4 Strategic outcomes over 3 years</a></h3>
+<ul>
+<li><strong>Lost-deal rate down 60%</strong> — the AI + web feature gap that lost deals in 2027 is closed by 2029</li>
+<li><strong>Enterprise &amp; regulated customer wins</strong> — the encrypted-licensing crypto-audit report becomes the deciding factor in 3 government-tender wins</li>
+<li><strong>RegionCAD 2028 becomes a marketplace hub</strong> for European MEP plugins (attracts developers because it aggregates 18K seats + adjacent RegionCAD-family users)</li>
+<li><strong>RegionCAD&rsquo;s co-developed MEP vertical</strong> ships in three other TejasCAD tenants&rsquo; shells; the royalty flow becomes a €500K+/year line by Y3</li>
+<li><strong>Acquirer interest shifts</strong> — where RegionCAD-on-IntelliCAD was a &ldquo;hard to buy&rdquo; asset (buyer inherits consortium terms), RegionCAD-on-TejasCAD is a &ldquo;clean&rdquo; acquisition candidate at higher multiple</li>
+</ul>
+<h3 id="105-what-makes-this-case-study-realistic-vs-optimistic"><a class="toclink" href="#105-what-makes-this-case-study-realistic-vs-optimistic">10.5 What makes this case study realistic vs optimistic</a></h3>
+<p><strong>Realistic assumptions:</strong>
+- 60% conversion of new sales to the new product in Y2 (aggressive but achievable given AI/web/cloud gap they closed)
+- 10% pricing uplift on perpetual (typical for feature-differentiating releases)
+- €80K T&amp;M migration cost (in line with TejasCAD&rsquo;s cost-recovery model)</p>
+<p><strong>What could make it better than modeled:</strong>
+- Faster subscription mix shift as AI/cloud pull customers to subscription
+- Winning strategic accounts on encrypted-licensing story (single deal could exceed €500K)
+- Marketplace GMV grows faster than modeled if RegionCAD actively promotes plugins</p>
+<p><strong>What could make it worse than modeled:</strong>
+- Migration slower than 8 weeks due to deeper .NET dependencies
+- ACIS pass-through royalty higher than modeled if new customer volume outpaces
+- Some IntelliCAD-era customers refuse to upgrade and remain on runoff longer</p>
+<p><strong>Bottom line:</strong> the illustrative case shows RegionCAD reaches €1.8M annual improvement by Y2 on a Y1 net cost of −€470K (i.e., saves money in year 1) and a one-time €80K migration fee. The switch is cash-flow positive from month 12 onward.</p>
+<hr />
+<h2 id="11-in-one-paragraph-for-the-itc-member-ceo"><a class="toclink" href="#11-in-one-paragraph-for-the-itc-member-ceo">11. In one paragraph, for the ITC member CEO</a></h2>
+<p>If your product depends on AI, cloud, web, mobile, real-time co-edit, plugin ecosystem, or encrypted licensing being part of your value proposition in the next 24–36 months, you will need to invest $3–8M per year of engineering to build any of those on top of IntelliCAD, and the consortium license limits what you&rsquo;re allowed to build anyway. TejasCAD is the alternative to that spend — a platform on ODA + ACIS that ships all of those as first-class features, delivered on a member-license model that costs a fraction of what independent build-out would cost, run under an encrypted licensing infrastructure that is architecturally blind to your customer data. Your migration takes 9–18 months, your brand and customer relationships stay yours, your consortium royalty ends, and your acquirer optionality strengthens. <strong>The question is not whether the modern-CAD wave arrives at your segment — it&rsquo;s whether you cross to it, or wait for it to arrive at your customers first.</strong></p>
+    <footer class="doc-footer">
+      <p>Companion documents:
+        <a href="index.html">index</a> ·
+        <a href="tejascad-story.html">TejasCAD story</a> ·
+        <a href="tejascad-pitch-deck.html">TejasCAD deck</a> ·
+        <a href="tejascad-vs-intellicad.html">vs IntelliCAD</a> ·
+        <a href="tejascad-company-structure.html">company structure</a> ·
+        <a href="tejascad-licensing-architecture.html">licensing</a> ·
+        <a href="platform-strategy.html">platform strategy</a> ·
+        <a href="rearchitecture-plan.html">engine plan</a> ·
+        <a href="architecture-overview.html">overview</a> ·
+        <a href="industry-outlook.html">industry</a> ·
+        <a href="memory-architecture.html">memory</a> ·
+        <a href="brand-shortlist.html">brand</a> ·
+        <a href="exec-presentation.html">original exec deck</a>
+      </p>
+    </footer>
+  </main>
+</div>
+</body>
+</html>
