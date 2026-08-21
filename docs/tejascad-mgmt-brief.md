@@ -110,9 +110,13 @@ style: |
 | Component royalties (ACIS and others) | **$15–20 per sale** |
 | AI module | **~$7–8,000 per year** — experimental |
 | Android viewer | **~$8,000 per year** |
-| Mac, web application, web editor | **Not available** |
+| **macOS** | **Not available at any price** |
+| Web application and web editor | **Not available at any price** |
+| Linux | **Not available at any price** |
 
 > **The fee buys source code, not a product** — a codebase to staff, modify and re-merge at every version uptake.
+
+**IntelliCAD is Windows-bound.** macOS, Linux and the browser are not options a member can buy — **they are doors that stay shut.**
 
 ---
 
@@ -125,7 +129,7 @@ style: |
 | Engine defects | Member fixes; **work reaches rivals** | **We fix; member receives** |
 | Member's own plugins | Entangled with engine changes | **Remain theirs** |
 | Release cadence | Annual, coordinated | **Rolling** |
-| Platform reach | Windows | **Windows, Mac, Linux, web, Android** |
+| Platform reach | **Windows only** | **Windows, macOS, Linux, web, Android** |
 | AI | Paid add-on | **Included** |
 | Licensing infrastructure | Member sources their own | **Included, and platform-blind** |
 
