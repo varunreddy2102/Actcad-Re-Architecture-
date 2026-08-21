@@ -107,7 +107,9 @@ The viewer is proving something else: **some ODA features are not exposed throug
 
 7. **"IntelliCAD members are sticky."** They have been there twenty years. Switching costs are enormous. Why would they move now, for us?
 
-> **Points 2, 3, 5 and 6 are substantially correct. The next slide is where we agree with them and explain why we still think the answer is yes.**
+8. **"We do not have the team to do this."** The deep engine work is not what ActCAD's engineers do today. **A platform team has to be hired, from scratch, in a competitive market** — and until it exists, every estimate on these slides is provisional.
+
+> **Points 2, 3, 5, 6 and 8 are substantially correct. The next slide is where we agree with them and explain why we still think the answer is yes.**
 
 ---
 
@@ -122,6 +124,7 @@ The viewer is proving something else: **some ODA features are not exposed throug
 | **Members constrain the roadmap** | **Conceded, and it is the one that worries us most.** Mitigation: members get roadmap *input*, never a veto. Only Founding Partners get a seat, and it is advisory. |
 | **No validated demand** | **Fully conceded. We have zero LOIs.** That is precisely why the ask is concept approval and why there is a **hard kill switch at month 24.** |
 | **ITC members are sticky** | True — which is why the realistic base case is **12 members in seven years**, not fifty. The model already assumes they move slowly. |
+| **We don't have the team** | **Conceded, and it is the biggest execution risk.** The platform team must be hired. But note: **we need that team for ActCAD-new regardless** — the engine does not build itself either way. The platform spreads its cost, it does not create it. |
 
 <div class="big" markdown="1">
 
@@ -142,7 +145,7 @@ The viewer is proving something else: **some ODA features are not exposed throug
 | The concern | The commitment |
 |---|---|
 | **Who owns the roadmap?** | ActCAD's operating partner holds **final say on engine priorities.** Members get input. **No member request enters the engine roadmap over ActCAD's objection.** |
-| **Does my team become a support desk?** | **No.** Platform support is a **separate function with its own headcount**, funded out of member fees. ActCAD engineers are never on the hook for another vendor's bug. |
+| **Does my team become a support desk?** | **No — and they are not the ones who could.** Deep engine and platform work sits with the platform team. **ActCAD's team does what it is genuinely best at: domain expertise, verticals, IRX-level customisation, product judgement.** Platform L3 support is separate headcount, funded from member fees. |
 | **Who decides we're arming a competitor?** | **You do.** Whether we sell any tier to a given vendor is ActCAD's operating call, not a committee's. **Named-competitor exclusion is a veto you hold**, not a clause you hope works. |
 | **Does ActCAD wait behind members?** | **Every platform capability lands in ActCAD first**, before it is offered to any member. We are not building for members at ActCAD's expense. |
 | **What do I get out of it?** | **A founding stake and an operating role in TejasCAD.** This is not a sibling entity billing you from across a table — **you are a principal on both sides of it.** |
@@ -157,6 +160,23 @@ The viewer is proving something else: **some ODA features are not exposed throug
 **One consequence of us all being on both sides, stated plainly:** common ownership makes alignment easy and makes **written discipline more necessary, not less.** When the same people sit on both sides of an intercompany agreement, **nothing enforces arm's-length pricing except the agreement itself** — and a future investor or acquirer will examine exactly that in diligence. The discipline protects the *value* of both entities, not one from the other.
 
 > **If ActCAD and the platform ever conflict, ActCAD wins.** Worth writing down now — while we all agree — precisely because we are the same people today and may not always be the ones making the call.
+
+---
+
+## Who actually builds this — an honest division of labour
+
+**The two teams are good at different things, and the plan should say so plainly rather than assume everyone does everything.**
+
+| Function | Who does it |
+|---|---|
+| **Engine, multi-tenancy, licensing infrastructure, deep systems work** | **Platform team — to be built and led from the TejasCAD side.** This is C++/Rust systems engineering. |
+| **Domain expertise, verticals, IRX-level customisation, product judgement, what customers actually need** | **ActCAD's team.** Fifteen years of it, and it is not replaceable by hiring. |
+| **Platform L3 support to members** | Platform team, separate headcount, funded from member fees |
+| **A member's own L1 / L2 support** | The member. Never us. |
+
+> **This is a genuine complementarity, not a polite division.** The verticals are the most differentiated thing we can license — and they exist because of domain judgement the platform team could not produce. The engine exists because of systems work the ActCAD team does not do. **Neither half is sufficient alone.**
+
+**But it means one thing must be said clearly: the platform engineering team does not exist yet.** It has to be hired, and the ~3–6 engineer-months figure assumes those people are in place and productive. **Recruitment and ramp are the real schedule risk here** — more than the architecture, which is already proving out.
 
 ---
 

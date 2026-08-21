@@ -244,6 +244,7 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <li><a href="#the-case-against-this-stated-as-strongly-as-we-can-put-it">The case against this — stated as strongly as we can put it</a></li>
 <li><a href="#why-the-answer-is-still-yes-and-where-the-objection-lands">Why the answer is still yes — and where the objection lands</a></li>
 <li><a href="#what-this-means-for-actcad-and-for-the-partner-who-runs-it">What this means for ActCAD — and for the partner who runs it</a></li>
+<li><a href="#who-actually-builds-this-an-honest-division-of-labour">Who actually builds this — an honest division of labour</a></li>
 <li><a href="#the-kill-switch-how-this-ends-if-it-isnt-working">The kill switch — how this ends if it isn&rsquo;t working</a></li>
 <li><a href="#where-the-platform-idea-came-from-and-why-now">Where the platform idea came from — and why now</a></li>
 <li><a href="#building-for-actcad-vs-building-for-the-world-the-two-paths-side-by-side">Building for ActCAD vs building for the world — the two paths, side by side</a></li>
@@ -385,9 +386,12 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <li>
 <p><strong>&ldquo;IntelliCAD members are sticky.&rdquo;</strong> They have been there twenty years. Switching costs are enormous. Why would they move now, for us?</p>
 </li>
+<li>
+<p><strong>&ldquo;We do not have the team to do this.&rdquo;</strong> The deep engine work is not what ActCAD&rsquo;s engineers do today. <strong>A platform team has to be hired, from scratch, in a competitive market</strong> — and until it exists, every estimate on these slides is provisional.</p>
+</li>
 </ol>
 <blockquote>
-<p><strong>Points 2, 3, 5 and 6 are substantially correct. The next slide is where we agree with them and explain why we still think the answer is yes.</strong></p>
+<p><strong>Points 2, 3, 5, 6 and 8 are substantially correct. The next slide is where we agree with them and explain why we still think the answer is yes.</strong></p>
 </blockquote>
 <hr />
 <h2 id="why-the-answer-is-still-yes-and-where-the-objection-lands"><a class="toclink" href="#why-the-answer-is-still-yes-and-where-the-objection-lands">Why the answer is still yes — and where the objection lands</a></h2>
@@ -427,6 +431,10 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <td><strong>ITC members are sticky</strong></td>
 <td>True — which is why the realistic base case is <strong>12 members in seven years</strong>, not fifty. The model already assumes they move slowly.</td>
 </tr>
+<tr>
+<td><strong>We don&rsquo;t have the team</strong></td>
+<td><strong>Conceded, and it is the biggest execution risk.</strong> The platform team must be hired. But note: <strong>we need that team for ActCAD-new regardless</strong> — the engine does not build itself either way. The platform spreads its cost, it does not create it.</td>
+</tr>
 </tbody>
 </table>
 <div class="big">
@@ -453,7 +461,7 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </tr>
 <tr>
 <td><strong>Does my team become a support desk?</strong></td>
-<td><strong>No.</strong> Platform support is a <strong>separate function with its own headcount</strong>, funded out of member fees. ActCAD engineers are never on the hook for another vendor&rsquo;s bug.</td>
+<td><strong>No — and they are not the ones who could.</strong> Deep engine and platform work sits with the platform team. <strong>ActCAD&rsquo;s team does what it is genuinely best at: domain expertise, verticals, IRX-level customisation, product judgement.</strong> Platform L3 support is separate headcount, funded from member fees.</td>
 </tr>
 <tr>
 <td><strong>Who decides we&rsquo;re arming a competitor?</strong></td>
@@ -480,6 +488,39 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <blockquote>
 <p><strong>If ActCAD and the platform ever conflict, ActCAD wins.</strong> Worth writing down now — while we all agree — precisely because we are the same people today and may not always be the ones making the call.</p>
 </blockquote>
+<hr />
+<h2 id="who-actually-builds-this-an-honest-division-of-labour"><a class="toclink" href="#who-actually-builds-this-an-honest-division-of-labour">Who actually builds this — an honest division of labour</a></h2>
+<p><strong>The two teams are good at different things, and the plan should say so plainly rather than assume everyone does everything.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Who does it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Engine, multi-tenancy, licensing infrastructure, deep systems work</strong></td>
+<td><strong>Platform team — to be built and led from the TejasCAD side.</strong> This is C++/Rust systems engineering.</td>
+</tr>
+<tr>
+<td><strong>Domain expertise, verticals, IRX-level customisation, product judgement, what customers actually need</strong></td>
+<td><strong>ActCAD&rsquo;s team.</strong> Fifteen years of it, and it is not replaceable by hiring.</td>
+</tr>
+<tr>
+<td><strong>Platform L3 support to members</strong></td>
+<td>Platform team, separate headcount, funded from member fees</td>
+</tr>
+<tr>
+<td><strong>A member&rsquo;s own L1 / L2 support</strong></td>
+<td>The member. Never us.</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>This is a genuine complementarity, not a polite division.</strong> The verticals are the most differentiated thing we can license — and they exist because of domain judgement the platform team could not produce. The engine exists because of systems work the ActCAD team does not do. <strong>Neither half is sufficient alone.</strong></p>
+</blockquote>
+<p><strong>But it means one thing must be said clearly: the platform engineering team does not exist yet.</strong> It has to be hired, and the ~3–6 engineer-months figure assumes those people are in place and productive. <strong>Recruitment and ramp are the real schedule risk here</strong> — more than the architecture, which is already proving out.</p>
 <hr />
 <h2 id="the-kill-switch-how-this-ends-if-it-isnt-working"><a class="toclink" href="#the-kill-switch-how-this-ends-if-it-isnt-working">The kill switch — how this ends if it isn&rsquo;t working</a></h2>
 <p><strong>A yes today is not open-ended. It buys an option with a defined expiry and a defined test.</strong></p>
