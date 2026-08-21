@@ -287,7 +287,8 @@ We are an IntelliCAD member. **We know this market's economics because we live t
 | **Who maintains the engine** | **You do. Forever.** Fork it, patch it, re-merge on every uptake | **We do.** You never touch engine code |
 | **Who owns the IP** | Consortium-held; you hold a licence | Platform-held; you hold a licence **— and founding members hold equity** |
 | **Who sets direction** | Member supermajority. **The slowest member sets the pace** | Platform decides. **Members have voice, not veto** |
-| **Your bug fixes** | Flow to every member, **including your competitors** | **Stay yours** |
+| **Engine bugs** | **You fix them yourself, in source** — then your fix flows to every member including competitors, *and* you carry the re-merge burden forever | **We fix them, and the fix ships to every member.** You benefit from every other member's reported bug without having funded any of it |
+| **Your proprietary work** | Blurred — your engine patches and your product code are intertwined | **Clean: your plugins, verticals, tenant configuration and UI stay entirely yours** |
 | **Release cadence** | Coordinated, annual | **Rolling. You ship when you are ready** |
 | **Platform reach** | Windows | Windows, Mac, Linux, web, Android |
 | **AI** | ~$8K experimental add-on | **In every tier** |
@@ -301,6 +302,10 @@ We are an IntelliCAD member. **We know this market's economics because we live t
 
 > **The "++" is not just a better engine — it is a better deal on who does the work.** That is the sentence to lead with in every member conversation.
 
+**On shared fixes, to be precise — because it sounds like the ITC problem and is its opposite.** Engine fixes *do* reach every member. The difference is who paid for them. **Under ITC a member spends their own engineers fixing the engine and watches that investment reach competitors. Here, nobody's engineers are spent on the engine but ours** — so a shared fix pool is something each member draws from rather than contributes to. **What stays proprietary is the work that actually differentiates them: their plugins, verticals, configuration and UI.**
+
+> **We are already running this model.** ActCAD's team files numbered bugs against each drop and we ship fixes back — 13+ releases so far. **ActCAD is member zero, and the arrangement is working before we have written a contract for it.**
+
 > ⚠️ **One thing this raises that needs deciding:** how far the ownership-sharing goes. Founding Partner warrants are three small slots — parity between us is preserved. **Going further, toward genuine member co-ownership, buys deeper commitment but reintroduces exactly the governance drag that made ITC slow.** Our position is warrants yes, votes no — but it is a decision, not a given.
 
 ---
@@ -311,7 +316,7 @@ Not competition. Segments where they'd rather share the platform cost than fund 
 
 | Segment | What they are | Why they'd talk to us |
 |---|---|---|
-| **Regional ITC members** | progeCAD, CADian, CMS IntelliCAD, DoubleCAD, and the long tail of regional / vertical ITC-based products | Stuck on the IntelliCAD ceiling for AI / cloud / web / mobile. Consortium sends their fixes to competitors. |
+| **Regional ITC members** | progeCAD, CADian, CMS IntelliCAD, DoubleCAD, and the long tail of regional / vertical ITC-based products | Stuck on the IntelliCAD ceiling for AI / cloud / web / mobile — and **paying their own engineers to fix an engine, only for that work to reach competitors.** |
 | **Vertical ISVs** | MEP, structural, electrical, survey, solar, curtain-wall specialists | No clean engine option. Forced onto AutoCAD SDK or DIY. Would ship a full branded CAD in 90 days on us. |
 | **BIM-lite startups** | New AEC-tech founders in Bengaluru, EU, ME, LATAM | Need CAD + IFC + AI foundation; can't afford to build it |
 
