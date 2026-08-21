@@ -200,7 +200,19 @@ go(isNaN(h)?0:h-1);
 
 def build(src: Path) -> Path:
     raw = src.read_text(encoding="utf-8")
+
+    # Guard: if the frontmatter's closing "---" is missing, the lazy match runs
+    # on to the first slide separator and silently swallows slide 1. That failed
+    # quietly twice. Detect it by what got captured: real frontmatter is only
+    # key/value lines, so a heading or HTML comment inside it means over-match.
+    m = FRONTMATTER_RE.match(raw)
+    if m and re.search(r"^#{1,3}\s|<!--", m.group(0), re.M):
+        raise SystemExit(
+            f"{src}: YAML frontmatter has no closing '---', so slide 1 would be "
+            "swallowed.\nAdd a '---' line after the style block."
+        )
     raw = FRONTMATTER_RE.sub("", raw)
+
     chunks = [c.strip() for c in raw.split("\n---\n") if c.strip()]
 
     slides, cards = [], []

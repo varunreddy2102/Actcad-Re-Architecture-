@@ -15,6 +15,7 @@ style: |
   strong { color: #1a3a6c; }
   .big { font-size: 1.35em; line-height: 1.4; color: #1a3a6c; }
   .quiet { color: #666; font-size: 0.85em; }
+---
 
 <!-- _class: lead -->
 <!-- _paginate: false -->
