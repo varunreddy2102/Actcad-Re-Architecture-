@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TejasCAD — ActCAD Re-Architecture</title>
+<title>A next-generation CAD platform — ActCAD Re-Architecture</title>
 <style>
 :root {
   --bg: #fafbfc;
@@ -237,20 +237,21 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
     </div>
     <nav class="toc-nav"><div class="toc">
 <ul>
-<li><a href="#licensing-our-new-cad-engine-to-other-vendors">Licensing our new CAD engine to other vendors</a></li>
-<li><a href="#purpose-of-this-briefing">Purpose of this briefing</a></li>
+<li><a href="#built-in-india-licensed-to-the-world">Built in India. Licensed to the world.</a></li>
+<li><a href="#what-we-are-proposing">What we are proposing</a></li>
 <li><a href="#where-the-engineering-stands">Where the engineering stands</a></li>
 <li><a href="#architecture-for-the-editor">Architecture for the editor</a></li>
 <li><a href="#the-opportunity">The opportunity</a></li>
 <li><a href="#what-we-pay-intellicad-today">What we pay IntelliCAD today</a></li>
-<li><a href="#how-our-offer-would-compare">How our offer would compare</a></li>
-<li><a href="#proposed-commercial-model">Proposed commercial model</a></li>
+<li><a href="#what-we-would-offer-instead">What we would offer instead</a></li>
+<li><a href="#commercial-model">Commercial model</a></li>
 <li><a href="#financial-outlook">Financial outlook</a></li>
 <li><a href="#investment-required">Investment required</a></li>
-<li><a href="#two-options">Two options</a></li>
-<li><a href="#principal-risks">Principal risks</a></li>
-<li><a href="#governance-and-review-gates">Governance and review gates</a><ul>
-<li><a href="#and-to-open-three-discussions">And to open three discussions</a></li>
+<li><a href="#our-approach">Our approach</a></li>
+<li><a href="#risks-and-how-we-manage-them">Risks and how we manage them</a></li>
+<li><a href="#governance-and-review-gates">Governance and review gates</a></li>
+<li><a href="#the-name">The name</a><ul>
+<li><a href="#what-we-are-asking-today">What we are asking today</a></li>
 </ul>
 </li>
 </ul>
@@ -262,22 +263,23 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
       <p class="doc-kicker">ActCAD Re-Architecture · Jytra Technology Solutions · Confidential</p>
       <p class="doc-meta">tejascad-mgmt-brief.md</p>
     </div>
-    <h1 id="tejascad"><a class="toclink" href="#tejascad">TejasCAD</a></h1>
-<h3 id="licensing-our-new-cad-engine-to-other-vendors"><a class="toclink" href="#licensing-our-new-cad-engine-to-other-vendors">Licensing our new CAD engine to other vendors</a></h3>
+    <h1 id="a-next-generation-cad-platform"><a class="toclink" href="#a-next-generation-cad-platform">A next-generation CAD platform</a></h1>
+<h3 id="built-in-india-licensed-to-the-world"><a class="toclink" href="#built-in-india-licensed-to-the-world">Built in India. Licensed to the world.</a></h3>
 <p><strong>Directors&rsquo; briefing</strong></p>
-<p><em>Working brand, pending trademark clearance. ITC figures are actual; our projections are illustrative.</em></p>
+<p><em>ITC figures are actual. Our projections are illustrative.</em></p>
 <hr />
-<h2 id="purpose-of-this-briefing"><a class="toclink" href="#purpose-of-this-briefing">Purpose of this briefing</a></h2>
+<h2 id="what-we-are-proposing"><a class="toclink" href="#what-we-are-proposing">What we are proposing</a></h2>
 <ul>
-<li>We are replacing ActCAD&rsquo;s IntelliCAD foundation with <strong>an engine we own</strong></li>
-<li>The same engine could be <strong>licensed to other CAD vendors</strong> under their brands</li>
-<li>This briefing sets out <strong>that opportunity, its economics, and its risks</strong></li>
+<li>We are building <strong>an engine we own</strong> — and it is already running</li>
+<li>The same engine can carry <strong>many brands, not just ours</strong></li>
+<li>That makes us <strong>a platform business alongside a product business</strong></li>
 </ul>
 <div class="big">
-<p><strong>We are seeking in-principle approval to explore it — and to open three discussions.</strong></p>
+<p><strong>We are seeking in-principle approval to build this as a platform from the outset.</strong></p>
 </div>
+<p><strong>Three things to work through together</strong></p>
 <ul>
-<li><strong>Corporate structure</strong> · <strong>Capital requirement</strong> · <strong>Team required</strong></li>
+<li><strong>Corporate structure</strong> · <strong>Capital requirement</strong> · <strong>The team we build</strong></li>
 </ul>
 <hr />
 <h2 id="where-the-engineering-stands"><a class="toclink" href="#where-the-engineering-stands">Where the engineering stands</a></h2>
@@ -289,39 +291,41 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <li><strong>3D orbit, ViewCube, layouts and paper-space viewports</strong></li>
 <li><strong>DWG and PDF comparison</strong>, colour plotting, batch print, markups</li>
 <li><strong>Windows MSI shipping</strong> · macOS CI green · Android prototype</li>
-<li><strong>594 of 594 tests passing</strong> · read-only guarantee intact</li>
+<li><strong>594 of 594 tests passing</strong></li>
 </ul>
-<blockquote>
-<p><strong>Benchmarking shows it ahead of ActCAD on many customer files, and ahead of both IntelliCAD&rsquo;s viewer and ODA&rsquo;s own.</strong></p>
-</blockquote>
-<p><strong>Outstanding:</strong> customer-hardware performance baseline · public launch</p>
+<div class="big">
+<p><strong>Benchmarking already puts it ahead of ActCAD on many customer files — and ahead of both IntelliCAD&rsquo;s viewer and ODA&rsquo;s own.</strong></p>
+</div>
 <hr />
 <h2 id="architecture-for-the-editor"><a class="toclink" href="#architecture-for-the-editor">Architecture for the editor</a></h2>
 <p><strong>Certain ODA capabilities are not exposed through the web stack.</strong></p>
 <ul>
 <li><strong>To viewer launch</strong> — continue on the current Rust/Tauri and WASM stack</li>
 <li><strong>After launch</strong> — <strong>migrate the full editor to Qt and C++ native</strong></li>
-<li>provides access to the ODA surface unavailable on web</li>
+<li>opens the ODA surface unavailable on web</li>
 <li>aligns with where the ActCAD team intends to work long term</li>
-<li><strong>The web viewer</strong> — either folds into the Qt stack or remains separate</li>
-<li><strong>to be determined with data during migration</strong></li>
+<li><strong>The web viewer</strong> — folds into the Qt stack, or remains separate</li>
+<li>decided with data during migration</li>
 </ul>
 <blockquote>
-<p><strong>The platform capabilities — tenant configuration, licensing, marketplace, AI — reside in the C++ core in either case.</strong></p>
+<p><strong>The platform capabilities — tenant configuration, licensing, marketplace, AI — live in the C++ core either way.</strong></p>
 </blockquote>
 <hr />
 <h2 id="the-opportunity"><a class="toclink" href="#the-opportunity">The opportunity</a></h2>
 <ul>
-<li><strong>~40 IntelliCAD Consortium members</strong> — regional CAD vendors on the same foundation we are leaving</li>
+<li><strong>~40 IntelliCAD Consortium members</strong> — regional CAD vendors on the foundation we are leaving</li>
 <li><strong>~200 vertical ISVs</strong> — MEP, structural, electrical, survey, solar</li>
-<li><strong>BIM-lite startups</strong> — need a CAD foundation they cannot afford to build</li>
+<li><strong>BIM-lite startups</strong> — needing a CAD foundation they cannot afford to build</li>
 </ul>
-<p><strong>What they have in common</strong></p>
+<p><strong>What they share</strong></p>
 <ul>
-<li>Paying for a foundation that <strong>cannot deliver AI, cloud, web or mobile</strong></li>
-<li>Carrying <strong>a million lines of source they must maintain themselves</strong></li>
-<li><strong>No practical alternative</strong> short of a multi-year engine rebuild</li>
+<li>A foundation that <strong>cannot deliver AI, cloud, web or mobile</strong></li>
+<li><strong>A million lines of source they must maintain themselves</strong></li>
+<li><strong>No practical alternative</strong> short of a multi-year rebuild</li>
 </ul>
+<div class="big">
+<p><strong>Nobody is currently offering them a modern engine as a product. That is the opening.</strong></p>
+</div>
 <hr />
 <h2 id="what-we-pay-intellicad-today"><a class="toclink" href="#what-we-pay-intellicad-today">What we pay IntelliCAD today</a></h2>
 <table>
@@ -359,16 +363,16 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </tbody>
 </table>
 <blockquote>
-<p><strong>The fee purchases source code, not a product</strong> — a codebase to staff, modify and re-merge at every version uptake.</p>
+<p><strong>The fee buys source code, not a product</strong> — a codebase to staff, modify and re-merge at every version uptake.</p>
 </blockquote>
 <hr />
-<h2 id="how-our-offer-would-compare"><a class="toclink" href="#how-our-offer-would-compare">How our offer would compare</a></h2>
+<h2 id="what-we-would-offer-instead"><a class="toclink" href="#what-we-would-offer-instead">What we would offer instead</a></h2>
 <table>
 <thead>
 <tr>
 <th></th>
 <th><strong>IntelliCAD provides</strong></th>
-<th><strong>TejasCAD would provide</strong></th>
+<th><strong>We would provide</strong></th>
 </tr>
 </thead>
 <tbody>
@@ -379,7 +383,7 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </tr>
 <tr>
 <td>Engine maintenance</td>
-<td>The member&rsquo;s responsibility</td>
+<td>The member&rsquo;s problem</td>
 <td><strong>Ours</strong></td>
 </tr>
 <tr>
@@ -415,7 +419,7 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </tbody>
 </table>
 <hr />
-<h2 id="proposed-commercial-model"><a class="toclink" href="#proposed-commercial-model">Proposed commercial model</a></h2>
+<h2 id="commercial-model"><a class="toclink" href="#commercial-model">Commercial model</a></h2>
 <p><strong>Three tiers</strong></p>
 <ul>
 <li><strong>Core</strong> — engine, DWG fidelity, white-label shell, licensing, AI</li>
@@ -459,8 +463,8 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </tbody>
 </table>
 <ul>
-<li><strong>Phased at 50 / 75 / 100%</strong> across the member&rsquo;s migration years</li>
-<li><strong>Component royalties passed through at cost</strong> · <strong>AI metered above an allowance</strong></li>
+<li><strong>Phased 50 / 75 / 100%</strong> across each member&rsquo;s migration</li>
+<li><strong>Component royalties at cost</strong> · <strong>AI metered above an allowance</strong></li>
 </ul>
 <hr />
 <h2 id="financial-outlook"><a class="toclink" href="#financial-outlook">Financial outlook</a></h2>
@@ -507,11 +511,10 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </tbody>
 </table>
 <div class="big">
-<p><strong>A profitable adjacent business line. Not a venture-scale outcome.</strong></p>
+<p><strong>High-margin recurring revenue, earned on engineering we are funding anyway — and a second asset on the balance sheet.</strong></p>
 </div>
 <ul>
-<li>Revenue accrues <strong>in addition to ActCAD</strong>, from engineering already funded</li>
-<li>Materially larger scale would require <strong>60–100 members</strong>, direct distribution, or the 3D product</li>
+<li>Beyond this: <strong>60–100 members</strong>, direct distribution, or the <strong>3D product on C3D</strong> each open a materially larger business</li>
 </ul>
 <hr />
 <h2 id="investment-required"><a class="toclink" href="#investment-required">Investment required</a></h2>
@@ -542,12 +545,20 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </tbody>
 </table>
 <ul>
-<li>The seed is <strong>the increment on an engine already funded</strong> — not its full cost</li>
-<li>A strategic investor at years 4–5 would <strong>establish a valuation floor</strong> ahead of any sale</li>
+<li>The seed is <strong>the increment on an engine already funded</strong></li>
+<li>A strategic investor at years 4–5 <strong>sets a valuation floor</strong> ahead of any sale</li>
 <li>At ~70% margins the business <strong>self-funds from year 3</strong></li>
 </ul>
 <hr />
-<h2 id="two-options"><a class="toclink" href="#two-options">Two options</a></h2>
+<h2 id="our-approach"><a class="toclink" href="#our-approach">Our approach</a></h2>
+<div class="big">
+<p><strong>Build the platform capability now. Decide on commercialisation at month 24, with real data.</strong></p>
+</div>
+<ul>
+<li>The multi-tenant architecture <strong>makes ActCAD better in its own right</strong> — clean core, real plugin API, configuration over hard-coding</li>
+<li>Building it now costs <strong>3–6 engineer-months</strong>. Retrofitting later means <strong>reworking six of ten modules</strong></li>
+<li>We reach the month-24 decision <strong>having lost nothing if we decline it</strong></li>
+</ul>
 <table>
 <thead>
 <tr>
@@ -563,14 +574,9 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <td>Same</td>
 </tr>
 <tr>
-<td>Timeline</td>
-<td>~24 months to GA</td>
+<td>Timeline to GA</td>
+<td>~24 months</td>
 <td>Unchanged</td>
-</tr>
-<tr>
-<td>Additional cost</td>
-<td>—</td>
-<td><strong>3–6 engineer-months</strong></td>
 </tr>
 <tr>
 <td>Revenue</td>
@@ -578,45 +584,33 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <td><strong>Plus member fees and royalties</strong></td>
 </tr>
 <tr>
-<td>Asset at exit</td>
+<td>Assets</td>
 <td>One product</td>
 <td><strong>Two separable assets</strong></td>
 </tr>
-<tr>
-<td>Complexity</td>
-<td>Lower</td>
-<td>Second entity, partner obligations</td>
-</tr>
 </tbody>
 </table>
-<div class="big">
-<p><strong>Recommendation: build the platform capability now, and decide on commercialisation at month 24.</strong></p>
-</div>
-<ul>
-<li>The multi-tenant architecture <strong>improves ActCAD in its own right</strong></li>
-<li>Retrofitting it later would mean <strong>reworking six of ten modules</strong></li>
-</ul>
 <hr />
-<h2 id="principal-risks"><a class="toclink" href="#principal-risks">Principal risks</a></h2>
+<h2 id="risks-and-how-we-manage-them"><a class="toclink" href="#risks-and-how-we-manage-them">Risks and how we manage them</a></h2>
 <table>
 <thead>
 <tr>
 <th>Risk</th>
-<th>How we would manage it</th>
+<th>Mitigation</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Management attention diverted from ActCAD</strong></td>
-<td>Platform work is scoped and time-boxed; ActCAD GA remains the priority</td>
+<td><strong>Attention diverted from ActCAD</strong></td>
+<td>Platform work scoped and time-boxed; ActCAD GA stays the priority</td>
 </tr>
 <tr>
-<td><strong>Demand unproven</strong> — no members, no LOIs</td>
+<td><strong>Demand unproven</strong></td>
 <td>Month-24 gate; no entity or obligations before it</td>
 </tr>
 <tr>
 <td><strong>Team must be recruited</strong></td>
-<td>Required for ActCAD regardless; platform shares the cost</td>
+<td>Needed for ActCAD regardless; the platform shares the cost</td>
 </tr>
 <tr>
 <td><strong>Member roadmap influence</strong></td>
@@ -624,15 +618,11 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 </tr>
 <tr>
 <td><strong>Licensing verticals to potential competitors</strong></td>
-<td>Named-competitor exclusion, or the tier is simply not offered</td>
+<td>Named-competitor exclusion, or the tier is not offered</td>
 </tr>
 <tr>
-<td><strong>Consortium members are slow to move</strong></td>
+<td><strong>Consortium members move slowly</strong></td>
 <td>Base case assumes 12 members over seven years</td>
-</tr>
-<tr>
-<td><strong>Returns are modest</strong></td>
-<td>Presented as an adjacent line, not a growth story</td>
 </tr>
 </tbody>
 </table>
@@ -650,35 +640,73 @@ h4:hover .headerlink, h5:hover .headerlink, h6:hover .headerlink { opacity: 1; }
 <tr>
 <td><strong>Month 12</strong></td>
 <td>8–10 qualified member conversations held</td>
-<td>Outbound stops; engineering continues</td>
+<td>Outbound pauses; engineering continues</td>
 </tr>
 <tr>
 <td><strong>Month 24, at ActCAD GA</strong></td>
 <td><strong>Two members at signed LOI</strong></td>
-<td><strong>Commercialisation does not proceed</strong></td>
+<td>Commercialisation does not proceed</td>
 </tr>
 <tr>
 <td><strong>Before any vertical-tier sale</strong></td>
-<td>No conflict with ActCAD&rsquo;s own markets</td>
+<td>No conflict with ActCAD&rsquo;s markets</td>
 <td>Tier withheld from that member</td>
 </tr>
 </tbody>
 </table>
-<div class="big">
-<p><strong>If the month-24 gate is not met, the exposure is 3–6 engineer-months of architecture we would adopt for ActCAD in any case.</strong></p>
-</div>
+<blockquote>
+<p><strong>Every gate is a decision this board takes, on evidence, at the time.</strong></p>
+</blockquote>
 <hr />
-<h1 id="decisions-requested"><a class="toclink" href="#decisions-requested">Decisions requested</a></h1>
-<div class="big">
-<p><strong>In-principle approval to proceed with exploration</strong></p>
-</div>
-<h3 id="and-to-open-three-discussions"><a class="toclink" href="#and-to-open-three-discussions">And to open three discussions</a></h3>
+<h2 id="the-name"><a class="toclink" href="#the-name">The name</a></h2>
+<p>From Sanskrit <strong>takṣ</strong> — <em>to shape, to carve, to fashion</em>. The root of <strong>Takshashila</strong>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Line</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TAKSHON</strong></td>
+<td><em>Design Beyond Boundaries</em></td>
+<td>Most futuristic and ownable; <strong>strongest search position</strong></td>
+</tr>
+<tr>
+<td><strong>TAKSH</strong></td>
+<td><em>Precision in Every Dimension</em></td>
+<td><strong>Shortest, sharpest wordmark</strong>; meaning maps exactly to what CAD does</td>
+</tr>
+<tr>
+<td><strong>TAKSHA</strong></td>
+<td><em>Design. Simulate. Build.</em></td>
+<td>Premium and distinctly Indian — <strong>conflict risk with an adjacent engineering-AI name</strong></td>
+</tr>
+<tr>
+<td><strong>VISTAAR</strong></td>
+<td><em>From Structures to Skylines</em></td>
+<td>Best BIM and infrastructure story; more crowded</td>
+</tr>
+</tbody>
+</table>
 <ul>
-<li><strong>Corporate structure</strong></li>
-<li><strong>Capital requirement</strong></li>
-<li><strong>Team required</strong></li>
+<li><strong>TAKSH</strong> and <strong>TAKSHON</strong> are the two to take forward</li>
+<li>Sub-brands follow naturally — <strong>Engine · Cloud · Forge · SDK</strong></li>
+<li><strong>Trademark and domain clearance before anything external</strong></li>
 </ul>
-<p><strong>No capital commitment, incorporation, external communication, or change to ActCAD&rsquo;s operations is sought today.</strong></p>
+<hr />
+<h1 id="lets-build-it"><a class="toclink" href="#lets-build-it">Let&rsquo;s build it</a></h1>
+<div class="big">
+<p><strong>A next-generation CAD platform, engineered in India, licensed to the world.</strong></p>
+</div>
+<h3 id="what-we-are-asking-today"><a class="toclink" href="#what-we-are-asking-today">What we are asking today</a></h3>
+<ul>
+<li><strong>In-principle approval to build platform-first</strong></li>
+<li><strong>Open the discussion on structure, capital and team</strong></li>
+</ul>
+<p><strong>The engine is already running. The question is how far we take it.</strong></p>
     <footer class="doc-footer">
       <p>Companion documents:
         <a href="index.html">index</a> ·

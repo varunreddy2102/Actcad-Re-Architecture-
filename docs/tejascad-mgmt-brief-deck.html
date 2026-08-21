@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>TejasCAD</title>
+<title>A next-generation CAD platform</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -132,21 +132,22 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 <body>
 <div id="bar"></div><div id="appx">Appendix</div>
 <div id="tag">TejasCAD · Confidential</div><div id="num"></div>
-<section class="slide lead" data-ap="0"><h1>TejasCAD</h1>
-<h3>Licensing our new CAD engine to other vendors</h3>
+<section class="slide lead" data-ap="0"><h1>A next-generation CAD platform</h1>
+<h3>Built in India. Licensed to the world.</h3>
 <p><strong>Directors&rsquo; briefing</strong></p>
-<p><em>Working brand, pending trademark clearance. ITC figures are actual; our projections are illustrative.</em></p></section>
-<section class="slide" data-ap="0"><h2>Purpose of this briefing</h2>
+<p><em>ITC figures are actual. Our projections are illustrative.</em></p></section>
+<section class="slide" data-ap="0"><h2>What we are proposing</h2>
 <ul>
-<li>We are replacing ActCAD&rsquo;s IntelliCAD foundation with <strong>an engine we own</strong></li>
-<li>The same engine could be <strong>licensed to other CAD vendors</strong> under their brands</li>
-<li>This briefing sets out <strong>that opportunity, its economics, and its risks</strong></li>
+<li>We are building <strong>an engine we own</strong> — and it is already running</li>
+<li>The same engine can carry <strong>many brands, not just ours</strong></li>
+<li>That makes us <strong>a platform business alongside a product business</strong></li>
 </ul>
 <div class="big">
-<p><strong>We are seeking in-principle approval to explore it — and to open three discussions.</strong></p>
+<p><strong>We are seeking in-principle approval to build this as a platform from the outset.</strong></p>
 </div>
+<p><strong>Three things to work through together</strong></p>
 <ul>
-<li><strong>Corporate structure</strong> · <strong>Capital requirement</strong> · <strong>Team required</strong></li>
+<li><strong>Corporate structure</strong> · <strong>Capital requirement</strong> · <strong>The team we build</strong></li>
 </ul></section>
 <section class="slide" data-ap="0"><h2>Where the engineering stands</h2>
 <p><strong>Phase 0 — six weeks, ~207 commits, 13+ releases to the ActCAD team</strong></p>
@@ -157,37 +158,39 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 <li><strong>3D orbit, ViewCube, layouts and paper-space viewports</strong></li>
 <li><strong>DWG and PDF comparison</strong>, colour plotting, batch print, markups</li>
 <li><strong>Windows MSI shipping</strong> · macOS CI green · Android prototype</li>
-<li><strong>594 of 594 tests passing</strong> · read-only guarantee intact</li>
+<li><strong>594 of 594 tests passing</strong></li>
 </ul>
-<blockquote>
-<p><strong>Benchmarking shows it ahead of ActCAD on many customer files, and ahead of both IntelliCAD&rsquo;s viewer and ODA&rsquo;s own.</strong></p>
-</blockquote>
-<p><strong>Outstanding:</strong> customer-hardware performance baseline · public launch</p></section>
+<div class="big">
+<p><strong>Benchmarking already puts it ahead of ActCAD on many customer files — and ahead of both IntelliCAD&rsquo;s viewer and ODA&rsquo;s own.</strong></p>
+</div></section>
 <section class="slide" data-ap="0"><h2>Architecture for the editor</h2>
 <p><strong>Certain ODA capabilities are not exposed through the web stack.</strong></p>
 <ul>
 <li><strong>To viewer launch</strong> — continue on the current Rust/Tauri and WASM stack</li>
 <li><strong>After launch</strong> — <strong>migrate the full editor to Qt and C++ native</strong></li>
-<li>provides access to the ODA surface unavailable on web</li>
+<li>opens the ODA surface unavailable on web</li>
 <li>aligns with where the ActCAD team intends to work long term</li>
-<li><strong>The web viewer</strong> — either folds into the Qt stack or remains separate</li>
-<li><strong>to be determined with data during migration</strong></li>
+<li><strong>The web viewer</strong> — folds into the Qt stack, or remains separate</li>
+<li>decided with data during migration</li>
 </ul>
 <blockquote>
-<p><strong>The platform capabilities — tenant configuration, licensing, marketplace, AI — reside in the C++ core in either case.</strong></p>
+<p><strong>The platform capabilities — tenant configuration, licensing, marketplace, AI — live in the C++ core either way.</strong></p>
 </blockquote></section>
 <section class="slide" data-ap="0"><h2>The opportunity</h2>
 <ul>
-<li><strong>~40 IntelliCAD Consortium members</strong> — regional CAD vendors on the same foundation we are leaving</li>
+<li><strong>~40 IntelliCAD Consortium members</strong> — regional CAD vendors on the foundation we are leaving</li>
 <li><strong>~200 vertical ISVs</strong> — MEP, structural, electrical, survey, solar</li>
-<li><strong>BIM-lite startups</strong> — need a CAD foundation they cannot afford to build</li>
+<li><strong>BIM-lite startups</strong> — needing a CAD foundation they cannot afford to build</li>
 </ul>
-<p><strong>What they have in common</strong></p>
+<p><strong>What they share</strong></p>
 <ul>
-<li>Paying for a foundation that <strong>cannot deliver AI, cloud, web or mobile</strong></li>
-<li>Carrying <strong>a million lines of source they must maintain themselves</strong></li>
-<li><strong>No practical alternative</strong> short of a multi-year engine rebuild</li>
-</ul></section>
+<li>A foundation that <strong>cannot deliver AI, cloud, web or mobile</strong></li>
+<li><strong>A million lines of source they must maintain themselves</strong></li>
+<li><strong>No practical alternative</strong> short of a multi-year rebuild</li>
+</ul>
+<div class="big">
+<p><strong>Nobody is currently offering them a modern engine as a product. That is the opening.</strong></p>
+</div></section>
 <section class="slide" data-ap="0"><h2>What we pay IntelliCAD today</h2>
 <table>
 <thead>
@@ -224,15 +227,15 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 </tbody>
 </table>
 <blockquote>
-<p><strong>The fee purchases source code, not a product</strong> — a codebase to staff, modify and re-merge at every version uptake.</p>
+<p><strong>The fee buys source code, not a product</strong> — a codebase to staff, modify and re-merge at every version uptake.</p>
 </blockquote></section>
-<section class="slide" data-ap="0"><h2>How our offer would compare</h2>
+<section class="slide" data-ap="0"><h2>What we would offer instead</h2>
 <table>
 <thead>
 <tr>
 <th></th>
 <th><strong>IntelliCAD provides</strong></th>
-<th><strong>TejasCAD would provide</strong></th>
+<th><strong>We would provide</strong></th>
 </tr>
 </thead>
 <tbody>
@@ -243,7 +246,7 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 </tr>
 <tr>
 <td>Engine maintenance</td>
-<td>The member&rsquo;s responsibility</td>
+<td>The member&rsquo;s problem</td>
 <td><strong>Ours</strong></td>
 </tr>
 <tr>
@@ -278,7 +281,7 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 </tr>
 </tbody>
 </table></section>
-<section class="slide" data-ap="0"><h2>Proposed commercial model</h2>
+<section class="slide" data-ap="0"><h2>Commercial model</h2>
 <p><strong>Three tiers</strong></p>
 <ul>
 <li><strong>Core</strong> — engine, DWG fidelity, white-label shell, licensing, AI</li>
@@ -322,8 +325,8 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 </tbody>
 </table>
 <ul>
-<li><strong>Phased at 50 / 75 / 100%</strong> across the member&rsquo;s migration years</li>
-<li><strong>Component royalties passed through at cost</strong> · <strong>AI metered above an allowance</strong></li>
+<li><strong>Phased 50 / 75 / 100%</strong> across each member&rsquo;s migration</li>
+<li><strong>Component royalties at cost</strong> · <strong>AI metered above an allowance</strong></li>
 </ul></section>
 <section class="slide" data-ap="0"><h2>Financial outlook</h2>
 <table>
@@ -369,11 +372,10 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 </tbody>
 </table>
 <div class="big">
-<p><strong>A profitable adjacent business line. Not a venture-scale outcome.</strong></p>
+<p><strong>High-margin recurring revenue, earned on engineering we are funding anyway — and a second asset on the balance sheet.</strong></p>
 </div>
 <ul>
-<li>Revenue accrues <strong>in addition to ActCAD</strong>, from engineering already funded</li>
-<li>Materially larger scale would require <strong>60–100 members</strong>, direct distribution, or the 3D product</li>
+<li>Beyond this: <strong>60–100 members</strong>, direct distribution, or the <strong>3D product on C3D</strong> each open a materially larger business</li>
 </ul></section>
 <section class="slide" data-ap="0"><h2>Investment required</h2>
 <table>
@@ -403,11 +405,19 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 </tbody>
 </table>
 <ul>
-<li>The seed is <strong>the increment on an engine already funded</strong> — not its full cost</li>
-<li>A strategic investor at years 4–5 would <strong>establish a valuation floor</strong> ahead of any sale</li>
+<li>The seed is <strong>the increment on an engine already funded</strong></li>
+<li>A strategic investor at years 4–5 <strong>sets a valuation floor</strong> ahead of any sale</li>
 <li>At ~70% margins the business <strong>self-funds from year 3</strong></li>
 </ul></section>
-<section class="slide" data-ap="0"><h2>Two options</h2>
+<section class="slide" data-ap="0"><h2>Our approach</h2>
+<div class="big">
+<p><strong>Build the platform capability now. Decide on commercialisation at month 24, with real data.</strong></p>
+</div>
+<ul>
+<li>The multi-tenant architecture <strong>makes ActCAD better in its own right</strong> — clean core, real plugin API, configuration over hard-coding</li>
+<li>Building it now costs <strong>3–6 engineer-months</strong>. Retrofitting later means <strong>reworking six of ten modules</strong></li>
+<li>We reach the month-24 decision <strong>having lost nothing if we decline it</strong></li>
+</ul>
 <table>
 <thead>
 <tr>
@@ -423,14 +433,9 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 <td>Same</td>
 </tr>
 <tr>
-<td>Timeline</td>
-<td>~24 months to GA</td>
+<td>Timeline to GA</td>
+<td>~24 months</td>
 <td>Unchanged</td>
-</tr>
-<tr>
-<td>Additional cost</td>
-<td>—</td>
-<td><strong>3–6 engineer-months</strong></td>
 </tr>
 <tr>
 <td>Revenue</td>
@@ -438,44 +443,32 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 <td><strong>Plus member fees and royalties</strong></td>
 </tr>
 <tr>
-<td>Asset at exit</td>
+<td>Assets</td>
 <td>One product</td>
 <td><strong>Two separable assets</strong></td>
 </tr>
-<tr>
-<td>Complexity</td>
-<td>Lower</td>
-<td>Second entity, partner obligations</td>
-</tr>
 </tbody>
-</table>
-<div class="big">
-<p><strong>Recommendation: build the platform capability now, and decide on commercialisation at month 24.</strong></p>
-</div>
-<ul>
-<li>The multi-tenant architecture <strong>improves ActCAD in its own right</strong></li>
-<li>Retrofitting it later would mean <strong>reworking six of ten modules</strong></li>
-</ul></section>
-<section class="slide" data-ap="0"><h2>Principal risks</h2>
+</table></section>
+<section class="slide" data-ap="0"><h2>Risks and how we manage them</h2>
 <table>
 <thead>
 <tr>
 <th>Risk</th>
-<th>How we would manage it</th>
+<th>Mitigation</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Management attention diverted from ActCAD</strong></td>
-<td>Platform work is scoped and time-boxed; ActCAD GA remains the priority</td>
+<td><strong>Attention diverted from ActCAD</strong></td>
+<td>Platform work scoped and time-boxed; ActCAD GA stays the priority</td>
 </tr>
 <tr>
-<td><strong>Demand unproven</strong> — no members, no LOIs</td>
+<td><strong>Demand unproven</strong></td>
 <td>Month-24 gate; no entity or obligations before it</td>
 </tr>
 <tr>
 <td><strong>Team must be recruited</strong></td>
-<td>Required for ActCAD regardless; platform shares the cost</td>
+<td>Needed for ActCAD regardless; the platform shares the cost</td>
 </tr>
 <tr>
 <td><strong>Member roadmap influence</strong></td>
@@ -483,15 +476,11 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 </tr>
 <tr>
 <td><strong>Licensing verticals to potential competitors</strong></td>
-<td>Named-competitor exclusion, or the tier is simply not offered</td>
+<td>Named-competitor exclusion, or the tier is not offered</td>
 </tr>
 <tr>
-<td><strong>Consortium members are slow to move</strong></td>
+<td><strong>Consortium members move slowly</strong></td>
 <td>Base case assumes 12 members over seven years</td>
-</tr>
-<tr>
-<td><strong>Returns are modest</strong></td>
-<td>Presented as an adjacent line, not a growth story</td>
 </tr>
 </tbody>
 </table></section>
@@ -508,49 +497,87 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 <tr>
 <td><strong>Month 12</strong></td>
 <td>8–10 qualified member conversations held</td>
-<td>Outbound stops; engineering continues</td>
+<td>Outbound pauses; engineering continues</td>
 </tr>
 <tr>
 <td><strong>Month 24, at ActCAD GA</strong></td>
 <td><strong>Two members at signed LOI</strong></td>
-<td><strong>Commercialisation does not proceed</strong></td>
+<td>Commercialisation does not proceed</td>
 </tr>
 <tr>
 <td><strong>Before any vertical-tier sale</strong></td>
-<td>No conflict with ActCAD&rsquo;s own markets</td>
+<td>No conflict with ActCAD&rsquo;s markets</td>
 <td>Tier withheld from that member</td>
 </tr>
 </tbody>
 </table>
-<div class="big">
-<p><strong>If the month-24 gate is not met, the exposure is 3–6 engineer-months of architecture we would adopt for ActCAD in any case.</strong></p>
-</div></section>
-<section class="slide lead" data-ap="0"><h1>Decisions requested</h1>
-<div class="big">
-<p><strong>In-principle approval to proceed with exploration</strong></p>
-</div>
-<h3>And to open three discussions</h3>
+<blockquote>
+<p><strong>Every gate is a decision this board takes, on evidence, at the time.</strong></p>
+</blockquote></section>
+<section class="slide" data-ap="0"><h2>The name</h2>
+<p>From Sanskrit <strong>takṣ</strong> — <em>to shape, to carve, to fashion</em>. The root of <strong>Takshashila</strong>.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Line</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TAKSHON</strong></td>
+<td><em>Design Beyond Boundaries</em></td>
+<td>Most futuristic and ownable; <strong>strongest search position</strong></td>
+</tr>
+<tr>
+<td><strong>TAKSH</strong></td>
+<td><em>Precision in Every Dimension</em></td>
+<td><strong>Shortest, sharpest wordmark</strong>; meaning maps exactly to what CAD does</td>
+</tr>
+<tr>
+<td><strong>TAKSHA</strong></td>
+<td><em>Design. Simulate. Build.</em></td>
+<td>Premium and distinctly Indian — <strong>conflict risk with an adjacent engineering-AI name</strong></td>
+</tr>
+<tr>
+<td><strong>VISTAAR</strong></td>
+<td><em>From Structures to Skylines</em></td>
+<td>Best BIM and infrastructure story; more crowded</td>
+</tr>
+</tbody>
+</table>
 <ul>
-<li><strong>Corporate structure</strong></li>
-<li><strong>Capital requirement</strong></li>
-<li><strong>Team required</strong></li>
+<li><strong>TAKSH</strong> and <strong>TAKSHON</strong> are the two to take forward</li>
+<li>Sub-brands follow naturally — <strong>Engine · Cloud · Forge · SDK</strong></li>
+<li><strong>Trademark and domain clearance before anything external</strong></li>
+</ul></section>
+<section class="slide lead" data-ap="0"><h1>Let&rsquo;s build it</h1>
+<div class="big">
+<p><strong>A next-generation CAD platform, engineered in India, licensed to the world.</strong></p>
+</div>
+<h3>What we are asking today</h3>
+<ul>
+<li><strong>In-principle approval to build platform-first</strong></li>
+<li><strong>Open the discussion on structure, capital and team</strong></li>
 </ul>
-<p><strong>No capital commitment, incorporation, external communication, or change to ActCAD&rsquo;s operations is sought today.</strong></p></section>
+<p><strong>The engine is already running. The question is how far we take it.</strong></p></section>
 <div id="ov"><h2>All slides</h2><div class="grid">
-<div class="card" data-i="0"><div class="n">1</div><div class="t">TejasCAD</div></div>
-<div class="card" data-i="1"><div class="n">2</div><div class="t">Purpose of this briefing</div></div>
+<div class="card" data-i="0"><div class="n">1</div><div class="t">A next-generation CAD platform</div></div>
+<div class="card" data-i="1"><div class="n">2</div><div class="t">What we are proposing</div></div>
 <div class="card" data-i="2"><div class="n">3</div><div class="t">Where the engineering stands</div></div>
 <div class="card" data-i="3"><div class="n">4</div><div class="t">Architecture for the editor</div></div>
 <div class="card" data-i="4"><div class="n">5</div><div class="t">The opportunity</div></div>
 <div class="card" data-i="5"><div class="n">6</div><div class="t">What we pay IntelliCAD today</div></div>
-<div class="card" data-i="6"><div class="n">7</div><div class="t">How our offer would compare</div></div>
-<div class="card" data-i="7"><div class="n">8</div><div class="t">Proposed commercial model</div></div>
+<div class="card" data-i="6"><div class="n">7</div><div class="t">What we would offer instead</div></div>
+<div class="card" data-i="7"><div class="n">8</div><div class="t">Commercial model</div></div>
 <div class="card" data-i="8"><div class="n">9</div><div class="t">Financial outlook</div></div>
 <div class="card" data-i="9"><div class="n">10</div><div class="t">Investment required</div></div>
-<div class="card" data-i="10"><div class="n">11</div><div class="t">Two options</div></div>
-<div class="card" data-i="11"><div class="n">12</div><div class="t">Principal risks</div></div>
+<div class="card" data-i="10"><div class="n">11</div><div class="t">Our approach</div></div>
+<div class="card" data-i="11"><div class="n">12</div><div class="t">Risks and how we manage them</div></div>
 <div class="card" data-i="12"><div class="n">13</div><div class="t">Governance and review gates</div></div>
-<div class="card" data-i="13"><div class="n">14</div><div class="t">Decisions requested</div></div>
+<div class="card" data-i="13"><div class="n">14</div><div class="t">The name</div></div>
+<div class="card" data-i="14"><div class="n">15</div><div class="t">Let&#x27;s build it</div></div>
 </div><div class="hint">Click a slide to jump &nbsp;·&nbsp; ← → or space to move &nbsp;·&nbsp;
 O / Esc for this view &nbsp;·&nbsp; F fullscreen &nbsp;·&nbsp; P print to PDF</div></div>
 <script>
