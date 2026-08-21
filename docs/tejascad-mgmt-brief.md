@@ -123,50 +123,73 @@ And a specific market opened at the same time:
 
 ---
 
-## The passive-revenue picture — illustrative
+## What a member actually pays today — our own bill as the benchmark
 
-Once the engine is live, every member we add is **recurring income from work we already funded.** Illustrative per-member steady-state economics (Year 3+):
+We are an IntelliCAD member. **We know exactly what this market pays, because we pay it.**
+
+| What ActCAD pays today | Amount |
+|---|---|
+| ITC membership + extras | **~$100K / year** |
+| Per-seat royalty to ITC | **$0** — membership is royalty-free at the ITC level |
+| Component royalties (ACIS and a few others) | **$15–20 per sale** |
+
+**This is the number that disciplines our entire pricing model.** No ITC-tier vendor is going to pay us $250K/year for an engine when they pay ~$100K today — however much better ours is. Our fee has to land in the same neighbourhood and win on what it includes, not on price.
+
+**So the model is:**
+
+- **Platform fee $100–150K/year** — comparable to what they pay ITC now, but it includes AI, cloud, web, mobile, the marketplace, and the encrypted licensing stack, none of which ITC can deliver at any price
+- **Component royalties passed straight through at cost** — the same $15–20/sale they already pay, no markup, no margin for us
+- **Marketplace and vertical royalties on top** — these grow slowly and only become material once the ecosystem is real
+
+> **We are not trying to extract more per member than ITC does. We're trying to be worth the same money and deliver a product they cannot otherwise get.** That's a much easier sale, and it's the honest one.
+
+---
+
+## The passive-revenue picture — realistic
+
+Per-member economics at maturity, priced against the benchmark above:
 
 | Line | Per member / year |
 |---|---|
-| Annual membership fee (sliding scale) | ~$250K |
-| ACIS royalty pass-through margin | (~$0 — passed at cost) |
-| Marketplace share (platform's 15% of $500K GMV) | ~$75K |
-| Vertical co-development royalty (when applicable) | ~$50K |
-| **Recurring revenue per member** | **~$375K** |
-| Platform cost to serve one additional member | ~$85K |
-| **Gross margin per additional member** | **~77%** |
+| Platform fee (blended: ~$60K small ISV → ~$200K large vendor) | ~$120K |
+| Component royalties (ACIS etc.) | **$0 to us** — passed through at cost |
+| Marketplace share (15% of ~$230K GMV, once mature) | ~$35K |
+| Vertical co-development royalty (variable, when applicable) | ~$15K |
+| **Recurring revenue per member** | **~$170K** |
+| Platform cost to serve one additional member | ~$50K |
+| **Gross margin per additional member** | **~70%** |
 
-**What that compounds to (illustrative):**
+**What that compounds to:**
 
-| Members onboarded (incl. ActCAD) | Recurring platform revenue |
-|---|---|
-| 3 | ~$1.1M/yr |
-| 6 | ~$2.3M/yr |
-| 10 | ~$3.8M/yr |
-| 15 | ~$5.6M/yr |
+| Members (incl. ActCAD) | Recurring platform revenue | Contribution at ~70% margin |
+|---|---|---|
+| 3 | ~$450K/yr | ~$315K/yr |
+| 6 | ~$1.0M/yr | ~$700K/yr |
+| 12 | ~$2.0M/yr | ~$1.4M/yr |
+| 20 | ~$3.4M/yr | ~$2.4M/yr |
 
-> **This is on top of ActCAD's own revenue** — which we keep, in full, inside Jytra.
+> **This is on top of ActCAD's own revenue** — which we keep, in full, inside Jytra. And it comes from engineering we are funding anyway.
 
 ---
 
 ## What this could become — conservative, base, aggressive
 
-Two variables drive the whole outcome: **how many members we sign**, and **what each is worth per year.** Per-member value matures over time — roughly **$275K in year 3 → $600K by year 7** — as the member's own business grows on the platform, the marketplace fills up, and co-developed verticals start paying royalties.
+Two variables drive everything: **how many members we sign**, and **what each is worth per year** (fee + marketplace + vertical royalties, maturing from ~$120K early to ~$220K for a large, long-tenured member).
 
 | | **Conservative** | **Base** | **Aggressive** |
 |---|---|---|---|
-| Members by Y7 (incl. ActCAD) | 6 | 12 | 20 |
-| Avg revenue per member at Y7 | ~$350K | ~$600K | ~$900K |
-| **Platform ARR at Y7** | **~$2M** | **~$7M** | **~$18M** |
-| Gross margin | ~75% | ~78% | ~80% |
-| Indicative exit multiple | 6× (sub-scale) | 10× | 14× (ecosystem premium) |
-| **Indicative enterprise value** | **~$12M** | **~$70M** | **~$250M** |
-| What we'd likely do | Don't sell — run it as a profitable adjunct to ActCAD (~$1.5M/yr contribution) | Sell, or keep compounding | Competitive process; real strategic interest |
+| Members by Y7 (incl. ActCAD) | 5 | 12 | 20 |
+| Avg revenue per member at Y7 | ~$130K | ~$170K | ~$220K |
+| **Platform ARR at Y7** | **~$650K** | **~$2.0M** | **~$4.4M** |
+| Gross margin | ~65% | ~70% | ~72% |
+| **Annual profit contribution** | **~$420K** | **~$1.4M** | **~$3.2M** |
+| Indicative exit multiple | — | 5–6× | 7–8× |
+| **Indicative enterprise value** | not saleable at this scale | **~$10–12M** | **~$30–35M** |
+| What we'd likely do | Don't sell. Run it — it still pays for itself | Sell, or keep compounding | Competitive process; genuine strategic interest |
 
-**All three are acceptable outcomes.** Even the conservative case returns the promoter capital several times over and leaves ActCAD on a materially better engine. **None of them is a bet-the-company risk** — the engine gets built either way; the platform layer is the option on top.
+**Read this honestly: this is a profitable adjacent business line, not a venture-scale company.** Even the aggressive case is a ~$4M ARR business worth ~$35M. That is a very good outcome for a few engineer-months of incremental work on an engine we are building anyway — and a poor outcome for anyone expecting a unicorn.
 
-> **What would it take to be worth $1B+?** Honestly: **not this member model.** Twenty members at $900K caps out near $250M. A billion-dollar outcome needs either ~10× the member count (the full global long tail, 200+ vendors) or the platform selling **direct to end users** alongside its members — a bigger, more competitive, and quite different business. **That is a Phase 3 question to open deliberately, not something to assume today.**
+> **What would it take to be materially bigger?** Not this model. Twenty members at $220K caps out around $35M. Getting to $20M+ ARR needs **~100 members** (the full global long tail, a decade of partner management) or selling **direct to end users** alongside our members — a bigger, more competitive, quite different business. **That is a question to open deliberately later, not something to assume today.**
 
 ---
 
@@ -279,13 +302,15 @@ If we do not take the platform path, this is what happens:
 
 ## The three questions we'd like directors to sit with
 
-1. **Are we willing to run Jytra + TejasCAD as two clean entities**, with ActCAD paying standard-member fees to TejasCAD like any other member, so the platform economics are believable to future members and acquirers?
+1. **Is a ~$2–4M/year, ~70%-margin adjacent business worth the operational complexity** of running a second entity, managing partner relationships, and supporting other vendors' engineering teams? The revenue is real but it is not transformational — the honest question is whether the distraction cost is worth it.
 
-2. **Do we believe the founder team has the personal-capital appetite for the initial promoter seed** (illustrative $4M over 18 months), knowing this is friends-and-family capital with a 5-7 year horizon?
+2. **Are we willing to run Jytra + TejasCAD as two clean entities**, with ActCAD paying standard-member fees like any other member? That discipline is what makes the economics legible to members — but it also means real intercompany accounting for a business this size.
 
-3. **Do we want to be the ones who build this category** — the "India-built CAD platform, exported to the world" — or would we rather ship an excellent ActCAD and let someone else define the platform space?
+3. **Do we want to be the ones who build this** — the India-built CAD platform other vendors run on — accepting that on current numbers it is a **profitable business line, not a venture-scale outcome**, unless we later choose a much bigger distribution model?
 
-**Concept approval today is a yes to exploring these questions rigorously, not a yes to answering them.**
+**Concept approval today is a yes to exploring these rigorously, not a yes to answering them.**
+
+> **What we are NOT asking you to fund today:** the engine. That is already committed and building. The platform layer is roughly **3–6 engineer-months incremental** on top of work in flight — the marginal cost of keeping this option open is small.
 
 ---
 
