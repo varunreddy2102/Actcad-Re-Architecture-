@@ -15,7 +15,6 @@ style: |
   strong { color: #1a3a6c; }
   .big { font-size: 1.35em; line-height: 1.4; color: #1a3a6c; }
   .quiet { color: #666; font-size: 0.85em; }
----
 
 <!-- _class: lead -->
 <!-- _paginate: false -->
@@ -33,9 +32,7 @@ style: |
 
 ## The decision on the table today
 
-We are already re-architecting ActCAD off IntelliCAD onto our own engine. That work continues either way.
-
-**Today's question is one level higher:**
+We are already re-architecting ActCAD off IntelliCAD onto our own engine. **That work continues either way.**
 
 <div class="big" markdown="1">
 
@@ -43,7 +40,11 @@ We are already re-architecting ActCAD off IntelliCAD onto our own engine. That w
 
 </div>
 
-The technical answer to "can we build this?" is now yes — with real evidence. Phase 0, six weeks in (~207 commits), already ships a working viewer that the ActCAD team is beta-testing daily. **This is no longer a feasibility conversation. It is a strategy conversation.** Detail on the next slide.
+**Why the question arises now:** every seam we are building to serve ActCAD — the tenant-profile layer, the license service, the plugin host, the AI agent — **is exactly what a white-label CAD platform needs.** We are paying for it either way.
+
+**And the market it would serve is specific:** ~40 IntelliCAD Consortium members stuck where ActCAD was · ~200 vertical ISVs with no clean engine to license · a BIM-lite startup segment that cannot afford to build one. **They already spend $700K–1.3M a year all-in on a foundation they don't love.**
+
+> **"Can we build it?" is settled.** Phase 0 is six weeks in, ~207 commits, with a working viewer the ActCAD team beta-tests daily. **This is a strategy conversation now, not a feasibility one.**
 
 ---
 
@@ -68,24 +69,6 @@ Six weeks in, ~207 commits, versioning aligned to ActCAD's own (26.1 → 26.3.7,
 **Still owed from the exit criteria:** customer-hardware perf gate measurement (2019-i5 baseline) and public web adoption signal (there is no public launch yet).
 
 **Vendor blockers logged:** three ODA inWEB gaps (paper-space engine abort, TTF tessellation quality, unbound `appServices`) — all filed / worked around; none block the strategy.
-
----
-
-## The Phase 1 architectural direction — what we already know
-
-The viewer is proving something else: **some ODA features are not exposed through the web stack.** For those, the full-editor product needs a **native application** path, not just a browser.
-
-**Plan (already consistent with the original re-architecture plan):**
-
-- **Now → viewer launch:** continue on the current Rust/Tauri + WASM/inWEB stack. Ship the viewer.
-- **After viewer launch:** **migrate the full-product to Qt + C++ native.** This is where the ODA features currently missing from the web stack become available, and where the ActCAD team wants to live long-term.
-- **The web viewer:** either **folds into the Qt stack** as an alternate frontend on the same C++ engine, or **stays on Rust/Tauri** as an independent codebase. Open decision — settled with data during the migration.
-
-**Why the directors should hear this now:**
-
-- The Qt/C++ direction is not a change of plan; it is what the re-architecture always intended for the full product. The Rust/Tauri viewer is the entry point, not the destination.
-- The "should the web viewer live in Qt or stay Rust/Tauri?" question is a **healthy** architectural choice we get to make after the viewer ships, not a fire we're fighting.
-- **None of this changes the platform argument.** The platform seams (tenant profile, encrypted licensing, marketplace, MCP agent) live in the C++ core regardless of which shell wraps them.
 
 ---
 
@@ -159,6 +142,15 @@ The viewer is proving something else: **some ODA features are not exposed throug
 
 **One consequence of us all being on both sides, stated plainly:** common ownership makes alignment easy and makes **written discipline more necessary, not less.** When the same people sit on both sides of an intercompany agreement, **nothing enforces arm's-length pricing except the agreement itself** — and a future investor or acquirer will examine exactly that in diligence. The discipline protects the *value* of both entities, not one from the other.
 
+**And what does *not* change, explicitly:**
+
+| | |
+|---|---|
+| ActCAD brand, customers, channel, pricing | **No change** |
+| Jytra's ownership of ActCAD | **No change** |
+| How ActCAD is sold, and by whom | **No change** — same sales organisation, same customers |
+| Existing customer commitments | **Fully honoured**, migration staged over 24 months |
+
 > **If ActCAD and the platform ever conflict, ActCAD wins.** Worth writing down now — while we all agree — precisely because we are the same people today and may not always be the ones making the call.
 
 ---
@@ -209,24 +201,6 @@ The viewer is proving something else: **some ODA features are not exposed throug
 
 ---
 
-## Where the platform idea came from — and why now
-
-The re-architecture we approved earlier gave us **an engine we own** on ODA + ACIS + Qt + WASM, with a plugin surface, an MCP-based AI layer, and a modern shell.
-
-Halfway through building it, one thing became obvious:
-
-**Every seam we're building to serve ActCAD** — the tenant-profile layer, the license service, the plugin marketplace, the AI agent — **is exactly what a white-label CAD platform needs.** We're paying the cost. We might as well capture the value.
-
-And a specific market opened at the same time:
-
-- ~40 IntelliCAD Consortium members are stuck exactly where ActCAD was
-- ~200 vertical ISVs have no clean CAD engine to license
-- BIM-lite / AEC startup segment is looking for a foundation they don't have to build
-
-**They already spend $700K–1.3M a year all-in on a foundation they don't love** — broken down shortly. We can offer them a better one.
-
----
-
 ## Building for ActCAD vs building for the world — the two paths, side by side
 
 | Dimension | Build for ActCAD only | Build as a platform (ActCAD = anchor tenant) |
@@ -239,7 +213,9 @@ And a specific market opened at the same time:
 | Exit optionality | ActCAD sold as a product | A second, separately saleable asset — modest on its own (~$14–54M, see scenarios), but it also makes ActCAD itself a cleaner acquisition |
 | Risk if platform play fails | — | We still shipped a great ActCAD. Nothing wasted. |
 
-> **The platform path costs a small P1 discipline premium and unlocks a real second revenue line.** If members don't come, we've still shipped ActCAD. If they do, we have a profitable business that cost us almost nothing to option.
+**If the answer is no, nothing breaks.** We still ship modern ActCAD in 24 months, save ~3–6 engineer-months, and take on no partner obligations, no second entity, no second set of books. We forgo a ~$2–7M/yr line at ~70% margin.
+
+> **The one thing a no forecloses that is hard to reopen is the architecture.** Everything else on this list can be revisited in three years. **The tenant seam is materially cheaper to build now than to retrofit** — which is why we are asking now rather than after GA.
 
 ---
 
@@ -310,27 +286,7 @@ We are an IntelliCAD member. **We know this market's economics because we live t
 
 ---
 
-## Who our first members would be
-
-Not competition. Segments where they'd rather share the platform cost than fund the R&D alone.
-
-| Segment | What they are | Why they'd talk to us |
-|---|---|---|
-| **Regional ITC members** | progeCAD, CADian, CMS IntelliCAD, DoubleCAD, and the long tail of regional / vertical ITC-based products | Stuck on the IntelliCAD ceiling for AI / cloud / web / mobile — and **paying their own engineers to fix an engine, only for that work to reach competitors.** |
-| **Vertical ISVs** | MEP, structural, electrical, survey, solar, curtain-wall specialists | No clean engine option. Forced onto AutoCAD SDK or DIY. Would ship a full branded CAD in 90 days on us. |
-| **BIM-lite startups** | New AEC-tech founders in Bengaluru, EU, ME, LATAM | Need CAD + IFC + AI foundation; can't afford to build it |
-
-**To be clear about who is NOT on this list:** BricsCAD, ZWCAD, and GstarCAD are **peers, not prospects.** They each already left IntelliCAD and built their own engine direct on ODA — ZWCAD and GstarCAD are among ActCAD's most direct competitors in India today. **We do not white-label to them.**
-
-> That they made this exact move — and won — is the strongest external validation of the direction. We're taking the same road they took, and adding the white-label layer none of them built.
-
-**We approach the real prospects warmly, from ActCAD's existing network** — not cold outbound. The founder's own relationships across India / SEA / MEA / EU open the first 10–15 conversations without a sales team.
-
----
-
-## What each tier gates
-
-**Two axes: how big they are, and how much of the platform they take.**
+## What each tier gates — and what it costs
 
 | Tier | What it unlocks |
 |---|---|
@@ -338,38 +294,22 @@ Not competition. Segments where they'd rather share the platform cost than fund 
 | **Plus** | + **web app, Mac, Android**, marketplace access, cloud AI |
 | **Complete** | + **the ActCAD-derived vertical modules** (Arch / Mech / Elec / BIM / GIS), co-development priority |
 
-| **3D** *(future — not part of this decision)* | A **separate product on the C3D kernel**, built alongside rather than bundled into the main engine. For members it would eventually be **an additional licensable module**, not a change to the tiers above. |
-
-> **On the 3D product:** it is a distinct line, not a kernel swap — the main engine's ACIS reasoning is unchanged. One item to clear **before it is ever offered to members**: C3D is Russian-origin, so export and jurisdiction constraints would need resolving for **EU / UK / US members specifically**. Manageable for a product we ship ourselves; a real question the moment we license it onward. **Flagged now so it is not discovered later — out of scope for today.**
-
-> **AI ships in every tier, deliberately.** It is our sharpest edge over IntelliCAD — we want it in front of *every* member's end customers, not held back as an upsell. What we gate is the genuinely expensive-to-serve stuff: **extra platform shells, marketplace operations, and our verticals.**
-
-**This is not a contradiction of "bundle, don't itemize."** A member buys *Plus*. They never see a line item called "AI — $40K" that invites comparison to ITC's $8K experiment.
-
----
-
-## The price matrix — and it ramps
-
-**$300K on day one is steep for a vendor paying ITC $100K.** So we don't ask on day one, and we don't charge everyone the same.
+**$300K on day one is steep for a vendor paying ITC $100K.** So we don't ask on day one, and we don't charge everyone the same — **the band is set by the member's own installed base:**
 
 | Member's seat base | **Core** | **Plus** | **Complete** |
 |---|---|---|---|
 | **Launch** — under 5,000 | $90K | $130K | $190K |
 | **Growth** — 5,000–20,000 | $180K | $230K | $300K |
-| **Scale** — 20,000–50,000 | $300K | $360K | $450K |
+| **Scale** — 20,000–50,000 | $300K | **$360K** ← *ActCAD* | $450K |
 | **Enterprise** — 50,000+ | $450K | $520K | $620K+ |
 
-*(ActCAD sits in **Scale / Plus — $360K**. The anchor tenant pays a real, arm's-length number. That discipline is what makes the model credible to everyone else.)*
+**Ramped 50% / 75% / 100%** across migration years 1–3, because their revenue on our platform ramps too. **Component royalties (ACIS etc.) pass through at cost** — no markup on the one number they can compare directly.
 
-**And it ramps, because their revenue on our platform ramps:**
+> **AI is in every tier deliberately** — it is our sharpest edge over IntelliCAD and belongs in front of every member's customers. **But the capability is bundled and the consumption is metered** (allowance, then at cost, or bring-your-own-key) — unmetered inference against a fixed fee is an unbounded liability. *Detail in appendix.*
 
-| Migration year | They pay |
-|---|---|
-| Year 1 — porting, still paying ITC in parallel | **50%** |
-| Year 2 — GA under their brand | **75%** |
-| Year 3+ — fully migrated, ITC contract ended | **100%** |
+> ⚠️ **Complete needs a decision, not just a price.** Licensing our verticals arms vendors who may compete with ActCAD. The named-competitor exclusion is **a veto held by ActCAD's operating partner** — see the earlier slide.
 
-> ⚠️ **Complete needs a decision, not just a price.** Licensing our verticals arms vendors who may compete with ActCAD in adjacent markets. The named-competitor exclusions and territory carve-outs in the Verticalised Solutions Program **stop being boilerplate the moment we sell that tier.**
+> **3D (future, out of scope today):** a separate product on the **C3D kernel**, eventually an additional module. Russian-origin — **export/jurisdiction constraints need clearing before it is licensed onward to EU/UK/US members.**
 
 ---
 
@@ -423,28 +363,6 @@ Two variables drive everything: **how many members we sign**, and **what mix of 
 
 ---
 
-## How Jytra + ActCAD change (and how they don't)
-
-<div class="big" markdown="1">
-
-**Jytra keeps everything it has today. ActCAD keeps everything it has today. TejasCAD is a sibling entity built alongside.**
-
-</div>
-
-| Thing | What changes |
-|---|---|
-| **ActCAD brand, customers, channel, pricing** | No change |
-| **Jytra ownership of ActCAD** | No change — Jytra remains the parent of ActCAD as a product |
-| **Where the engine lives** | Owned by a new entity (TejasCAD Inc. + India Op-Co), licensed to Jytra for ActCAD on **standard-member terms** — same as every other member |
-| **P&L reporting** | Two entities, two sets of books, arm's-length invoices between them |
-| **Promoters' equity in ActCAD** | No change |
-| **Promoters' equity in TejasCAD** | **The same 50/50 split as ActCAD**, capitalised in personal capacity. Same principals, same proportions, both sides. |
-| **Existing ActCAD customer commitments** | Fully honored. Migration plan is transparent, staged over 24 months. |
-
-**The discipline that makes this work:** ActCAD pays TejasCAD the same rate as any external member. That is what makes the platform economics real for investors and clean for a future acquirer.
-
----
-
 ## What we're asking today — and what we're explicitly NOT asking
 
 **We're asking for: concept approval in principle.** That's it.
@@ -467,31 +385,13 @@ That approval unlocks the following prep work — none of which commits capital 
 
 ---
 
-## If the answer today is no
+**Three questions worth sitting with before you answer:**
 
-**A no is a legitimate outcome and nothing breaks.** What actually follows:
+1. **Is a ~$3–7M/year, ~75%-margin adjacent business worth the operational complexity** of a second entity, partner relationships, and supporting other vendors' teams? The revenue is real but not transformational.
+2. **Are we willing to run two clean entities**, with ActCAD paying standard member fees like anyone else — knowing that fee is what actually funds the platform team in the early years?
+3. **Do we want to be the ones who build this** — accepting it is a **profitable business line, not a venture-scale outcome**, unless we later choose a much bigger distribution model?
 
-- We still ship modern ActCAD in 24 months. **That is a great outcome on its own.**
-- We save ~3–6 engineer-months in P1 — **and we accept that adding multi-tenancy later means reworking six modules, not adding a layer.**
-- No partner obligations, no second entity, no second set of books, no duty to support other vendors' engineering teams.
-- We forgo a ~$2–7M/yr revenue line at ~70% margin.
-- Our long-term exit is ActCAD as a single product rather than two separable assets.
-
-> **The one thing a no forecloses that is hard to reopen:** the architecture. Everything else on this list can be revisited in three years. **The tenant seam is materially cheaper to build now than to retrofit** — which is why we are asking now rather than after GA.
-
----
-
-## The three questions we'd like directors to sit with
-
-1. **Is a ~$3–7M/year, ~75%-margin adjacent business worth the operational complexity** of running a second entity, managing partner relationships, and supporting other vendors' engineering teams? The revenue is real but it is not transformational — the honest question is whether the distraction cost is worth it.
-
-2. **Are we willing to run Jytra + TejasCAD as two clean entities**, with ActCAD paying standard-member fees like any other member? That discipline is what makes the economics legible to members — but it also means real intercompany accounting for a business this size.
-
-3. **Do we want to be the ones who build this** — the India-built CAD platform other vendors run on — accepting that on current numbers it is a **profitable business line, not a venture-scale outcome**, unless we later choose a much bigger distribution model?
-
-**Concept approval today is a yes to exploring these rigorously, not a yes to answering them.**
-
-> **What we are NOT asking you to fund today:** the engine. That is already committed and building. The platform layer is roughly **3–6 engineer-months incremental** on top of work in flight — the marginal cost of keeping this option open is small.
+> **What we are NOT asking you to fund today: the engine.** That is already committed and building. The platform layer is **~3–6 engineer-months incremental** on work in flight.
 
 ---
 
@@ -546,6 +446,58 @@ Questions?
 ### Commercial model detail
 
 *Pricing mechanics, tier gating, AI metering, founding-member terms, member onboarding, and the licensing trust story. Here if the conversation goes there — not part of the main line.*
+
+---
+
+## The Phase 1 architectural direction — what we already know
+
+The viewer is proving something else: **some ODA features are not exposed through the web stack.** For those, the full-editor product needs a **native application** path, not just a browser.
+
+**Plan (already consistent with the original re-architecture plan):**
+
+- **Now → viewer launch:** continue on the current Rust/Tauri + WASM/inWEB stack. Ship the viewer.
+- **After viewer launch:** **migrate the full-product to Qt + C++ native.** This is where the ODA features currently missing from the web stack become available, and where the ActCAD team wants to live long-term.
+- **The web viewer:** either **folds into the Qt stack** as an alternate frontend on the same C++ engine, or **stays on Rust/Tauri** as an independent codebase. Open decision — settled with data during the migration.
+
+**Why the directors should hear this now:**
+
+- The Qt/C++ direction is not a change of plan; it is what the re-architecture always intended for the full product. The Rust/Tauri viewer is the entry point, not the destination.
+- The "should the web viewer live in Qt or stay Rust/Tauri?" question is a **healthy** architectural choice we get to make after the viewer ships, not a fire we're fighting.
+- **None of this changes the platform argument.** The platform seams (tenant profile, encrypted licensing, marketplace, MCP agent) live in the C++ core regardless of which shell wraps them.
+
+---
+
+## Who our first members would be
+
+Not competition. Segments where they'd rather share the platform cost than fund the R&D alone.
+
+| Segment | What they are | Why they'd talk to us |
+|---|---|---|
+| **Regional ITC members** | progeCAD, CADian, CMS IntelliCAD, DoubleCAD, and the long tail of regional / vertical ITC-based products | Stuck on the IntelliCAD ceiling for AI / cloud / web / mobile — and **paying their own engineers to fix an engine, only for that work to reach competitors.** |
+| **Vertical ISVs** | MEP, structural, electrical, survey, solar, curtain-wall specialists | No clean engine option. Forced onto AutoCAD SDK or DIY. Would ship a full branded CAD in 90 days on us. |
+| **BIM-lite startups** | New AEC-tech founders in Bengaluru, EU, ME, LATAM | Need CAD + IFC + AI foundation; can't afford to build it |
+
+**To be clear about who is NOT on this list:** BricsCAD, ZWCAD, and GstarCAD are **peers, not prospects.** They each already left IntelliCAD and built their own engine direct on ODA — ZWCAD and GstarCAD are among ActCAD's most direct competitors in India today. **We do not white-label to them.**
+
+> That they made this exact move — and won — is the strongest external validation of the direction. We're taking the same road they took, and adding the white-label layer none of them built.
+
+**We approach the real prospects warmly, from ActCAD's existing network** — not cold outbound. The founder's own relationships across India / SEA / MEA / EU open the first 10–15 conversations without a sales team.
+
+---
+
+## How we bring a member on — the 90-day pattern
+
+Members don't build. Members configure. That is the whole point.
+
+| Week | What happens | Who does it |
+|---|---|---|
+| **W0** | LOI signed. Member gets sandboxed evaluation build with their brand pre-configured, and their 20 hardest customer DWGs test-loaded. | Member evaluates. TejasCAD supports. |
+| **W1–4** | Tenant profile finalized: brand assets, EULA, command-prefix, feature flags, license-server endpoint, marketplace share %. **License Authority key generated and handed to the member — we never see it again.** | Joint. |
+| **W5–10** | Existing extensions ported to our plugin SDK (95% of LISP works unchanged; .NET migration guide handles the rest). Dedicated migration engineer embedded. | Member engineering + TejasCAD migration lead. |
+| **W11–13** | Closed beta with 5–15 of the member's own friendly customers under NDA. | Member. |
+| **W14+** | **GA under the member's brand.** Signed installers roll out of our build pipeline. AI, cloud, web features go live with their name on them. | Member sells to their customers. |
+
+**Full detail:** `docs/tejascad-vs-intellicad.md` §6 + `docs/tejascad-licensing-architecture.md` §5–6.
 
 ---
 
@@ -692,22 +644,6 @@ ODA and IntelliCAD sell into **the same market**. Look at what they charge and w
 *Early members sit below the mature figure — the ramp means a year-1 member pays half. The 3- and 6-member rows reflect that.*
 
 > **This is on top of ActCAD's own revenue** — which we keep, in full, inside Jytra. And it comes from engineering we are funding anyway.
-
----
-
-## How we bring a member on — the 90-day pattern
-
-Members don't build. Members configure. That is the whole point.
-
-| Week | What happens | Who does it |
-|---|---|---|
-| **W0** | LOI signed. Member gets sandboxed evaluation build with their brand pre-configured, and their 20 hardest customer DWGs test-loaded. | Member evaluates. TejasCAD supports. |
-| **W1–4** | Tenant profile finalized: brand assets, EULA, command-prefix, feature flags, license-server endpoint, marketplace share %. **License Authority key generated and handed to the member — we never see it again.** | Joint. |
-| **W5–10** | Existing extensions ported to our plugin SDK (95% of LISP works unchanged; .NET migration guide handles the rest). Dedicated migration engineer embedded. | Member engineering + TejasCAD migration lead. |
-| **W11–13** | Closed beta with 5–15 of the member's own friendly customers under NDA. | Member. |
-| **W14+** | **GA under the member's brand.** Signed installers roll out of our build pipeline. AI, cloud, web features go live with their name on them. | Member sells to their customers. |
-
-**Full detail:** `docs/tejascad-vs-intellicad.md` §6 + `docs/tejascad-licensing-architecture.md` §5–6.
 
 ---
 
