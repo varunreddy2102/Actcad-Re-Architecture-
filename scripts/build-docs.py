@@ -84,6 +84,15 @@ DESCRIPTIONS = {
         "differentiation + funding waterfall + exit landscape. Also "
         "renders as a browsable HTML document."
     ),
+    "tejascad-mgmt-brief.md": (
+        "Directors briefing (Marp-formatted) — a punchy 13-slide deck "
+        "asking for concept approval in principle. Frames the choice as "
+        "'build for ActCAD vs build for the world', walks the passive-"
+        "revenue picture, member onboarding pattern, Jytra/ActCAD carve-"
+        "out, encrypted-licensing trust wedge, and the specific 8-week "
+        "pre-work the concept approval unlocks. For tomorrow's directors "
+        "conversation."
+    ),
     "exec-presentation.html": (
         "Slide deck for the management decision briefing (reveal.js)."
     ),
@@ -381,7 +390,8 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
     <nav class="toc-nav">
       <ul>
         <li><a href="index.html"><strong>Index</strong></a></li>
-        <li><a href="tejascad-story.html"><strong>TejasCAD story</strong></a></li>
+        <li><a href="tejascad-mgmt-brief.html"><strong>Directors briefing</strong></a></li>
+        <li><a href="tejascad-story.html">TejasCAD story</a></li>
         <li><a href="tejascad-pitch-deck.html">TejasCAD pitch deck</a></li>
         <li><a href="tejascad-vs-intellicad.html">TejasCAD vs IntelliCAD</a></li>
         <li><a href="tejascad-company-structure.html">Company structure & funding</a></li>
@@ -471,6 +481,7 @@ def build_index(pages: list[tuple[Path, str]]) -> None:
     # pack (structure, licensing, vs-intellicad, deck), then engine plan &
     # supporting docs, then brand shortlist, then original exec deck.
     order = [
+        "tejascad-mgmt-brief.html",
         "tejascad-story.html",
         "tejascad-pitch-deck.html",
         "tejascad-vs-intellicad.html",
