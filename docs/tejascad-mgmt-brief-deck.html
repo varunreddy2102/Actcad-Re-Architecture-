@@ -20,15 +20,21 @@ overflow-y:auto;display:none;flex-direction:column;
 font-size:clamp(13px,1.42vw,21px);line-height:1.5}
 .slide.on{display:flex}
 .slide.lead{justify-content:center;align-items:flex-start;
-background:linear-gradient(160deg,var(--deep) 0%,var(--primary) 100%);color:#fff;
-padding:6vh 8vw}
-.slide.lead h1{color:#fff;font-size:2.9em;line-height:1.08;border:0;margin-bottom:.35em;
-letter-spacing:-.02em}
-.slide.lead h3{color:var(--accent-lt);font-weight:500;font-size:1.15em;margin-bottom:1.1em}
-.slide.lead p{color:#d8e2ee;max-width:52em}
-.slide.lead strong{color:#fff}
-.slide.lead code{background:rgba(255,255,255,.13);color:var(--accent-lt)}
-.slide.lead a{color:var(--accent-lt)}
+background:var(--cream);color:var(--text);padding:7vh 9vw;
+border-left:14px solid var(--accent)}
+.slide.lead h1{color:var(--primary);font-size:3em;line-height:1.06;border:0;
+margin-bottom:.3em;letter-spacing:-.022em}
+.slide.lead h3{color:var(--accent);font-weight:600;font-size:1.16em;margin:0 0 1.2em;
+letter-spacing:.01em}
+.slide.lead p{color:var(--text2);max-width:52em}
+.slide.lead strong{color:var(--primary)}
+/* callouts on a lead slide: white panel, dark text - never inherit the
+   slide's colour, which previously produced white-on-cream */
+.slide.lead .big{background:#fff;color:var(--primary);
+border-left:5px solid var(--accent);box-shadow:0 1px 3px rgba(16,37,66,.07)}
+.slide.lead .big strong{color:var(--deep)}
+.slide.lead blockquote{background:#fff;color:var(--text)}
+.slide.lead ul>li::before{background:var(--accent)}
 
 h1{font-size:2.05em;color:var(--primary);line-height:1.12;letter-spacing:-.015em;margin-bottom:.4em}
 h2{font-size:1.5em;color:var(--primary);line-height:1.16;letter-spacing:-.012em;
@@ -79,7 +85,7 @@ margin:.85em 0;border-radius:0 5px 5px 0;max-width:60em}
 z-index:60;transition:width .18s ease}
 #num{position:fixed;right:2vw;bottom:2.4vh;font-size:12px;color:var(--text3);
 z-index:60;font-variant-numeric:tabular-nums;letter-spacing:.04em}
-.lead #num,.slide.lead~#num{color:var(--accent-lt)}
+
 #tag{position:fixed;left:6vw;bottom:2.4vh;font-size:10.5px;color:var(--text3);
 z-index:60;text-transform:uppercase;letter-spacing:.11em}
 #appx{position:fixed;right:2vw;top:2.2vh;font-size:10px;color:#fff;z-index:60;
@@ -113,8 +119,9 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
  page-break-after:always;break-after:page;
  font-size:10.5pt;line-height:1.42;padding:13mm 15mm 11mm}
  .slide:last-child{page-break-after:auto;break-after:auto}
- .slide.lead{min-height:206mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
- .slide.lead h1{font-size:2.3em}
+ .slide.lead{min-height:206mm;border-left-width:9mm;
+ -webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .slide.lead h1{font-size:2.4em}
  h2{font-size:1.34em;margin-bottom:.5em}
  ul>li::before,ol>li::before{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  li{margin:.34em 0}
@@ -143,7 +150,7 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 <li>That makes us <strong>a platform business alongside a product business</strong></li>
 </ul>
 <div class="big">
-<p><strong>We are seeking in-principle approval to build this as a platform from the outset.</strong></p>
+<p><strong>The proposal: build it platform-first from the outset.</strong></p>
 </div>
 <p><strong>Three things to work through together</strong></p>
 <ul>
@@ -449,41 +456,44 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 </tr>
 </tbody>
 </table></section>
-<section class="slide" data-ap="0"><h2>Risks and how we manage them</h2>
+<section class="slide" data-ap="0"><h2>What we need to get right</h2>
 <table>
 <thead>
 <tr>
-<th>Risk</th>
-<th>Mitigation</th>
+<th>Priority</th>
+<th>How we address it</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Attention diverted from ActCAD</strong></td>
-<td>Platform work scoped and time-boxed; ActCAD GA stays the priority</td>
+<td><strong>ActCAD GA comes first</strong></td>
+<td>Platform work is scoped and time-boxed around it</td>
 </tr>
 <tr>
-<td><strong>Demand unproven</strong></td>
-<td>Month-24 gate; no entity or obligations before it</td>
+<td><strong>Build the team well</strong></td>
+<td>Needed for ActCAD regardless — the platform shares the cost</td>
 </tr>
 <tr>
-<td><strong>Team must be recruited</strong></td>
-<td>Needed for ActCAD regardless; the platform shares the cost</td>
+<td><strong>Prove demand before committing</strong></td>
+<td>Month-24 gate on two signed LOIs</td>
 </tr>
 <tr>
-<td><strong>Member roadmap influence</strong></td>
-<td>Members advise; <strong>they do not hold a vote</strong></td>
+<td><strong>Keep control of the roadmap</strong></td>
+<td>Members advise; <strong>we decide</strong></td>
 </tr>
 <tr>
-<td><strong>Licensing verticals to potential competitors</strong></td>
-<td>Named-competitor exclusion, or the tier is not offered</td>
+<td><strong>Protect our verticals</strong></td>
+<td>Named-competitor exclusion; the tier stays optional</td>
 </tr>
 <tr>
-<td><strong>Consortium members move slowly</strong></td>
+<td><strong>Set a realistic pace</strong></td>
 <td>Base case assumes 12 members over seven years</td>
 </tr>
 </tbody>
-</table></section>
+</table>
+<div class="big">
+<p><strong>Each of these is a decision we hold, not a dependency we carry.</strong></p>
+</div></section>
 <section class="slide" data-ap="0"><h2>Governance and review gates</h2>
 <table>
 <thead>
@@ -556,10 +566,10 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 <div class="big">
 <p><strong>A next-generation CAD platform, engineered in India, licensed to the world.</strong></p>
 </div>
-<h3>What we are asking today</h3>
+<h3>Where we&rsquo;d like to go from here</h3>
 <ul>
-<li><strong>In-principle approval to build platform-first</strong></li>
-<li><strong>Open the discussion on structure, capital and team</strong></li>
+<li><strong>Build platform-first from the outset</strong></li>
+<li><strong>Work through structure, capital and team together</strong></li>
 </ul>
 <p><strong>The engine is already running. The question is how far we take it.</strong></p></section>
 <div id="ov"><h2>All slides</h2><div class="grid">
@@ -574,7 +584,7 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 <div class="card" data-i="8"><div class="n">9</div><div class="t">Financial outlook</div></div>
 <div class="card" data-i="9"><div class="n">10</div><div class="t">Investment required</div></div>
 <div class="card" data-i="10"><div class="n">11</div><div class="t">Our approach</div></div>
-<div class="card" data-i="11"><div class="n">12</div><div class="t">Risks and how we manage them</div></div>
+<div class="card" data-i="11"><div class="n">12</div><div class="t">What we need to get right</div></div>
 <div class="card" data-i="12"><div class="n">13</div><div class="t">Governance and review gates</div></div>
 <div class="card" data-i="13"><div class="n">14</div><div class="t">The name</div></div>
 <div class="card" data-i="14"><div class="n">15</div><div class="t">Let&#x27;s build it</div></div>

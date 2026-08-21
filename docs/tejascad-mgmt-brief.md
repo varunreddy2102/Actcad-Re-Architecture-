@@ -36,7 +36,7 @@ style: |
 
 <div class="big" markdown="1">
 
-**We are seeking in-principle approval to build this as a platform from the outset.**
+**The proposal: build it platform-first from the outset.**
 
 </div>
 
@@ -206,16 +206,22 @@ style: |
 
 ---
 
-## Risks and how we manage them
+## What we need to get right
 
-| Risk | Mitigation |
+| Priority | How we address it |
 |---|---|
-| **Attention diverted from ActCAD** | Platform work scoped and time-boxed; ActCAD GA stays the priority |
-| **Demand unproven** | Month-24 gate; no entity or obligations before it |
-| **Team must be recruited** | Needed for ActCAD regardless; the platform shares the cost |
-| **Member roadmap influence** | Members advise; **they do not hold a vote** |
-| **Licensing verticals to potential competitors** | Named-competitor exclusion, or the tier is not offered |
-| **Consortium members move slowly** | Base case assumes 12 members over seven years |
+| **ActCAD GA comes first** | Platform work is scoped and time-boxed around it |
+| **Build the team well** | Needed for ActCAD regardless — the platform shares the cost |
+| **Prove demand before committing** | Month-24 gate on two signed LOIs |
+| **Keep control of the roadmap** | Members advise; **we decide** |
+| **Protect our verticals** | Named-competitor exclusion; the tier stays optional |
+| **Set a realistic pace** | Base case assumes 12 members over seven years |
+
+<div class="big" markdown="1">
+
+**Each of these is a decision we hold, not a dependency we carry.**
+
+</div>
 
 ---
 
@@ -258,9 +264,9 @@ From Sanskrit **takṣ** — *to shape, to carve, to fashion*. The root of **Tak
 
 </div>
 
-### What we are asking today
+### Where we'd like to go from here
 
-- **In-principle approval to build platform-first**
-- **Open the discussion on structure, capital and team**
+- **Build platform-first from the outset**
+- **Work through structure, capital and team together**
 
 **The engine is already running. The question is how far we take it.**

@@ -58,15 +58,21 @@ overflow-y:auto;display:none;flex-direction:column;
 font-size:clamp(13px,1.42vw,21px);line-height:1.5}
 .slide.on{display:flex}
 .slide.lead{justify-content:center;align-items:flex-start;
-background:linear-gradient(160deg,var(--deep) 0%,var(--primary) 100%);color:#fff;
-padding:6vh 8vw}
-.slide.lead h1{color:#fff;font-size:2.9em;line-height:1.08;border:0;margin-bottom:.35em;
-letter-spacing:-.02em}
-.slide.lead h3{color:var(--accent-lt);font-weight:500;font-size:1.15em;margin-bottom:1.1em}
-.slide.lead p{color:#d8e2ee;max-width:52em}
-.slide.lead strong{color:#fff}
-.slide.lead code{background:rgba(255,255,255,.13);color:var(--accent-lt)}
-.slide.lead a{color:var(--accent-lt)}
+background:var(--cream);color:var(--text);padding:7vh 9vw;
+border-left:14px solid var(--accent)}
+.slide.lead h1{color:var(--primary);font-size:3em;line-height:1.06;border:0;
+margin-bottom:.3em;letter-spacing:-.022em}
+.slide.lead h3{color:var(--accent);font-weight:600;font-size:1.16em;margin:0 0 1.2em;
+letter-spacing:.01em}
+.slide.lead p{color:var(--text2);max-width:52em}
+.slide.lead strong{color:var(--primary)}
+/* callouts on a lead slide: white panel, dark text - never inherit the
+   slide's colour, which previously produced white-on-cream */
+.slide.lead .big{background:#fff;color:var(--primary);
+border-left:5px solid var(--accent);box-shadow:0 1px 3px rgba(16,37,66,.07)}
+.slide.lead .big strong{color:var(--deep)}
+.slide.lead blockquote{background:#fff;color:var(--text)}
+.slide.lead ul>li::before{background:var(--accent)}
 
 h1{font-size:2.05em;color:var(--primary);line-height:1.12;letter-spacing:-.015em;margin-bottom:.4em}
 h2{font-size:1.5em;color:var(--primary);line-height:1.16;letter-spacing:-.012em;
@@ -117,7 +123,7 @@ margin:.85em 0;border-radius:0 5px 5px 0;max-width:60em}
 z-index:60;transition:width .18s ease}
 #num{position:fixed;right:2vw;bottom:2.4vh;font-size:12px;color:var(--text3);
 z-index:60;font-variant-numeric:tabular-nums;letter-spacing:.04em}
-.lead #num,.slide.lead~#num{color:var(--accent-lt)}
+
 #tag{position:fixed;left:6vw;bottom:2.4vh;font-size:10.5px;color:var(--text3);
 z-index:60;text-transform:uppercase;letter-spacing:.11em}
 #appx{position:fixed;right:2vw;top:2.2vh;font-size:10px;color:#fff;z-index:60;
@@ -151,8 +157,9 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
  page-break-after:always;break-after:page;
  font-size:10.5pt;line-height:1.42;padding:13mm 15mm 11mm}
  .slide:last-child{page-break-after:auto;break-after:auto}
- .slide.lead{min-height:206mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
- .slide.lead h1{font-size:2.3em}
+ .slide.lead{min-height:206mm;border-left-width:9mm;
+ -webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .slide.lead h1{font-size:2.4em}
  h2{font-size:1.34em;margin-bottom:.5em}
  ul>li::before,ol>li::before{-webkit-print-color-adjust:exact;print-color-adjust:exact}
  li{margin:.34em 0}
