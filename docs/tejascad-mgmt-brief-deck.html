@@ -121,22 +121,19 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 <div id="bar"></div><div id="appx">Appendix</div>
 <div id="tag">TejasCAD · Confidential</div><div id="num"></div>
 <section class="slide lead" data-ap="0"><h1>Building for ActCAD, or building for the world?</h1>
-<h3>A directors briefing — concept approval in principle</h3>
-<p><strong>Companion documents already circulated:</strong>
-<code>docs/tejascad-story.md</code> · <code>docs/tejascad-company-structure.md</code> · <code>docs/tejascad-vs-intellicad.md</code> · <code>docs/tejascad-licensing-architecture.md</code></p>
-<p><em>Working brand TejasCAD pending TM clearance. </em><em>ITC and ODA pricing are actuals we pay or can verify; our own projections are illustrative.</em><em> This briefing asks for concept approval, not a spend commitment.</em></p></section>
-<section class="slide" data-ap="0"><h2>The decision on the table today</h2>
-<p>We are already re-architecting ActCAD off IntelliCAD onto our own engine. <strong>That work continues either way.</strong></p>
-<div class="big">
-<p><strong>Do we build the new engine only for ActCAD — or do we build it as a platform that ActCAD is the anchor tenant of, and license the same platform to other CAD vendors under their own brand?</strong></p>
-</div>
-<p><strong>Why the question arises now:</strong> every seam we are building to serve ActCAD — the tenant-profile layer, the license service, the plugin host, the AI agent — <strong>is exactly what a white-label CAD platform needs.</strong> We are paying for it either way.</p>
-<p><strong>And the market it would serve is specific:</strong> ~40 IntelliCAD Consortium members stuck where ActCAD was · ~200 vertical ISVs with no clean engine to license · a BIM-lite startup segment that cannot afford to build one. <strong>They already spend $700K–1.3M a year all-in on a foundation they don&rsquo;t love.</strong></p>
-<blockquote>
-<p><strong>&ldquo;Can we build it?&rdquo; is settled.</strong> Phase 0 is six weeks in, ~207 commits, with a working viewer the ActCAD team beta-tests daily. <strong>This is a strategy conversation now, not a feasibility one.</strong></p>
-</blockquote></section>
+<h3>A directors briefing — for discussion</h3>
+<p><strong>Working brand TejasCAD, pending TM clearance.</strong></p>
+<p>ITC pricing is what we actually pay. Our own projections are illustrative.</p></section>
+<section class="slide" data-ap="0"><h2>The decision on the table</h2>
+<ul>
+<li>We are <strong>already</strong> re-architecting ActCAD off IntelliCAD. <strong>That continues either way.</strong></li>
+<li>The question is one level up: <strong>do we build it only for ActCAD, or as a platform other CAD vendors license under their own brand?</strong></li>
+<li>Every seam we build for ActCAD — tenant profile, licensing, plugin host, AI — <strong>is what a white-label platform needs anyway</strong></li>
+<li>The market is specific: <strong>~40 ITC members</strong>, <strong>~200 vertical ISVs</strong>, BIM-lite startups</li>
+<li><strong>&ldquo;Can we build it&rdquo; is settled</strong> — Phase 0 ships today</li>
+</ul></section>
 <section class="slide" data-ap="0"><h2>Phase 0 today — what already ships</h2>
-<p>Six weeks in, ~207 commits, versioning aligned to ActCAD&rsquo;s own (26.1 → 26.3.7, the latest drop fixing 5 team-reported bugs).</p>
+<p>Six weeks, ~207 commits, 13+ drops to the ActCAD team.</p>
 <table>
 <thead>
 <tr>
@@ -146,294 +143,171 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 </thead>
 <tbody>
 <tr>
-<td><strong>DWG/DXF open</strong></td>
-<td>Real customer files open in the browser on WASM + ODA inWEB. Both backends live.</td>
+<td><strong>DWG/DXF</strong></td>
+<td>Real customer files open in the browser. WASM + ODA inWEB, both live.</td>
 </tr>
 <tr>
-<td><strong>Measurement + snap + count</strong></td>
-<td>Full 14-mode AutoCAD/ActCAD osnap suite; count + CSV/Excel export; quick calc.</td>
+<td><strong>Measure / snap / count</strong></td>
+<td>Full 14-mode osnap suite, CSV + Excel export</td>
 </tr>
 <tr>
-<td><strong>Rendering perf</strong></td>
-<td>250K entities at 61 fps via region rendering + culling; regen 17× faster; instant zoom-extents.</td>
+<td><strong>Performance</strong></td>
+<td>250K entities at 61 fps; regen 17× faster; instant zoom-extents</td>
 </tr>
 <tr>
 <td><strong>3D</strong></td>
-<td>Visualize camera bound — orbit, standard views, live 3D ViewCube shipping. Layouts + paper space viewports work end-to-end.</td>
+<td>Orbit, standard views, ViewCube. Layouts + paper space viewports.</td>
 </tr>
 <tr>
 <td><strong>Beyond scope</strong></td>
-<td>DWG↔DWG + PDF revision comparison, color plotting, batch print, print-to-PDF, sidecar markup overlays.</td>
+<td>DWG↔DWG and PDF comparison, colour plotting, batch print, markups</td>
 </tr>
 <tr>
 <td><strong>Distribution</strong></td>
-<td>Tauri Windows MSI + <code>setup.exe</code> shipping. macOS CI build green. Android Tauri prototype exists.</td>
+<td>Windows MSI shipping. macOS CI green. Android prototype.</td>
 </tr>
 <tr>
-<td><strong>Test posture</strong></td>
-<td>594/594 web tests green; gate-5 native harness (22 cases, 223 assertions) exercises the ui-bridge with no shell-specific branching in core.</td>
+<td><strong>Tests</strong></td>
+<td>594/594 green, plus a native gate harness</td>
 </tr>
 <tr>
-<td><strong>Feedback loop</strong></td>
-<td><strong>The ActCAD team is the de-facto closed beta</strong> — filing numbered bugs against each drop, driving priorities. 13+ release drops delivered.</td>
-</tr>
-<tr>
-<td><strong>The one hard rule</strong></td>
-<td><strong>Read-only guarantee has held throughout.</strong> No <code>db</code> writes anywhere in the codebase. Structurally intact.</td>
+<td><strong>The hard rule</strong></td>
+<td><strong>Read-only guarantee holds. No <code>db</code> writes anywhere.</strong></td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p><strong>Competitive posture from live testing:</strong> the new viewer is <strong>faster than ActCAD&rsquo;s current product on many customer files, and significantly better than IntelliCAD&rsquo;s viewer and ODA&rsquo;s own web viewer.</strong> The engineering work has already produced a best-in-class result — before we&rsquo;ve even shipped it publicly.</p>
+<p><strong>Faster than ActCAD on many customer files — and well ahead of IntelliCAD&rsquo;s viewer and ODA&rsquo;s own.</strong> Before public launch.</p>
 </blockquote>
-<p><strong>Still owed from the exit criteria:</strong> customer-hardware perf gate measurement (2019-i5 baseline) and public web adoption signal (there is no public launch yet).</p>
-<p><strong>Vendor blockers logged:</strong> three ODA inWEB gaps (paper-space engine abort, TTF tessellation quality, unbound <code>appServices</code>) — all filed / worked around; none block the strategy.</p></section>
-<section class="slide" data-ap="0"><h2>The case against this — stated as strongly as we can put it</h2>
-<p><strong>This deserves a real hearing, not a strawman. The argument against is serious:</strong></p>
+<p><strong>Still owed:</strong> customer-hardware perf baseline · public launch and adoption signal.</p></section>
+<section class="slide" data-ap="0"><h2>Architecture for the editor</h2>
+<p>Some ODA features are not exposed to the web stack. The full editor needs a <strong>native</strong> path.</p>
+<ul>
+<li><strong>Now → viewer launch</strong> — continue on Rust/Tauri + WASM/inWEB. Ship it.</li>
+<li><strong>After launch</strong> — <strong>migrate the full product to Qt + C++ native.</strong> This is where the missing ODA surface becomes available, and where the ActCAD team wants to be long term.</li>
+<li><strong>The web viewer</strong> — either folds into the Qt stack as a second frontend on the same C++ engine, or stays on Rust/Tauri. <strong>Decide with data during the migration.</strong></li>
+</ul>
+<blockquote>
+<p><strong>The platform seams — tenant profile, licensing, marketplace, AI agent — live in the C++ core regardless of which shell wraps them.</strong></p>
+</blockquote></section>
+<section class="slide" data-ap="0"><h2>The case against — stated at full strength</h2>
 <ol>
-<li>
-<p><strong>&ldquo;We are a CAD company, not a platform company.&rdquo;</strong> Selling to other software vendors is a different business — different sales motion, different support model, different skills. We have never done it. Why would we be good at it?</p>
-</li>
-<li>
-<p><strong>&ldquo;It distracts from the thing that actually matters.&rdquo;</strong> We are mid-rebuild of our core product. Nothing is more important than ActCAD-new reaching GA. Three to six engineer-months understates it — <strong>the real cost is management attention</strong>, which is our scarcest resource.</p>
-</li>
-<li>
-<p><strong>&ldquo;The money isn&rsquo;t worth the trouble.&rdquo;</strong> We have just been told this is not venture-scale. For $2–7M a year, we take on partner obligations, a second entity, two sets of books, and a duty to support other companies&rsquo; engineering teams.</p>
-</li>
-<li>
-<p><strong>&ldquo;We would be arming competitors.&rdquo;</strong> Especially at the Complete tier. Why hand fifteen years of our vertical work to a vendor who may meet us in a tender next year?</p>
-</li>
-<li>
-<p><strong>&ldquo;Members will constrain our roadmap.&rdquo;</strong> A member needs feature X; ActCAD needs feature Y. Once we have paying partners, we are no longer free to choose Y.</p>
-</li>
-<li>
-<p><strong>&ldquo;Nobody has asked for this.&rdquo;</strong> Zero members. Zero LOIs. This is a solution in search of a problem.</p>
-</li>
-<li>
-<p><strong>&ldquo;IntelliCAD members are sticky.&rdquo;</strong> They have been there twenty years. Switching costs are enormous. Why would they move now, for us?</p>
-</li>
-<li>
-<p><strong>&ldquo;We do not have the team to do this.&rdquo;</strong> The deep engine work is not what ActCAD&rsquo;s engineers do today. <strong>A platform team has to be hired, from scratch, in a competitive market</strong> — and until it exists, every estimate on these slides is provisional.</p>
-</li>
+<li><strong>We are a CAD company, not a platform company.</strong> Different sales motion, different support model, skills we have never had.</li>
+<li><strong>It distracts from what matters.</strong> ActCAD-new reaching GA is the priority. <strong>The real cost is management attention.</strong></li>
+<li><strong>The money is not transformational.</strong> Partner obligations and a second entity for a few million a year.</li>
+<li><strong>We would be arming competitors</strong> — especially by licensing our verticals.</li>
+<li><strong>Members will constrain our roadmap.</strong> Once they pay, we are less free to choose.</li>
+<li><strong>Nobody has asked for this.</strong> Zero members, zero LOIs.</li>
+<li><strong>ITC members are sticky.</strong> Twenty years in, switching costs are large.</li>
+<li><strong>We do not have the team.</strong> A platform team has to be hired from scratch.</li>
 </ol>
 <blockquote>
-<p><strong>Points 2, 3, 5, 6 and 8 are substantially correct. The next slide is where we agree with them and explain why we still think the answer is yes.</strong></p>
+<p><strong>2, 3, 5, 6 and 8 are substantially correct.</strong></p>
 </blockquote></section>
-<section class="slide" data-ap="0"><h2>Why the answer is still yes — and where the objection lands</h2>
+<section class="slide" data-ap="0"><h2>Why we still think yes</h2>
 <table>
 <thead>
 <tr>
-<th>The objection</th>
-<th>Our honest answer</th>
+<th>Objection</th>
+<th>Answer</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>We&rsquo;re not a platform company</strong></td>
-<td>True today. But we do not have to become one to keep the option. Nothing before the month-24 gate requires a platform sales team.</td>
+<td>Not a platform company</td>
+<td><strong>True.</strong> But nothing before month 24 requires becoming one.</td>
 </tr>
 <tr>
-<td><strong>It distracts from ActCAD</strong></td>
-<td><strong>Partly conceded — management attention is the real cost.</strong> But the engineering argument runs the other way: see below.</td>
+<td>Distracts from ActCAD</td>
+<td><strong>Partly conceded</strong> — attention is the real cost</td>
 </tr>
 <tr>
-<td><strong>The money is modest</strong></td>
-<td><strong>Conceded.</strong> $2–7M/yr at ~70% margin. Worth having, not transformational. If that alone were the case, we would not propose it.</td>
+<td>Money is modest</td>
+<td><strong>Conceded.</strong> Not why we would do it alone.</td>
 </tr>
 <tr>
-<td><strong>Arming competitors</strong></td>
-<td>Real. Which is why Complete is <strong>gated by named-competitor exclusion and territory carve-out</strong> — and why we can simply choose not to sell that tier.</td>
+<td>Arming competitors</td>
+<td>Gated by named-competitor exclusion — <strong>or we don&rsquo;t sell that tier</strong></td>
 </tr>
 <tr>
-<td><strong>Members constrain the roadmap</strong></td>
-<td><strong>Conceded, and it is the one that worries us most.</strong> Mitigation: members get roadmap <em>input</em>, never a veto. Only Founding Partners get a seat, and it is advisory.</td>
+<td>Roadmap constraint</td>
+<td><strong>Conceded — the one that worries us most.</strong> Input, never veto.</td>
 </tr>
 <tr>
-<td><strong>No validated demand</strong></td>
-<td><strong>Fully conceded. We have zero LOIs.</strong> That is precisely why the ask is concept approval and why there is a <strong>hard kill switch at month 24.</strong></td>
+<td>No demand proven</td>
+<td><strong>Fully conceded. Zero LOIs.</strong> Hence a kill switch at month 24.</td>
 </tr>
 <tr>
-<td><strong>ITC members are sticky</strong></td>
-<td>True — which is why the realistic base case is <strong>12 members in seven years</strong>, not fifty. The model already assumes they move slowly.</td>
+<td>Members are sticky</td>
+<td><strong>True</strong> — base case is 12 members in seven years, not fifty</td>
 </tr>
 <tr>
-<td><strong>We don&rsquo;t have the team</strong></td>
-<td><strong>Conceded, and it is the biggest execution risk.</strong> The platform team must be hired. But note: <strong>we need that team for ActCAD-new regardless</strong> — the engine does not build itself either way. The platform spreads its cost, it does not create it.</td>
+<td>No team</td>
+<td><strong>Conceded.</strong> But <strong>we need that team for ActCAD-new regardless.</strong></td>
 </tr>
 </tbody>
 </table>
 <div class="big">
-<p><strong>The single argument that carries the decision: building multi-tenant makes ActCAD better even if no member ever signs.</strong></p>
+<p><strong>Building multi-tenant makes ActCAD better even if no member ever signs.</strong></p>
 </div>
-<p><strong>The tenant seam touches six of our ten modules.</strong> Building it now forces: no ActCAD-specific hacks in the core, a real plugin API instead of internal coupling, configuration-driven behaviour instead of hardcoded assumptions, and a proper licensing abstraction. <strong>Teams building for one customer accumulate coupling. Teams building for N stay clean.</strong></p>
-<blockquote>
-<p><strong>Retrofitting multi-tenancy later is not 3–6 engineer-months — it is a rewrite of those six modules after they have hardened around single-tenant assumptions.</strong> That asymmetry is the whole argument. <strong>We are not deciding to become a platform company today. We are deciding whether to keep the door open cheaply, or close it expensively.</strong></p>
-</blockquote></section>
-<section class="slide" data-ap="0"><h2>What this means for ActCAD — and for the partner who runs it</h2>
-<p><strong>The person running ActCAD carries the most risk in this and should carry the most protection. These are commitments, not assurances.</strong></p>
-<table>
-<thead>
-<tr>
-<th>The concern</th>
-<th>The commitment</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Who owns the roadmap?</strong></td>
-<td>ActCAD&rsquo;s operating partner holds <strong>final say on engine priorities.</strong> Members get input. <strong>No member request enters the engine roadmap over ActCAD&rsquo;s objection.</strong></td>
-</tr>
-<tr>
-<td><strong>Does my team become a support desk?</strong></td>
-<td><strong>No — and they are not the ones who could.</strong> Deep engine and platform work sits with the platform team. <strong>ActCAD&rsquo;s team does what it is genuinely best at: domain expertise, verticals, IRX-level customisation, product judgement.</strong> Platform L3 support is separate headcount, funded from member fees.</td>
-</tr>
-<tr>
-<td><strong>Who decides we&rsquo;re arming a competitor?</strong></td>
-<td><strong>You do.</strong> Whether we sell any tier to a given vendor is ActCAD&rsquo;s operating call, not a committee&rsquo;s. <strong>Named-competitor exclusion is a veto you hold</strong>, not a clause you hope works.</td>
-</tr>
-<tr>
-<td><strong>Does ActCAD wait behind members?</strong></td>
-<td><strong>Every platform capability lands in ActCAD first</strong>, before it is offered to any member. We are not building for members at ActCAD&rsquo;s expense.</td>
-</tr>
-<tr>
-<td><strong>What do I get out of it?</strong></td>
-<td><strong>The same 50/50 partnership, carried into the new entity.</strong> Not a minority stake in someone else&rsquo;s venture — <strong>the identical split we have in ActCAD today.</strong> You are a principal on both sides, in equal measure.</td>
-</tr>
-<tr>
-<td><strong>Whose expertise is this built on?</strong></td>
-<td>The verticals are licensable <em>because of</em> fifteen years of ActCAD product judgement. <strong>That is the input the platform cannot buy</strong> — recognised in role and equity, not merely acknowledged.</td>
-</tr>
-</tbody>
-</table>
-<div class="big">
-<p><strong>ActCAD is the anchor tenant, not a subordinate. The platform exists because ActCAD needed a modern engine — not the other way round.</strong></p>
-</div>
-<p><strong>One consequence of us all being on both sides, stated plainly:</strong> common ownership makes alignment easy and makes <strong>written discipline more necessary, not less.</strong> When the same people sit on both sides of an intercompany agreement, <strong>nothing enforces arm&rsquo;s-length pricing except the agreement itself</strong> — and a future investor or acquirer will examine exactly that in diligence. The discipline protects the <em>value</em> of both entities, not one from the other.</p>
-<p><strong>And what does <em>not</em> change, explicitly:</strong></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ActCAD brand, customers, channel, pricing</td>
-<td><strong>No change</strong></td>
-</tr>
-<tr>
-<td>Jytra&rsquo;s ownership of ActCAD</td>
-<td><strong>No change</strong></td>
-</tr>
-<tr>
-<td>How ActCAD is sold, and by whom</td>
-<td><strong>No change</strong> — same sales organisation, same customers</td>
-</tr>
-<tr>
-<td>Existing customer commitments</td>
-<td><strong>Fully honoured</strong>, migration staged over 24 months</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p><strong>If ActCAD and the platform ever conflict, ActCAD wins.</strong> Worth writing down now — while we all agree — precisely because we are the same people today and may not always be the ones making the call.</p>
-</blockquote></section>
-<section class="slide" data-ap="0"><h2>Who actually builds this — an honest division of labour</h2>
-<p><strong>The two teams are good at different things, and the plan should say so plainly rather than assume everyone does everything.</strong></p>
+<p><strong>The tenant seam touches six of ten modules.</strong> Building it now forces no ActCAD-specific hacks in core, a real plugin API, configuration-driven behaviour. <strong>Retrofitting later means reworking those six modules after they harden.</strong></p></section>
+<section class="slide" data-ap="0"><h2>Who builds it</h2>
 <table>
 <thead>
 <tr>
 <th>Function</th>
-<th>Who does it</th>
+<th>Who</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Engine, multi-tenancy, licensing infrastructure, deep systems work</strong></td>
-<td><strong>TejasCAD&rsquo;s own dev team</strong> — hired into the new entity. C++/Rust systems engineering.</td>
+<td>Engine, multi-tenancy, licensing, deep systems</td>
+<td><strong>TejasCAD — dev team to be hired</strong></td>
 </tr>
 <tr>
-<td><strong>QA, release engineering, the corpus and regression harness</strong></td>
-<td><strong>TejasCAD QA</strong> — hired. Phase 0 already runs 594 web tests and a native gate harness; that discipline needs staffing to scale.</td>
+<td>QA, release engineering, corpus and regression</td>
+<td><strong>TejasCAD — to be hired</strong></td>
 </tr>
 <tr>
-<td><strong>Dev support — SDK, docs, migration engineering, member L3</strong></td>
-<td><strong>TejasCAD dev support</strong> — hired. This is the function that keeps members off ActCAD&rsquo;s team.</td>
+<td>Dev support, SDK, docs, member L3</td>
+<td><strong>TejasCAD — to be hired</strong></td>
 </tr>
 <tr>
-<td><strong>Domain expertise, verticals, IRX-level customisation, product judgement, what customers actually need</strong></td>
-<td><strong>ActCAD&rsquo;s team.</strong> Fifteen years of it, and not replaceable by hiring.</td>
+<td>Domain expertise, verticals, IRX, product judgement</td>
+<td><strong>ActCAD&rsquo;s team</strong></td>
 </tr>
 <tr>
-<td><strong>Member acquisition — selling platform memberships</strong></td>
-<td><strong>TejasCAD.</strong> Founder-led warm intros first; a partnerships hire only once there is something to sell. Few deals, long cycles, senior conversations.</td>
+<td>Selling ActCAD to end customers</td>
+<td><strong>ActCAD&rsquo;s sales — unchanged</strong></td>
 </tr>
 <tr>
-<td><strong>Selling ActCAD to end customers</strong></td>
-<td><strong>ActCAD&rsquo;s existing sales organisation. Completely unchanged.</strong> New engine, same channel, same team, same customers.</td>
-</tr>
-<tr>
-<td><strong>A member&rsquo;s own L1 / L2 support and their end-customer sales</strong></td>
-<td>The member. Never us.</td>
+<td>A member&rsquo;s own L1/L2 and end-customer sales</td>
+<td><strong>The member</strong></td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p><strong>This is a genuine complementarity, not a polite division.</strong> The verticals are the most differentiated thing we can license — and they exist because of domain judgement the platform team could not produce. The engine exists because of systems work the ActCAD team does not do. <strong>Neither half is sufficient alone.</strong></p>
-</blockquote>
-<p><strong>Three things follow, and they should be said plainly:</strong></p>
-<ol>
-<li><strong>The TejasCAD team does not exist yet.</strong> Dev, QA and dev support all have to be hired. <strong>Recruitment and ramp are the real schedule risk</strong> — more than the architecture, which is already proving out in Phase 0.</li>
-<li><strong>That team is the engine team.</strong> It is not an extra cost created by the platform — <strong>it is the cost of building ActCAD-new, which we are paying either way.</strong> The platform decides who employs them and who else helps pay for them.</li>
-<li><strong>Which makes ActCAD&rsquo;s member fee the actual funding mechanism, not bookkeeping.</strong> For the first two years there are no external members. <strong>ActCAD is what funds the platform team</strong> — that is precisely why its fee has to be a real, arm&rsquo;s-length number rather than a notional entry.</li>
-</ol></section>
-<section class="slide" data-ap="0"><h2>The kill switch — how this ends if it isn&rsquo;t working</h2>
-<p><strong>A yes today is not open-ended. It buys an option with a defined expiry and a defined test.</strong></p>
-<table>
-<thead>
-<tr>
-<th>Gate</th>
-<th>When</th>
-<th>Test</th>
-<th>If it fails</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Outreach check</strong></td>
-<td>Month 12</td>
-<td>Have 8–10 qualified member conversations happened?</td>
-<td>Stop outbound. Keep building the seam — it pays for itself in ActCAD&rsquo;s architecture regardless.</td>
-</tr>
-<tr>
-<td><strong>The real gate</strong></td>
-<td><strong>Month 24, at ActCAD-new GA</strong></td>
-<td><strong>Are there ≥2 members at signed LOI?</strong></td>
-<td><strong>We stop.</strong> No platform entity, no partner obligations, no second set of books.</td>
-</tr>
-<tr>
-<td>Tier decision</td>
-<td>Before first Complete sale</td>
-<td>Does licensing our verticals threaten ActCAD in that member&rsquo;s territory?</td>
-<td>Don&rsquo;t sell that tier to that member.</td>
-</tr>
-</tbody>
-</table>
-<div class="big">
-<p><strong>If the month-24 gate fails, what have we lost? Three to six engineer-months — spent on architecture we would defend on ActCAD&rsquo;s own merits anyway.</strong></p>
-</div>
-<p><strong>And what we would still have:</strong> a cleanly-separated engine, a real plugin API, configuration-driven behaviour, a proper licensing abstraction, and ActCAD shipping on all of it. <strong>That is the downside case. It is not a bad one.</strong></p>
-<blockquote>
-<p><strong>For anyone not yet convinced: this is the slide to hold us to.</strong> Approving the concept does not commit the company to becoming a platform business. It commits us to <strong>coming back to this room at month 24 with either two signed LOIs or a recommendation to stop.</strong></p>
+<p><strong>That team is the engine team.</strong> The platform does not create the cost — ActCAD-new needs those people either way. <strong>It decides who employs them and who else helps pay.</strong></p>
 </blockquote></section>
-<section class="slide" data-ap="0"><h2>Building for ActCAD vs building for the world — the two paths, side by side</h2>
+<section class="slide" data-ap="0"><h2>The kill switch</h2>
+<ul>
+<li><strong>Month 12</strong> — have 8–10 qualified member conversations happened? If not, <strong>stop outbound</strong></li>
+<li><strong>Month 24, at ActCAD-new GA</strong> — <strong>≥2 members at signed LOI, or we stop.</strong> No platform entity, no partner obligations</li>
+<li><strong>Before any Complete-tier sale</strong> — does it threaten ActCAD in that territory? If so, <strong>don&rsquo;t sell it</strong></li>
+</ul>
+<div class="big">
+<p><strong>If month 24 fails, we lose 3–6 engineer-months — spent on architecture we would defend on ActCAD&rsquo;s own merits anyway.</strong></p>
+</div>
+<ul>
+<li>What we keep regardless: <strong>cleanly separated engine, real plugin API, configuration-driven behaviour, proper licensing abstraction</strong></li>
+</ul></section>
+<section class="slide" data-ap="0"><h2>The two paths</h2>
 <table>
 <thead>
 <tr>
-<th>Dimension</th>
+<th></th>
 <th>Build for ActCAD only</th>
-<th>Build as a platform (ActCAD = anchor tenant)</th>
+<th>Build as a platform</th>
 </tr>
 </thead>
 <tbody>
@@ -445,948 +319,318 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 <tr>
 <td>Ship date</td>
 <td>~24 months to GA</td>
-<td>Same 24 months to GA + tenant-profile discipline in P1</td>
+<td>Same, + tenant discipline in P1</td>
 </tr>
 <tr>
-<td>Extra P1 engineering cost</td>
+<td>Extra P1 cost</td>
 <td>Baseline</td>
-<td><strong>~3–6 engineer-months</strong> for the tenant layer done properly</td>
+<td><strong>~3–6 engineer-months</strong></td>
 </tr>
 <tr>
-<td>Revenue model</td>
-<td>ActCAD license + AI/cloud subs</td>
-<td>Same for ActCAD <strong>plus</strong> member fees + royalty pass-through + marketplace share + vertical co-development royalties</td>
+<td>Revenue</td>
+<td>ActCAD only</td>
+<td><strong>+ member fees, marketplace, vertical royalties</strong></td>
 </tr>
 <tr>
-<td>Passive-revenue upside</td>
-<td>Zero</td>
-<td><strong>Real</strong> — every member added is annuity income from work we already did</td>
+<td>Exit</td>
+<td>ActCAD as one product</td>
+<td><strong>A second, separately saleable asset</strong></td>
 </tr>
 <tr>
-<td>Exit optionality</td>
-<td>ActCAD sold as a product</td>
-<td>A second, separately saleable asset — modest on its own (~$14–54M, see scenarios), but it also makes ActCAD itself a cleaner acquisition</td>
-</tr>
-<tr>
-<td>Risk if platform play fails</td>
+<td>If it fails</td>
 <td>—</td>
-<td>We still shipped a great ActCAD. Nothing wasted.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>If the answer is no, nothing breaks.</strong> We still ship modern ActCAD in 24 months, save ~3–6 engineer-months, and take on no partner obligations, no second entity, no second set of books. We forgo a ~$2–7M/yr line at ~70% margin.</p>
-<blockquote>
-<p><strong>The one thing a no forecloses that is hard to reopen is the architecture.</strong> Everything else on this list can be revisited in three years. <strong>The tenant seam is materially cheaper to build now than to retrofit</strong> — which is why we are asking now rather than after GA.</p>
-</blockquote></section>
-<section class="slide" data-ap="0"><h2>What a member pays IntelliCAD today — and what they actually get for it</h2>
-<p>We are an IntelliCAD member. <strong>We know this market&rsquo;s economics because we live them.</strong></p>
-<table>
-<thead>
-<tr>
-<th>ActCAD&rsquo;s ITC bill</th>
-<th>Amount</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ITC membership + extras</td>
-<td>~$100K / year</td>
-</tr>
-<tr>
-<td>Per-seat royalty to ITC</td>
-<td>$0 — royalty-free at the ITC level</td>
-</tr>
-<tr>
-<td>Component royalties (ACIS and a few others)</td>
-<td>$15–20 per sale</td>
-</tr>
-</tbody>
-</table>
-<p><strong>But the membership fee is the small part of the cost.</strong> What ITC hands you is roughly <strong>a million lines of source code</strong>. That is not a product you can ship. It is a codebase you now have to staff, patch, fork, and re-merge on every ITC version uptake — <strong>forever</strong> — before you can sell a single seat.</p>
-<p><strong>The real cost of being an IntelliCAD member:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Line</th>
-<th>Typical mid-size member</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>ITC membership + extras</td>
-<td>~$100K</td>
-</tr>
-<tr>
-<td>Component royalties (~3–4K sales/yr)</td>
-<td>~$60K</td>
-</tr>
-<tr>
-<td>Third-party DRM (Sentinel / Reprise) + integration</td>
-<td>$50–150K</td>
-</tr>
-<tr>
-<td>6–8 engineers maintaining the fork and building features</td>
-<td>$500K–1M</td>
-</tr>
-<tr>
-<td><strong>Realistic all-in cost of ownership</strong></td>
-<td><strong>~$700K – $1.3M / year</strong></td>
-</tr>
-</tbody>
-</table>
-<p><strong>What ITC sells as paid add-ons — and what they actually are:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Add-on</th>
-<th>ITC price</th>
-<th>Reality</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>AI</td>
-<td>~$7–8K / yr</td>
-<td>Experimental. Unclear how much is genuinely usable.</td>
-</tr>
-<tr>
-<td>Android viewer</td>
-<td>~$8K / yr</td>
-<td>Exists, but weak.</td>
-</tr>
-<tr>
-<td>Mac / full web app / web editor</td>
-<td>—</td>
-<td><strong>Not available. IntelliCAD is Windows-tied.</strong></td>
+<td><strong>We still shipped a great ActCAD</strong></td>
 </tr>
 </tbody>
 </table>
 <blockquote>
-<p><strong>The add-ons are cheap because they are not really products.</strong> That matters for how we price: <strong>we bundle, we do not itemize.</strong> The moment we put a line item called &ldquo;AI&rdquo; on a quote, we get compared to an $8K experiment. Bundled into one platform fee that retires most of a $700K–1.3M stack, the comparison is the one we want.</p>
+<p><strong>A no forecloses one thing that is hard to reopen: the architecture.</strong> Everything else can be revisited in three years.</p>
 </blockquote></section>
-<section class="slide" data-ap="0"><h2>IntelliCAD++ — the same idea, with ownership and responsibility fixed</h2>
-<p><strong>The consortium model was right about one thing: small CAD vendors cannot each fund an engine.</strong> What it got wrong is who owns the result and who carries the burden of it.</p>
+<section class="slide" data-ap="0"><h2>What we pay IntelliCAD today</h2>
 <table>
 <thead>
 <tr>
 <th></th>
-<th><strong>IntelliCAD (ITC)</strong></th>
-<th><strong>TejasCAD — IntelliCAD++</strong></th>
+<th></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>What you receive</strong></td>
+<td>ITC membership + extras</td>
+<td><strong>~$100K / year</strong></td>
+</tr>
+<tr>
+<td>Per-seat royalty to ITC</td>
+<td><strong>$0</strong> — royalty-free at the ITC level</td>
+</tr>
+<tr>
+<td>Component royalties (ACIS and others)</td>
+<td><strong>$15–20 per sale</strong></td>
+</tr>
+<tr>
+<td>AI</td>
+<td><strong>~$7–8K/yr extra</strong> — experimental</td>
+</tr>
+<tr>
+<td>Android viewer</td>
+<td><strong>~$8K/yr extra</strong> — weak</td>
+</tr>
+<tr>
+<td>Mac, web app, web editor</td>
+<td><strong>Not available. Windows-tied.</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>And what we get for it is ~a million lines of source</strong> — not a product. A codebase to staff, fork and re-merge on every uptake, before selling a single seat.</p>
+</blockquote></section>
+<section class="slide" data-ap="0"><h2>IntelliCAD++ — what we give that ITC does not</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>ITC gives</strong></th>
+<th><strong>We give</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The deliverable</td>
 <td>~1M lines of source</td>
 <td><strong>A shipping product you configure</strong></td>
 </tr>
 <tr>
-<td><strong>Who maintains the engine</strong></td>
-<td><strong>You do. Forever.</strong> Fork it, patch it, re-merge on every uptake</td>
-<td><strong>We do.</strong> You never touch engine code</td>
+<td>Engine maintenance</td>
+<td><strong>Yours, forever</strong></td>
+<td><strong>Ours.</strong> You never touch engine code</td>
 </tr>
 <tr>
-<td><strong>Who owns the IP</strong></td>
-<td>Consortium-held; you hold a licence</td>
-<td>Platform-held; you hold a licence <strong>— and founding members hold equity</strong></td>
+<td>Engine bugs</td>
+<td>You fix them; <strong>your work reaches competitors</strong></td>
+<td><strong>We fix them.</strong> You draw from the pool without funding it</td>
 </tr>
 <tr>
-<td><strong>Who sets direction</strong></td>
-<td>Member supermajority. <strong>The slowest member sets the pace</strong></td>
-<td>Platform decides. <strong>Members have voice, not veto</strong></td>
+<td>Your own plugins &amp; verticals</td>
+<td>Intertwined with engine patches</td>
+<td><strong>Stay entirely yours</strong></td>
 </tr>
 <tr>
-<td><strong>Engine bugs</strong></td>
-<td><strong>You fix them yourself, in source</strong> — then your fix flows to every member including competitors, <em>and</em> you carry the re-merge burden forever</td>
-<td><strong>We fix them, and the fix ships to every member.</strong> You benefit from every other member&rsquo;s reported bug without having funded any of it</td>
-</tr>
-<tr>
-<td><strong>Your proprietary work</strong></td>
-<td>Blurred — your engine patches and your product code are intertwined</td>
-<td><strong>Clean: your plugins, verticals, tenant configuration and UI stay entirely yours</strong></td>
-</tr>
-<tr>
-<td><strong>Release cadence</strong></td>
+<td>Release cadence</td>
 <td>Coordinated, annual</td>
-<td><strong>Rolling. You ship when you are ready</strong></td>
+<td><strong>Rolling — ship when ready</strong></td>
 </tr>
 <tr>
-<td><strong>Platform reach</strong></td>
+<td>Platform reach</td>
 <td>Windows</td>
-<td>Windows, Mac, Linux, web, Android</td>
+<td><strong>Windows, Mac, Linux, web, Android</strong></td>
 </tr>
 <tr>
-<td><strong>AI</strong></td>
+<td>AI</td>
 <td>~$8K experimental add-on</td>
-<td><strong>In every tier</strong></td>
+<td><strong>Included</strong></td>
 </tr>
 <tr>
-<td><strong>Licensing / DRM</strong></td>
+<td>Licensing / DRM</td>
 <td>Buy your own</td>
 <td><strong>Included, and platform-blind</strong></td>
 </tr>
+<tr>
+<td>Direction</td>
+<td>Member supermajority</td>
+<td>Platform decides; <strong>members have voice</strong></td>
+</tr>
 </tbody>
 </table>
-<div class="big">
-<p><strong>The consortium gave members shared ownership of a codebase and sole responsibility for running it. We invert that: we carry the responsibility, and we share the ownership with the members who matter most.</strong></p>
-</div>
 <blockquote>
-<p><strong>The &ldquo;++&rdquo; is not just a better engine — it is a better deal on who does the work.</strong> That is the sentence to lead with in every member conversation.</p>
-</blockquote>
-<p><strong>On shared fixes, to be precise — because it sounds like the ITC problem and is its opposite.</strong> Engine fixes <em>do</em> reach every member. The difference is who paid for them. <strong>Under ITC a member spends their own engineers fixing the engine and watches that investment reach competitors. Here, nobody&rsquo;s engineers are spent on the engine but ours</strong> — so a shared fix pool is something each member draws from rather than contributes to. <strong>What stays proprietary is the work that actually differentiates them: their plugins, verticals, configuration and UI.</strong></p>
-<blockquote>
-<p><strong>We are already running this model.</strong> ActCAD&rsquo;s team files numbered bugs against each drop and we ship fixes back — 13+ releases so far. <strong>ActCAD is member zero, and the arrangement is working before we have written a contract for it.</strong></p>
-<p>⚠️ <strong>One thing this raises that needs deciding:</strong> how far the ownership-sharing goes. Founding Partner warrants are three small slots — parity between us is preserved. <strong>Going further, toward genuine member co-ownership, buys deeper commitment but reintroduces exactly the governance drag that made ITC slow.</strong> Our position is warrants yes, votes no — but it is a decision, not a given.</p>
+<p><strong>The consortium gave members shared ownership of a codebase and sole responsibility for running it. We carry the responsibility instead.</strong></p>
 </blockquote></section>
-<section class="slide" data-ap="0"><h2>What each tier gates — and what it costs</h2>
+<section class="slide" data-ap="0"><h2>What we deliver, and what we would charge</h2>
+<p><strong>Tiers gate on what they take:</strong></p>
 <table>
 <thead>
 <tr>
 <th>Tier</th>
-<th>What it unlocks</th>
+<th>Adds</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Core</strong></td>
-<td>Engine, DWG/DXF fidelity, white-label shell + build pipeline, encrypted licensing, <strong>and AI</strong></td>
+<td>Engine, DWG fidelity, white-label shell, build pipeline, licensing, <strong>AI</strong></td>
 </tr>
 <tr>
 <td><strong>Plus</strong></td>
-<td>+ <strong>web app, Mac, Android</strong>, marketplace access, cloud AI</td>
+<td>+ web app, <strong>Mac, Android</strong>, marketplace</td>
 </tr>
 <tr>
 <td><strong>Complete</strong></td>
-<td>+ <strong>the ActCAD-derived vertical modules</strong> (Arch / Mech / Elec / BIM / GIS), co-development priority</td>
+<td>+ <strong>the ActCAD-derived verticals</strong> (Arch / Mech / Elec / BIM / GIS)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>$300K on day one is steep for a vendor paying ITC $100K.</strong> So we don&rsquo;t ask on day one, and we don&rsquo;t charge everyone the same — <strong>the band is set by the member&rsquo;s own installed base:</strong></p>
+<p><strong>Priced by the member&rsquo;s own installed base:</strong></p>
 <table>
 <thead>
 <tr>
-<th>Member&rsquo;s seat base</th>
-<th><strong>Core</strong></th>
-<th><strong>Plus</strong></th>
-<th><strong>Complete</strong></th>
+<th>Seat base</th>
+<th>Core</th>
+<th>Plus</th>
+<th>Complete</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Launch</strong> — under 5,000</td>
+<td>Under 5,000</td>
+<td>$45K</td>
+<td>$65K</td>
 <td>$90K</td>
+</tr>
+<tr>
+<td>5,000–20,000</td>
+<td>$80K</td>
+<td>$110K</td>
+<td>$150K</td>
+</tr>
+<tr>
+<td>20,000–50,000</td>
 <td>$130K</td>
+<td><strong>$170K</strong></td>
+<td>$220K</td>
+</tr>
+<tr>
+<td>50,000+</td>
 <td>$190K</td>
-</tr>
-<tr>
-<td><strong>Growth</strong> — 5,000–20,000</td>
-<td>$180K</td>
-<td>$230K</td>
+<td>$240K</td>
 <td>$300K</td>
-</tr>
-<tr>
-<td><strong>Scale</strong> — 20,000–50,000</td>
-<td>$300K</td>
-<td><strong>$360K</strong> ← <em>ActCAD</em></td>
-<td>$450K</td>
-</tr>
-<tr>
-<td><strong>Enterprise</strong> — 50,000+</td>
-<td>$450K</td>
-<td>$520K</td>
-<td>$620K+</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Ramped 50% / 75% / 100%</strong> across migration years 1–3, because their revenue on our platform ramps too. <strong>Component royalties (ACIS etc.) pass through at cost</strong> — no markup on the one number they can compare directly.</p>
-<blockquote>
-<p><strong>AI is in every tier deliberately</strong> — it is our sharpest edge over IntelliCAD and belongs in front of every member&rsquo;s customers. <strong>But the capability is bundled and the consumption is metered</strong> (allowance, then at cost, or bring-your-own-key) — unmetered inference against a fixed fee is an unbounded liability. <em>Detail in appendix.</em></p>
-<p>⚠️ <strong>Complete needs a decision, not just a price.</strong> Licensing our verticals arms vendors who may compete with ActCAD. The named-competitor exclusion is <strong>a veto held by ActCAD&rsquo;s operating partner</strong> — see the earlier slide.</p>
-<p><strong>3D (future, out of scope today):</strong> a separate product on the <strong>C3D kernel</strong>, eventually an additional module. Russian-origin — <strong>export/jurisdiction constraints need clearing before it is licensed onward to EU/UK/US members.</strong></p>
-</blockquote></section>
-<section class="slide" data-ap="0"><h2>What this could become — conservative, base, aggressive</h2>
-<p>Two variables drive everything: <strong>how many members we sign</strong>, and <strong>what mix of tiers they buy.</strong></p>
+<ul>
+<li><strong>Ramped 50% / 75% / 100%</strong> over migration years 1–3</li>
+<li><strong>Component royalties pass through at cost</strong> — no markup</li>
+<li><strong>AI metered above an allowance</strong>, or bring your own key — inference is a real per-use cost</li>
+<li><strong>Complete tier is a decision, not just a price</strong> — it arms vendors who may compete with ActCAD</li>
+</ul></section>
+<section class="slide" data-ap="0"><h2>What this could become</h2>
 <table>
 <thead>
 <tr>
 <th></th>
-<th><strong>Conservative</strong></th>
-<th><strong>Base</strong></th>
-<th><strong>Aggressive</strong></th>
+<th>Conservative</th>
+<th>Base</th>
+<th>Aggressive</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Commercial</strong> members by Y7 (incl. ActCAD)</td>
+<td>Members by Y7</td>
 <td>5</td>
 <td>12</td>
 <td>20</td>
 </tr>
 <tr>
-<td>Developer-tier members (funnel)</td>
-<td>~10</td>
-<td>~40</td>
-<td>~80</td>
+<td>Blended fee</td>
+<td>~$70K</td>
+<td>~$110K</td>
+<td>~$170K</td>
 </tr>
 <tr>
-<td>Tier mix</td>
-<td>mostly Launch / Core</td>
-<td>the mix in the appendix</td>
-<td>skews Growth+ / Plus &amp; Complete</td>
+<td>+ marketplace &amp; royalties</td>
+<td>~$15K</td>
+<td>~$30K</td>
+<td>~$45K</td>
 </tr>
 <tr>
-<td>Blended fee per member</td>
-<td>~$105K</td>
-<td>~$181K</td>
-<td>~$285K</td>
+<td><strong>Platform ARR</strong></td>
+<td><strong>~$425K</strong></td>
+<td><strong>~$1.7M</strong></td>
+<td><strong>~$4.3M</strong></td>
 </tr>
 <tr>
-<td><strong>+ marketplace &amp; vertical royalties</strong></td>
-<td>~$25K</td>
-<td>~$50K</td>
-<td>~$50K</td>
-</tr>
-<tr>
-<td><strong>Platform ARR at Y7</strong></td>
-<td><strong>~$650K</strong></td>
-<td><strong>~$2.8M</strong></td>
-<td><strong>~$6.7M</strong></td>
-</tr>
-<tr>
-<td>Gross margin</td>
+<td>Margin</td>
 <td>~68%</td>
 <td>~70%</td>
-<td>~73%</td>
+<td>~72%</td>
 </tr>
 <tr>
-<td><strong>Annual profit contribution</strong></td>
-<td><strong>~$440K</strong></td>
-<td><strong>~$2.0M</strong></td>
-<td><strong>~$4.9M</strong></td>
+<td><strong>Profit contribution</strong></td>
+<td><strong>~$290K</strong></td>
+<td><strong>~$1.2M</strong></td>
+<td><strong>~$3.1M</strong></td>
 </tr>
 <tr>
-<td>Indicative exit multiple</td>
-<td>—</td>
-<td>5–6×</td>
-<td>7–8×</td>
-</tr>
-<tr>
-<td><strong>Indicative enterprise value</strong></td>
-<td>not saleable at this scale</td>
-<td><strong>~$14–17M</strong></td>
-<td><strong>~$47–54M</strong></td>
-</tr>
-<tr>
-<td>What we&rsquo;d likely do</td>
-<td>Don&rsquo;t sell. Run it — it pays for itself</td>
-<td>Sell, or keep compounding</td>
-<td>Competitive process; genuine strategic interest</td>
+<td>Enterprise value at 6–8×</td>
+<td>not saleable</td>
+<td>~$10–13M</td>
+<td><strong>~$26–34M</strong></td>
 </tr>
 </tbody>
 </table>
-<p><em>Developer-tier revenue is excluded above — at $4K it is immaterial (~$320K even at 80 members). </em><em>Its value is the graduation pipeline into the commercial tiers</em><em>, which is what makes the Y8–12 picture bigger than the Y7 one.</em></p>
-<p><em>Component royalties (ACIS etc.) are excluded throughout — they pass through at cost and earn us nothing.</em></p>
-<p><strong>The honest read: a strong adjacent business line, not a venture-scale company.</strong> The aggressive case is a ~$7M ARR business worth ~$50M, throwing off ~$5M/year. That is an excellent return on a few engineer-months of incremental work on an engine we are funding anyway — and it is not a unicorn.</p>
 <blockquote>
-<p><strong>What would make it materially bigger?</strong> Not this model. Twenty members at $340K caps out near $50M. Reaching $20M+ ARR needs <strong>~60–100 members</strong> (the global long tail, a decade of partner management), or selling <strong>direct to end users</strong> alongside our members, or <strong>a second licensable product line — the 3D product on C3D is the obvious candidate.</strong> All three are questions to open deliberately later, not to assume today.</p>
-</blockquote></section>
-<section class="slide" data-ap="0"><h2>Funding path — and what actually sets an acquisition floor</h2>
-<p><strong>Promoter-funded at the start, as intended.</strong> But the ask is small, because the expensive part is already committed.</p>
+<p><strong>A profitable adjacent business line, not a venture-scale company.</strong> Good return on a few engineer-months on an engine we are building anyway.</p>
+</blockquote>
+<p><strong>Materially bigger needs ~60–100 members, direct-to-end-user, or the 3D product — later questions, not assumptions.</strong></p></section>
+<section class="slide" data-ap="0"><h2>Funding</h2>
 <table>
 <thead>
 <tr>
 <th>Stage</th>
 <th>When</th>
 <th>Size</th>
-<th>Purpose</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Promoter seed</strong></td>
 <td>Now → Y2</td>
-<td><strong>$1–2M</strong></td>
-<td>Platform layer + licensing infra + first member onboarding. <strong>The engine is already funded and building — this is the increment on top.</strong></td>
+<td><strong>$1–2M</strong> — the increment on an already-funded engine</td>
 </tr>
 <tr>
 <td><strong>Strategic round</strong> <em>(optional)</em></td>
 <td>Y4–5</td>
-<td><strong>$5–10M at $40–60M pre</strong></td>
-<td><strong>The floor-setter.</strong> See below.</td>
+<td><strong>$5–10M</strong> — sets a floor, from a plausible acquirer</td>
 </tr>
 <tr>
 <td><strong>Exit</strong></td>
 <td>Y6–7</td>
-<td>Target $50–100M</td>
-<td>Competitive process, if the strategic round created tension</td>
+<td>Target <strong>$30–50M</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>On setting a floor — the honest mechanics:</strong></p>
 <ul>
-<li>A priced round&rsquo;s post-money <strong>does</strong> anchor board and shareholder expectations. That part is real.</li>
-<li>But it only holds <strong>if the valuation was defensible.</strong> An inflated round doesn&rsquo;t create a floor — it creates down-round risk and scares acquirers off.</li>
-<li><strong>What actually forces price up is competition between buyers, not a prior round.</strong></li>
-</ul>
-<blockquote>
-<p><strong>So the highest-leverage move is not a big financial round — it&rsquo;s a small strategic one.</strong> $5–10M from a <em>plausible acquirer</em> (an ODA-ecosystem vendor, a CAD-adjacent strategic, an Indian engineering major) does three things a financial round cannot: it <strong>sets a defensible floor</strong>, it <strong>puts a real buyer on the cap table</strong>, and it <strong>forces rival buyers to move</strong> rather than wait.</p>
-</blockquote>
-<p><strong>And a caution worth stating plainly:</strong> at ~74% margins this business likely <strong>self-funds from year 3</strong>. Raising money we don&rsquo;t need is dilution without benefit. <strong>Take the strategic round for the strategic reason — the floor and the tension — not for the cash.</strong></p></section>
-<section class="slide" data-ap="0"><h2>What we&rsquo;re asking today — and what we&rsquo;re explicitly NOT asking</h2>
-<p><strong>We&rsquo;re asking for: concept approval in principle.</strong> That&rsquo;s it.</p>
-<p>That approval unlocks the following prep work — none of which commits capital or public communication:</p>
-<ul>
-<li>Draft Master Platform License Agreement template (Jytra ↔ TejasCAD)</li>
-<li>Open trademark clearance on TejasCAD + sub-brand family (TejasCAD Engine / Forge / Cloud / SDK)</li>
-<li>Corporate counsel scoping of the entity structure — <strong>note the earlier Delaware C-Corp recommendation was premised on institutional VC rounds we are no longer planning; a simpler Indian structure may now be correct</strong></li>
-<li>Non-binding scoping conversation with 3–5 candidate member CEOs (all in ActCAD&rsquo;s existing warm network)</li>
-<li>Encrypted licensing v0 design review with an external crypto firm</li>
-</ul>
-<p><strong>We are NOT asking today for:</strong></p>
-<ul>
-<li>Capital commitment (the $1–2M promoter seed is a separate, later decision)</li>
-<li>Public announcement of any kind</li>
-<li>Entity incorporation (that follows counsel review)</li>
-<li>ACIS platform-amendment negotiation with Spatial (that follows the bilateral first)</li>
-<li>Any change to how ActCAD is run today</li>
+<li>A priced round&rsquo;s post-money <strong>does</strong> anchor expectations — but only if defensible</li>
+<li><strong>What forces price up is competition between buyers, not a prior round</strong></li>
+<li>At ~70% margins this <strong>self-funds from year 3</strong> — take the round for tension, not cash</li>
 </ul></section>
-<section class="slide" data-ap="0"><p><strong>Three questions worth sitting with before you answer:</strong></p>
-<ol>
-<li><strong>Is a ~$3–7M/year, ~75%-margin adjacent business worth the operational complexity</strong> of a second entity, partner relationships, and supporting other vendors&rsquo; teams? The revenue is real but not transformational.</li>
-<li><strong>Are we willing to run two clean entities</strong>, with ActCAD paying standard member fees like anyone else — knowing that fee is what actually funds the platform team in the early years?</li>
-<li><strong>Do we want to be the ones who build this</strong> — accepting it is a <strong>profitable business line, not a venture-scale outcome</strong>, unless we later choose a much bigger distribution model?</li>
-</ol>
-<blockquote>
-<p><strong>What we are NOT asking you to fund today: the engine.</strong> That is already committed and building. The platform layer is <strong>~3–6 engineer-months incremental</strong> on work in flight.</p>
-</blockquote></section>
-<section class="slide" data-ap="0"><h2>What happens on Monday if the concept is approved</h2>
-<p>Week 1 (this coming week):
-- Legal engagement: entity structure scoping (Delaware C-Corp vs simpler Indian structure — the funding path has changed)
-- Trademark clearance opens on TejasCAD + sub-brand family
-- Draft of Master Platform License Agreement between Jytra and TejasCAD
-- <strong>Phase 0 engineering continues at current pace</strong> — no disruption, no scope change; the tenant-profile discipline gets folded into the build pipeline that already exists</p>
-<p>Weeks 2–4:
-- Draft of the $1–2M promoter seed structure (equity + convertible notes)
-- First soft conversation with 2 candidate members from ActCAD&rsquo;s warm network — no LOI ask, just problem discovery. <strong>We can show them the working viewer.</strong>
-- External crypto firm engaged to review encrypted licensing v0 design
-- Customer-hardware perf baseline measurement (the exit criterion still owed from Phase 0)
-- <strong>Instrument AI inference cost per active user</strong> — the number that sizes the allowance and protects the margin
-- Public web-launch decision — first candidate-member conversations may benefit from a controlled public demo</p>
-<p>By month 2, we come back to this room with:
-- A confirmed entity plan
-- A trademark status update
-- Notes from the first 2 candidate-member conversations — <strong>live product in hand for the demo, not slides</strong>
-- A firm number on the promoter seed
-- Customer-hardware perf numbers to close the last Phase 0 exit criterion</p>
-<p><strong>Nothing between now and month 2 is publicly visible. Nothing commits capital or brand until the promoter group approves the next step. Phase 0 engineering keeps shipping through all of it.</strong></p></section>
-<section class="slide lead" data-ap="0"><h1>The ask, in one line</h1>
+<section class="slide" data-ap="0"><h2>What we are asking</h2>
 <div class="big">
-<p><strong>Approve TejasCAD as a concept in principle — turn on the pre-work that lets us come back with real answers in eight weeks.</strong></p>
+<p><strong>In-principle approval.</strong></p>
 </div>
-<p><code>docs/tejascad-story.md</code> · <code>docs/tejascad-company-structure.md</code> · <code>docs/tejascad-vs-intellicad.md</code> · <code>docs/tejascad-licensing-architecture.md</code> · <code>docs/tejascad-pitch-deck.md</code></p>
-<p>Questions?</p></section>
-<section class="slide lead" data-ap="1"><h1>Appendix</h1>
-<h3>Commercial model detail</h3>
-<p><em>Pricing mechanics, tier gating, AI metering, founding-member terms, member onboarding, and the licensing trust story. Here if the conversation goes there — not part of the main line.</em></p></section>
-<section class="slide" data-ap="1"><h2>The Phase 1 architectural direction — what we already know</h2>
-<p>The viewer is proving something else: <strong>some ODA features are not exposed through the web stack.</strong> For those, the full-editor product needs a <strong>native application</strong> path, not just a browser.</p>
-<p><strong>Plan (already consistent with the original re-architecture plan):</strong></p>
+<p><strong>And to open three discussions:</strong></p>
 <ul>
-<li><strong>Now → viewer launch:</strong> continue on the current Rust/Tauri + WASM/inWEB stack. Ship the viewer.</li>
-<li><strong>After viewer launch:</strong> <strong>migrate the full-product to Qt + C++ native.</strong> This is where the ODA features currently missing from the web stack become available, and where the ActCAD team wants to live long-term.</li>
-<li><strong>The web viewer:</strong> either <strong>folds into the Qt stack</strong> as an alternate frontend on the same C++ engine, or <strong>stays on Rust/Tauri</strong> as an independent codebase. Open decision — settled with data during the migration.</li>
-</ul>
-<p><strong>Why the directors should hear this now:</strong></p>
-<ul>
-<li>The Qt/C++ direction is not a change of plan; it is what the re-architecture always intended for the full product. The Rust/Tauri viewer is the entry point, not the destination.</li>
-<li>The &ldquo;should the web viewer live in Qt or stay Rust/Tauri?&rdquo; question is a <strong>healthy</strong> architectural choice we get to make after the viewer ships, not a fire we&rsquo;re fighting.</li>
-<li><strong>None of this changes the platform argument.</strong> The platform seams (tenant profile, encrypted licensing, marketplace, MCP agent) live in the C++ core regardless of which shell wraps them.</li>
-</ul></section>
-<section class="slide" data-ap="1"><h2>Who our first members would be</h2>
-<p>Not competition. Segments where they&rsquo;d rather share the platform cost than fund the R&amp;D alone.</p>
-<table>
-<thead>
-<tr>
-<th>Segment</th>
-<th>What they are</th>
-<th>Why they&rsquo;d talk to us</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Regional ITC members</strong></td>
-<td>progeCAD, CADian, CMS IntelliCAD, DoubleCAD, and the long tail of regional / vertical ITC-based products</td>
-<td>Stuck on the IntelliCAD ceiling for AI / cloud / web / mobile — and <strong>paying their own engineers to fix an engine, only for that work to reach competitors.</strong></td>
-</tr>
-<tr>
-<td><strong>Vertical ISVs</strong></td>
-<td>MEP, structural, electrical, survey, solar, curtain-wall specialists</td>
-<td>No clean engine option. Forced onto AutoCAD SDK or DIY. Would ship a full branded CAD in 90 days on us.</td>
-</tr>
-<tr>
-<td><strong>BIM-lite startups</strong></td>
-<td>New AEC-tech founders in Bengaluru, EU, ME, LATAM</td>
-<td>Need CAD + IFC + AI foundation; can&rsquo;t afford to build it</td>
-</tr>
-</tbody>
-</table>
-<p><strong>To be clear about who is NOT on this list:</strong> BricsCAD, ZWCAD, and GstarCAD are <strong>peers, not prospects.</strong> They each already left IntelliCAD and built their own engine direct on ODA — ZWCAD and GstarCAD are among ActCAD&rsquo;s most direct competitors in India today. <strong>We do not white-label to them.</strong></p>
-<blockquote>
-<p>That they made this exact move — and won — is the strongest external validation of the direction. We&rsquo;re taking the same road they took, and adding the white-label layer none of them built.</p>
-</blockquote>
-<p><strong>We approach the real prospects warmly, from ActCAD&rsquo;s existing network</strong> — not cold outbound. The founder&rsquo;s own relationships across India / SEA / MEA / EU open the first 10–15 conversations without a sales team.</p></section>
-<section class="slide" data-ap="1"><h2>How we bring a member on — the 90-day pattern</h2>
-<p>Members don&rsquo;t build. Members configure. That is the whole point.</p>
-<table>
-<thead>
-<tr>
-<th>Week</th>
-<th>What happens</th>
-<th>Who does it</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>W0</strong></td>
-<td>LOI signed. Member gets sandboxed evaluation build with their brand pre-configured, and their 20 hardest customer DWGs test-loaded.</td>
-<td>Member evaluates. TejasCAD supports.</td>
-</tr>
-<tr>
-<td><strong>W1–4</strong></td>
-<td>Tenant profile finalized: brand assets, EULA, command-prefix, feature flags, license-server endpoint, marketplace share %. <strong>License Authority key generated and handed to the member — we never see it again.</strong></td>
-<td>Joint.</td>
-</tr>
-<tr>
-<td><strong>W5–10</strong></td>
-<td>Existing extensions ported to our plugin SDK (95% of LISP works unchanged; .NET migration guide handles the rest). Dedicated migration engineer embedded.</td>
-<td>Member engineering + TejasCAD migration lead.</td>
-</tr>
-<tr>
-<td><strong>W11–13</strong></td>
-<td>Closed beta with 5–15 of the member&rsquo;s own friendly customers under NDA.</td>
-<td>Member.</td>
-</tr>
-<tr>
-<td><strong>W14+</strong></td>
-<td><strong>GA under the member&rsquo;s brand.</strong> Signed installers roll out of our build pipeline. AI, cloud, web features go live with their name on them.</td>
-<td>Member sells to their customers.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Full detail:</strong> <code>docs/tejascad-vs-intellicad.md</code> §6 + <code>docs/tejascad-licensing-architecture.md</code> §5–6.</p></section>
-<section class="slide" data-ap="1"><h2>The lesson from ODA — cheap memberships won</h2>
-<p>ODA and IntelliCAD sell into <strong>the same market</strong>. Look at what they charge and what it got them.</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>IntelliCAD (ITC)</strong></th>
-<th><strong>ODA</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Entry price</td>
-<td>~$100K / year</td>
-<td><strong>$3K first yr / $2.25K renewal</strong></td>
-</tr>
-<tr>
-<td>Main commercial tier</td>
-<td>~$100K + paid add-ons</td>
-<td><strong>$7.5K first yr / $4.5K renewal</strong> — unlimited seats, no per-seat royalty</td>
-</tr>
-<tr>
-<td>Top tier</td>
-<td>—</td>
-<td>$37.5K / $18K — full source, Git access, <strong>board nomination</strong></td>
-</tr>
-<tr>
-<td>Add-ons</td>
-<td>AI ~$8K, Android ~$8K</td>
-<td>Extensions $5–10K each</td>
-</tr>
-<tr>
-<td><strong>Members</strong></td>
-<td><strong>~40</strong></td>
-<td><strong>~1,200+</strong></td>
-</tr>
-<tr>
-<td>Who&rsquo;s on it</td>
-<td>Regional CAD vendors</td>
-<td>Bricsys, GstarCAD, ZWCAD, NanoCAD, Graphisoft, Vectorworks, Bentley, Trimble, Dassault</td>
-</tr>
-</tbody>
-</table>
-<p><strong>ODA charges roughly 1/20th of ITC and has ~30× the members.</strong> That is not an accident — <strong>low friction beat high extraction</strong>, in exactly the market we are entering.</p>
-<p><strong>But we cannot simply copy their price, and it&rsquo;s important to be clear why:</strong> ODA ships <em>components</em>. The member does their own integration, and ODA&rsquo;s cost to serve each member is near zero. <strong>We ship a turnkey white-labeled product with migration support</strong> — our cost to serve is real (~$70K/member). Price below that and every member loses us money.</p>
-<blockquote>
-<p><strong>So we copy ODA&rsquo;s structure, not their number:</strong> a genuinely cheap, genuinely self-serve bottom rung that costs us almost nothing to support — and paid rungs above it where we do real work. That is the next slide.</p>
-</blockquote></section>
-<section class="slide" data-ap="1"><h2>Two speeds — a wide funnel and a paid core</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Developer tier</strong> <em>(the ODA lesson)</em></th>
-<th><strong>Commercial tiers</strong> <em>(where the revenue is)</em></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Price</td>
-<td><strong>$6K first yr / $4K renewal</strong></td>
-<td>$90K – $450K / yr</td>
-</tr>
-<tr>
-<td>Who</td>
-<td>Vertical ISVs, BIM-lite startups, individual devs, evaluators</td>
-<td>Regional CAD vendors, funded ISVs shipping at scale</td>
-</tr>
-<tr>
-<td>What they get</td>
-<td>Engine + SDK + build pipeline, docs, community support, marketplace publishing</td>
-<td>Full white-label, migration engineering, dedicated support, verticals, AI, multiplatform</td>
-</tr>
-<tr>
-<td>Support model</td>
-<td><strong>Self-serve. Near-zero cost to serve.</strong></td>
-<td>Hands-on. ~$70K/member/yr</td>
-</tr>
-<tr>
-<td>Seat cap</td>
-<td>Capped (e.g. 500 seats) — outgrow it, move up</td>
-<td>Uncapped</td>
-</tr>
-<tr>
-<td>Why we do it</td>
-<td><strong>Funnel + ecosystem + marketplace supply</strong></td>
-<td>Pays for the platform</td>
-</tr>
-</tbody>
-</table>
-<p><strong>The developer tier is not a revenue line — it is the growth engine.</strong> Sixty developer members at $4K is $240K, which is rounding error. What it actually buys:</p>
-<ul>
-<li><strong>Reach into the ~200 vertical ISVs and ~40 BIM-lite startups</strong> who would never write a $90K cheque but might write a $6K one</li>
-<li><strong>A pipeline that graduates upward</strong> — today&rsquo;s $6K ISV shipping 300 seats is tomorrow&rsquo;s $180K Growth-tier member</li>
-<li><strong>Marketplace supply</strong> — plugins need developers, and developers need cheap access</li>
-<li><strong>The path past ~20 members.</strong> Twenty commercial members is the realistic Y7 ceiling, and that caps the business near $50M. <strong>A cheap bottom rung is how you get to 60–100.</strong> ODA proved that in this exact market.</li>
+<li><strong>Corporate structure</strong></li>
+<li><strong>Capital requirement</strong></li>
+<li><strong>The team required to make this happen</strong></li>
 </ul>
 <blockquote>
-<p><strong>This is the one argument that the ceiling is higher than the base case suggests.</strong> Twenty commercial members caps out around $50M — but an ODA-shaped funnel feeding those twenty, and graduating members into them over a decade, is a materially bigger business. It is a <strong>Year 8–12 story, not a Year 7 one</strong>, and it should not change today&rsquo;s decision.</p>
-</blockquote></section>
-<section class="slide" data-ap="1"><h2>AI: bundle the capability, meter the consumption</h2>
-<p><strong>AI carries an ongoing marginal cost, and that has to be capped.</strong> Bundling inference unmetered would put an <strong>unbounded liability against a fixed fee</strong> — a 10,000-seat member with 20% active AI use could plausibly burn more in inference than their entire platform fee. That single mistake would take the ~70% margin to nothing.</p>
-<p><strong>So we treat AI inference exactly as we treat ACIS royalties: a pass-through cost, never a margin line.</strong></p>
-<table>
-<thead>
-<tr>
-<th>Mechanism</th>
-<th>How it works</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Per-seat allowance</strong></td>
-<td>Each tier includes a modest monthly allowance — enough for normal drafting use</td>
-</tr>
-<tr>
-<td><strong>Metered above it</strong></td>
-<td>Beyond the allowance, billed at <strong>cost plus a small ops margin</strong>. Never subsidised.</td>
-</tr>
-<tr>
-<td><strong>Bring your own key</strong></td>
-<td>Member supplies their own model API key — <strong>unlimited use, and it costs us nothing</strong></td>
-</tr>
-<tr>
-<td><strong>They resell it</strong></td>
-<td>Members price AI to their end customers however they like. <strong>It becomes their revenue line, not our cost centre.</strong></td>
-</tr>
-</tbody>
-</table>
-<p><strong>And most calls should never hit a frontier model.</strong> Routine work — command suggestion, drawing health, block detection — runs on <strong>small or on-device models</strong>. Frontier models are reserved for genuine agent tasks. That is the difference between a cost that scales with usage and one that doesn&rsquo;t.</p>
-<blockquote>
-<p>⚠️ <strong>Open item, stated honestly: we do not yet know our real inference cost per active user.</strong> Sizing the allowance requires measuring it. <strong>That is a Phase 1 task</strong>, alongside the customer-hardware performance baseline — and until it is measured, the AI allowance numbers stay deliberately unset.</p>
-</blockquote></section>
-<section class="slide" data-ap="1"><h2>Membership + royalty, or membership only?</h2>
-<p><strong>Recommendation: no per-seat royalty to us. Tier by scale instead.</strong></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Membership + per-sale royalty</th>
-<th><strong>Tier by seat band (recommended)</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Revenue scales with member success</td>
-<td>Yes</td>
-<td><strong>Yes — same economics, via the band</strong></td>
-</tr>
-<tr>
-<td>How it reads to an ITC member</td>
-<td>A <strong>downgrade</strong> — ITC is royalty-free at the ITC level</td>
-<td>Familiar; like any subscription</td>
-</tr>
-<tr>
-<td>Reporting burden</td>
-<td>Per-sale reporting, audits, friction</td>
-<td><strong>One annual seat attestation</strong></td>
-</tr>
-<tr>
-<td>Trust posture</td>
-<td>We audit them</td>
-<td><strong>They self-attest; we verify the signature</strong></td>
-</tr>
-<tr>
-<td>Marketing line</td>
-<td>—</td>
-<td><strong>&ldquo;No per-seat royalty to the platform.&rdquo;</strong> Clean and quotable.</td>
-</tr>
-</tbody>
-</table>
-<p><strong>The elegant part: our licensing architecture already produces exactly the number we need.</strong> The quarterly aggregate attestation — a signed count of active deployments, with no customer identities in it — is already in the design for ACIS royalty reporting. <strong>The tier true-up rides on infrastructure we&rsquo;re building anyway, and it works without us ever seeing who their customers are.</strong></p>
-<p><strong>Component royalties (ACIS etc.) still pass through at cost</strong> — the same $15–20/sale they already pay. No markup. That&rsquo;s the one number they can compare directly, so it stays scrupulously clean.</p></section>
-<section class="slide" data-ap="1"><h2>Founding status — earned by tier, not by showing up early</h2>
-<p><strong>Founding benefits cost us real money. They go to members who bring real reference value and take real risk — not to everyone who signs first.</strong></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>Founding Partner</strong></th>
-<th><strong>Founding Member</strong></th>
-<th><strong>Early adopter</strong></th>
-<th><strong>Developer tier</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Who qualifies</td>
-<td><strong>Scale / Enterprise</strong> (20K+ seats, $300K+)</td>
-<td><strong>Growth</strong> (5–20K seats, $180K)</td>
-<td><strong>Launch</strong> ($90K)</td>
-<td>$6K self-serve</td>
-</tr>
-<tr>
-<td>Slots available</td>
-<td><strong>Max 3</strong></td>
-<td><strong>Max 5</strong></td>
-<td>uncapped</td>
-<td>uncapped</td>
-</tr>
-<tr>
-<td>Fee discount</td>
-<td><strong>30%, locked 5 yrs</strong></td>
-<td><strong>20%, locked 3 yrs</strong></td>
-<td>15%, 2 yrs</td>
-<td>— <em>(already the cheap rung)</em></td>
-</tr>
-<tr>
-<td><strong>Warrants</strong></td>
-<td><strong>Yes</strong> — small equity stake, vests 3–4 yrs</td>
-<td>No</td>
-<td>No</td>
-<td>No</td>
-</tr>
-<tr>
-<td>Governance</td>
-<td><strong>Technical advisory board seat</strong></td>
-<td>Roadmap input, no seat</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td>Vertical co-dev split</td>
-<td><strong>50 / 30 / 20</strong></td>
-<td>45 / 35 / 20</td>
-<td>standard 40 / 40 / 20</td>
-<td>n/a</td>
-</tr>
-<tr>
-<td>Marketplace fee holiday</td>
-<td>24 months</td>
-<td>12 months</td>
-<td>—</td>
-<td>—</td>
-</tr>
-<tr>
-<td>Public designation</td>
-<td><strong>&ldquo;Founding Partner&rdquo;</strong></td>
-<td>&ldquo;Founding Member&rdquo;</td>
-<td>—</td>
-<td>—</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Two conditions on all of it:</strong></p>
-<ol>
-<li><strong>A deadline</strong> — founding agreements must be signed <strong>before platform GA</strong>. After that the designation closes permanently, or it stops meaning anything.</li>
-<li><strong>ActCAD does not take a founding slot.</strong> It pays standard Scale-tier rates as the anchor tenant. <strong>The arm&rsquo;s-length discipline matters more than the discount</strong>, and it keeps all three Partner slots available for genuine external reference customers.</li>
-</ol>
-<blockquote>
-<p><strong>The warrants are the piece worth arguing about.</strong> Giving equity to a customer is unusual — but a Founding Partner holding warrants stops being a licensee and becomes an ally who wants the platform <strong>acquired well</strong>. At three slots the dilution is negligible, and it is the strongest retention tool we have against a member drifting back to ITC or building their own.</p>
-</blockquote></section>
-<section class="slide" data-ap="1"><h2>The passive-revenue picture</h2>
-<p><strong>The blended fee depends entirely on who actually signs, so here is the assumed mix — not a number pulled from the air.</strong> A realistic 12-member book at Year 7:</p>
-<table>
-<thead>
-<tr>
-<th>Count</th>
-<th>Tier</th>
-<th>Fee</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>4</td>
-<td>Launch / Core</td>
-<td>$90K</td>
-</tr>
-<tr>
-<td>3</td>
-<td>Launch / Plus</td>
-<td>$130K</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Growth / Plus</td>
-<td>$230K</td>
-</tr>
-<tr>
-<td>2</td>
-<td>Growth / Complete</td>
-<td>$300K</td>
-</tr>
-<tr>
-<td>1</td>
-<td>Scale / Plus <em>(ActCAD)</em></td>
-<td>$360K</td>
-</tr>
-<tr>
-<td><strong>12</strong></td>
-<td></td>
-<td><strong>$2.17M → ~$181K blended</strong></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Per-member economics on that mix:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Line</th>
-<th>Per member / year</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Platform fee (blended, per above)</td>
-<td>~$181K</td>
-</tr>
-<tr>
-<td>Component royalties (ACIS etc.)</td>
-<td><strong>$0 to us</strong> — passed through at cost</td>
-</tr>
-<tr>
-<td>Marketplace share (15% of ~$230K GMV, once mature)</td>
-<td>~$35K</td>
-</tr>
-<tr>
-<td>Vertical co-development royalty (variable)</td>
-<td>~$15K</td>
-</tr>
-<tr>
-<td><strong>Recurring revenue per member</strong></td>
-<td><strong>~$230K</strong></td>
-</tr>
-<tr>
-<td>Platform cost to serve one additional member</td>
-<td>~$70K</td>
-</tr>
-<tr>
-<td><strong>Gross margin per additional member</strong></td>
-<td><strong>~70%</strong></td>
-</tr>
-</tbody>
-</table>
-<p><em>Cost to serve excludes AI inference, which is metered and passed through — see the AI slide. That is what keeps this margin real rather than notional.</em></p>
-<p><strong>What that compounds to:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Members (incl. ActCAD)</th>
-<th>Recurring platform revenue</th>
-<th>Contribution at ~70% margin</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>3</td>
-<td>~$550K/yr</td>
-<td>~$385K/yr</td>
-</tr>
-<tr>
-<td>6</td>
-<td>~$1.2M/yr</td>
-<td>~$840K/yr</td>
-</tr>
-<tr>
-<td>12</td>
-<td>~$2.8M/yr</td>
-<td>~$2.0M/yr</td>
-</tr>
-<tr>
-<td>20</td>
-<td>~$4.6M/yr</td>
-<td>~$3.2M/yr</td>
-</tr>
-</tbody>
-</table>
-<p><em>Early members sit below the mature figure — the ramp means a year-1 member pays half. The 3- and 6-member rows reflect that.</em></p>
-<blockquote>
-<p><strong>This is on top of ActCAD&rsquo;s own revenue</strong> — which we keep, in full, inside Jytra. And it comes from engineering we are funding anyway.</p>
-</blockquote></section>
-<section class="slide" data-ap="1"><h2>Trust wedge — what we tell members that no one else can</h2>
-<p><strong>&ldquo;Ship your licensing through our infrastructure. We architecturally cannot see your customer list, your seat counts, your prices, or your license contents. Not by policy — by cryptography. Third-party audited annually.&rdquo;</strong></p>
-<ul>
-<li><strong>Member holds their own License Authority key.</strong> We generate it and destroy our copy at onboarding.</li>
-<li><strong>License payloads are encrypted with keys we don&rsquo;t have.</strong> Even if we&rsquo;re breached, attackers get ciphertext + aggregate counters.</li>
-<li><strong>Subpoena-resistant by design.</strong> We cannot break the crypto for a government any more than for an attacker.</li>
-<li><strong>Survives us.</strong> If TejasCAD ever goes away, the member&rsquo;s licensing keeps working. Playbook shipped with the SDK.</li>
-</ul>
-<p>Full technical spec: <code>docs/tejascad-licensing-architecture.md</code> (25 pages, external cryptographic audit planned before v1).</p>
-<blockquote>
-<p>This one property alone is worth a member conversation for every regulated-sector customer they&rsquo;re trying to close. <strong>No competitor offers it. IntelliCAD structurally cannot.</strong></p>
+<p><strong>Nothing else is being decided today.</strong> No capital commitment, no incorporation, no announcement, no change to how ActCAD is run.</p>
 </blockquote></section>
 <div id="ov"><h2>All slides</h2><div class="grid">
 <div class="card" data-i="0"><div class="n">1</div><div class="t">Building for ActCAD, or building for the world?</div></div>
-<div class="card" data-i="1"><div class="n">2</div><div class="t">The decision on the table today</div></div>
+<div class="card" data-i="1"><div class="n">2</div><div class="t">The decision on the table</div></div>
 <div class="card" data-i="2"><div class="n">3</div><div class="t">Phase 0 today — what already ships</div></div>
-<div class="card" data-i="3"><div class="n">4</div><div class="t">The case against this — stated as strongly as we can put it</div></div>
-<div class="card" data-i="4"><div class="n">5</div><div class="t">Why the answer is still yes — and where the objection lands</div></div>
-<div class="card" data-i="5"><div class="n">6</div><div class="t">What this means for ActCAD — and for the partner who runs it</div></div>
-<div class="card" data-i="6"><div class="n">7</div><div class="t">Who actually builds this — an honest division of labour</div></div>
-<div class="card" data-i="7"><div class="n">8</div><div class="t">The kill switch — how this ends if it isn&#x27;t working</div></div>
-<div class="card" data-i="8"><div class="n">9</div><div class="t">Building for ActCAD vs building for the world — the two paths, side by side</div></div>
-<div class="card" data-i="9"><div class="n">10</div><div class="t">What a member pays IntelliCAD today — and what they actually get for it</div></div>
-<div class="card" data-i="10"><div class="n">11</div><div class="t">IntelliCAD++ — the same idea, with ownership and responsibility fixed</div></div>
-<div class="card" data-i="11"><div class="n">12</div><div class="t">What each tier gates — and what it costs</div></div>
-<div class="card" data-i="12"><div class="n">13</div><div class="t">What this could become — conservative, base, aggressive</div></div>
-<div class="card" data-i="13"><div class="n">14</div><div class="t">Funding path — and what actually sets an acquisition floor</div></div>
-<div class="card" data-i="14"><div class="n">15</div><div class="t">What we&#x27;re asking today — and what we&#x27;re explicitly NOT asking</div></div>
-<div class="card" data-i="15"><div class="n">16</div><div class="t">—</div></div>
-<div class="card" data-i="16"><div class="n">17</div><div class="t">What happens on Monday if the concept is approved</div></div>
-<div class="card" data-i="17"><div class="n">18</div><div class="t">The ask, in one line</div></div>
-<div class="card ap" data-i="18"><div class="n">19</div><div class="t">Appendix</div></div>
-<div class="card ap" data-i="19"><div class="n">20</div><div class="t">The Phase 1 architectural direction — what we already know</div></div>
-<div class="card ap" data-i="20"><div class="n">21</div><div class="t">Who our first members would be</div></div>
-<div class="card ap" data-i="21"><div class="n">22</div><div class="t">How we bring a member on — the 90-day pattern</div></div>
-<div class="card ap" data-i="22"><div class="n">23</div><div class="t">The lesson from ODA — cheap memberships won</div></div>
-<div class="card ap" data-i="23"><div class="n">24</div><div class="t">Two speeds — a wide funnel and a paid core</div></div>
-<div class="card ap" data-i="24"><div class="n">25</div><div class="t">AI: bundle the capability, meter the consumption</div></div>
-<div class="card ap" data-i="25"><div class="n">26</div><div class="t">Membership + royalty, or membership only?</div></div>
-<div class="card ap" data-i="26"><div class="n">27</div><div class="t">Founding status — earned by tier, not by showing up early</div></div>
-<div class="card ap" data-i="27"><div class="n">28</div><div class="t">The passive-revenue picture</div></div>
-<div class="card ap" data-i="28"><div class="n">29</div><div class="t">Trust wedge — what we tell members that no one else can</div></div>
+<div class="card" data-i="3"><div class="n">4</div><div class="t">Architecture for the editor</div></div>
+<div class="card" data-i="4"><div class="n">5</div><div class="t">The case against — stated at full strength</div></div>
+<div class="card" data-i="5"><div class="n">6</div><div class="t">Why we still think yes</div></div>
+<div class="card" data-i="6"><div class="n">7</div><div class="t">Who builds it</div></div>
+<div class="card" data-i="7"><div class="n">8</div><div class="t">The kill switch</div></div>
+<div class="card" data-i="8"><div class="n">9</div><div class="t">The two paths</div></div>
+<div class="card" data-i="9"><div class="n">10</div><div class="t">What we pay IntelliCAD today</div></div>
+<div class="card" data-i="10"><div class="n">11</div><div class="t">IntelliCAD++ — what we give that ITC does not</div></div>
+<div class="card" data-i="11"><div class="n">12</div><div class="t">What we deliver, and what we would charge</div></div>
+<div class="card" data-i="12"><div class="n">13</div><div class="t">What this could become</div></div>
+<div class="card" data-i="13"><div class="n">14</div><div class="t">Funding</div></div>
+<div class="card" data-i="14"><div class="n">15</div><div class="t">What we are asking</div></div>
 </div><div class="hint">Click a slide to jump &nbsp;·&nbsp; ← → or space to move &nbsp;·&nbsp;
 O / Esc for this view &nbsp;·&nbsp; F fullscreen &nbsp;·&nbsp; P print to PDF</div></div>
 <script>
