@@ -130,13 +130,27 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 #ov .hint{color:#94a8c0;font-size:11.5px;margin-top:1.4em;letter-spacing:.03em}
 
 @media print{
- @page{size:1280px 720px;margin:0}
+ /* A4 landscape - real paper, not 16:9 pixels. Height is auto with a
+    min-height so a dense slide spills to a second sheet rather than
+    silently clipping a table mid-row. Completeness beats tidiness in
+    a handout. */
+ @page{size:A4 landscape;margin:0}
  html,body{background:#fff}
- .slide{position:relative;display:flex!important;inset:auto;
- width:1280px;height:720px;page-break-after:always;overflow:hidden;font-size:15px;
- padding:44px 60px 46px}
- .slide.lead{-webkit-print-color-adjust:exact;print-color-adjust:exact}
- th,tbody tr:nth-child(even),blockquote,.big{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .slide{position:relative;display:block!important;inset:auto;
+ width:297mm;min-height:206mm;height:auto;overflow:visible;
+ page-break-after:always;break-after:page;
+ font-size:10.5pt;line-height:1.42;padding:13mm 15mm 11mm}
+ .slide:last-child{page-break-after:auto;break-after:auto}
+ .slide.lead{min-height:206mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .slide.lead h1{font-size:2.3em}
+ h2{font-size:1.34em;margin-bottom:.5em}
+ table{font-size:.82em;page-break-inside:avoid;break-inside:avoid}
+ th,td{padding:.34em .5em}
+ blockquote,.big{page-break-inside:avoid;break-inside:avoid;margin:.5em 0}
+ .big{font-size:1.1em}
+ h2,h3,h4{page-break-after:avoid;break-after:avoid}
+ th,tbody tr:nth-child(even),blockquote,.big,.slide.lead{
+ -webkit-print-color-adjust:exact;print-color-adjust:exact}
  #bar,#num,#tag,#ov,#appx{display:none!important}
 }
 """
@@ -231,9 +245,50 @@ O / Esc for this view &nbsp;·&nbsp; F fullscreen &nbsp;·&nbsp; P print to PDF<
     return out
 
 
+CHROME_HINTS = [
+    "/opt/pw-browsers/chromium-*/chrome-linux/chrome",
+    "/opt/pw-browsers/chromium/chrome-linux/chrome",
+]
+
+
+def find_chrome() -> str | None:
+    import glob
+    import shutil
+
+    for pat in CHROME_HINTS:
+        hits = sorted(glob.glob(pat))
+        if hits:
+            return hits[-1]
+    for name in ("chromium", "chromium-browser", "google-chrome", "chrome"):
+        if (w := shutil.which(name)):
+            return w
+    return None
+
+
+def to_pdf(deck: Path) -> Path | None:
+    """Render the deck to PDF via headless Chromium, one slide per sheet."""
+    import subprocess
+
+    chrome = find_chrome()
+    if not chrome:
+        print("  ! no chromium found - open the deck and press P instead")
+        return None
+    out = deck.with_suffix(".pdf")
+    subprocess.run(
+        [chrome, "--headless", "--disable-gpu", "--no-sandbox",
+         "--no-pdf-header-footer", "--virtual-time-budget=5000",
+         f"--print-to-pdf={out}", deck.resolve().as_uri()],
+        check=True, capture_output=True,
+    )
+    return out
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        sys.exit("usage: build-deck.py <marp-markdown-file>")
+        sys.exit("usage: build-deck.py <marp-markdown-file> [--pdf]")
     s = Path(sys.argv[1])
     o = build(s)
     print(f"  {s.name} -> {o.name}  ({o.stat().st_size // 1024} KB, self-contained)")
+    if "--pdf" in sys.argv:
+        if (pdf := to_pdf(o)):
+            print(f"  {o.name} -> {pdf.name}  ({pdf.stat().st_size // 1024} KB, A4 landscape)")

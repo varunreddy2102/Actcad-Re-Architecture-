@@ -92,13 +92,27 @@ border:2px solid transparent;transition:transform .1s,border-color .1s;min-heigh
 #ov .hint{color:#94a8c0;font-size:11.5px;margin-top:1.4em;letter-spacing:.03em}
 
 @media print{
- @page{size:1280px 720px;margin:0}
+ /* A4 landscape - real paper, not 16:9 pixels. Height is auto with a
+    min-height so a dense slide spills to a second sheet rather than
+    silently clipping a table mid-row. Completeness beats tidiness in
+    a handout. */
+ @page{size:A4 landscape;margin:0}
  html,body{background:#fff}
- .slide{position:relative;display:flex!important;inset:auto;
- width:1280px;height:720px;page-break-after:always;overflow:hidden;font-size:15px;
- padding:44px 60px 46px}
- .slide.lead{-webkit-print-color-adjust:exact;print-color-adjust:exact}
- th,tbody tr:nth-child(even),blockquote,.big{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .slide{position:relative;display:block!important;inset:auto;
+ width:297mm;min-height:206mm;height:auto;overflow:visible;
+ page-break-after:always;break-after:page;
+ font-size:10.5pt;line-height:1.42;padding:13mm 15mm 11mm}
+ .slide:last-child{page-break-after:auto;break-after:auto}
+ .slide.lead{min-height:206mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ .slide.lead h1{font-size:2.3em}
+ h2{font-size:1.34em;margin-bottom:.5em}
+ table{font-size:.82em;page-break-inside:avoid;break-inside:avoid}
+ th,td{padding:.34em .5em}
+ blockquote,.big{page-break-inside:avoid;break-inside:avoid;margin:.5em 0}
+ .big{font-size:1.1em}
+ h2,h3,h4{page-break-after:avoid;break-after:avoid}
+ th,tbody tr:nth-child(even),blockquote,.big,.slide.lead{
+ -webkit-print-color-adjust:exact;print-color-adjust:exact}
  #bar,#num,#tag,#ov,#appx{display:none!important}
 }
 </style>
