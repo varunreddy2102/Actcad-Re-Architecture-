@@ -123,6 +123,52 @@ And a specific market opened at the same time:
 
 ---
 
+## The case against this — stated as strongly as we can put it
+
+**This deserves a real hearing, not a strawman. The argument against is serious:**
+
+1. **"We are a CAD company, not a platform company."** Selling to other software vendors is a different business — different sales motion, different support model, different skills. We have never done it. Why would we be good at it?
+
+2. **"It distracts from the thing that actually matters."** We are mid-rebuild of our core product. Nothing is more important than ActCAD-new reaching GA. Three to six engineer-months understates it — **the real cost is management attention**, which is our scarcest resource.
+
+3. **"The money isn't worth the trouble."** We have just been told this is not venture-scale. For $2–7M a year, we take on partner obligations, a second entity, two sets of books, and a duty to support other companies' engineering teams.
+
+4. **"We would be arming competitors."** Especially at the Complete tier. Why hand fifteen years of our vertical work to a vendor who may meet us in a tender next year?
+
+5. **"Members will constrain our roadmap."** A member needs feature X; ActCAD needs feature Y. Once we have paying partners, we are no longer free to choose Y.
+
+6. **"Nobody has asked for this."** Zero members. Zero LOIs. This is a solution in search of a problem.
+
+7. **"IntelliCAD members are sticky."** They have been there twenty years. Switching costs are enormous. Why would they move now, for us?
+
+> **Points 2, 3, 5 and 6 are substantially correct. The next slide is where we agree with them and explain why we still think the answer is yes.**
+
+---
+
+## Why the answer is still yes — and where the objection lands
+
+| The objection | Our honest answer |
+|---|---|
+| **We're not a platform company** | True today. But we do not have to become one to keep the option. Nothing before the month-24 gate requires a platform sales team. |
+| **It distracts from ActCAD** | **Partly conceded — management attention is the real cost.** But the engineering argument runs the other way: see below. |
+| **The money is modest** | **Conceded.** $2–7M/yr at ~70% margin. Worth having, not transformational. If that alone were the case, we would not propose it. |
+| **Arming competitors** | Real. Which is why Complete is **gated by named-competitor exclusion and territory carve-out** — and why we can simply choose not to sell that tier. |
+| **Members constrain the roadmap** | **Conceded, and it is the one that worries us most.** Mitigation: members get roadmap *input*, never a veto. Only Founding Partners get a seat, and it is advisory. |
+| **No validated demand** | **Fully conceded. We have zero LOIs.** That is precisely why the ask is concept approval and why there is a **hard kill switch at month 24.** |
+| **ITC members are sticky** | True — which is why the realistic base case is **12 members in seven years**, not fifty. The model already assumes they move slowly. |
+
+<div class="big" markdown="1">
+
+**The single argument that carries the decision: building multi-tenant makes ActCAD better even if no member ever signs.**
+
+</div>
+
+**The tenant seam touches six of our ten modules.** Building it now forces: no ActCAD-specific hacks in the core, a real plugin API instead of internal coupling, configuration-driven behaviour instead of hardcoded assumptions, and a proper licensing abstraction. **Teams building for one customer accumulate coupling. Teams building for N stay clean.**
+
+> **Retrofitting multi-tenancy later is not 3–6 engineer-months — it is a rewrite of those six modules after they have hardened around single-tenant assumptions.** That asymmetry is the whole argument. **We are not deciding to become a platform company today. We are deciding whether to keep the door open cheaply, or close it expensively.**
+
+---
+
 ## What a member pays IntelliCAD today — and what they actually get for it
 
 We are an IntelliCAD member. **We know this market's economics because we live them.**
@@ -487,17 +533,39 @@ That approval unlocks the following prep work — none of which commits capital 
 
 ---
 
-## What "no" looks like — the honest counter
+## The kill switch — how this ends if it isn't working
 
-If we do not take the platform path, this is what happens:
+**A yes today is not open-ended. It buys an option with a defined expiry and a defined test.**
 
-- We still ship modern ActCAD in 24 months. **That is a great outcome.**
-- We do not build the tenant / licensing / marketplace scaffolding — save ~3–6 engineer-months in P1.
-- We keep all upside on ActCAD alone. No dilution risk from external investors later, no complexity of a two-entity structure, no partner-management overhead.
-- We forgo the passive-revenue stream. If a competitor (Hexagon, ODA, an Indian tech major) decides in 2–3 years to build the same white-label platform, they own the category — not us.
-- Our long-term exit is ActCAD as a product. The platform-multiplier is not available.
+| Gate | When | Test | If it fails |
+|---|---|---|---|
+| **Outreach check** | Month 12 | Have 8–10 qualified member conversations happened? | Stop outbound. Keep building the seam — it pays for itself in ActCAD's architecture regardless. |
+| **The real gate** | **Month 24, at ActCAD-new GA** | **Are there ≥2 members at signed LOI?** | **We stop.** No platform entity, no partner obligations, no second set of books. |
+| Tier decision | Before first Complete sale | Does licensing our verticals threaten ActCAD in that member's territory? | Don't sell that tier to that member. |
 
-**Both paths are respectable.** The platform path adds a second revenue line and a second saleable asset. The single-product path is simpler, with no partner obligations and no second set of books.
+<div class="big" markdown="1">
+
+**If the month-24 gate fails, what have we lost? Three to six engineer-months — spent on architecture we would defend on ActCAD's own merits anyway.**
+
+</div>
+
+**And what we would still have:** a cleanly-separated engine, a real plugin API, configuration-driven behaviour, a proper licensing abstraction, and ActCAD shipping on all of it. **That is the downside case. It is not a bad one.**
+
+> **For anyone not yet convinced: this is the slide to hold us to.** Approving the concept does not commit the company to becoming a platform business. It commits us to **coming back to this room at month 24 with either two signed LOIs or a recommendation to stop.**
+
+---
+
+## If the answer today is no
+
+**A no is a legitimate outcome and nothing breaks.** What actually follows:
+
+- We still ship modern ActCAD in 24 months. **That is a great outcome on its own.**
+- We save ~3–6 engineer-months in P1 — **and we accept that adding multi-tenancy later means reworking six modules, not adding a layer.**
+- No partner obligations, no second entity, no second set of books, no duty to support other vendors' engineering teams.
+- We forgo a ~$2–7M/yr revenue line at ~70% margin.
+- Our long-term exit is ActCAD as a single product rather than two separable assets.
+
+> **The one thing a no forecloses that is hard to reopen:** the architecture. Everything else on this list can be revisited in three years. **The tenant seam is materially cheaper to build now than to retrofit** — which is why we are asking now rather than after GA.
 
 ---
 
