@@ -179,13 +179,33 @@ style: |
 
 | Stage | Timing | Amount |
 |---|---|---|
-| **Promoter seed** | Now to year 2 | **$1–2M** |
+| **Promoter seed** | Now to year 2 | **₹2 crore** |
 | **Strategic round** *(optional)* | Years 4–5 | **$5–10M** |
 | **Exit** | Years 6–7 | **$30–50M** target |
 
-- The seed is **the increment on an engine already funded**
+- The seed **funds the two-year build team** — next slide
 - A strategic investor at years 4–5 **sets a valuation floor** ahead of any sale
 - At ~70% margins the business **self-funds from year 3**
+
+---
+
+## Team required — the two-year build
+
+| Role | Headcount | Cost |
+|---|---|---|
+| **CAD engine developers** | 2–4 | **₹100 lakh** |
+| **Commands and UI developers** | 3–5 | **₹50 lakh** |
+| **Marketing** | 1 | **₹25 lakh** |
+| **Total** | **6–10 people** | **₹1.75 crore** |
+
+<div class="big" markdown="1">
+
+**₹2 crore seed against a ₹1.75 crore build — funded, with headroom.**
+
+</div>
+
+- This is **the team the next ActCAD engine needs regardless** — the platform shares it, it does not create it
+- Engine developers are the constraint: **senior C++ and systems people, hired deliberately**
 
 ---
 
