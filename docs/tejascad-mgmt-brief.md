@@ -204,8 +204,11 @@ style: |
 
 </div>
 
+**A team this size is viable because of how we are building.** Phase 0 delivered ~207 commits and a shipping viewer in six weeks with AI-assisted development — the UI, commands, tests and tooling layers move several times faster than they used to.
+
+- **AI carries the commands and UI layer** — that is where the leverage is real
+- **Engine work still needs people** — ODA and ACIS integration, performance, vendor defects. Hire these deliberately.
 - This is **the team the next ActCAD engine needs regardless** — the platform shares it, it does not create it
-- Engine developers are the constraint: **senior C++ and systems people, hired deliberately**
 
 ---
 
