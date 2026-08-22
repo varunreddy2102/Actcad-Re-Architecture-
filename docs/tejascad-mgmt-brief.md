@@ -268,16 +268,21 @@ style: |
 
 From Sanskrit **takṣ** — *to shape, to carve, to fashion*. The root of **Takshashila**.
 
-| | Line | Note |
+| | Line | What a search turns up |
 |---|---|---|
-| **TAKSHON** | *Design Beyond Boundaries* | Most futuristic and ownable; **strongest search position** |
-| **TAKSH** | *Precision in Every Dimension* | **Shortest, sharpest wordmark**; meaning maps exactly to what CAD does |
-| **TAKSHA** | *Design. Simulate. Build.* | Premium and distinctly Indian — **conflict risk with an adjacent engineering-AI name** |
-| **VISTAAR** | *From Structures to Skylines* | Best BIM and infrastructure story; more crowded |
+| **TAKSHON** | *Design Beyond Boundaries* | **Clear** — no Indian technology company trading on the name |
+| **TAKSH** | *Precision in Every Dimension* | **Crowded** — four Indian software firms already use it |
+| **TAKSHA** | *Design. Simulate. Build.* | **Conflict** — Taksha AI & Robotics Pvt Ltd, plus robotics and engineering firms |
+| **VISTAAR** | *From Structures to Skylines* | Strong BIM story, but a common word in wide commercial use |
 
-- **TAKSH** and **TAKSHON** are the two to take forward
+<div class="big" markdown="1">
+
+**TAKSHON is the recommendation** — the only one of the four with room to own the category.
+
+</div>
+
 - Sub-brands follow naturally — **Engine · Cloud · Forge · SDK**
-- **Trademark and domain clearance before anything external**
+- These are web searches, **not register searches** — IP India Classes 9 and 42, plus USPTO and EUIPO, **before anything external**
 
 ---
 
